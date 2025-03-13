@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="22G120" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="4">
+    <entity name="CategoryEntity" representedClassName="CategoryEntity" syncable="YES">
+        <attribute name="creationDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="modificationDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="memoSet" toMany="YES" deletionRule="Nullify" destinationEntity="MemoEntity" inverseName="categories" inverseEntity="MemoEntity"/>
+    </entity>
+    <entity name="ImageEntity" representedClassName="ImageEntity" syncable="YES">
+        <attribute name="isTemporaryAppended" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isTemporaryDeleted" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="orderIndex" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="temporaryOrderIndex" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="thumbnailUUID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="memo" maxCount="1" deletionRule="Nullify" destinationEntity="MemoEntity" inverseName="images" inverseEntity="MemoEntity"/>
+    </entity>
+    <entity name="MemoEntity" representedClassName="MemoEntity" syncable="YES">
+        <attribute name="creationDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="deletedDate" optional="YES" attributeType="Date" defaultDateTimeInterval="726847920" usesScalarValueType="NO"/>
+        <attribute name="directoryName" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isFavorite" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isInTrash" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="memoText" attributeType="String"/>
+        <attribute name="memoTitle" attributeType="String"/>
+        <attribute name="modificationDate" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="categories" toMany="YES" deletionRule="Nullify" destinationEntity="CategoryEntity" inverseName="memoSet" inverseEntity="CategoryEntity"/>
+        <relationship name="images" toMany="YES" deletionRule="Nullify" destinationEntity="ImageEntity" inverseName="memo" inverseEntity="ImageEntity"/>
+    </entity>
+</model>

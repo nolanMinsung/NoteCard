@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  CardMemo
+
+  Created by 김민성 on 2024/01/21.
+  
+*/
+
+"CFBundleDisplayName" = "NoteCard";

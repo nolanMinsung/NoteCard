@@ -1,0 +1,250 @@
+/* 
+  Localizable.strings
+  CardMemo
+
+  Created by 김민성 on 2023/12/28.
+  
+*/
+
+//MemoEntity+CoreDataProperties
+"오늘" = "Today";
+"어제" = "Yesterday";
+
+//TabBarCon
+"홈 화면" = "Main View";
+"카테고리 없음" = "Uncategorized";
+"빠른 메모" = "Quick Memo";
+"메모 검색" = "Search Memo";
+"설정" = "Settings";
+
+//HomeVC
+"홈 화면" = "Main view";
+"카테고리" = "Category";
+"즐겨찾기" = "Favorites";
+"전체 메모" = "All Memos";
+"카테고리 만들기" = "Make Category";
+"즐겨찾기 없음" = "No Favorites";
+
+//CategoryListVC
+"전체 카테고리 목록" = "Category List";
+"이름 변경" = "Rename";
+"카테고리 이름 변경" = "Rename Category";
+"새 카테고리 이름을 입력하세요" = "Please Enter the New Category Name.";
+"저장" = "Save";
+"이름 중복" = "Duplicate Category Name";
+"같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요." = "There is already a category with the same name.\nPlease enter a different name.";
+"확인" = "OK";
+"취소" = "Cancel";
+"카테고리 삭제" = "Delete Category";
+"카테고리를 삭제하시겠습니까?\n카테고리에 속한 메모들은 삭제되지 않습니다." ="Are you sure you want to delete the Category?\nMemos within the category will not be deleted.";
+"취소" = "Cance";
+"삭제" = "Delete";
+
+//CreateCategoryVC
+"카테고리 생성" = "Make Category";
+"취소" = "Cancel";
+"완료" = "Done";
+"카테고리 이름 입력" = "Write Category Name."; //placeholder
+"카테고리 이름이 비었습니다." = "Empty Category Name!";
+"카테고리 이름을 입력하여 카테고리를 추가하세요." = "Category Name cannot be empty.";
+"확인" = "OK";
+
+//CreateCategoryView
+"카테고리 이름 입력" = "Write Category Name";
+
+//PopupCardViewController
+"카테고리 없는 메모로 복구" = "Recover as Uncategorized Memo";
+"이 메모를 복구하시겠습니까?" = "Would you like to recover this memo?";
+"복구된 메모는 '카테고리 없음' 항목에서 확인할 수 있습니다." = "The recovered memo can be found under the 'Uncategorized' section.";
+"취소" = "Cancel";
+"복구" = "Recover";
+"편집 모드" = "Editing Mode";
+"이 메모 삭제하기" = "Delete This Memo";
+"선택한 메모를 영구적으로 삭제하시겠습니까?" = "Are you sure you want to permanently delete the selected memos?";
+"이 동작은 취소할 수 없습니다." = "This action cannot be undone.";
+"메모 삭제" = "Delete Memo";
+"메모를 삭제하시겠습니까?" = "Would you like to delete the memo?";
+"취소" = "Cancel";
+"삭제" = "Delete";
+
+//PopupCardView
+"제목 없음" = "No Title";
+"%d일 뒤에 삭제됨" = "Will be Deleted in %d days";
+"1일 이내에 삭제됨" = "Will be deleted within 24 hours";
+"%@에 생성됨" = "Created on %@";
+"%@에 수정됨" = "Edited on %@";
+
+//MemoViewController
+"카테고리 없는 메모들로 복구" = "Recover as Uncategorized Memos";
+"이 메모들을 복구하시겠습니까?" = "Would you like to recover this memos?";
+"복구된 메모들은 '카테고리 없음' 항목에서 확인할 수 있습니다." = "The recovered memos can be found under the 'Uncategorized' section.";
+"취소" = "Cancel";
+"복구" = "Recover";
+"복구할 카테고리 선택" = "Select Categories for Recoverd Memos";
+"카테고리 일괄 추가" = "Batch Add Categories";
+"카테고리 일괄 해제" = "Batch Remove Categories";
+"즐겨찾기에 추가" = "Add to Favorites";
+"즐겨찾기에 해제" = "Remove from Favorites";
+"%d개의 메모 선택됨" = "%d memo selected";
+"선택" = "Select";
+"완료" = "Done";
+"카테고리 없음" = "Uncategorized";
+"즐겨찾기한 메모" = "Favorite Memo";
+"전체 메모 목록" = "All Memos";
+"휴지통" = "🗑️Trash";
+"선택한 메모들을 영구적으로 삭제하시겠습니까?" = "Are you sure you want to permanently delete the selected memos?";
+"이 동작은 취소할 수 없습니다." = "This action cannot be undone.";
+"선택된 메모 삭제" = "Delete Selected Memos";
+"선택한 메모들을 모두 삭제하시겠습니까?" = "Would you like to delete selected memos?";
+"취소" = "Cancel";
+"삭제" = "Delete";
+"알림" = "Alert";
+"카테고리 이름을 비울 수 없습니다." = "Category name cannot be empty.";
+"확인" = "OK";
+
+//MemoCompositionalCollectionViewCell
+"제목 없음" = "No title";
+"카테고리 없는 메모로 복구" = "Recover as Uncategorized Memo";
+"이 메모를 복구하시겠습니까?" = "Would you like to recover this memo?";
+"복구된 메모는 '카테고리 없음' 항목에서 확인할 수 있습니다." = "The recovered memo can be found under the 'Uncategorized' section.";
+"취소" = "Cancel";
+"복구" = "Recover";
+"편집 모드" = "Editing Mode";
+"이 메모 삭제하기" = "Delete this memo";
+"선택한 메모를 영구적으로 삭제하시겠습니까?" = "Are you sure you want to permanently delete this memo?";
+"이 동작은 취소할 수 없습니다." = "This action cannot be undone.";
+"메모 삭제" = "Delete memo";
+"메모를 삭제하시겠습니까?" = "Would you like to delete the memo?";
+"취소" = "Cancel";
+"삭제" = "Delete";
+//"%@에 생성됨" = "Created on %@";
+//"%@에 수정됨" = "Edited on %@";
+"%d일 뒤에 삭제됨" = "Will be Deleted in %d days";
+"1일 이내에 삭제됨" = "Will be deleted within 24 hours";
+"%@에 생성됨" = "Created on %@";
+"%@에 수정됨" = "Edited on %@";
+
+//MemoFlowCollectionViewCell
+"제목 없음" = "No title";
+
+//CategorySelectionViewController
+"카테고리 선택하기" = "Select category";
+"취소" = "Cancel";
+"추가" = "Add";
+"해제" = "Remove";
+"%d개의 카테고리 선택됨" = "%d Category Selected";
+"카테고리 선택하기" = "Select Cateogory";
+
+//TotalListViewController
+"메모 검색" = "Search Memo";
+
+//TotalListCollectionViewCell
+"제목 없음" = "No Title";
+
+//MemoDetailView
+"제목 없음" = "No Title";
+"카테고리" = "Category";
+"메모를 입력하세요." = "Write Memo.";
+"메모 내용이 없습니다." = "Memo is Empty";
+
+//MemoMakingViewController
+"취소" = "Cancel";
+"완료" = "Done";
+"%d개의 카테고리 선택됨" = "%d Category Selected";
+"메모 작성 취소" = "Cancel Memo Creation.";
+"메모 작성을 취소하시겠습니까?" = "Are you sure you want to cancel memo creation?";
+"계속 작성" = "Continue Memo Writing";
+"메모 작성 취소" = "Cancel Memo Writing";
+"확인" = "OK";
+"메모 추가하기" = "Add Memo";
+
+//MemoEditingViewController
+"취소" = "Cancel";
+"완료" = "Done";
+"%d개의 카테고리 선택됨" = "%d Category Selected";
+"확인" = "OK";
+"이미지 한도 초과" = "mage limit exceeded.";
+"메모당 이미지 저장은 최대 10개까지 가능합니다." = "You can store a maximum of 10 images per note.";
+"편집 모드" = "Editing Mode";
+
+//SettingsVC
+"테마 색" = "Theme Color";
+"날짜 표시 형식" = "Date Format";
+"시간 표시 형식" = "Time Format";
+"표시 순서" = "Memo Order";
+"다크 모드" = "Dark Mode";
+
+"총 메모 수" = "Total Memos";
+"총 카테고리 수" = "Total Categories";
+"휴지통" = "Trash";
+"휴지통 비우기" = "Empty Trash";
+
+"개발자 이메일" = "Contact to Developer";
+"별점/리뷰 남기기" = "Give Me 5 Stars";
+"버전 정보" = "Version";
+
+"설정" = "Settings";
+
+"Black/White" = "Black/White";
+"Brown" = "Brown";
+"Red" = "Red";
+"Orange" = "Orange";
+"Yellow" = "Yellow";
+"Green" = "Green";
+"Skyblue" = "Skyblue";
+"Blue" = "Blue";
+"Purple" = "Purple";
+"Black" = "Black";
+
+"24시간제" = "24-Hour Time";
+"12시간제" = "12-Hour Time";
+
+"SettingsVC/수정 시간" = "Modification";
+"SettingsVC/만든 시간" = "Creation";
+"SettingsVC/오름차순" = "Ascending";
+"SettingsVC/내림차순" = "Descending";
+
+"라이트 모드" = "Light Mode";
+"다크 모드" = "Dark Mode";
+"시스템 모드" = "System Mode";
+
+"휴지통에 들어간 메모는 삭제된 지 2주가 지나면 영구적으로 삭제됩니다." = "Memos in the trash will be permanently deleted after 2 weeks.";
+"휴지통 비우기" = "Empty Trash";
+"휴지통의 모든 메모가 삭제됩니다.\n이 동작은 취소할 수 없습니다." = "All memos in the trash will be deleted.\nThis action cannot be undone.";
+"휴지통 비우기" = "Empty Trash";
+"취소" = "Cancel";
+
+//ThemeColorPickingViewController
+"테마 색 선택" = "Select Theme Color";
+
+//ThemeColorPickingTableViewCell
+"Black/White" = "Black/White";
+"Brown" = "Brown";
+"Red" = "Red";
+"Orange" = "Orange";
+"Yellow" = "Yellow";
+"Green" = "Green";
+"Skyblue" = "Skyblue";
+"Blue" = "Blue";
+"Purple" = "Purple";
+"Black" = "Black";
+
+//DateFormatSettingViewController
+"날짜 표시 형식" = "Date Format";
+
+//TimeFormatSettingViewController
+"24시간제" = "24-Hour Time";
+"시간 표시 형식" = "Time Format";
+
+//OrderSettingViewController
+"수정 시간" = "Memo Modification Date";
+"만든 시간" = "Memo Creation Date";
+"메모 순서 표시" = "Memo Sorting";
+"오름차순" = "Ascending Order";
+"내림차순" = "Descending Order";
+"메모 정렬 기준" = "Memo Sorting Criteria";
+
+//DarkModeSettingTableViewCell
+"라이트 모드" = "Light Mode";
+"다크 모드" = "Dark Mode";
+"시스템 모드" = "System Mode";
