@@ -244,7 +244,7 @@
 		4E1384982AF37B350063817B = {
 			isa = PBXGroup;
 			children = (
-				4E1384A32AF37B350063817B /* CardMemo */,
+				4E1384A32AF37B350063817B /* NoteCard */,
 				4E1384A22AF37B350063817B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -257,7 +257,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4E1384A32AF37B350063817B /* CardMemo */ = {
+		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
 				4ED42A842B3D6EDA00D14571 /* Localizable.strings */,
@@ -281,7 +281,6 @@
 				4E1384B52AF37B370063817B /* Info.plist */,
 				4EEFF40A2B5CC155008F0BBB /* InfoPlist.strings */,
 			);
-			name = CardMemo;
 			path = NoteCard;
 			sourceTree = "<group>";
 		};
