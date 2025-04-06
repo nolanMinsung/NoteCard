@@ -1,5 +1,5 @@
 //
-//  HomeCollectionViewFavoriteCell.swift
+//  HomeFavoriteCell.swift
 //  CardMemo
 //
 //  Created by 김민성 on 2023/11/02.
@@ -7,22 +7,21 @@
 
 import UIKit
 
-final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
+final class HomeFavoriteCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
     
+    var shrinkingAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
     
-    static var cellID: String {
-        return String(describing: self)
+    override var isHighlighted: Bool {
+        didSet {
+            if isHighlighted {
+                shrink(scale: 0.95)
+            } else {
+                expand()
+            }
+        }
     }
     
-    var memoEntity: MemoEntity? //{
-    //        didSet {
-    //            configureUIWithData()
-    //        }
-    //    }
-    
-    
-    let longPressGesture = UILongPressGestureRecognizer()
-    
+    var memoEntity: MemoEntity?
     
     var titleTextField: UITextField = {
         let textField = UITextField()
@@ -36,7 +35,6 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         return textField
     }()
     
-    
     let pictureImageLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15)
@@ -46,14 +44,6 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-//    let photoImageLabel: UIImageView = {
-//        let imageView = UIImageView(image: UIImage(systemName: "photo.on.rectangle.angled"))
-//        imageView.contentMode = .scaleAspectFit
-//        //        imageView.backgroundColor = .systemGray5
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        return imageView
-//    }()
     
     let imageCountLabel: UILabel = {
         let label = UILabel()
@@ -77,7 +67,6 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         return label
     }()
     
-    
     let memoTextView: UITextView = {
         let textView: UITextView
         if #available(iOS 16.0, *) {
@@ -85,8 +74,6 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         } else {
             textView = UITextView()
         }
-        
-        //textView.font = UIFont.systemFont(ofSize: 12)
         textView.textAlignment = .left
         textView.backgroundColor = .clear
         textView.clipsToBounds = true
@@ -95,20 +82,14 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         textView.isUserInteractionEnabled = false
         textView.contentInset.top = 0
         textView.textContainerInset.top = 4
-        //textView.isScrollEnabled = true
-        //textView.isEditable = false
-        //textView.isSelectable = false
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
         setupConstraints()
-        setupDelegates()
-        setupGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -123,9 +104,7 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
             self.layer.shadowColor  = nil
             
         } else {
-            
             let roundBezierPath = UIBezierPath(roundedRect: CGRect(x: 0, y: 3, width: 145, height: 220), cornerRadius: 20)
-//            let roundBezierPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: 12)
             self.layer.shadowPath = roundBezierPath.cgPath
             self.layer.shadowOpacity = 0.2
             self.layer.shadowRadius = 5
@@ -139,8 +118,6 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         self.imageCountLabel.alpha = 1
         self.memoTextView.text = ""
     }
-    
-    
     
     func setupUI() {
         //cell의 contentView의 backgroundColor 대신에 cell의 backgroundColor에 직접 색을 넣어주는 이유는
@@ -156,11 +133,9 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         self.contentView.addSubview(self.imageCountLabel)
         self.contentView.addSubview(self.dateLabel)
         self.contentView.addSubview(self.memoTextView)
-        
     }
     
     func configureCell(with memo: MemoEntity) {
-        
         guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
         
         self.memoEntity = memo
@@ -174,7 +149,6 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         } else {
             self.dateLabel.text = memo.getModificationDateString()
         }
-//        self.memoTextView.text = memo.memoText
         self.memoTextView.setLineSpace(with: memo.memoTextShortBuffer, lineSpace: 2, font: UIFont.systemFont(ofSize: 12))
         
         if memo.images.count == 0 {
@@ -185,7 +159,6 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
     }
     
     func setupConstraints() {
-        
         self.titleTextField.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 9).isActive = true
         self.titleTextField.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8).isActive = true
         self.titleTextField.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8).isActive = true
@@ -209,56 +182,4 @@ final class HomeCollectionViewFavoriteCell: UICollectionViewCell {
         self.memoTextView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -7).isActive = true
     }
     
-    
-    private func setupDelegates() {
-        self.longPressGesture.delegate = self
-    }
-    
-    
-    private func setupGesture() {
-        self.longPressGesture.cancelsTouchesInView = false
-        self.longPressGesture.minimumPressDuration = 0.0
-        self.contentView.addGestureRecognizer(self.longPressGesture)
-        self.longPressGesture.addTarget(self, action: #selector(handleLongPressGesture))
-    }
-    
-    @objc private func handleLongPressGesture(gesture: UILongPressGestureRecognizer) {
-        
-        switch gesture.state {
-        case .began:
-            let animator = UIViewPropertyAnimator(duration: 0.6, controlPoint1: CGPoint(x: 0.15, y: 1), controlPoint2: CGPoint(x: 0.25, y: 1.0))
-            animator.addAnimations { [weak self] in
-                guard let self else { fatalError() }
-                self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-            }
-            animator.startAnimation()
-            
-        default:
-            let animator = UIViewPropertyAnimator(duration: 0.3, controlPoint1: CGPoint(x: 0.3, y: 0.25), controlPoint2: CGPoint(x: 0.25, y: 1.0))
-            animator.addAnimations { [weak self] in
-                guard let self else { fatalError() }
-                self.transform = CGAffineTransform.identity
-            }
-            animator.startAnimation()
-        }
-    }
-    
-    
-    
-    
-    
 }
-
-
-
-extension HomeCollectionViewFavoriteCell: UIGestureRecognizerDelegate {
-    
-    //Cell에 longPressGesture를 추가하면 그 상위 뷰인 collection view 에 적용하는 다른 제스쳐가 안 먹힌다.
-    //여기서 말하는 '다른 제스쳐' 란, collection view를 스크롤 하는 행위를 말한다. (그럼 scroll 이 gestureRecognizer란 말이냐?!! 그렇다!!)
-    //추측컨데, 아마 UICollectionView의 scroll도 내부적으로 UIPanGesture로 인식해서 처리하나봄...
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-    
-}
-

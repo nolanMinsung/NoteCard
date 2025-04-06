@@ -10,7 +10,6 @@ import UIKit
 final class HomeView: UIView {
     
     private let categoryLayoutSection: NSCollectionLayoutSection = {
-        
         let headerSize = NSCollectionLayoutSize(
             widthDimension: NSCollectionLayoutDimension.fractionalWidth(1.0),
             heightDimension: NSCollectionLayoutDimension.absolute(44)
@@ -47,7 +46,6 @@ final class HomeView: UIView {
     }()
     
     private let cardLayoutSection: NSCollectionLayoutSection = {
-        
         let headerSize = NSCollectionLayoutSize(
             widthDimension: NSCollectionLayoutDimension.fractionalWidth(1.0),
             heightDimension: NSCollectionLayoutDimension.absolute(44)
@@ -84,18 +82,18 @@ final class HomeView: UIView {
     }()
 
     private lazy var compositionalLayout: UICollectionViewCompositionalLayout = {
-        
         let layout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, env in
             switch sectionIndex {
             case 0:
                 return self?.categoryLayoutSection
             case 1:
                 return self?.cardLayoutSection
-            default:
+            case 2:
                 return self?.cardLayoutSection
+            default:
+                return nil
             }
         }
-        
         return layout
     }()
     
@@ -103,20 +101,19 @@ final class HomeView: UIView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: compositionalLayout)
         
         collectionView.register(
-            HomeCollectionViewHeaderView.self,
+            HomeHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: HomeCollectionViewHeaderView.cellID
+            withReuseIdentifier: HomeHeaderView.reuseIdentifier
         )
         
-        collectionView.register(HomeCollectionViewCategoryCell.self, forCellWithReuseIdentifier: HomeCollectionViewCategoryCell.cellID)
-        collectionView.register(HomeCollectionViewFavoriteCell.self, forCellWithReuseIdentifier: HomeCollectionViewFavoriteCell.cellID)
-        collectionView.register(HomeCollectionViewRecentCell.self, forCellWithReuseIdentifier: HomeCollectionViewRecentCell.cellID)
+        collectionView.register(HomeCategoryCell.self, forCellWithReuseIdentifier: HomeCategoryCell.reuseIdentifier)
+        collectionView.register(HomeFavoriteCell.self, forCellWithReuseIdentifier: HomeFavoriteCell.reuseIdentifier)
+        collectionView.register(HomeRecentCell.self, forCellWithReuseIdentifier: HomeRecentCell.reuseIdentifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
+        collectionView.delaysContentTouches = false
         return collectionView
     }()
-    
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -128,7 +125,6 @@ final class HomeView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     private func setupUI() {
         let homeViewBackgroundColor = UIColor { traitCollection in

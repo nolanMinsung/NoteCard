@@ -271,15 +271,15 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
                 case (true, 1):
                     homeView.homeCollectionView.scrollToItem(at: IndexPath(item: 0, section: 1), at: .init(), animated: false)
                     homeView.layoutIfNeeded()
-                    selectedCell = homeView.homeCollectionView.cellForItem(at: IndexPath(row: 0, section: 1)) as! HomeCollectionViewFavoriteCell
+                    selectedCell = homeView.homeCollectionView.cellForItem(at: IndexPath(row: 0, section: 1)) as! HomeFavoriteCell
                 case (true, 2):
                     homeView.homeCollectionView.scrollToItem(at: IndexPath(item: 0, section: 2), at: .init(), animated: false)
                     homeView.layoutIfNeeded()
-                    selectedCell = homeView.homeCollectionView.cellForItem(at: IndexPath(row: 0, section: 2)) as! HomeCollectionViewRecentCell
+                    selectedCell = homeView.homeCollectionView.cellForItem(at: IndexPath(row: 0, section: 2)) as! HomeRecentCell
                 case (false, 1):
-                    selectedCell = homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeCollectionViewFavoriteCell
+                    selectedCell = homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeFavoriteCell
                 case (false, 2):
-                    selectedCell = homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeCollectionViewRecentCell
+                    selectedCell = homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeRecentCell
                 default:
                     fatalError()
                 }
@@ -289,9 +289,9 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         } else {
             switch popupCardVC.selectedIndexPath.section {
             case 1:
-                selectedCell = homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeCollectionViewFavoriteCell
+                selectedCell = homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeFavoriteCell
             case 2:
-                selectedCell = homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeCollectionViewRecentCell
+                selectedCell = homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeRecentCell
             default:
                 fatalError()
             }

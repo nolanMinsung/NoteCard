@@ -32,10 +32,10 @@
 		4E1384E92AF3840A0063817B /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E82AF3840A0063817B /* DateManager.swift */; };
 		4E1384EB2AF3843A0063817B /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EA2AF3843A0063817B /* HomeViewController.swift */; };
 		4E1384ED2AF3846C0063817B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EC2AF3846C0063817B /* HomeView.swift */; };
-		4E1384EF2AF384880063817B /* HomeCollectionViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EE2AF384880063817B /* HomeCollectionViewHeaderView.swift */; };
-		4E1384F12AF384A70063817B /* HomeCollectionViewCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F02AF384A70063817B /* HomeCollectionViewCategoryCell.swift */; };
-		4E1384F32AF384C80063817B /* HomeCollectionViewFavoriteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F22AF384C80063817B /* HomeCollectionViewFavoriteCell.swift */; };
-		4E1384F52AF384E10063817B /* HomeCollectionViewRecentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F42AF384E10063817B /* HomeCollectionViewRecentCell.swift */; };
+		4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EE2AF384880063817B /* HomeHeaderView.swift */; };
+		4E1384F12AF384A70063817B /* HomeCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F02AF384A70063817B /* HomeCategoryCell.swift */; };
+		4E1384F32AF384C80063817B /* HomeFavoriteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F22AF384C80063817B /* HomeFavoriteCell.swift */; };
+		4E1384F52AF384E10063817B /* HomeRecentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F42AF384E10063817B /* HomeRecentCell.swift */; };
 		4E1384F72AF385090063817B /* PopupCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F62AF385090063817B /* PopupCardViewController.swift */; };
 		4E1384F92AF3851B0063817B /* PopupCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F82AF3851B0063817B /* PopupCardView.swift */; };
 		4E1384FB2AF385340063817B /* PopupCardPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384FA2AF385340063817B /* PopupCardPresentationController.swift */; };
@@ -68,6 +68,9 @@
 		4E1385492AF38BB40063817B /* EditingVCImagePickerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385482AF38BB40063817B /* EditingVCImagePickerCollectionViewCell.swift */; };
 		4E13854C2AF38BE40063817B /* DetailViewSelectedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */; };
 		4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */; };
+		4E2712042DA19C8C0007D53A /* ReuseIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */; };
+		4E2712062DA1A12A0007D53A /* Shrinkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712052DA1A12A0007D53A /* Shrinkable.swift */; };
+		4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */; };
 		4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */; };
 		4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */; };
 		4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */; };
@@ -138,10 +141,10 @@
 		4E1384E82AF3840A0063817B /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
 		4E1384EA2AF3843A0063817B /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		4E1384EC2AF3846C0063817B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		4E1384EE2AF384880063817B /* HomeCollectionViewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewHeaderView.swift; sourceTree = "<group>"; };
-		4E1384F02AF384A70063817B /* HomeCollectionViewCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewCategoryCell.swift; sourceTree = "<group>"; };
-		4E1384F22AF384C80063817B /* HomeCollectionViewFavoriteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewFavoriteCell.swift; sourceTree = "<group>"; };
-		4E1384F42AF384E10063817B /* HomeCollectionViewRecentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewRecentCell.swift; sourceTree = "<group>"; };
+		4E1384EE2AF384880063817B /* HomeHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderView.swift; sourceTree = "<group>"; };
+		4E1384F02AF384A70063817B /* HomeCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCategoryCell.swift; sourceTree = "<group>"; };
+		4E1384F22AF384C80063817B /* HomeFavoriteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFavoriteCell.swift; sourceTree = "<group>"; };
+		4E1384F42AF384E10063817B /* HomeRecentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecentCell.swift; sourceTree = "<group>"; };
 		4E1384F62AF385090063817B /* PopupCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupCardViewController.swift; sourceTree = "<group>"; };
 		4E1384F82AF3851B0063817B /* PopupCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupCardView.swift; sourceTree = "<group>"; };
 		4E1384FA2AF385340063817B /* PopupCardPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupCardPresentationController.swift; sourceTree = "<group>"; };
@@ -174,6 +177,9 @@
 		4E1385482AF38BB40063817B /* EditingVCImagePickerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingVCImagePickerCollectionViewCell.swift; sourceTree = "<group>"; };
 		4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageViewController.swift; sourceTree = "<group>"; };
 		4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageView.swift; sourceTree = "<group>"; };
+		4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseIdentifiable.swift; sourceTree = "<group>"; };
+		4E2712052DA1A12A0007D53A /* Shrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shrinkable.swift; sourceTree = "<group>"; };
+		4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderButton.swift; sourceTree = "<group>"; };
 		4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingViewController.swift; sourceTree = "<group>"; };
 		4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingView.swift; sourceTree = "<group>"; };
 		4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -260,6 +266,7 @@
 		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
+				4E2712022DA19C730007D53A /* Protocols */,
 				4ED42A842B3D6EDA00D14571 /* Localizable.strings */,
 				4E1384A42AF37B350063817B /* AppDelegate.swift */,
 				4E1384A62AF37B350063817B /* SceneDelegate.swift */,
@@ -317,10 +324,11 @@
 			children = (
 				4E1384EA2AF3843A0063817B /* HomeViewController.swift */,
 				4E1384EC2AF3846C0063817B /* HomeView.swift */,
-				4E1384EE2AF384880063817B /* HomeCollectionViewHeaderView.swift */,
-				4E1384F02AF384A70063817B /* HomeCollectionViewCategoryCell.swift */,
-				4E1384F22AF384C80063817B /* HomeCollectionViewFavoriteCell.swift */,
-				4E1384F42AF384E10063817B /* HomeCollectionViewRecentCell.swift */,
+				4E1384EE2AF384880063817B /* HomeHeaderView.swift */,
+				4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */,
+				4E1384F02AF384A70063817B /* HomeCategoryCell.swift */,
+				4E1384F22AF384C80063817B /* HomeFavoriteCell.swift */,
+				4E1384F42AF384E10063817B /* HomeRecentCell.swift */,
 				4E1384C32AF37E750063817B /* CategoryListTableView */,
 			);
 			path = HomeView;
@@ -440,6 +448,15 @@
 				4E1385482AF38BB40063817B /* EditingVCImagePickerCollectionViewCell.swift */,
 			);
 			path = ImagePickerView;
+			sourceTree = "<group>";
+		};
+		4E2712022DA19C730007D53A /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */,
+				4E2712052DA1A12A0007D53A /* Shrinkable.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		4E3E756B2B677EAF0073A951 /* DarkModeSettingView */ = {
@@ -618,9 +635,10 @@
 				4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */,
 				4E1384FB2AF385340063817B /* PopupCardPresentationController.swift in Sources */,
 				4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */,
-				4E1384F32AF384C80063817B /* HomeCollectionViewFavoriteCell.swift in Sources */,
+				4E1384F32AF384C80063817B /* HomeFavoriteCell.swift in Sources */,
 				4E1384DD2AF382A40063817B /* MemoEntity+CoreDataProperties.swift in Sources */,
 				4E1384D92AF382A40063817B /* CategoryEntity+CoreDataProperties.swift in Sources */,
+				4E2712062DA1A12A0007D53A /* Shrinkable.swift in Sources */,
 				4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */,
 				4E1385472AF38B910063817B /* EditingVCImagePickerView.swift in Sources */,
 				4ED333A62B332FCD00492B0F /* ThemeColorPickingViewController.swift in Sources */,
@@ -635,7 +653,7 @@
 				4E4FCCC52B3C5875000CBE17 /* TimeFormatSettingTableViewCell.swift in Sources */,
 				4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */,
 				4E1385032AF385B00063817B /* CategoryListTableViewCell.swift in Sources */,
-				4E1384F12AF384A70063817B /* HomeCollectionViewCategoryCell.swift in Sources */,
+				4E1384F12AF384A70063817B /* HomeCategoryCell.swift in Sources */,
 				4E3E757C2B6889260073A951 /* MainTabBarController.swift in Sources */,
 				4E10F8442B654162007B468A /* NoteCardCoreData.xcdatamodeld in Sources */,
 				4EB46F982B0B215E00B4633F /* ColorModel.swift in Sources */,
@@ -663,6 +681,7 @@
 				4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */,
 				4E1384E92AF3840A0063817B /* DateManager.swift in Sources */,
 				4E5960332B072E380029BA3D /* TotalListViewController.swift in Sources */,
+				4E2712042DA19C8C0007D53A /* ReuseIdentifiable.swift in Sources */,
 				4E1384DB2AF382A40063817B /* ImageEntity+CoreDataProperties.swift in Sources */,
 				4E1385012AF3859D0063817B /* CategoryListViewController.swift in Sources */,
 				4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */,
@@ -674,6 +693,7 @@
 				4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */,
 				4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */,
 				4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */,
+				4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */,
 				4E1385492AF38BB40063817B /* EditingVCImagePickerCollectionViewCell.swift in Sources */,
 				4E0D6A022B08BBB2008447AB /* Extensions.swift in Sources */,
 				4E1384DC2AF382A40063817B /* MemoEntity+CoreDataClass.swift in Sources */,
@@ -681,7 +701,7 @@
 				4E1384FD2AF385580063817B /* HomeViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E1384A92AF37B350063817B /* ViewController.swift in Sources */,
 				4E1385352AF38A4C0063817B /* MakingVCImagePickerCollectionViewCell.swift in Sources */,
-				4E1384EF2AF384880063817B /* HomeCollectionViewHeaderView.swift in Sources */,
+				4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */,
 				4E1385132AF386AF0063817B /* LargeCardCollectionViewCell.swift in Sources */,
 				4E1385222AF387AA0063817B /* CardImageShowingPresentationController.swift in Sources */,
 				4E4FCCBA2B3C33E7000CBE17 /* DateFormatSettingViewController.swift in Sources */,
@@ -689,7 +709,7 @@
 				4EBE35E52B0DBC3B00C0E5A7 /* UIShadowView.swift in Sources */,
 				4E1385202AF387890063817B /* CardImageShowingCollectionViewCell.swift in Sources */,
 				4E3F63562B0B7BFF004DD676 /* CategoryListView.swift in Sources */,
-				4E1384F52AF384E10063817B /* HomeCollectionViewRecentCell.swift in Sources */,
+				4E1384F52AF384E10063817B /* HomeRecentCell.swift in Sources */,
 				4E1384F72AF385090063817B /* PopupCardViewController.swift in Sources */,
 				4E1384D82AF382A40063817B /* CategoryEntity+CoreDataClass.swift in Sources */,
 				4E13851C2AF387480063817B /* CardImageShowingViewController.swift in Sources */,
