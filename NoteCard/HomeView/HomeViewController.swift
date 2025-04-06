@@ -216,7 +216,7 @@ extension HomeViewController: UICollectionViewDataSource {
             }
             
         case 1:
-            let favoriteCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeFavoriteCell.reuseIdentifier, for: indexPath) as! HomeFavoriteCell
+            let favoriteCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
             switch MemoEntityManager.shared.getFavoriteMemoEntities().count {
             case 0:
                 favoriteCell.titleTextField.text = "즐겨찾기 없음".localized()
@@ -233,7 +233,8 @@ extension HomeViewController: UICollectionViewDataSource {
             }
             
         case 2:
-            let recentCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeRecentCell.reuseIdentifier, for: indexPath) as! HomeRecentCell
+//            let recentCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeRecentCell.reuseIdentifier, for: indexPath) as! HomeRecentCell
+            let recentCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
             let memoEntity = recentMemoArray[indexPath.row]
             recentCell.configureCell(with: memoEntity)
             return recentCell
@@ -269,7 +270,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 return
                 
             default:
-                guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeFavoriteCell else { return }
+                guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
                 guard let selectedMemoEntity = selectedCell.memoEntity else { return }
                 
                 let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
@@ -281,7 +282,7 @@ extension HomeViewController: UICollectionViewDelegate {
             }
             
         case 2:
-            guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeRecentCell else { return }
+            guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
             guard let selectedMemoEntity = selectedCell.memoEntity else { return }
             
             let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)

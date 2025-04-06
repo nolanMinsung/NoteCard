@@ -107,8 +107,8 @@ final class HomeView: UIView {
         )
         
         collectionView.register(HomeCategoryCell.self, forCellWithReuseIdentifier: HomeCategoryCell.reuseIdentifier)
-        collectionView.register(HomeFavoriteCell.self, forCellWithReuseIdentifier: HomeFavoriteCell.reuseIdentifier)
-        collectionView.register(HomeRecentCell.self, forCellWithReuseIdentifier: HomeRecentCell.reuseIdentifier)
+        collectionView.register(HomeCardCell.self, forCellWithReuseIdentifier: HomeCardCell.reuseIdentifier)
+//        collectionView.register(HomeRecentCell.self, forCellWithReuseIdentifier: HomeRecentCell.reuseIdentifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         collectionView.delaysContentTouches = false

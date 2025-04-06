@@ -1,5 +1,5 @@
 //
-//  HomeRecentCell.swift
+//  HomeCardCell.swift
 //  CardMemo
 //
 //  Created by 김민성 on 2023/11/02.
@@ -7,7 +7,8 @@
 
 import UIKit
 
-class HomeRecentCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
+final class HomeCardCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
+    
     var shrinkingAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
     
     override var isHighlighted: Bool {
