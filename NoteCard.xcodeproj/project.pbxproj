@@ -70,6 +70,7 @@
 		4E2712042DA19C8C0007D53A /* ReuseIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */; };
 		4E2712062DA1A12A0007D53A /* Shrinkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712052DA1A12A0007D53A /* Shrinkable.swift */; };
 		4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */; };
+		4E27120A2DA214C70007D53A /* HomeCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712092DA214C70007D53A /* HomeCollectionView.swift */; };
 		4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */; };
 		4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */; };
 		4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */; };
@@ -178,6 +179,7 @@
 		4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseIdentifiable.swift; sourceTree = "<group>"; };
 		4E2712052DA1A12A0007D53A /* Shrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shrinkable.swift; sourceTree = "<group>"; };
 		4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderButton.swift; sourceTree = "<group>"; };
+		4E2712092DA214C70007D53A /* HomeCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionView.swift; sourceTree = "<group>"; };
 		4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingViewController.swift; sourceTree = "<group>"; };
 		4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingView.swift; sourceTree = "<group>"; };
 		4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 			children = (
 				4E1384EA2AF3843A0063817B /* HomeViewController.swift */,
 				4E1384EC2AF3846C0063817B /* HomeView.swift */,
+				4E2712092DA214C70007D53A /* HomeCollectionView.swift */,
 				4E1384EE2AF384880063817B /* HomeHeaderView.swift */,
 				4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */,
 				4E1384F02AF384A70063817B /* HomeCategoryCell.swift */,
@@ -666,6 +669,7 @@
 				4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */,
 				4E1385312AF38A1A0063817B /* MakingVCImagePickerViewController.swift in Sources */,
 				4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */,
+				4E27120A2DA214C70007D53A /* HomeCollectionView.swift in Sources */,
 				4EEF141B2B14A74B001EB295 /* MemoViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */,
 				4E1384DA2AF382A40063817B /* ImageEntity+CoreDataClass.swift in Sources */,

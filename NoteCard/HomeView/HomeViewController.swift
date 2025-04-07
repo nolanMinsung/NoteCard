@@ -233,7 +233,6 @@ extension HomeViewController: UICollectionViewDataSource {
             }
             
         case 2:
-//            let recentCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeRecentCell.reuseIdentifier, for: indexPath) as! HomeRecentCell
             let recentCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
             let memoEntity = recentMemoArray[indexPath.row]
             recentCell.configureCell(with: memoEntity)

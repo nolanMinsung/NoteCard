@@ -93,99 +93,6 @@ final class PopupCardView: UIView {
         return imageView
     }()
     
-    
-    
-    /*
-    lazy var restoreMemoAction = UIAction(
-        title: "카테고리 없는 메모로 복구".localized(),
-        image: UIImage(systemName: "tag.slash")?.withTintColor(.currentTheme(), renderingMode: UIImage.RenderingMode.alwaysOriginal),
-        handler: { [weak self] action in
-            guard let self else { fatalError() }
-            guard let memoEntity else { fatalError() }
-            guard let delegate else { fatalError() }
-            
-            self.endEditing(true)
-            
-            let alertCon = UIAlertController(title: "이 메모를 복구하시겠습니까?".localized(), message: "복구된 메모는 '카테고리 없음' 항목에서 확인할 수 있습니다.".localized(), preferredStyle: UIAlertController.Style.alert)
-            let cancelAction = UIAlertAction(title: "취소".localized(), style: UIAlertAction.Style.cancel)
-            let restoreAction = UIAlertAction(title: "복구".localized(), style: UIAlertAction.Style.default) { action in
-                MemoEntityManager.shared.restoreFromTrash(memoEntity: memoEntity)
-                delegate.triggerApplyingSnapshot(animatingDifferences: true, usingReloadData: false, completionForCompositional: nil, completionForFlow: nil)
-                NotificationCenter.default.post(name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil, userInfo: ["recoveredMemos": [memoEntity]])
-            }
-            alertCon.addAction(cancelAction)
-            alertCon.addAction(restoreAction)
-            
-            
-            
-            delegate.triggerPresentMethod(presented: alertCon, animated: true)
-        }
-    )
-    */
-    
-    
-    /*
-    lazy var presentEditingModeAction = UIAction(
-        title: "편집 모드".localized(),
-        image: UIImage(systemName: "pencil"),
-        handler: { [weak self] action in
-            guard let self else { return }
-            guard let memoEntityToEdit = self.memoEntity else { return }
-            guard let delegate = self.delegate else { return }
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
-            
-            self.endEditing(true)
-            let memoEditingVC = MemoEditingViewController(memo: memoEntityToEdit)
-            appDelegate.memoEditingVC = memoEditingVC
-            let memoEditingNaviCon = UINavigationController(rootViewController: memoEditingVC)
-            delegate.triggerPresentMethod(presented: memoEditingNaviCon, animated: true)
-        }
-    )
-    */
-    
-    
-    /*
-    lazy var deleteMemoAction = UIAction(
-        title: "이 메모 삭제하기".localized(),
-        image: UIImage(systemName: "trash"),
-        attributes: UIMenuElement.Attributes.destructive,
-        handler: { [weak self] action in
-            guard let self else { return }
-            guard let memoEntityToDelete = self.memoEntity else { return }
-            guard let delegate else { return }
-            
-            self.endEditing(true)
-            let alertCon: UIAlertController
-            if memoEntityToDelete.isInTrash {
-                alertCon = UIAlertController(
-                    title: "선택한 메모를 영구적으로 삭제하시겠습니까?".localized(),
-                    message: "이 동작은 취소할 수 없습니다.".localized(),
-                    preferredStyle: UIAlertController.Style.actionSheet
-                )
-            } else {
-                alertCon = UIAlertController(title: "메모 삭제".localized(), message: "메모를 삭제하시겠습니까?".localized(), preferredStyle: UIAlertController.Style.alert)
-            }
-            alertCon.view.tintColor = .currentTheme()
-            let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
-            let deleteAction = UIAlertAction(title: "삭제".localized(), style: .destructive) { action in
-                if memoEntityToDelete.isInTrash {
-                    MemoEntityManager.shared.deleteMemoEntity(memoEntity: memoEntityToDelete)
-                } else {
-                    MemoEntityManager.shared.sendToTrash(memoEntity: memoEntityToDelete)
-                }
-                NotificationCenter.default.post(name: NSNotification.Name("memoTrashedNotification"), object: nil, userInfo: ["trashedMemos": [memoEntityToDelete]])
-            }
-            alertCon.addAction(cancelAction)
-            alertCon.addAction(deleteAction)
-            delegate.triggerPresentMethod(presented: alertCon, animated: true)
-        }
-    )
-     */
-    
-    
-    
-    
-    
     lazy var ellipsisButton: UIButton = {
         var configuration = UIButton.Configuration.plain()
         configuration.image = UIImage(systemName: "ellipsis.circle")
@@ -208,31 +115,11 @@ final class PopupCardView: UIView {
             }
         }
         
-//        let button = UIButton()
-//        
-//        button.setImage(UIImage(systemName: "ellipsis.circle"), for: UIControl.State.normal)
-//        button.setImage(UIImage(systemName: "ellipsis.circle")?.withTintColor(.lightGray), for: UIControl.State.selected)
-//        button.contentVerticalAlignment = .fill
-//        button.contentHorizontalAlignment = .fill
         button.translatesAutoresizingMaskIntoConstraints = false
         button.showsMenuAsPrimaryAction = true
-//        button.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
         
         return button
     }()
-    
-    
-//    let heartImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.image = UIImage(systemName: "heart")
-//        imageView.tintColor = .systemRed
-//        imageView.alpha = 0
-//        imageView.contentMode = .scaleAspectFit
-//        imageView.isUserInteractionEnabled = true
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        return imageView
-//    }()
-    
     
     let selectedCategoryCollectionView: UICollectionView = {
         let flowLayout: UICollectionViewFlowLayout = {
@@ -253,8 +140,6 @@ final class PopupCardView: UIView {
         return collectionView
     }()
     
-    
-    
     let selectedImageCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = 10
@@ -274,7 +159,6 @@ final class PopupCardView: UIView {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
-    
     
     lazy var memoTextView: UITextView = { [weak self] in
         guard let self else { fatalError() }
@@ -331,7 +215,6 @@ final class PopupCardView: UIView {
         return view
     }()
     
-    
     let memoDateLabel: UILabel = {
         let label = UILabel()
         label.text = "1998.12.22.에 생성됨"
@@ -341,9 +224,6 @@ final class PopupCardView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -421,7 +301,6 @@ final class PopupCardView: UIView {
         
     }
     
-    
     @objc private func memoTextViewTapped(_ gesture: UITapGestureRecognizer) {
         print(#function)
         let tappedPoint = gesture.location(in: self.memoTextView)
@@ -497,7 +376,6 @@ final class PopupCardView: UIView {
         }
     }
     
-    
     private func setupActions() {
         self.titleTextField.addTarget(self, action: #selector(textFieldDidChagne(_:)), for: UIControl.Event.editingChanged)
     }
@@ -519,16 +397,10 @@ final class PopupCardView: UIView {
         self.memoTextView.delegate = self
     }
     
-    
     private func setupConstraints() {
         self.titleTextFieldTopConstraint.isActive = true
         self.titleTextFieldLeadingConstraint.isActive = true
         self.titleTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-//        self.heartImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 14).isActive = true
-//        self.heartImageView.leadingAnchor.constraint(equalTo: self.memoTitleLabel.trailingAnchor, constant: 10).isActive = true
-//        self.heartImageView.widthAnchor.constraint(equalToConstant: 27).isActive = true
-//        self.heartImageView.heightAnchor.constraint(equalToConstant: 27).isActive = true
         
         self.heartImageViewTopConstraint.isActive = true
         self.heartImageViewLeadingConstraint.isActive = true
@@ -566,17 +438,19 @@ final class PopupCardView: UIView {
     }
     
     private func setupObserver() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow(_:)),
+                                               name: UIResponder.keyboardWillShowNotification, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidHide), name: UIResponder.keyboardDidHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {
-        print(#function)
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { fatalError() }
+        guard let keyboardFrame =
+                notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
+        else { fatalError() }
         self.keyboardFrame = keyboardFrame
         if !self.isViewShiftedUp && self.memoTextView.isFirstResponder {
             self.shiftUpView()
@@ -588,16 +462,6 @@ final class PopupCardView: UIView {
         if self.isViewShiftedUp {
             self.shiftDownView()
         }
-        
-//        if self.titleTextField.isFirstResponder {
-//            self.titleTextFieldTapGesture.isEnabled = true
-//            
-//        } else if self.memoTextView.isFirstResponder {
-//            self.memoTextView.resignFirstResponder()
-//            self.updateMemoTextView()
-//            self.memoTextView.isEditable = false
-//            self.memoTextViewTapGesture.isEnabled = true
-//        }
         
         self.memoTextView.isEditable = false
         self.memoTextViewTapGesture.isEnabled = true
@@ -617,14 +481,6 @@ final class PopupCardView: UIView {
         }
     }
     
-    @objc private func keyboardDidHide() {
-        
-        
-        
-    }
-    
-    
-    
     private func shiftUpView() {
         print(#function)
         guard let screenSize else { fatalError() }
@@ -637,15 +493,11 @@ final class PopupCardView: UIView {
             self.frame.size.height = screenSize.height - (self.popupCardVerticalPadding * 2) - lengthToShrink
             
             if numberOfImages != 0, aspectRatio < 2 {
-//            if let themeColor = UserDefaults.standard.value(forKey: KeysForUserDefaults.themeColor.rawValue) as? String, themeColor == ThemeColor.blue.rawValue {
                 self.selectedImageCollectionViewHeightConstraint.constant = 0
                 self.layoutIfNeeded()
             }
             
         }
-//        animator.addCompletion { _ in
-//            self.isViewShiftedUp = true
-//        }
         animator.startAnimation()
     }
     
@@ -689,28 +541,6 @@ final class PopupCardView: UIView {
             appDelegate.saveContext()
         }
     }
-    
-    
-//    func updateTexts() {
-//        guard let memoEntity else { fatalError() }
-//        switch (self.isTextFieldChanged, self.isTextViewChanged) {
-//        case (true, true):
-//            self.updateTitleTextField()
-//            self.updateMemoTextView()
-//            print("post함")
-//            NotificationCenter.default.post(name: NSNotification.Name("editingCompleteNotification"), object: nil, userInfo: ["memo": memoEntity])
-//            print("post함")
-//        case (true, false):
-//            self.updateTitleTextField()
-//            NotificationCenter.default.post(name: NSNotification.Name("editingCompleteNotification"), object: nil, userInfo: ["memo": memoEntity])
-//        case (false, true):
-//            self.updateMemoTextView()
-//            NotificationCenter.default.post(name: NSNotification.Name("editingCompleteNotification"), object: nil, userInfo: ["memo": memoEntity])
-//        case (false, false):
-//            return
-//        }
-//    }
-    
     
     func configureView(with memo: MemoEntity) {
         guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
@@ -807,9 +637,6 @@ final class PopupCardView: UIView {
     
 }
 
-
-
-
 extension PopupCardView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == self.selectedCategoryCollectionView {
@@ -842,18 +669,6 @@ extension PopupCardView: UICollectionViewDataSource {
     
 }
 
-
-//extension PopupCardView: UICollectionViewDelegate {
-//    
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        guard let delegate else { fatalError() }
-//        guard collectionView == self.selectedImageCollectionView else { return }
-//        delegate.triggerPresentMethod(selectedItemAt: indexPath, imageArray: self.imageArray)
-//    }
-//    
-//}
-
-
 extension PopupCardView: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -882,25 +697,9 @@ extension PopupCardView: UITextViewDelegate {
         return true
     }
     
-    //이상하다...textViewDidEndEditing이 textField로 firstResponder가 바뀔 때만 호출된다...키보드가 내려가도 호출되지 않음...
-    //왠진 모르겠는데, keyboardWillHide notification의 observer로 self 를 등록하면 textViewDidEndEditing이 호출되지 않는다.
-    //그래서 일단 textViewDidEndEditing 에서 호출해야 하는 updateMemoTextView() 메서드를 keyboardWillHide() 메서드에서 호출했음.
-    //근데 웃긴건 MemoDetailView에서도 keyboardWillHide() 옵저버 등록했는데 걔는 또 textViewDidEndEditing 이 잘 불린다.
-    //아마 Notification하고 Observer들끼리 복잡하게 연결되면서 서로 꼬인 것 같음...
     func textViewDidEndEditing(_ textView: UITextView) {
         print(#function)
         self.updateMemoTextView()
     }
-    
-    
-//    func textViewDidChangeSelection(_ textView: UITextView) {
-//        print(#function)
-//        
-//        if self.isViewShiftedUp {
-//            return
-//        } else {
-//            textView.resignFirstResponder()
-//        }
-//    }
     
 }

@@ -26,8 +26,6 @@ class PopupCardViewController: UIViewController {
     //강한 순환 참조가 돼버려서 weak var로 선언하려고 했는데, 그러면 또 값을 할당할 때 문제가 생긴다. (변수를 하나 더 만들어야 한다. 그렇게 큰 문제는 아닐 수 있지만 혹시 모를 부작용 조심)
     var percentDrivenInteractiveTransition: PercentDrivenInteractiveTransition?
     
-    
-    
     lazy var restoreMemoAction = UIAction(
         title: "카테고리 없는 메모로 복구".localized(),
         image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme(), renderingMode: UIImage.RenderingMode.alwaysOriginal),
