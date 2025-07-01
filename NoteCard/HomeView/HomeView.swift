@@ -9,35 +9,34 @@ import UIKit
 
 final class HomeView: UIView {
     
-    private(set) lazy var homeCollectionView: UICollectionView = {
-        let collectionView = HomeCollectionView()
-        
-        collectionView.register(
-            HomeHeaderView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: HomeHeaderView.reuseIdentifier
-        )
-        
-        collectionView.register(HomeCategoryCell.self, forCellWithReuseIdentifier: HomeCategoryCell.reuseIdentifier)
-        collectionView.register(HomeCardCell.self, forCellWithReuseIdentifier: HomeCardCell.reuseIdentifier)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        
-        collectionView.delaysContentTouches = false
-        return collectionView
-    }()
+    let homeCollectionView = HomeCollectionView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        setupUI()
-        setupConstraints()
+        self.setupCollectionView()
+        self.setupStyle()
+        self.setupViewHierarchy()
+        self.setupLayoutConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupUI() {
+    private func setupCollectionView() {
+        // reusable views registering
+        self.homeCollectionView.register(
+            HomeHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: HomeHeaderView.reuseIdentifier
+        )
+        
+        self.homeCollectionView.register(HomeCategoryCell.self, forCellWithReuseIdentifier: HomeCategoryCell.reuseIdentifier)
+        self.homeCollectionView.register(HomeCardCell.self, forCellWithReuseIdentifier: HomeCardCell.reuseIdentifier)
+    }
+    
+    private func setupStyle() {
         let homeViewBackgroundColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
                 return UIColor.systemGray6
@@ -47,14 +46,21 @@ final class HomeView: UIView {
         }
         self.backgroundColor = homeViewBackgroundColor
         self.homeCollectionView.backgroundColor = UIColor.clear
+        self.homeCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        self.homeCollectionView.delaysContentTouches = false
+    }
+    
+    private func setupViewHierarchy() {
         self.addSubview(homeCollectionView)
     }
     
-    private func setupConstraints() {
-        self.homeCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
-        self.homeCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0).isActive = true
-        self.homeCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
-        self.homeCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
+    private func setupLayoutConstraints() {
+        NSLayoutConstraint.activate([
+            self.homeCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+            self.homeCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
+            self.homeCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
+            self.homeCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0)
+        ])
     }
     
 }

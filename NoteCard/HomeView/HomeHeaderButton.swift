@@ -15,7 +15,7 @@ final class HomeHeaderButton: UIButton, Shrinkable {
             if isHighlighted {
                 shrink(scale: 0.9)
             } else {
-                expand()
+                restore()
             }
         }
     }
@@ -24,7 +24,7 @@ final class HomeHeaderButton: UIButton, Shrinkable {
         super.init(frame: frame)
         
         var configuration = UIButton.Configuration.plain()
-        configuration.image = UIImage(systemName: "chevron.right")
+        configuration.image = UIImage(systemName: "chevron.forward")
         configuration.imagePlacement = NSDirectionalRectEdge.trailing
         configuration.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         self.configuration = configuration

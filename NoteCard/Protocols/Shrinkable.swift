@@ -11,7 +11,7 @@ protocol Shrinkable: UIView {
     
     var shrinkingAnimator: UIViewPropertyAnimator { get set }
     func shrink(scale: CGFloat)
-    func expand()
+    func restore()
     
 }
 
@@ -25,7 +25,7 @@ extension Shrinkable {
         shrinkingAnimator.startAnimation()
     }
     
-    func expand() {
+    func restore() {
         shrinkingAnimator.stopAnimation(true)
         shrinkingAnimator.addAnimations {
             self.transform = .identity
@@ -45,7 +45,7 @@ extension Shrinkable {
 //        shrinkingAnimator.startAnimation()
 //    }
 //    
-//    func expand() {
+//    func restore() {
 //        shrinkingAnimator.stopAnimation(true)
 //        shrinkingAnimator.addAnimations {
 //            self.contentView.transform = .identity

@@ -21,24 +21,5 @@ final class DateManager {
         case long
     }
     
-    
-    //func getHowOld(date: Date) -> HowOld {
-    //    let nowDate = Date()
-    //    let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
-    //
-    //    let savedDateComponents =  calendar.dateComponents([.year, .month, .weekOfYear, .day], from: date)
-    //    let nowDateCoponents = calendar.dateComponents([.year, .month, .weekOfYear, .day], from: nowDate)
-    //
-    //    if calendar.isDateInToday(date) {
-    //        return HowOld.today
-    //    } else if calendar.isDateInYesterday(date) {
-    //        return HowOld.yesterDay
-    //    } else {
-    //
-    //    }
-    //}
-    
-    
-    
 }
 

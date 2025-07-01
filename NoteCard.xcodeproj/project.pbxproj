@@ -28,7 +28,6 @@
 		4E1384E12AF3833E0063817B /* MemoEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E02AF3833E0063817B /* MemoEntityManager.swift */; };
 		4E1384E32AF3839F0063817B /* CategoryEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */; };
 		4E1384E52AF383D70063817B /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E42AF383D70063817B /* DataManager.swift */; };
-		4E1384E72AF383F20063817B /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E62AF383F20063817B /* Helpers.swift */; };
 		4E1384E92AF3840A0063817B /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E82AF3840A0063817B /* DateManager.swift */; };
 		4E1384EB2AF3843A0063817B /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EA2AF3843A0063817B /* HomeViewController.swift */; };
 		4E1384ED2AF3846C0063817B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EC2AF3846C0063817B /* HomeView.swift */; };
@@ -128,7 +127,6 @@
 		4E1384E02AF3833E0063817B /* MemoEntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEntityManager.swift; sourceTree = "<group>"; };
 		4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryEntityManager.swift; sourceTree = "<group>"; };
 		4E1384E42AF383D70063817B /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		4E1384E62AF383F20063817B /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		4E1384E82AF3840A0063817B /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
 		4E1384EA2AF3843A0063817B /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		4E1384EC2AF3846C0063817B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -294,7 +292,6 @@
 			isa = PBXGroup;
 			children = (
 				4E1384E42AF383D70063817B /* DataManager.swift */,
-				4E1384E62AF383F20063817B /* Helpers.swift */,
 				4E1384E82AF3840A0063817B /* DateManager.swift */,
 				4EB46F972B0B215E00B4633F /* ColorModel.swift */,
 			);
@@ -670,7 +667,6 @@
 				4E1384A52AF37B350063817B /* AppDelegate.swift in Sources */,
 				4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */,
 				4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */,
-				4E1384E72AF383F20063817B /* Helpers.swift in Sources */,
 				4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */,
 				4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */,
 				4E1384A72AF37B350063817B /* SceneDelegate.swift in Sources */,

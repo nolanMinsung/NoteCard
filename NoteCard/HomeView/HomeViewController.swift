@@ -17,7 +17,7 @@ class HomeViewController: UIViewController {
     
     let homeView = HomeView()
     
-    lazy var homeCollectionView = self.homeView.homeCollectionView
+    var homeCollectionView: HomeCollectionView { self.homeView.homeCollectionView }
     
     var favoriteMemoArray: [MemoEntity] {
         return MemoEntityManager.shared.getFavoriteMemoEntities()
@@ -32,7 +32,7 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        
         setupNaviBar()
         setupDelegates()
         setupObserver()
@@ -50,31 +50,20 @@ class HomeViewController: UIViewController {
         self.homeCollectionView.reloadData()
     }
     
-    private func setupUI() { }
-    
     private func setupNaviBar() {
         self.title = "홈 화면".localized()
         
-        let appearanceForStandard: UINavigationBarAppearance = {
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithDefaultBackground()
-            //appearance.titleTextAttributes = [.foregroundColor: UIColor.currentTheme()]
-            //appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.currentTheme()]
-            return appearance
-        }()
+        let standardAppearance = UINavigationBarAppearance()
+        standardAppearance.configureWithDefaultBackground()
         
-        let appearanceForScrollEdge: UINavigationBarAppearance = {
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithTransparentBackground()
-            appearance.backgroundColor = .clear
-            //appearance.titleTextAttributes = [.foregroundColor: UIColor.currentTheme()]
-            //appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.currentTheme()]
-            return appearance
-        }()
+        // 가장 끝까지 스크롤할 때 appearance
+        let scrollEdgeAppearance = UINavigationBarAppearance()
+        scrollEdgeAppearance.configureWithTransparentBackground()
+        scrollEdgeAppearance.backgroundColor = .clear
         
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationController?.navigationBar.scrollEdgeAppearance = appearanceForScrollEdge
-        self.navigationController?.navigationBar.standardAppearance = appearanceForStandard
+        self.navigationController?.navigationBar.standardAppearance = standardAppearance
+        self.navigationController?.navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
         
         self.navigationController?.navigationBar.tintColor = .currentTheme()
         self.navigationController?.toolbar.tintColor = .currentTheme()

@@ -9,6 +9,7 @@ import UIKit
 
 final class HomeCollectionView: UICollectionView {
     
+    /// 홈 컬렉션뷰에서 category Section의 레이아웃
     private static var categoryLayoutSection: NSCollectionLayoutSection {
         let headerSize = NSCollectionLayoutSize(
             widthDimension: NSCollectionLayoutDimension.fractionalWidth(1.0),
@@ -45,6 +46,7 @@ final class HomeCollectionView: UICollectionView {
         return categorySection
     }
     
+    /// 홈 컬렉션뷰에서 card Section의 레이아웃
     private static var cardLayoutSection: NSCollectionLayoutSection {
         let headerSize = NSCollectionLayoutSize(
             widthDimension: NSCollectionLayoutDimension.fractionalWidth(1.0),

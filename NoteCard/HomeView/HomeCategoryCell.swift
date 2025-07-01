@@ -16,7 +16,7 @@ class HomeCategoryCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
             if isHighlighted {
                 shrink(scale: 0.95)
             } else {
-                expand()
+                restore()
             }
         }
     }

@@ -16,7 +16,7 @@ final class HomeCardCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
             if isHighlighted {
                 shrink(scale: 0.95)
             } else {
-                expand()
+                restore()
             }
         }
     }
