@@ -69,60 +69,58 @@ class HomeViewController: UIViewController {
         self.navigationController?.toolbar.tintColor = .currentTheme()
     }
     
-    
     private func setupDelegates() {
         self.homeCollectionView.dataSource = self
         self.homeCollectionView.delegate = self
     }
     
-    
     private func setupObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(memoCreated),
-                                               name: NSNotification.Name("createdMemoNotification"),
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(memoCreated),
+            name: NSNotification.Name("createdMemoNotification"),
+            object: nil
+        )
         
-        NotificationCenter.default.addObserver(self, selector: #selector(themeColorChanged),
-                                               name: NSNotification.Name("themeColorChangedNotification"),
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(themeColorChanged),
+            name: NSNotification.Name("themeColorChangedNotification"),
+            object: nil
+        )
         
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name("didCreateNewCategoryNotification"),
             object: nil, queue: nil
         ) { [weak self] _ in
-            guard let self else { fatalError() }
+            guard let self else { return }
             guard let homeView = self.view as? HomeView else { return }
             homeView.homeCollectionView.reloadData()
         }
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(memoEdited),
-                                               name: NSNotification.Name("editingCompleteNotification"),
-                                               object: nil)
-        
         NotificationCenter.default.addObserver(
-            forName: NSNotification.Name("headerTapped"),
-            object: nil,
-            queue: nil
-        ) { [weak self] notification in
-            guard let self else { fatalError() }
-            guard let headerView = notification.object as? HomeHeaderView else { return }
-            guard let naviCon = self.tabBarController?.selectedViewController as? UINavigationController else { return }
-            
-            switch headerView.section {
-            case 0:
-                let categoryListVC = CategoryListViewController()
-                naviCon.pushViewController(categoryListVC, animated: true)
-            case 1:
-                let favoriteMemoVC = MemoViewController(memoVCType: .favorite)
-                favoriteMemoVC.navigationItem.leftBarButtonItem = nil
-                naviCon.pushViewController(favoriteMemoVC, animated: true)
-            case 2:
-                let allMemoVC = MemoViewController(memoVCType: .all)
-                naviCon.pushViewController(allMemoVC, animated: true)
-            default:
-                fatalError()
-            }
+            self,
+            selector: #selector(memoEdited),
+            name: NSNotification.Name("editingCompleteNotification"),
+            object: nil
+        )
+        
+    }
+    
+    @objc private func onHeaderButtonTapped(_ sender: UIButton) {
+        switch sender.tag {
+        case 0:
+            let categoryListVC = CategoryListViewController()
+            self.navigationController?.pushViewController(categoryListVC, animated: true)
+        case 1:
+            let favoriteMemoVC = MemoViewController(memoVCType: .favorite)
+            favoriteMemoVC.navigationItem.leftBarButtonItem = nil
+            self.navigationController?.pushViewController(favoriteMemoVC, animated: true)
+        case 2:
+            let allMemoVC = MemoViewController(memoVCType: .all)
+            self.navigationController?.pushViewController(allMemoVC, animated: true)
+        default:
+            fatalError()
         }
     }
     
@@ -143,13 +141,15 @@ class HomeViewController: UIViewController {
     
 }
 
+// MARK: - UICollectionViewDataSource
+
 extension HomeViewController: UICollectionViewDataSource {
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return self.sectionHederTitleArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         switch section {
         case 0:
             switch CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false).count != 0 {
@@ -172,16 +172,24 @@ extension HomeViewController: UICollectionViewDataSource {
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         
-        let headerView = collectionView.dequeueReusableSupplementaryView(
+        guard let headerView = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: HomeHeaderView.reuseIdentifier,
             for: indexPath
-        ) as! HomeHeaderView
+        ) as? HomeHeaderView else {
+            fatalError()
+        }
         
-        headerView.section = indexPath.section
+        headerView.button.configuration?.baseForegroundColor = UIColor.currentTheme()
+        headerView.button.tag = indexPath.section
         headerView.button.configuration?.title = sectionHederTitleArray[indexPath.section] + " "
+        headerView.button.addTarget(self, action: #selector(onHeaderButtonTapped), for: .touchUpInside)
         
         return headerView
     }
@@ -233,7 +241,7 @@ extension HomeViewController: UICollectionViewDataSource {
     }
 }
 
-
+// MARK: - UICollectionViewDelegate
 
 extension HomeViewController: UICollectionViewDelegate {
     
@@ -286,6 +294,8 @@ extension HomeViewController: UICollectionViewDelegate {
     }
     
 }
+
+// MARK: - UIViewControllerTransitioningDelegate
 
 extension HomeViewController: UIViewControllerTransitioningDelegate {
     
