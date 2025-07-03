@@ -27,7 +27,6 @@ class MainTabBarController: UITabBarController {
         
         setTabBarDesign()
         initialViewControllersSetting()
-        setTabBarItemSetting()
     }
     
     required init?(coder: NSCoder) {
@@ -39,7 +38,7 @@ class MainTabBarController: UITabBarController {
         super.viewDidLoad()
         
         delegate = self
-        configureHierarchy()
+        configureViewHierarchy()
         setupConstraints()
     }
     
@@ -51,47 +50,60 @@ class MainTabBarController: UITabBarController {
         tabBar.tintColor = UIColor.currentTheme()
     }
     
+    /// Note:
+    /// 탭바 아이템의 경우, 탭바 컨트롤러에서 직접 설정하는 것이 아니라, 각 뷰컨트롤러의 tabBarItem을 설정해 주어야 함.
+    /// https://developer.apple.com/documentation/uikit/uitabbarcontroller#overview
     private func initialViewControllersSetting() {
         // tab 0: 홈 화면
         let homeNaviCon = UINavigationController(rootViewController: HomeViewController())
+        homeNaviCon.tabBarItem = UITabBarItem(
+            title: "홈 화면",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill")
+        )
         
         // tab 1: 카테고리 없음.
         let uncategorizedMemoVC = MemoViewController(memoVCType: .uncategorized)
         let noCategoriesCardNaviCon = UINavigationController(rootViewController: uncategorizedMemoVC)
         noCategoriesCardNaviCon.navigationController?.toolbar.tintColor = .currentTheme()
+        noCategoriesCardNaviCon.tabBarItem = UITabBarItem(
+            title: "카테고리 없음".localized(),
+            image: UIImage(systemName: "app.dashed"),
+            selectedImage: UIImage(systemName: "inset.filled.square.dashed")
+        )
         
-        // tab: 2: 빠른 메모 , 여기서는 안 쓰임.
-//        let quickMemoEmptyNaviCon = UINavigationController(rootViewController: QuickMemoEmptyViewController())
+        // tab: 2: 빠른 메모 , 탭바 컨트롤러에 실제로는 메모 작성 VC 대신 ThirdTabViewController가 들어감.
+        let thirdTabViewController = ThirdTabViewController()
+        thirdTabViewController.tabBarItem = UITabBarItem(
+            title: "빠른 메모".localized(),
+            image: UIImage(systemName: "plus.app"),
+            selectedImage: UIImage(systemName: "plus.app")
+        )
         
         // tab 3: 메모 검색
         let totalListNaviCon = UINavigationController(rootViewController: TotalListViewController())
+        totalListNaviCon.tabBarItem = UITabBarItem(
+            title: "메모 검색".localized(),
+            image: UIImage(systemName: "magnifyingglass"),
+            selectedImage: UIImage(systemName: "magnifyingglass")
+        )
         
         // tab 4: 설정
         let settingNaviCon = UINavigationController(rootViewController: SettingsViewController())
+        settingNaviCon.tabBarItem = UITabBarItem(
+            title: "설정".localized(),
+            image: UIImage(systemName: "gearshape.2"),
+            selectedImage: UIImage(systemName: "gearshape.2.fill")
+        )
         
+        // tab 5: 설정
         self.setViewControllers(
-            [homeNaviCon, noCategoriesCardNaviCon, ThirdTabViewController(), totalListNaviCon, settingNaviCon],
+            [homeNaviCon, noCategoriesCardNaviCon, thirdTabViewController, totalListNaviCon, settingNaviCon],
             animated: true
         )
     }
     
-    private func setTabBarItemSetting() {
-        self.tabBar.items?[0].title = "홈 화면".localized()
-        self.tabBar.items?[0].image = UIImage(systemName: "house")
-        self.tabBar.items?[0].selectedImage = UIImage(systemName: "house.fill")
-        self.tabBar.items?[1].title = "카테고리 없음".localized()
-        self.tabBar.items?[1].image = UIImage(systemName: "app.dashed")
-        self.tabBar.items?[1].selectedImage = UIImage(systemName: "inset.filled.square.dashed")
-        self.tabBar.items?[2].title = "빠른 메모".localized()
-        self.tabBar.items?[2].image = UIImage(systemName: "plus.app")
-        self.tabBar.items?[3].title = "메모 검색".localized()
-        self.tabBar.items?[3].image = UIImage(systemName: "magnifyingglass")
-        self.tabBar.items?[4].title = "설정".localized()
-        self.tabBar.items?[4].image = UIImage(systemName: "gearshape.2")
-        self.tabBar.items?[4].selectedImage = UIImage(systemName: "gearshape.2.fill")
-    }
-    
-    private func configureHierarchy() {
+    private func configureViewHierarchy() {
         self.view.addSubview(self.blurView)
     }
     
