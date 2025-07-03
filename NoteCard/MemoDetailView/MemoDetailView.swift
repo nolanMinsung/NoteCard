@@ -48,7 +48,7 @@ final class MemoDetailView: UIView {
     let selectedImageCollectionView: MemoDetailViewSelectedImageCollectionView = {
         let flowLayout = LeftAlignedFlowLayout()
         flowLayout.scrollDirection = UICollectionView.ScrollDirection.horizontal
-        flowLayout.itemSize = SizeContainer.detailViewThumbnailSize
+        flowLayout.itemSize = CGSizeConstant.detailViewThumbnailSize
         flowLayout.minimumInteritemSpacing = 10
         
         let collectionView = MemoDetailViewSelectedImageCollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
@@ -404,7 +404,7 @@ final class MemoDetailView: UIView {
             if self.selectedImageCollectionView.numberOfSections != 0, aspectRatio < 2 {
 //            if let themeColor = UserDefaults.standard.value(forKey: KeysForUserDefaults.themeColor.rawValue) as? String, themeColor == ThemeColor.blue.rawValue {
                 self.selectedImageCollectionViewTopConstraint.constant = 17
-                self.selectedImageCollectionViewHeightConstraint.constant = SizeContainer.detailViewThumbnailSize.height
+                self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.detailViewThumbnailSize.height
                 self.layoutIfNeeded()
             }
         }

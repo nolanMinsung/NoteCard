@@ -63,7 +63,7 @@ final class ThemeColorPickingViewController: UIViewController {
     }
     
     private func selectCurrentColor() {
-        guard let themeColorHex = UserDefaults.standard.string(forKey: KeysForUserDefaults.themeColor.rawValue) else { fatalError() }
+        guard let themeColorHex = UserDefaults.standard.string(forKey: UserDefaultsKeys.themeColor.rawValue) else { fatalError() }
         guard let indexRowToSelect = ThemeColor.allCases.firstIndex(where: { $0.rawValue == themeColorHex }) else { fatalError() }
         self.themeColorPickingTableView.selectRow(at: IndexPath(row: indexRowToSelect, section: 0), animated: false, scrollPosition: .none)
     }
@@ -96,8 +96,8 @@ extension ThemeColorPickingViewController: UITableViewDelegate {
         guard let cell = tableView.cellForRow(at: indexPath) as? ThemeColorPickingTableViewCell else { fatalError() }
         cell.isSelected = true
         
-        guard UserDefaults.standard.object(forKey: KeysForUserDefaults.themeColor.rawValue) as! String != ThemeColor.allCases[indexPath.row].rawValue else { return }
-        UserDefaults.standard.set(ThemeColor.allCases[indexPath.row].rawValue, forKey: KeysForUserDefaults.themeColor.rawValue)
+        guard UserDefaults.standard.object(forKey: UserDefaultsKeys.themeColor.rawValue) as! String != ThemeColor.allCases[indexPath.row].rawValue else { return }
+        UserDefaults.standard.set(ThemeColor.allCases[indexPath.row].rawValue, forKey: UserDefaultsKeys.themeColor.rawValue)
         NotificationCenter.default.post(name: NSNotification.Name("themeColorChangedNotification"), object: nil)
         UIWindow.current?.tintColor = .currentTheme()
         self.navigationController?.navigationBar.tintColor = .currentTheme()

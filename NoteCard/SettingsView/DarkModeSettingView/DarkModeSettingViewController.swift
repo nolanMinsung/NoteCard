@@ -65,7 +65,7 @@ final class DarkModeSettingViewController: UIViewController {
     }
     
     private func selectCurrentMode() {
-        guard let darkModeTheme = UserDefaults.standard.string(forKey: KeysForUserDefaults.darkModeTheme.rawValue) else { fatalError() }
+        guard let darkModeTheme = UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) else { fatalError() }
         switch darkModeTheme {
         case DarkModeTheme.light.rawValue:
             print(self.traitCollection.userInterfaceStyle.rawValue)
@@ -130,11 +130,11 @@ extension DarkModeSettingViewController: UITableViewDelegate {
         
         switch userInterfaceStyle {
         case .light:
-            UserDefaults.standard.setValue(DarkModeTheme.light.rawValue, forKey: KeysForUserDefaults.darkModeTheme.rawValue)
+            UserDefaults.standard.setValue(DarkModeTheme.light.rawValue, forKey: UserDefaultsKeys.darkModeTheme.rawValue)
         case .dark:
-            UserDefaults.standard.setValue(DarkModeTheme.dark.rawValue, forKey: KeysForUserDefaults.darkModeTheme.rawValue)
+            UserDefaults.standard.setValue(DarkModeTheme.dark.rawValue, forKey: UserDefaultsKeys.darkModeTheme.rawValue)
         case .unspecified:
-            UserDefaults.standard.setValue(DarkModeTheme.systemTheme.rawValue, forKey: KeysForUserDefaults.darkModeTheme.rawValue)
+            UserDefaults.standard.setValue(DarkModeTheme.systemTheme.rawValue, forKey: UserDefaultsKeys.darkModeTheme.rawValue)
         @unknown default:
             fatalError()
         }

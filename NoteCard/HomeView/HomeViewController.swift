@@ -19,10 +19,10 @@ class HomeViewController: UIViewController {
     
     var homeCollectionView: HomeCollectionView { self.homeView.homeCollectionView }
     
-    var favoriteMemoArray: [MemoEntity] {
+    private var favoriteMemoArray: [MemoEntity] {
         return MemoEntityManager.shared.getFavoriteMemoEntities()
     }
-    var recentMemoArray: [MemoEntity] {
+    private var recentMemoArray: [MemoEntity] {
         return MemoEntityManager.shared.getMemoEntitiesFromCoreData()
     }
     
@@ -187,6 +187,7 @@ extension HomeViewController: UICollectionViewDataSource {
         }
         
         headerView.button.configuration?.baseForegroundColor = UIColor.currentTheme()
+        // 헤더 안의 버튼은 section 정보를 button의 tag로 저장함.
         headerView.button.tag = indexPath.section
         headerView.button.configuration?.title = sectionHederTitleArray[indexPath.section] + " "
         headerView.button.addTarget(self, action: #selector(onHeaderButtonTapped), for: .touchUpInside)

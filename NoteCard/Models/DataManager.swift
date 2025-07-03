@@ -7,12 +7,6 @@
 
 import UIKit
 
-final class DataManager {
-    static let shared = DataManager()
-    private init() {}
-}
-
-
 enum MemoProperties: String {
     
     case creationDate
@@ -40,7 +34,7 @@ enum ImageOrderIndexKind: String {
     case temporaryOrderIndex
 }
 
-enum KeysForUserDefaults: String {
+enum UserDefaultsKeys: String {
     case themeColor
     case dateFormat
     case isTimeFormat24
@@ -64,7 +58,7 @@ enum DarkModeTheme: String, CaseIterable {
 }
 
 
-struct SizeContainer {
+struct CGSizeConstant {
     static let screenSize = UIScreen.current!.bounds.size
     static let popupCardThumbnailSize = CGSize(width: 70, height: 70)
     static let detailViewThumbnailSize = CGSize(width: 70, height: 70)

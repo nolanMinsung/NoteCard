@@ -34,7 +34,7 @@ final class HomeViewPopupCardAnimatedTransitioning: NSObject {
     
     let disappearingPropertyAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1)
     
-    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) }
+    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     var animationType: AnimationType
     let interactiveTransition: PercentDrivenInteractiveTransition?
@@ -259,7 +259,7 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
         if self.userDefaultCriterion == OrderCriterion.modificationDate.rawValue {
             
-            let isOrderAscending = UserDefaults.standard.bool(forKey: KeysForUserDefaults.isOrderAscending.rawValue)
+            let isOrderAscending = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isOrderAscending.rawValue)
             
             if isOrderAscending && popupCardView.isEdited {
                 self.disappearingPropertyAnimator.startAnimation()

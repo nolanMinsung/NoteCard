@@ -16,7 +16,7 @@ enum AnimationType {
 
 final class TotalListViewPopupCardAnimatedTransitioning: NSObject {
     
-    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) }
+    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     let screenSize = UIScreen.current?.bounds.size
     let presentationPropertyAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1)

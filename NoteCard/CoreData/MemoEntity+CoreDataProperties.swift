@@ -86,7 +86,7 @@ extension MemoEntity {
     
     func getModificationDateString() -> String {
         let modificationDate = self.modificationDate
-        let isTimeFormat24 = UserDefaults.standard.bool(forKey: KeysForUserDefaults.isTimeFormat24.rawValue)
+        let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         let formatterForDate = DateFormatter()
         let formatterForTime = DateFormatter()
         
@@ -111,7 +111,7 @@ extension MemoEntity {
     func getCreationDateInString() -> String {
         
 //        let dateFormat = UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue)!
-        let isTimeFormat24 = UserDefaults.standard.bool(forKey: KeysForUserDefaults.isTimeFormat24.rawValue)
+        let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         
         let formatterForDate = DateFormatter()
         let formatterForTime = DateFormatter()
@@ -148,7 +148,7 @@ extension MemoEntity {
         guard let deletedDate else { fatalError() }
         
 //        let dateFormat = UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue)!
-        let isTimeFormat24 = UserDefaults.standard.bool(forKey: KeysForUserDefaults.isTimeFormat24.rawValue)
+        let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         
         let formatterForDate = DateFormatter()
         let formatterForTime = DateFormatter()

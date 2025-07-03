@@ -74,10 +74,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         mainTabBarCon.delegate = self.window
         self.window?.windowScene?.keyWindow?.backgroundColor = .clear //그냥 window?backgroundColor = .clear랑 뭐가 다르지?
         
-        UserDefaults.standard.removeObject(forKey: KeysForUserDefaults.dateFormat.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.dateFormat.rawValue)
         
-        if UserDefaults.standard.string(forKey: KeysForUserDefaults.themeColor.rawValue) == nil {
-            UserDefaults.standard.set(ThemeColor.blue.rawValue, forKey: KeysForUserDefaults.themeColor.rawValue)
+        
+        // 설정값들 초기화
+        
+        // 테마 색상 초기화
+        if UserDefaults.standard.string(forKey: UserDefaultsKeys.themeColor.rawValue) == nil {
+            UserDefaults.standard.set(ThemeColor.blue.rawValue, forKey: UserDefaultsKeys.themeColor.rawValue)
             self.window?.tintColor = UIColor.themeColorBlue
             mainTabBarCon.tabBar.tintColor = UIColor.themeColorBlue
         }
@@ -85,23 +89,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        if UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue) == nil {
 //            UserDefaults.standard.setValue("yyyy. M. d. (EEE)", forKey: KeysForUserDefaults.dateFormat.rawValue)
 //        }
-        if UserDefaults.standard.string(forKey: KeysForUserDefaults.isTimeFormat24.rawValue) == nil {
-            UserDefaults.standard.setValue(true, forKey: KeysForUserDefaults.isTimeFormat24.rawValue)
+        
+        // 시간 표시형식 초기화
+        if UserDefaults.standard.string(forKey: UserDefaultsKeys.isTimeFormat24.rawValue) == nil {
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         }
-        if UserDefaults.standard.string(forKey: KeysForUserDefaults.locale.rawValue) == nil {
-            UserDefaults.standard.setValue("ko_KR", forKey: KeysForUserDefaults.locale.rawValue)
+        
+        // locale 초기화
+        if UserDefaults.standard.string(forKey: UserDefaultsKeys.locale.rawValue) == nil {
+            UserDefaults.standard.setValue("ko_KR", forKey: UserDefaultsKeys.locale.rawValue)
         }
-        if UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) == nil {
-            UserDefaults.standard.setValue(OrderCriterion.modificationDate.rawValue, forKey: KeysForUserDefaults.orderCriterion.rawValue)
+        
+        // 정렬 기준 초기화
+        if UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) == nil {
+            UserDefaults.standard.setValue(OrderCriterion.modificationDate.rawValue, forKey: UserDefaultsKeys.orderCriterion.rawValue)
         }
-        if UserDefaults.standard.string(forKey: KeysForUserDefaults.isOrderAscending.rawValue) == nil {
-            UserDefaults.standard.setValue(false, forKey: KeysForUserDefaults.isOrderAscending.rawValue)
+        
+        // 오름차순/내림차순 여부 초기화
+        if UserDefaults.standard.string(forKey: UserDefaultsKeys.isOrderAscending.rawValue) == nil {
+            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isOrderAscending.rawValue)
         }
-        if UserDefaults.standard.string(forKey: KeysForUserDefaults.darkModeTheme.rawValue) == nil {
-            UserDefaults.standard.setValue(DarkModeTheme.systemTheme.rawValue, forKey: KeysForUserDefaults.darkModeTheme.rawValue)
+        
+        // 다크모드 적용 여부 초기화
+        if UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) == nil {
+            UserDefaults.standard.setValue(DarkModeTheme.systemTheme.rawValue, forKey: UserDefaultsKeys.darkModeTheme.rawValue)
         } else {
             guard let darkModeUserDefault =
-                    UserDefaults.standard.string(forKey: KeysForUserDefaults.darkModeTheme.rawValue) else { fatalError() }
+                    UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) else { fatalError() }
             switch darkModeUserDefault {
             case DarkModeTheme.light.rawValue:
                 guard let window else { fatalError() }
@@ -116,7 +130,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
         
-        mainTabBarCon.selectedIndex = 1
+        mainTabBarCon.selectedIndex = 0
 //        while true {
 //            print("^____^")
 ////            if uncategorizedMemoVC.largeCardCollectionView.window != nil && uncategorizedMemoVC.smallCardCollectionView.window != nil {

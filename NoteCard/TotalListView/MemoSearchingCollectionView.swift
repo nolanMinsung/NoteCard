@@ -42,10 +42,10 @@ class MemoSearchingCollectionView: UICollectionView {
         self.characterSearchingImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
 //        self.characterSearchingImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         
-        self.characterSearchingImageView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: SizeContainer.screenSize.height * 0.15).isActive = true
+        self.characterSearchingImageView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: CGSizeConstant.screenSize.height * 0.15).isActive = true
 //        self.characterSearchingImageView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
-        self.characterSearchingImageView.widthAnchor.constraint(equalToConstant: SizeContainer.screenSize.width * 0.5).isActive = true
-        self.characterSearchingImageView.heightAnchor.constraint(equalToConstant: SizeContainer.screenSize.width * 0.5).isActive = true
+        self.characterSearchingImageView.widthAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.width * 0.5).isActive = true
+        self.characterSearchingImageView.heightAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.width * 0.5).isActive = true
     }
     
 }

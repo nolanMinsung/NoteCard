@@ -136,7 +136,11 @@ final class HomeCardCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
     }
     
     func configureCell(with memo: MemoEntity) {
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(
+            forKey: UserDefaultsKeys.orderCriterion.rawValue
+        ) else {
+            fatalError()
+        }
         
         self.memoEntity = memo
         self.titleTextField.text = memo.memoTitle

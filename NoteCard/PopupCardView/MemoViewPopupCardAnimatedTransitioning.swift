@@ -19,7 +19,7 @@ final class MemoViewPopupCardAnimatedTransitioning: NSObject {
     
     
     
-    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) }
+    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
 //    static let newGradientLayer: CAGradientLayer = {
 //        let layer = CAGradientLayer()

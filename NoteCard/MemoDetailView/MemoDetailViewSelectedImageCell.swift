@@ -36,7 +36,7 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         button.contentMode = .scaleAspectFit
         button.backgroundColor  = .detailViewDeleteImageButton
         button.clipsToBounds = true
-        button.layer.cornerRadius = SizeContainer.detailViewThumbnailSize.width * self.deleteButtonProportion / 2
+        button.layer.cornerRadius = CGSizeConstant.detailViewThumbnailSize.width * self.deleteButtonProportion / 2
         button.layer.borderWidth = 3
         button.layer.borderColor = UIColor.detailViewDeleteImageButton.cgColor
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -120,8 +120,8 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         
         self.deleteImageButton.centerXAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
         self.deleteImageButton.centerYAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0).isActive = true
-        self.deleteImageButton.widthAnchor.constraint(equalToConstant: SizeContainer.detailViewThumbnailSize.width * self.deleteButtonProportion).isActive = true
-        self.deleteImageButton.heightAnchor.constraint(equalToConstant: SizeContainer.detailViewThumbnailSize.width * self.deleteButtonProportion).isActive = true
+        self.deleteImageButton.widthAnchor.constraint(equalToConstant: CGSizeConstant.detailViewThumbnailSize.width * self.deleteButtonProportion).isActive = true
+        self.deleteImageButton.heightAnchor.constraint(equalToConstant: CGSizeConstant.detailViewThumbnailSize.width * self.deleteButtonProportion).isActive = true
     }
     
     

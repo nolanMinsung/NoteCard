@@ -39,7 +39,7 @@ class MemoViewController: UIViewController {
     var feedbackGenerator: UIImpactFeedbackGenerator!
     var isCategoryNameChanged: Bool = true
     var cardIndex: Int = 0
-    var userDefaultCriterion: String? { return UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) }
+    var userDefaultCriterion: String? { return UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     lazy var memoView = self.view as! MemoView
     lazy var largeCardCollectionView = memoView.largeCardCollectionView
@@ -683,7 +683,7 @@ class MemoViewController: UIViewController {
         
         guard let createdMemoEntity = notification.userInfo?["memo"] as? MemoEntity else { fatalError() }
         guard let categories = createdMemoEntity.categories else { fatalError() }
-        let isOrderAscending = UserDefaults.standard.bool(forKey: KeysForUserDefaults.isOrderAscending.rawValue)
+        let isOrderAscending = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isOrderAscending.rawValue)
         
         switch self.memoVCType {
             

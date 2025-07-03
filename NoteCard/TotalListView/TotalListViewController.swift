@@ -24,7 +24,7 @@ class TotalListViewController: UIViewController {
     
     lazy var totalListCollectionView = self.totalListView.totalListCollectionView
     
-    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) }
+    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     var percentDrivenInteractiveTransition: PercentDrivenInteractiveTransition?
     var memoEntitySearhResult: [MemoEntity] = []
@@ -160,7 +160,7 @@ class TotalListViewController: UIViewController {
     
     @objc private func memoCreated(_ notification: Notification) {
         guard let createdMemoEntity = notification.userInfo?["memo"] as? MemoEntity else { fatalError() }
-        guard let isOrderAscending = UserDefaults.standard.value(forKey: KeysForUserDefaults.isOrderAscending.rawValue) as? Bool else { fatalError() }
+        guard let isOrderAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
         guard let searchCon = self.navigationItem.searchController else { fatalError() }
         let searchText = searchCon.searchBar.text!
         

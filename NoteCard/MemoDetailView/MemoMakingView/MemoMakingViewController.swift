@@ -459,8 +459,8 @@ extension MemoMakingViewController: UICollectionViewDragDelegate {
             roundedRect: CGRect(
                 x: 0,
                 y: 0,
-                width: SizeContainer.compositionalCardThumbnailSize.width,
-                height: SizeContainer.compositionalCardThumbnailSize.height),
+                width: CGSizeConstant.compositionalCardThumbnailSize.width,
+                height: CGSizeConstant.compositionalCardThumbnailSize.height),
             cornerRadius: 10)
         
         previewParameters.visiblePath = bezierPath
@@ -539,7 +539,7 @@ extension MemoMakingViewController: PHPickerViewControllerDelegate {
         self.completeBarButtonItem.isEnabled = false
         self.photoBarButtonItem.isEnabled = false
         self.selectedImageColletionViewTopConstraint.constant = 17
-        self.selectedImageCollectionViewHeightConstraint.constant = SizeContainer.detailViewThumbnailSize.height
+        self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.detailViewThumbnailSize.height
         self.selectedImageCollectionView.isScrollEnabled = false
         self.selectedImageCollectionView.alpha = 0.3
         self.activityIndicatorView.startAnimating()
@@ -561,7 +561,7 @@ extension MemoMakingViewController: PHPickerViewControllerDelegate {
                     if countDown == 0 {
                         DispatchQueue.main.async { [weak self] in
                             guard let self else { fatalError() }
-//                            self.selectedImageCollectionViewHeightConstraint.constant = SizeContainer.compositionalCardThumbnailSize.height
+//                            self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.compositionalCardThumbnailSize.height
                             self.applySnapshot(animatingDifferences: true, usingReloadData: true) { [weak self] in
                                 guard let self else { fatalError() }
                                 self.completeBarButtonItem.isEnabled = true
@@ -599,7 +599,7 @@ extension MemoMakingViewController: PHPickerViewControllerDelegate {
                     if countDown == 0 {
                         DispatchQueue.main.async { [weak self] in
                             guard let self else { fatalError() }
-//                            self.selectedImageCollectionViewHeightConstraint.constant = SizeContainer.compositionalCardThumbnailSize.height
+//                            self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.compositionalCardThumbnailSize.height
                             self.applySnapshot(animatingDifferences: true, usingReloadData: true) { [weak self] in
                                 guard let self else { fatalError() }
                                 self.completeBarButtonItem.isEnabled = true

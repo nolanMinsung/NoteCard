@@ -176,11 +176,11 @@ class TotalListCollectionViewCell: UICollectionViewCell {
     
     
     private func setupConstraints() {
-        let widthConstraint = self.contentView.widthAnchor.constraint(equalToConstant: SizeContainer.screenSize.width * 0.95)
+        let widthConstraint = self.contentView.widthAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.width * 0.95)
         widthConstraint.priority = UILayoutPriority.init(751)
         widthConstraint.isActive = true
-//        self.contentView.widthAnchor.constraint(equalToConstant: SizeContainer.screenSize.width * 0.95).isActive = true
-//        self.contentView.widthAnchor.constraint(equalToConstant: SizeContainer.screenSize.width * 0.95).priority = .init(999)
+//        self.contentView.widthAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.width * 0.95).isActive = true
+//        self.contentView.widthAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.width * 0.95).priority = .init(999)
 //        self.contentView.widthAnchor.constraint(equalToConstant: 300).isActive = true
         
         self.titleTextField.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 6).isActive = true

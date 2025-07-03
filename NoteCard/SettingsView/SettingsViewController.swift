@@ -134,7 +134,7 @@ extension SettingsViewController {
         
         switch indexPath {
         case IndexPath(row: 0, section: 0):
-            guard let currentTheme = UserDefaults.standard.string(forKey: KeysForUserDefaults.themeColor.rawValue) else { fatalError() }
+            guard let currentTheme = UserDefaults.standard.string(forKey: UserDefaultsKeys.themeColor.rawValue) else { fatalError() }
             var secondaryText: String = ""
             
             switch currentTheme {
@@ -171,7 +171,7 @@ extension SettingsViewController {
             )
             
         case IndexPath(row: 1, section: 0):
-            let isTimeFormat24 = UserDefaults.standard.bool(forKey: KeysForUserDefaults.isTimeFormat24.rawValue)
+            let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
 //            cell.configureCell(
 //                withName: self.settingTitles[indexPath.section][indexPath.row],
 //                type: .pushing,
@@ -183,8 +183,8 @@ extension SettingsViewController {
             )
             
         case IndexPath(row: 2, section: 0):
-            guard let userDefaultCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
-            let userDefautlAscendingValue = UserDefaults.standard.bool(forKey: KeysForUserDefaults.isOrderAscending.rawValue)
+            guard let userDefaultCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
+            let userDefautlAscendingValue = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isOrderAscending.rawValue)
             let currentState1: String
             let currentState2: String
             
@@ -221,7 +221,7 @@ extension SettingsViewController {
             
         case IndexPath(row: 3, section: 0):
             guard let darkModeTheme =
-                    UserDefaults.standard.string(forKey: KeysForUserDefaults.darkModeTheme.rawValue) else { fatalError()}
+                    UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) else { fatalError()}
             switch darkModeTheme {
             case DarkModeTheme.light.rawValue:
 //                cell.configureCell(

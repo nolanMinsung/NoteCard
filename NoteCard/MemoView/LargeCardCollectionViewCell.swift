@@ -303,8 +303,8 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         let imageItem = NSCollectionLayoutItem(layoutSize: imageItemSize)
         
         let imageGroupSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(SizeContainer.compositionalCardThumbnailSize.width),
-            heightDimension: .absolute(SizeContainer.compositionalCardThumbnailSize.height)
+            widthDimension: .absolute(CGSizeConstant.compositionalCardThumbnailSize.width),
+            heightDimension: .absolute(CGSizeConstant.compositionalCardThumbnailSize.height)
         )
         let imageGroup = NSCollectionLayoutGroup.vertical(layoutSize: imageGroupSize, subitems: [imageItem])
         let imageSection = NSCollectionLayoutSection(group: imageGroup)
@@ -400,7 +400,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
     }()
     
     
-    lazy var contentViewHeightConstraint = self.contentView.heightAnchor.constraint(equalToConstant: SizeContainer.screenSize.height * 0.6)
+    lazy var contentViewHeightConstraint = self.contentView.heightAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.height * 0.6)
     
     
     override init(frame: CGRect) {
@@ -633,7 +633,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
             //self.frame.origin.y = cellUpperPadding - self.keyboardFrame.height + self.cellLowerPadding
 //            self.bounds.origin.y = self.keyboardFrame.height - cellUpperPadding
             self.frame.origin.y = -largeCardCollectionView.frame.origin.y + UIWindow.current!.safeAreaInsets.top
-            self.frame.size.height = SizeContainer.screenSize.height - UIWindow.current!.safeAreaInsets.top - self.keyboardFrame.height
+            self.frame.size.height = CGSizeConstant.screenSize.height - UIWindow.current!.safeAreaInsets.top - self.keyboardFrame.height
             
             self.titleTextField.textColor = .systemGray4
             self.heartImageView.tintColor = .systemGray4
@@ -652,7 +652,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         animator.addAnimations { [weak self] in
             guard let self else { fatalError() }
             self.frame.origin.y = cellUpperPadding
-            self.frame.size.height = SizeContainer.screenSize.height * 0.6
+            self.frame.size.height = CGSizeConstant.screenSize.height * 0.6
 //            self.bounds.origin.y = 0
             self.titleTextField.textColor = .label
             self.heartImageView.tintColor = .systemRed
@@ -680,13 +680,13 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
     
     
     func setConstraints() {
-        let contentViewWidthConstraint = self.contentView.widthAnchor.constraint(equalToConstant: SizeContainer.screenSize.width * 0.9)
+        let contentViewWidthConstraint = self.contentView.widthAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.width * 0.9)
         contentViewWidthConstraint.priority = UILayoutPriority(999)
         contentViewWidthConstraint.isActive = true
         
         self.contentViewHeightConstraint.priority = UILayoutPriority(rawValue: 999)
         self.contentViewHeightConstraint.isActive = true
-//        self.contentView.heightAnchor.constraint(equalToConstant: SizeContainer.screenSize.height * 0.6).isActive = true
+//        self.contentView.heightAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.height * 0.6).isActive = true
         
         self.memoDateLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -30).isActive = true
         self.memoDateLabel.bottomAnchor.constraint(equalTo: self.contentView.topAnchor, constant: -8).isActive = true
@@ -755,7 +755,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
             self.updateMemoTextView()
         }
         
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         guard let memoEntity else { fatalError() }
         if orderCriterion == OrderCriterion.creationDate.rawValue {
 //            self.memoDateLabel.text = memoEntity.getCreationDateInString() + "에 생성됨"
@@ -805,7 +805,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
     
     func configureCell(memo: MemoEntity, collectionViewHeight: CGFloat, cellLowerPadding: CGFloat) {
         
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         
         self.memoEntity = memo
         if memo.isInTrash {

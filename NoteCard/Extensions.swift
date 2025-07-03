@@ -62,13 +62,11 @@ extension UIColor {
     
     
     static func currentTheme() -> UIColor {
-//        guard let themeColorHex = UserDefaults.standard.value(forKey: KeysForUserDefaults.themeColor.rawValue) as? String else { return .label }
-//        return UIColor.init(hexCode: themeColorHex)
-        
-        guard let themeColor = UserDefaults.standard.value(forKey: KeysForUserDefaults.themeColor.rawValue) as? String else { return .label }
+        guard let themeColor = UserDefaults.standard.value(forKey: UserDefaultsKeys.themeColor.rawValue) as? String else {
+            return .label
+        }
         
         switch themeColor {
-            
         case "black":
             return UIColor.themeColorBlack
         case "brown":
@@ -89,7 +87,6 @@ extension UIColor {
             return UIColor.themeColorPurple
         default:
             return UIColor.label
-            
         }
     }
     

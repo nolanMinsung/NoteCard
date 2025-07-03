@@ -18,7 +18,6 @@ final class MemoEntityManager {
     
     let categoryManager = CategoryEntityManager.shared
     
-    
     weak var appDelegate = UIApplication.shared.delegate as? AppDelegate
 //    lazy var context = appDelegate?.persistentContainer.viewContext
 //    weak var context: NSManagedObjectContext? {
@@ -35,28 +34,25 @@ final class MemoEntityManager {
         categorySet: Set<CategoryEntity> = Set<CategoryEntity>(),
         image: [ImageEntity]? = nil
     ) -> MemoEntity? {
-        
-//        guard let context else { return nil }
         guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
         guard let entityDescription = NSEntityDescription.entity(forEntityName: self.entityName, in: context) else { return nil }
         guard let newMemoEntity = NSManagedObject(entity: entityDescription, insertInto: context) as? MemoEntity else { return nil }
         newMemoEntity.memoID = UUID()
         newMemoEntity.memoTitle = memoTitleText
         newMemoEntity.memoText = memoText
-        let date = Date()
-        newMemoEntity.creationDate = date
-        newMemoEntity.modificationDate = date
+        let currentDate = Date()
+        newMemoEntity.creationDate = currentDate
+        newMemoEntity.modificationDate = currentDate
         newMemoEntity.deletedDate = nil
         newMemoEntity.isFavorite = false
         newMemoEntity.isInTrash = false
         newMemoEntity.images = NSSet()
-//        newMemoEntity.categories = NSSet() //Instance will be immediately deallocated because property 'categories' is 'weak'
-        //아마 newMemoEntity의 addToCategories 메서드만 쓸 수도 있었을텐데,
-        //카테고리를 하나씩 넣으면서 category들의 modificationDate를 하나씩 바꾸기 위해 아래처럼 코드를 쓴 것 같다.
+        
+        // 카테고리에 추가
         for category in categorySet {
             category.addToMemoSet(newMemoEntity)
 //            여기서 category.modificationDate를 최신화하면 메모 만들다 취소했을 때에도 카테고리 목록 순서가 바뀔 수 있기 때문에
-//            category의 modificationDate를 바꾸는 일은 메모의 작성이 완료되는 시점에서 하기.
+//            category의 modificationDate를 바꾸는 일은 작성된 메모가 실제로 저장되는 시점에서 진행.
 //            category.modificationDate = Date()
             newMemoEntity.addToCategories(category)
         }
@@ -65,83 +61,64 @@ final class MemoEntityManager {
         print("코어데이터에 memoEntity 저장됨")
         
         
-        //폴더 만들 차례
-        
+        //폴더 생성
+        let documentURL = fileManager.urls(
+            for: FileManager.SearchPathDirectory.documentDirectory,
+            in: FileManager.SearchPathDomainMask.userDomainMask)[0]
+        let newMemoDirectoryURL: URL
         if #available(iOS 16, *) {
-            let documentURL = fileManager.urls(
-                for: FileManager.SearchPathDirectory.documentDirectory,
-                in: FileManager.SearchPathDomainMask.userDomainMask)[0]
-            let newMemoDirectoryURL = documentURL.appending(path: newMemoEntity.memoID.uuidString, directoryHint: URL.DirectoryHint.inferFromPath)
-            //경로 추가함
-            
-            //방금 만든 새로운 path에 새로운 디렉토리 만들어줌
-            do { try fileManager.createDirectory(at: newMemoDirectoryURL, withIntermediateDirectories: false) }
-            catch { fatalError("creating Directory of memo failed") }
-            
-            return newMemoEntity
-            
+            newMemoDirectoryURL = documentURL.appending(path: newMemoEntity.memoID.uuidString, directoryHint: URL.DirectoryHint.inferFromPath)
         } else {
-            let documentURL = fileManager.urls(
-                for: FileManager.SearchPathDirectory.documentDirectory,
-                in: FileManager.SearchPathDomainMask.userDomainMask)[0]
-            let newMemoDirectoryURL = documentURL.appendingPathComponent(newMemoEntity.memoID.uuidString)
-            //경로 추가함
-            
-            //방금 만든 새로운 path에 새로운 디렉토리 만들어줌
-            do { try fileManager.createDirectory(at: newMemoDirectoryURL, withIntermediateDirectories: false) }
-            catch { fatalError("creating Directory of memo failed") }
-            
-            
-//            fileManager.changeCurrentDirectoryPath(<#T##path: String##String#>)
-            
-            return newMemoEntity
-            
+            newMemoDirectoryURL = documentURL.appendingPathComponent(newMemoEntity.memoID.uuidString)
         }
+        //경로 추가함
+        
+        //방금 만든 새로운 path에 새로운 디렉토리 만들어줌
+        do { try fileManager.createDirectory(at: newMemoDirectoryURL, withIntermediateDirectories: false) }
+        catch { fatalError("creating Directory of memo failed") }
+        
+        return newMemoEntity
         
     }
-    
-    
-    
     
     
     
     func getMemoEntitiesFromCoreData() -> [MemoEntity] {
         
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
-        guard let isAscending = UserDefaults.standard.value(forKey: KeysForUserDefaults.isOrderAscending.rawValue) as? Bool else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(
+            forKey: UserDefaultsKeys.orderCriterion.rawValue
+        ) else {
+            fatalError()
+        }
+        guard let isAscending = UserDefaults.standard.value(
+            forKey: UserDefaultsKeys.isOrderAscending.rawValue
+        ) as? Bool else {
+            fatalError()
+        }
         
         var memoEntityList: [MemoEntity] = []
         
-//        if let context = self.context {
         guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
-//            let dataOrder = NSSortDescriptor(key: criterion.rawValue, ascending: ascending)
-            let dataOrder = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
-            request.sortDescriptors = [dataOrder]
-            request.predicate = NSPredicate(format: "isInTrash == false")
-            
-            do {
-                if let fetchedMemoTextList = try context.fetch(request) as? [MemoEntity] {
-                    memoEntityList = fetchedMemoTextList
-                }
-            } catch {
-                print("fetch request failed")
-            }
-//        } else {
-//            fatalError("context is nil")
-//        }
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
+        let dataOrder = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
+        request.sortDescriptors = [dataOrder]
+        request.predicate = NSPredicate(format: "isInTrash == false")
         
+        do {
+            if let fetchedMemoTextList = try context.fetch(request) as? [MemoEntity] {
+                memoEntityList = fetchedMemoTextList
+            }
+        } catch {
+            print("fetch request failed")
+        }
         return memoEntityList
     }
     
     
-    
-    
-    
     func getSpecificMemoEntitiesFromCoreData(inCategory category: CategoryEntity?) -> [MemoEntity] {
         
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
-        guard let isAscending = UserDefaults.standard.value(forKey: KeysForUserDefaults.isOrderAscending.rawValue) as? Bool else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
+        guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
         
         
         var memoEntitiesArray: [MemoEntity] = []
@@ -176,7 +153,7 @@ final class MemoEntityManager {
     func getMemoEntitiesInTrash() -> [MemoEntity] {
         
 //        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
-        guard let isAscending = UserDefaults.standard.value(forKey: KeysForUserDefaults.isOrderAscending.rawValue) as? Bool else { fatalError() }
+        guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
         
         var memoEntitiesArray: [MemoEntity] = []
         
@@ -214,8 +191,8 @@ final class MemoEntityManager {
     /// 이 부분은 searchText.isEmpty 메서드를 이용해서 searchText에 빈칸을 넣어도 전부 검색되게 구현함.
     func searchMemoEntity(with searchText: String, category: CategoryEntity? = nil) -> [MemoEntity] {
         
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
-        guard let isAscending = UserDefaults.standard.value(forKey: KeysForUserDefaults.isOrderAscending.rawValue) as? Bool else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
+        guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
         
         
 //        let searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -248,8 +225,8 @@ final class MemoEntityManager {
     
     func getFavoriteMemoEntities() -> [MemoEntity] {
         
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
-        guard let isAscending = UserDefaults.standard.value(forKey: KeysForUserDefaults.isOrderAscending.rawValue) as? Bool else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
+        guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
         
         
         var memoEntityList: [MemoEntity] = []

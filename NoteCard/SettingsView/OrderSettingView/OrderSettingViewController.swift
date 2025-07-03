@@ -34,11 +34,11 @@ final class OrderSettingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         guard let indexToSelectAtSection0 = OrderCriterion.allCases.map({ $0.rawValue }).firstIndex(where: { $0 == orderCriterion }) else { fatalError() }
         self.orderSettingTableView.selectRow(at: IndexPath(row: indexToSelectAtSection0, section: 0), animated: false, scrollPosition: .none)
         
-        let isOrderAscending = UserDefaults.standard.value(forKey: KeysForUserDefaults.isOrderAscending.rawValue) as! Bool
+        let isOrderAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as! Bool
         let indexToSelectAtSection1 = isOrderAscending ? 0 : 1
         self.orderSettingTableView.selectRow(at: IndexPath(row: indexToSelectAtSection1, section: 1), animated: false, scrollPosition: .none)
     }
@@ -114,9 +114,9 @@ extension OrderSettingViewController: UITableViewDelegate {
         guard let cell = tableView.cellForRow(at: indexPath) as? OrderSettingTableViewCell else { fatalError() }
         cell.isSelected = true
         if indexPath.section == 0 {
-            UserDefaults.standard.setValue(OrderCriterion.allCases[indexPath.row].rawValue, forKey: KeysForUserDefaults.orderCriterion.rawValue)
+            UserDefaults.standard.setValue(OrderCriterion.allCases[indexPath.row].rawValue, forKey: UserDefaultsKeys.orderCriterion.rawValue)
         } else if indexPath.section == 1 {
-            UserDefaults.standard.setValue(indexPath.row == 0 ? true : false, forKey: KeysForUserDefaults.isOrderAscending.rawValue)
+            UserDefaults.standard.setValue(indexPath.row == 0 ? true : false, forKey: UserDefaultsKeys.isOrderAscending.rawValue)
         }
     }
     

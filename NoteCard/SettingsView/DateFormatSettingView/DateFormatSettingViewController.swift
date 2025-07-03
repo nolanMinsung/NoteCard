@@ -86,7 +86,7 @@ extension DateFormatSettingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? DateFormatSettingTableViewCell else { fatalError() }
         cell.isSelected = true
-        UserDefaults.standard.setValue(dateFormatsArray[indexPath.row], forKey: KeysForUserDefaults.dateFormat.rawValue)
+        UserDefaults.standard.setValue(dateFormatsArray[indexPath.row], forKey: UserDefaultsKeys.dateFormat.rawValue)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {

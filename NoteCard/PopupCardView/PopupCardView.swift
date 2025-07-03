@@ -543,7 +543,7 @@ final class PopupCardView: UIView {
     }
     
     func configureView(with memo: MemoEntity) {
-        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         
         self.memoEntity = memo
         self.thumbnailArray = []

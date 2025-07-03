@@ -45,7 +45,7 @@ final class TimeFormatSettingTableViewCell: UITableViewCell {
     }
     
     private func setupSwitch() {
-        let isTimeFormat24 = UserDefaults.standard.bool(forKey: KeysForUserDefaults.isTimeFormat24.rawValue)
+        let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         self.switchInCell.setOn(isTimeFormat24, animated: false)
         self.switchInCell.addTarget(self, action: #selector(switchInCellToggled(_:)), for: UIControl.Event.valueChanged)
     }
@@ -54,9 +54,9 @@ final class TimeFormatSettingTableViewCell: UITableViewCell {
         print(#function)
         switch switchInCell.isOn {
         case true:
-            UserDefaults.standard.setValue(true, forKey: KeysForUserDefaults.isTimeFormat24.rawValue)
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         case false:
-            UserDefaults.standard.setValue(false, forKey: KeysForUserDefaults.isTimeFormat24.rawValue)
+            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         }
     }
     
