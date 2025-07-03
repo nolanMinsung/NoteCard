@@ -138,35 +138,6 @@ extension UIWindow {
     }
 }
 
-extension UIWindow: UITabBarControllerDelegate {
-    
-    public func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        guard let mainTabBarCon = self.rootViewController as? MainTabBarController else { fatalError() }
-        guard tabBarController == mainTabBarCon else { return true }
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
-        
-        guard let quickMemoEmptyNaviCon = tabBarController.viewControllers?[2] as? UINavigationController else { fatalError() }
-        
-        guard tabBarController == mainTabBarCon else { fatalError() }
-        guard viewController == quickMemoEmptyNaviCon else { return true }
-        if mainTabBarCon.selectedIndex == 1 {
-            mainTabBarCon.viewControllers?[1].view.endEditing(true)
-        }
-        
-        let memoMakingVC = MemoMakingViewController()
-        let memoMakingNaviCon = UINavigationController(rootViewController: memoMakingVC)
-        appDelegate.memoMakingVC = memoMakingVC
-        memoMakingNaviCon.modalPresentationStyle = .formSheet
-        tabBarController.present(memoMakingNaviCon, animated: true)
-        
-//        guard mainTabBarCon.selectedIndex != 2 else { fatalError() }
-//        mainTabBarCon.previousSelectedIndex = tabBarController.selectedIndex
-        return false
-    }
-    
-}
-
-
 
 
 

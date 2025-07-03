@@ -18,79 +18,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        //MemoView(와 TotalListView)에서 기기의 화면 사이즈를 얻기 위해 window에 접근하는 코드가 존재. (UIWindow 및 UIScreen 의 extension 참고)
-        //이때 접근하는 window가 keyWindow인지 확인하는 과정이 존재.
-        //그래서 앱 상의 어떤 MemoView(와 TotalListView)를 부르더라도 해당 뷰의 window를 keyWindow로 만드는 과정이 선행되어야 함.
-        //아래 코드들을 쭉 보면 현재 메서드(willConnectTo) 안에서 세번째 탭에 해당하는 뷰컨트롤러를 생성하는데, 이 뷰컨트롤러가 MemoViewController라서 MemoView를 생성하게 됨.
-        //따라서 window.makeKeyAndVisible() 코드를 맨 앞으로 뺀 것
-        //window의 rootViewController 에 값을 할당하는 것은 tabBarCon의 viewController를 모두 생성하고 난 뒤에 실행해야 하므로,
-        //window의 rootViewController에 값을 할당하는 코드(를 포함한 다른 window관련 코드)들은 이 메서드의 마지막 부분으로 뺐음.
-        
         self.window = UIWindow(windowScene: windowScene)
         self.window?.makeKeyAndVisible()
         self.window?.tintColor = UIColor.currentTheme()
         
         let mainTabBarCon = MainTabBarController()
         self.window?.rootViewController = mainTabBarCon
-        mainTabBarCon.delegate = self.window
-        self.window?.windowScene?.keyWindow?.backgroundColor = .clear //그냥 window?backgroundColor = .clear랑 뭐가 다르지?
+        self.window?.backgroundColor = .clear
         
-        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.dateFormat.rawValue)
+        // 다크모드 설정값 window에 반영하기.
         
-        
-        // 설정값들 초기화
-        
-        // 테마 색상 초기화
-        if UserDefaults.standard.string(forKey: UserDefaultsKeys.themeColor.rawValue) == nil {
-            UserDefaults.standard.set(ThemeColor.blue.rawValue, forKey: UserDefaultsKeys.themeColor.rawValue)
-            self.window?.tintColor = UIColor.themeColorBlue
-            mainTabBarCon.tabBar.tintColor = UIColor.themeColorBlue
+        // 설정에서 다크모드 세팅 UserDefault 값에 해당하는 문자열
+        guard let darkModeSettingRawValue = UserDefaults.standard.string(
+            forKey: UserDefaultsKeys.darkModeTheme.rawValue
+        ) else {
+            fatalError("다크모드 설정값이 초기화되지 않았습니다.")
         }
         
-//        if UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue) == nil {
-//            UserDefaults.standard.setValue("yyyy. M. d. (EEE)", forKey: KeysForUserDefaults.dateFormat.rawValue)
-//        }
-        
-        // 시간 표시형식 초기화
-        if UserDefaults.standard.string(forKey: UserDefaultsKeys.isTimeFormat24.rawValue) == nil {
-            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
+        let darKModeValue = DarkModeTheme(rawValue: darkModeSettingRawValue)
+        switch darKModeValue {
+        case .light:
+            window?.overrideUserInterfaceStyle = UIUserInterfaceStyle.light
+        case .dark:
+            window?.overrideUserInterfaceStyle = UIUserInterfaceStyle.dark
+        default:
+            window?.overrideUserInterfaceStyle = UIUserInterfaceStyle.unspecified
         }
         
-        // locale 초기화
-        if UserDefaults.standard.string(forKey: UserDefaultsKeys.locale.rawValue) == nil {
-            UserDefaults.standard.setValue("ko_KR", forKey: UserDefaultsKeys.locale.rawValue)
-        }
-        
-        // 정렬 기준 초기화
-        if UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) == nil {
-            UserDefaults.standard.setValue(OrderCriterion.modificationDate.rawValue, forKey: UserDefaultsKeys.orderCriterion.rawValue)
-        }
-        
-        // 오름차순/내림차순 여부 초기화
-        if UserDefaults.standard.string(forKey: UserDefaultsKeys.isOrderAscending.rawValue) == nil {
-            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.isOrderAscending.rawValue)
-        }
-        
-        // 다크모드 적용 여부 초기화
-        if UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) == nil {
-            UserDefaults.standard.setValue(DarkModeTheme.systemTheme.rawValue, forKey: UserDefaultsKeys.darkModeTheme.rawValue)
-        } else {
-            guard let darkModeUserDefault =
-                    UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) else { fatalError() }
-            switch darkModeUserDefault {
-            case DarkModeTheme.light.rawValue:
-                guard let window else { fatalError() }
-                window.overrideUserInterfaceStyle = UIUserInterfaceStyle.light
-            case DarkModeTheme.dark.rawValue:
-                guard let window else { fatalError() }
-                window.overrideUserInterfaceStyle = UIUserInterfaceStyle.dark
-                
-            default:
-                guard let window else { fatalError() }
-                window.overrideUserInterfaceStyle = UIUserInterfaceStyle.unspecified
-            }
-        }
-        
+        // 초기 화면은 홈 화면으로 설정.
         mainTabBarCon.selectedIndex = 0
 //        while true {
 //            print("^____^")

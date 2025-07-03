@@ -88,6 +88,7 @@
 		4EB46F982B0B215E00B4633F /* ColorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB46F972B0B215E00B4633F /* ColorModel.swift */; };
 		4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */; };
 		4EC220262B077F6B007C9326 /* TotalListCellCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC220252B077F6B007C9326 /* TotalListCellCategoryCell.swift */; };
+		4ECDA56F2E162753003D15F5 /* ThirdTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */; };
 		4ED333A62B332FCD00492B0F /* ThemeColorPickingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */; };
 		4ED333A82B332FF000492B0F /* ThemeColorPickingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */; };
 		4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A92B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift */; };
@@ -187,6 +188,7 @@
 		4EB46F972B0B215E00B4633F /* ColorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorModel.swift; sourceTree = "<group>"; };
 		4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListTableViewDiffableDataSource.swift; sourceTree = "<group>"; };
 		4EC220252B077F6B007C9326 /* TotalListCellCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListCellCategoryCell.swift; sourceTree = "<group>"; };
+		4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdTabViewController.swift; sourceTree = "<group>"; };
 		4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingViewController.swift; sourceTree = "<group>"; };
 		4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingView.swift; sourceTree = "<group>"; };
 		4ED333A92B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingTableViewCell.swift; sourceTree = "<group>"; };
@@ -251,7 +253,7 @@
 				4E1384A42AF37B350063817B /* AppDelegate.swift */,
 				4E1384A62AF37B350063817B /* SceneDelegate.swift */,
 				4E0D6A012B08BBB2008447AB /* Extensions.swift */,
-				4E3E757B2B6889260073A951 /* MainTabBarController.swift */,
+				4ECDA56B2E16262C003D15F5 /* TabBar */,
 				4E1384BB2AF37DE10063817B /* CoreData */,
 				4E1384BC2AF37E070063817B /* Models */,
 				4E1384BD2AF37E0D0063817B /* HomeView */,
@@ -468,6 +470,15 @@
 			path = QuickMemoEmptyView;
 			sourceTree = "<group>";
 		};
+		4ECDA56B2E16262C003D15F5 /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				4E3E757B2B6889260073A951 /* MainTabBarController.swift */,
+				4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */,
+			);
+			path = TabBar;
+			sourceTree = "<group>";
+		};
 		4ED333A42B332F7100492B0F /* ThemeColorPickingView */ = {
 			isa = PBXGroup;
 			children = (
@@ -629,6 +640,7 @@
 				4EA4011D2B14456700EB2FD3 /* TotalListViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E1385052AF385F20063817B /* CreateCategoryViewController.swift in Sources */,
 				4ED333A82B332FF000492B0F /* ThemeColorPickingView.swift in Sources */,
+				4ECDA56F2E162753003D15F5 /* ThirdTabViewController.swift in Sources */,
 				4E5960372B072E6F0029BA3D /* TotalListView.swift in Sources */,
 				4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */,
 				4E1384E92AF3840A0063817B /* DateManager.swift in Sources */,

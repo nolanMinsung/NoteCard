@@ -25,7 +25,7 @@ class MainTabBarController: UITabBarController {
     init() {
         super.init(nibName: nil, bundle: nil)
         
-        setTabBarAppearance()
+        setTabBarDesign()
         initialViewControllersSetting()
         setTabBarItemSetting()
     }
@@ -38,11 +38,12 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        delegate = self
         configureHierarchy()
         setupConstraints()
     }
     
-    private func setTabBarAppearance() {
+    private func setTabBarDesign() {
         let standardAppearance = UITabBarAppearance()
         standardAppearance.configureWithDefaultBackground()
         tabBar.standardAppearance = standardAppearance
@@ -59,8 +60,8 @@ class MainTabBarController: UITabBarController {
         let noCategoriesCardNaviCon = UINavigationController(rootViewController: uncategorizedMemoVC)
         noCategoriesCardNaviCon.navigationController?.toolbar.tintColor = .currentTheme()
         
-        // tab: 2: 빠른 메모
-        let quickMemoEmptyNaviCon = UINavigationController(rootViewController: QuickMemoEmptyViewController())
+        // tab: 2: 빠른 메모 , 여기서는 안 쓰임.
+//        let quickMemoEmptyNaviCon = UINavigationController(rootViewController: QuickMemoEmptyViewController())
         
         // tab 3: 메모 검색
         let totalListNaviCon = UINavigationController(rootViewController: TotalListViewController())
@@ -69,7 +70,7 @@ class MainTabBarController: UITabBarController {
         let settingNaviCon = UINavigationController(rootViewController: SettingsViewController())
         
         self.setViewControllers(
-            [homeNaviCon, noCategoriesCardNaviCon, quickMemoEmptyNaviCon, totalListNaviCon, settingNaviCon],
+            [homeNaviCon, noCategoriesCardNaviCon, ThirdTabViewController(), totalListNaviCon, settingNaviCon],
             animated: true
         )
     }
@@ -77,14 +78,17 @@ class MainTabBarController: UITabBarController {
     private func setTabBarItemSetting() {
         self.tabBar.items?[0].title = "홈 화면".localized()
         self.tabBar.items?[0].image = UIImage(systemName: "house")
+        self.tabBar.items?[0].selectedImage = UIImage(systemName: "house.fill")
         self.tabBar.items?[1].title = "카테고리 없음".localized()
         self.tabBar.items?[1].image = UIImage(systemName: "app.dashed")
+        self.tabBar.items?[1].selectedImage = UIImage(systemName: "inset.filled.square.dashed")
         self.tabBar.items?[2].title = "빠른 메모".localized()
         self.tabBar.items?[2].image = UIImage(systemName: "plus.app")
         self.tabBar.items?[3].title = "메모 검색".localized()
         self.tabBar.items?[3].image = UIImage(systemName: "magnifyingglass")
         self.tabBar.items?[4].title = "설정".localized()
         self.tabBar.items?[4].image = UIImage(systemName: "gearshape.2")
+        self.tabBar.items?[4].selectedImage = UIImage(systemName: "gearshape.2.fill")
     }
     
     private func configureHierarchy() {
@@ -100,5 +104,33 @@ class MainTabBarController: UITabBarController {
         )
     }
     
+}
+
+
+extension MainTabBarController: UITabBarControllerDelegate {
+    
+    public func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        
+        // 빠른 메모를 탭했을 때만 대응
+        if viewController is ThirdTabViewController {
+            // 빠른 메모를 탭했을 때 '카테고리 없음'에서 메모 수정중이면, 수정 멈추기(키보드 내리기)
+            if selectedIndex == 1 {
+                viewControllers?[1].view.endEditing(true)
+            }
+            
+            let memoMakingVC = MemoMakingViewController()
+            let memoMakingNaviCon = UINavigationController(rootViewController: memoMakingVC)
+            
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
+            appDelegate.memoMakingVC = memoMakingVC
+            memoMakingNaviCon.modalPresentationStyle = .formSheet
+            tabBarController.present(memoMakingNaviCon, animated: true)
+            
+            return false
+        } else {
+            return true
+        }
+        
+    }
     
 }
