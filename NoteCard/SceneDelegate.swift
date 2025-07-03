@@ -28,49 +28,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         self.window = UIWindow(windowScene: windowScene)
         self.window?.makeKeyAndVisible()
-        
-//        let tabBarItemAppearance: UITabBarItemAppearance = {
-//            let appearance = UITabBarAppearance()
-//        }()
-        
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithDefaultBackground()
-//        tabBarAppearance.configureWithTransparentBackground()
+        self.window?.tintColor = UIColor.currentTheme()
         
         let mainTabBarCon = MainTabBarController()
-        mainTabBarCon.tabBar.standardAppearance = tabBarAppearance
-        mainTabBarCon.tabBar.tintColor = UIColor.currentTheme()
-        
-        let homeNaviCon = UINavigationController(rootViewController: HomeViewController())
-        
-        let uncategorizedMemoVC = MemoViewController(memoVCType: .uncategorized)
-        
-        let quickMemoEmptyNaviCon = UINavigationController(rootViewController: QuickMemoEmptyViewController())
-        
-        let totalListNaviCon = UINavigationController(rootViewController: TotalListViewController())
-        
-        let noCategoriesCardNaviCon = UINavigationController(rootViewController: uncategorizedMemoVC)
-        noCategoriesCardNaviCon.navigationController?.toolbar.tintColor = .currentTheme()
-        
-        let settingsVC = SettingsViewController()
-        let settingNaviCon = UINavigationController(rootViewController: settingsVC)
-        
-        mainTabBarCon.setViewControllers([homeNaviCon, noCategoriesCardNaviCon, quickMemoEmptyNaviCon, totalListNaviCon, settingNaviCon], animated: true)
-        mainTabBarCon.tabBar.items?[0].title = "홈 화면".localized()
-        mainTabBarCon.tabBar.items?[0].image = UIImage(systemName: "house")
-        mainTabBarCon.tabBar.items?[1].title = "카테고리 없음".localized()
-        mainTabBarCon.tabBar.items?[1].image = UIImage(systemName: "app.dashed")
-        mainTabBarCon.tabBar.items?[2].title = "빠른 메모".localized()
-        mainTabBarCon.tabBar.items?[2].image = UIImage(systemName: "plus.app")
-        mainTabBarCon.tabBar.items?[3].title = "메모 검색".localized()
-        mainTabBarCon.tabBar.items?[3].image = UIImage(systemName: "magnifyingglass")
-        mainTabBarCon.tabBar.items?[4].title = "설정".localized()
-        mainTabBarCon.tabBar.items?[4].image = UIImage(systemName: "gearshape.2")
-        
-        self.window?.tintColor = UIColor.currentTheme()
-//        self.window?.windowScene = windowScene
         self.window?.rootViewController = mainTabBarCon
-        mainTabBarCon.blurView.effect = UIBlurEffect(style: UIBlurEffect.Style.regular)
         mainTabBarCon.delegate = self.window
         self.window?.windowScene?.keyWindow?.backgroundColor = .clear //그냥 window?backgroundColor = .clear랑 뭐가 다르지?
         
