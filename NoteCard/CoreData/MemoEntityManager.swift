@@ -280,7 +280,18 @@ final class MemoEntityManager {
     /// 매개변수로 들어온 memoEntity와 그 메모에 속한 이미지들 및 imageEntity들까지 모두 삭제한다.
     func deleteMemoEntity(memoEntity: MemoEntity) {
         
-        //memoEntity의 이미지들을 담는 디렉토리 지우기
+        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
+        guard let categories = memoEntity.categories else { return }
+        guard let images = memoEntity.images as? Set<ImageEntity> else { return }
+        memoEntity.removeFromCategories(categories)
+        
+        // 임시 저장된 이미지 삭제 (이미지 먼저 삭제 후 이미지들을 담는 디렉토리 삭제)
+        images.forEach { [weak self] imageEntity in
+            guard let self else { return }
+            self.imageEntityManager.deleteImageEntity(imageEntity: imageEntity)
+        }
+        
+        //memoEntity의 이미지들을 담는 디렉토리 삭제
         if #available(iOS 16, *) {
             let documentURL = fileManager.urls(
                 for: FileManager.SearchPathDirectory.documentDirectory,
@@ -303,15 +314,6 @@ final class MemoEntityManager {
             
         }
         
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-        guard let categories = memoEntity.categories else { return }
-        guard let images = memoEntity.images as? Set<ImageEntity> else { return }
-        memoEntity.removeFromCategories(categories)
-        
-        images.forEach { [weak self] imageEntity in
-            guard let self else { return }
-            self.imageEntityManager.deleteImageEntity(imageEntity: imageEntity)
-        }
         
         context.delete(memoEntity)
         appDelegate?.saveContext()
