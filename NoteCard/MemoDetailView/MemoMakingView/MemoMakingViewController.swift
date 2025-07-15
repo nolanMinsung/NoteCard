@@ -15,38 +15,26 @@ class MemoMakingViewController: UIViewController {
         case main
     }
     
-    let categoryEntityManager = CategoryEntityManager.shared
-    let memoEntityManager = MemoEntityManager.shared
-    let imageEntityManager = ImageEntityManager.shared
+    private let memoEntityManager = MemoEntityManager.shared
+    private let imageEntityManager = ImageEntityManager.shared
     
-    var temporaryMemoEntity: MemoEntity!
-    var assetsArray: [PHAsset] = []
-    var itemProviderArray: [NSItemProvider] = []
-    var imageArray: [UIImage] = []
-    var thumbnailArray: [UIImage] = []
-    var imageDiffableDataSource: UICollectionViewDiffableDataSource<Section, ImageEntity>!
-//    var labelBarButtonItem: UIBarButtonItem {
-//        self.memoDetailView.labelBarButtonItem
-//    }
+    private var temporaryMemoEntity: MemoEntity!
+    private var thumbnailArray: [UIImage] = []
+    private var imageDiffableDataSource: UICollectionViewDiffableDataSource<Section, ImageEntity>!
     
-    let selectedCategoryEntity: CategoryEntity?
+    private let selectedCategoryEntity: CategoryEntity?
     
-    lazy var memoDetailView = self.view as! MemoDetailView
-    lazy var selectedImageCollectionView = self.memoDetailView.selectedImageCollectionView
-    lazy var activityIndicatorView = self.memoDetailView.activityIndicatorView
-    lazy var categoryListCollectionView = self.memoDetailView.categoryListCollectionView
-    lazy var titleTextField = self.memoDetailView.titleTextField
-    lazy var memoTextView = self.memoDetailView.memoTextView
-//    lazy var flexibleSpaceBarButtonItem = self.memoDetailView.flexibleSpaceBarButtonItem
-//    lazy var photoBarButtonItem = self.memoDetailView.photoBarButtonItem
+    private let rootView = MemoDetailView()
     
-//    lazy var memoTextViewHeightConstraint = self.memoDetailView.memoTextViewHeightConstraint
-    lazy var selectedImageColletionViewTopConstraint = self.memoDetailView.selectedImageCollectionViewTopConstraint
-    lazy var selectedImageCollectionViewHeightConstraint = self.memoDetailView.selectedImageCollectionViewHeightConstraint
-    lazy var memoTextViewBottomConstraint = self.memoDetailView.memoTextViewBottomConstraint
+    private lazy var selectedImageCollectionView = rootView.selectedImageCollectionView
+    private lazy var activityIndicatorView = self.rootView.activityIndicatorView
+    private lazy var categoryListCollectionView = rootView.categoryListCollectionView
+    private lazy var titleTextField = rootView.titleTextField
+    private lazy var memoTextView = rootView.memoTextView
+    private lazy var memoTextViewBottomConstraint = rootView.memoTextViewBottomConstraint
     
     var categoryEntityArray: [CategoryEntity] {
-        return self.categoryEntityManager.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
+        return CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
     }
     
     let cancelBarButtonItem: UIBarButtonItem = {
@@ -65,11 +53,6 @@ class MemoMakingViewController: UIViewController {
         let item = UIBarButtonItem()
         item.image = UIImage(systemName: "photo")
         item.tintColor = UIColor.currentTheme()
-        return item
-    }()
-    
-    let flexibleSpaceBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         return item
     }()
     
@@ -96,7 +79,7 @@ class MemoMakingViewController: UIViewController {
     }
     
     override func loadView() {
-        self.view = MemoDetailView()
+        self.view = rootView
     }
     
     override func viewDidLoad() {
@@ -154,16 +137,17 @@ class MemoMakingViewController: UIViewController {
         
     }
     
-    
-    
     private func makeTemporaryMemoEntity() {
+        let categorySet: Set<CategoryEntity> = (self.selectedCategoryEntity != nil
+                                                ? [self.selectedCategoryEntity!]
+                                                : Set<CategoryEntity>())
         
-        let categorySet: Set<CategoryEntity> = self.selectedCategoryEntity != nil ? [self.selectedCategoryEntity!] : Set<CategoryEntity>()
-        
-        self.temporaryMemoEntity = self.memoEntityManager.createMemoEntity(memoTitleText: "", memoText: "", categorySet: categorySet)
-        
+        self.temporaryMemoEntity = self.memoEntityManager.createMemoEntity(
+            memoTitleText: "",
+            memoText: "",
+            categorySet: categorySet
+        )
     }
-    
     
     private func setupButtonsAction() {
         self.cancelBarButtonItem.target = self
@@ -178,7 +162,7 @@ class MemoMakingViewController: UIViewController {
     
     @objc private func cancelButtonTapped() {
         guard let temporaryMemoEntity else { fatalError() }
-        self.memoDetailView.endEditing(true)
+        view.endEditing(true)
         let alertCon = UIAlertController(title: "메모 작성 취소".localized(), message: "메모 작성을 취소하시겠습니까?".localized(), preferredStyle: UIAlertController.Style.alert)
         let cancelCancelingAction = UIAlertAction(title: "계속 작성".localized(), style: UIAlertAction.Style.default)
         let cancelingAction = UIAlertAction(title: "메모 작성 취소".localized(), style: UIAlertAction.Style.destructive) { action in
@@ -284,7 +268,13 @@ class MemoMakingViewController: UIViewController {
     }
     
     private func setupToolbar() {
-        self.toolbarItems = [self.photoBarButtonItem, self.flexibleSpaceBarButtonItem, self.labelBarButtonItem, self.flexibleSpaceBarButtonItem]
+        let flexibleSpaceItem = UIBarButtonItem(systemItem: .flexibleSpace)
+        self.toolbarItems = [
+            self.photoBarButtonItem,
+            flexibleSpaceItem,
+            self.labelBarButtonItem,
+            flexibleSpaceItem
+        ]
     }
     
     private func setupDelegates() {
@@ -321,9 +311,9 @@ class MemoMakingViewController: UIViewController {
             let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
             animator.addAnimations { [weak self] in
                 guard let self else { fatalError() }
-                self.selectedImageColletionViewTopConstraint.constant = 0
-                self.selectedImageCollectionViewHeightConstraint.constant = 0
-                self.memoDetailView.layoutIfNeeded()
+                
+                self.rootView.hideImageCollectionView()
+                view.layoutIfNeeded()
             }
             
             if self.selectedImageCollectionView.numberOfItems(inSection: 0) == 0 {
@@ -357,7 +347,7 @@ extension MemoMakingViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         guard collectionView == self.categoryListCollectionView else { fatalError() }
-        let categoryEntityArray = self.categoryEntityManager.getCategoryEntities(
+        let categoryEntityArray = CategoryEntityManager.shared.getCategoryEntities(
             inOrderOf: CategoryProperties.modificationDate,
             isAscending: false
         )
@@ -538,11 +528,10 @@ extension MemoMakingViewController: PHPickerViewControllerDelegate {
         guard results.count != 0 else { return }
         self.completeBarButtonItem.isEnabled = false
         self.photoBarButtonItem.isEnabled = false
-        self.selectedImageColletionViewTopConstraint.constant = 17
-        self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.detailViewThumbnailSize.height
+        self.rootView.showImageCollectionView(targetHeight: CGSizeConstant.detailViewThumbnailSize.height)
         self.selectedImageCollectionView.isScrollEnabled = false
         self.selectedImageCollectionView.alpha = 0.3
-        self.activityIndicatorView.startAnimating()
+        self.rootView.startImageCollectionViewLoading()
         
         results.forEach { result in
             let itemProvider = result.itemProvider
@@ -561,12 +550,12 @@ extension MemoMakingViewController: PHPickerViewControllerDelegate {
                     if countDown == 0 {
                         DispatchQueue.main.async { [weak self] in
                             guard let self else { fatalError() }
-//                            self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.compositionalCardThumbnailSize.height
+                            
                             self.applySnapshot(animatingDifferences: true, usingReloadData: true) { [weak self] in
                                 guard let self else { fatalError() }
                                 self.completeBarButtonItem.isEnabled = true
                                 self.photoBarButtonItem.isEnabled = true
-                                self.activityIndicatorView.stopAnimating()
+                                self.rootView.stopImageCollectionViewLoading()
                                 self.selectedImageCollectionView.isScrollEnabled = true
                                 self.selectedImageCollectionView.alpha = 1
                                 
@@ -599,7 +588,7 @@ extension MemoMakingViewController: PHPickerViewControllerDelegate {
                     if countDown == 0 {
                         DispatchQueue.main.async { [weak self] in
                             guard let self else { fatalError() }
-//                            self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.compositionalCardThumbnailSize.height
+                            
                             self.applySnapshot(animatingDifferences: true, usingReloadData: true) { [weak self] in
                                 guard let self else { fatalError() }
                                 self.completeBarButtonItem.isEnabled = true
@@ -620,8 +609,8 @@ extension MemoMakingViewController: PHPickerViewControllerDelegate {
                     }
                 }
             } else {
-                //아니 분명히 애플 공식 답변은 iCloud에서 다운받기 위해 별다른 조치 안해도 된다고 했는데, 왜 여기로 넘어오는거임???
-                //https://developer.apple.com/forums/thread/679884
+                // 애플 공식 답변은 iCloud에서 다운받기 위해 별다른 조치 안해도 된다고 했는데, 왜 여기로 넘어옴?
+                // https://developer.apple.com/forums/thread/679884
                 fatalError("아이클라우드에서 받아와야하는데 안받아오고 바로 여기로 넘어옴...??")
             }
             index += 1

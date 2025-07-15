@@ -6,8 +6,7 @@
 //
 
 import UIKit
-import Photos // PHAsset을 위한 것
-import PhotosUI //PHPicekrViewController를 위한 것
+import PhotosUI //PHPicekrViewController 관련
 
 class MemoEditingViewController: UIViewController {
     
@@ -15,54 +14,32 @@ class MemoEditingViewController: UIViewController {
         case main
     }
     
-    let categoryEntityManager = CategoryEntityManager.shared
-    let memoEntityManager = MemoEntityManager.shared
-    let imageEntityManager = ImageEntityManager.shared
-    let phImageManager = PHImageManager.default()
-    let fileManager = FileManager.default
+    private let imageEntityManager = ImageEntityManager.shared
+    private var temporaryCategorySet: Set<CategoryEntity>
+    private var selectedMemoEntity: MemoEntity
+    private var imageDiffableDataSource: UICollectionViewDiffableDataSource<SelectedImageCollectionViewSection, ImageEntity>!
     
-    var temporaryCategorySet: Set<CategoryEntity>
-    //var addedAssetsArray: [PHAsset] = []
-    var temporaryAddedImageEntities: [ImageEntity] = []
-    var selectedMemoEntity: MemoEntity
-    var imageDiffableDataSource: UICollectionViewDiffableDataSource<SelectedImageCollectionViewSection, ImageEntity>!
-//    var labelBarButtonItem: UIBarButtonItem {
-//        self.memoDetailView.labelBarButtonItem
-//    }
-    
-    var thumbnailArray: [UIImage] {
-        var array: [UIImage] = []
-        let imageEntitiesArray = self.imageEntityManager.getImageEntities(
-            from: self.selectedMemoEntity,
-            inOrderOf: ImageOrderIndexKind.temporaryOrderIndex, 
-            isTemporaryDeleted: false
-        )
-        imageEntitiesArray.forEach { imageEntity in
-            if let thumbnail = self.imageEntityManager.getThumbnailImage(imageEntity: imageEntity) {
-                array.append(thumbnail)
-            }
-        }
-        return array
+    private lazy var thumbnailArray = ImageEntityManager.shared.getImageEntities(
+        from: self.selectedMemoEntity,
+        inOrderOf: ImageOrderIndexKind.temporaryOrderIndex,
+        isTemporaryDeleted: false
+    ).map { imageEntity in
+        ImageEntityManager.shared.getThumbnailImage(imageEntity: imageEntity)
     }
     
-    lazy var memoDetailView = self.view as! MemoDetailView
-    lazy var selectedImageCollectionView = self.memoDetailView.selectedImageCollectionView
-    lazy var activityIndicatorView = self.memoDetailView.activityIndicatorView
-    lazy var categoryListCollectionView = self.memoDetailView.categoryListCollectionView
-    lazy var titleTextField = self.memoDetailView.titleTextField
-    lazy var memoTextView = self.memoDetailView.memoTextView
-//    lazy var flexibleSpaceBarButtonItem = self.memoDetailView.flexibleSpaceBarButtonItem
-//    lazy var photoBarButtonItem = self.memoDetailView.photoBarButtonItem
-    lazy var selectedImageCollectionViewTopConstraint = self.memoDetailView.selectedImageCollectionViewTopConstraint
-    lazy var selectedImageCollectionViewHeightConstraint = self.memoDetailView.selectedImageCollectionViewHeightConstraint
-    lazy var memoTextViewBottomConstraint = self.memoDetailView.memoTextViewBottomConstraint
-//    lazy var memoTextViewHeightConstraint = self.memoDetailView.memoTextViewHeightConstraint
+    private let rootView = MemoDetailView()
     
+    private lazy var selectedImageCollectionView = rootView.selectedImageCollectionView
+    private lazy var categoryListCollectionView = rootView.categoryListCollectionView
+    private lazy var titleTextField = rootView.titleTextField
+    private lazy var memoTextView = rootView.memoTextView
+    private lazy var memoTextViewBottomConstraint = rootView.memoTextViewBottomConstraint
     
-    var categoryEntityArray: [CategoryEntity] {
-        return self.categoryEntityManager.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
-    }
-    
+    // category Entity들
+    let categoryEntityArray: [CategoryEntity] = CategoryEntityManager.shared.getCategoryEntities(
+        inOrderOf: CategoryProperties.modificationDate,
+        isAscending: false
+    )
     
     let cancelBarButtonItem: UIBarButtonItem = {
         let item = UIBarButtonItem()
@@ -80,11 +57,6 @@ class MemoEditingViewController: UIViewController {
         let item = UIBarButtonItem()
         item.image = UIImage(systemName: "photo")
         item.tintColor = UIColor.currentTheme()
-        return item
-    }()
-    
-    let flexibleSpaceBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         return item
     }()
     
@@ -112,7 +84,7 @@ class MemoEditingViewController: UIViewController {
     
     
     override func loadView() {
-        self.view = MemoDetailView()
+        self.view = rootView
     }
     
     override func viewDidLoad() {
@@ -134,21 +106,13 @@ class MemoEditingViewController: UIViewController {
         super.viewWillAppear(animated)
         
         if thumbnailArray.count == 0 {
-            self.selectedImageCollectionViewTopConstraint.constant = 0
-            self.selectedImageCollectionViewHeightConstraint.constant = 0
-            
+            rootView.hideImageCollectionView()
         } else {
-            self.selectedImageCollectionViewTopConstraint.constant = 17
-            self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.compositionalCardThumbnailSize.height
+            rootView.showImageCollectionView(targetHeight: CGSizeConstant.compositionalCardThumbnailSize.height)
         }
         
         self.applySnapshot(animatingDifferences: true, usingReloadData: false)
-        
-        
-        
     }
-    
-    
     
     private func setupDiffableDataSource() {
         
@@ -167,7 +131,6 @@ class MemoEditingViewController: UIViewController {
         })
         
     }
-    
     
     
     /// 현재 수정 중인 화면에 기존 이미지와 임시로 추가된 이미지, 임시로 삭제된 이미지를 반영
@@ -242,7 +205,7 @@ class MemoEditingViewController: UIViewController {
 //        
 //        self.present(alertCon, animated: true)
         
-        self.memoDetailView.endEditing(true)
+        rootView.endEditing(true)
         
         //임시로 추가된 값들을 다시 삭제해주기
         let imageEntitiesTemporaryAppended = self.imageEntityManager.getImageEntities(from: self.selectedMemoEntity, inOrderOf: ImageOrderIndexKind.temporaryOrderIndex, isTemporaryAppended: true)
@@ -271,7 +234,7 @@ class MemoEditingViewController: UIViewController {
     /// 삭제할 이미지들을 삭제
     /// 추가된 사진들의 isTemporaryAppended 속성을 false로 설정
     @objc func completeEditing() {
-        self.memoDetailView.endEditing(true)
+        rootView.endEditing(true)
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         guard let titleText = self.titleTextField.text else { return }
@@ -288,7 +251,7 @@ class MemoEditingViewController: UIViewController {
         appDelegate.saveContext()
         
         //카테고리 변경사항 적용
-        self.memoEntityManager.replaceCategories(of: self.selectedMemoEntity, with: self.temporaryCategorySet)
+        MemoEntityManager.shared.replaceCategories(of: self.selectedMemoEntity, with: self.temporaryCategorySet)
         
         guard let categoryEntityList = self.selectedMemoEntity.categories?.sortedArray(using: []) as? [CategoryEntity] else {
             fatalError("temporaryMemoEnity's categories's sortedArray method return nil")
@@ -394,7 +357,13 @@ class MemoEditingViewController: UIViewController {
     }
     
     private func setupToolbar() {
-        self.toolbarItems = [self.photoBarButtonItem, self.flexibleSpaceBarButtonItem, self.labelBarButtonItem, self.flexibleSpaceBarButtonItem]
+        let flexibleSpaceItem = UIBarButtonItem(systemItem: .flexibleSpace)
+        self.toolbarItems = [
+            self.photoBarButtonItem,
+            flexibleSpaceItem,
+            self.labelBarButtonItem,
+            flexibleSpaceItem
+        ]
     }
     
     private func setupDelegates() {
@@ -433,20 +402,8 @@ class MemoEditingViewController: UIViewController {
         }
         
         self.applySnapshot(animatingDifferences: true, usingReloadData: false) { [weak self] in
-            guard let self else { fatalError() }
-            
-            let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
-            animator.addAnimations { [weak self] in
-                guard let self else { fatalError() }
-                self.selectedImageCollectionViewTopConstraint.constant = 0
-                self.selectedImageCollectionViewHeightConstraint.constant = 0
-                self.memoDetailView.layoutIfNeeded()
-            }
-            
-            if self.selectedImageCollectionView.numberOfItems(inSection: 0) == 0 {
-//                self.selectedImageCollectionViewHeightConstraint.constant = 0
-//                self.updateViewConstraints()
-                animator.startAnimation()
+            if self?.selectedImageCollectionView.numberOfItems(inSection: 0) == 0 {
+                self?.rootView.hideImageCollectionView()
             }
         }
     }
@@ -476,11 +433,8 @@ class MemoEditingViewController: UIViewController {
 
 extension MemoEditingViewController: UICollectionViewDataSource {
     
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let categoryEntityArray = self.categoryEntityManager.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
         return categoryEntityArray.count
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -650,11 +604,10 @@ extension MemoEditingViewController: PHPickerViewControllerDelegate {
         guard results.count != 0 else { return }
         self.completeBarButtonItem.isEnabled = false
         self.photoBarButtonItem.isEnabled = false
-        self.selectedImageCollectionViewTopConstraint.constant = 17
-        self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.detailViewThumbnailSize.height
+        self.rootView.showImageCollectionView(targetHeight: CGSizeConstant.detailViewThumbnailSize.height)
         self.selectedImageCollectionView.isScrollEnabled = false
         self.selectedImageCollectionView.alpha = 0.3
-        self.activityIndicatorView.startAnimating()
+        self.rootView.startImageCollectionViewLoading()
         
         results.forEach { result in
             let itemProvider = result.itemProvider
@@ -673,13 +626,13 @@ extension MemoEditingViewController: PHPickerViewControllerDelegate {
                     if countDown == 0 {
                         DispatchQueue.main.async { [weak self] in
                             guard let self else { fatalError() }
-//                            self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.compositionalCardThumbnailSize.height
+                            
                             self.applySnapshot(animatingDifferences: true, usingReloadData: false) { [weak self] in
                                 guard let self else { fatalError() }
                                 
                                 self.completeBarButtonItem.isEnabled = true
                                 self.photoBarButtonItem.isEnabled = true
-                                self.activityIndicatorView.stopAnimating()
+                                self.rootView.stopImageCollectionViewLoading()
                                 self.selectedImageCollectionView.isScrollEnabled = true
                                 self.selectedImageCollectionView.alpha = 1
                                 
@@ -703,8 +656,12 @@ extension MemoEditingViewController: PHPickerViewControllerDelegate {
                     guard let data else { return }
                     guard let webpToUIImage = UIImage(data: data) else { return }
                     
-                    print(index)
-                    let _ = self.imageEntityManager.createImageEntity(image: webpToUIImage, orderIndex: index, memoEntity: self.selectedMemoEntity, isTemporaryAppended: true)
+                    let _ = self.imageEntityManager.createImageEntity(
+                        image: webpToUIImage,
+                        orderIndex: index,
+                        memoEntity: self.selectedMemoEntity,
+                        isTemporaryAppended: true
+                    )
                     
                     countDown -= 1
                     
@@ -712,12 +669,12 @@ extension MemoEditingViewController: PHPickerViewControllerDelegate {
                     if countDown == 0 {
                         DispatchQueue.main.async { [weak self] in
                             guard let self else { fatalError() }
-//                            self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.compositionalCardThumbnailSize.height
+                            
                             self.applySnapshot(animatingDifferences: true, usingReloadData: false) { [weak self] in
                                 guard let self else { fatalError() }
                                 self.completeBarButtonItem.isEnabled = true
                                 self.photoBarButtonItem.isEnabled = true
-                                self.activityIndicatorView.stopAnimating()
+                                self.rootView.stopImageCollectionViewLoading()
                                 self.selectedImageCollectionView.isScrollEnabled = true
                                 self.selectedImageCollectionView.alpha = 1
                                 
