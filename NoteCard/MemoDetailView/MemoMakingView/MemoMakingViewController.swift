@@ -69,6 +69,7 @@ class MemoMakingViewController: UIViewController {
     
     
     init(category categoryEntity: CategoryEntity? = nil) {
+        print("MemoMakingViewController 생성됨.")
         self.selectedCategoryEntity = categoryEntity
         super.init(nibName: nil, bundle: nil)
     }
@@ -94,6 +95,9 @@ class MemoMakingViewController: UIViewController {
         setupObserver()
     }
     
+    deinit {
+        print("MemoMakingViewController 해제됨.")
+    }
     
     func setupDiffableDataSource() {
         self.imageDiffableDataSource = UICollectionViewDiffableDataSource<Section, ImageEntity>(collectionView: self.selectedImageCollectionView, cellProvider: { collectionView, indexPath, imageEntity in
@@ -167,6 +171,9 @@ class MemoMakingViewController: UIViewController {
         let cancelingAction = UIAlertAction(title: "메모 작성 취소".localized(), style: UIAlertAction.Style.destructive) { action in
             self.memoEntityManager.deleteMemoEntity(memoEntity: temporaryMemoEntity)
             self.memoTextViewBottomConstraint.isActive = false
+            
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
+            appDelegate.memoMakingVC = nil
             self.dismiss(animated: true)
         }
         alertCon.addAction(cancelCancelingAction)
@@ -218,6 +225,9 @@ class MemoMakingViewController: UIViewController {
         guard let temporaryMemoEntity else { fatalError() }
         NotificationCenter.default.post(name: NSNotification.Name("createdMemoNotification"), object: nil, userInfo: ["memo": temporaryMemoEntity])
         self.memoTextViewBottomConstraint.isActive = false
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
+        appDelegate.memoMakingVC = nil
         self.dismiss(animated: true)
     }
     
