@@ -429,8 +429,7 @@ class MemoEditingViewController: UIViewController {
 }
 
 
-
-
+// MARK: - UICollectionViewDataSource
 extension MemoEditingViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -459,6 +458,8 @@ extension MemoEditingViewController: UICollectionViewDataSource {
     
 }
 
+
+// MARK: - UICollectionViewDelegate
 extension MemoEditingViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -514,7 +515,7 @@ extension MemoEditingViewController: UICollectionViewDelegate {
     }
 }
 
-
+// MARK: - UICollectionViewDragDelegate
 extension MemoEditingViewController: UICollectionViewDragDelegate {
     
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
@@ -550,7 +551,7 @@ extension MemoEditingViewController: UICollectionViewDragDelegate {
 }
 
 
-
+// MARK: - UICollectionViewDropDelegate
 extension MemoEditingViewController: UICollectionViewDropDelegate {
     
     func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
@@ -592,8 +593,7 @@ extension MemoEditingViewController: UICollectionViewDropDelegate {
 }
 
 
-
-
+// MARK: - PHPickerViewControllerDelegate
 extension MemoEditingViewController: PHPickerViewControllerDelegate {
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
@@ -696,6 +696,7 @@ extension MemoEditingViewController: PHPickerViewControllerDelegate {
 }
 
 
+// MARK: - UIViewControllerTransitioningDelegate
 extension MemoEditingViewController: UIViewControllerTransitioningDelegate {
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
