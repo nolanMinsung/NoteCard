@@ -27,7 +27,6 @@ class MemoMakingViewController: UIViewController {
     private let rootView = MemoDetailView()
     
     private lazy var selectedImageCollectionView = rootView.selectedImageCollectionView
-    private lazy var activityIndicatorView = self.rootView.activityIndicatorView
     private lazy var categoryListCollectionView = rootView.categoryListCollectionView
     private lazy var titleTextField = rootView.titleTextField
     private lazy var memoTextView = rootView.memoTextView
@@ -593,7 +592,7 @@ extension MemoMakingViewController: PHPickerViewControllerDelegate {
                                 guard let self else { fatalError() }
                                 self.completeBarButtonItem.isEnabled = true
                                 self.photoBarButtonItem.isEnabled = true
-                                self.activityIndicatorView.stopAnimating()
+                                self.rootView.stopImageCollectionViewLoading()
                                 self.selectedImageCollectionView.isScrollEnabled = true
                                 self.selectedImageCollectionView.alpha = 1
                                 

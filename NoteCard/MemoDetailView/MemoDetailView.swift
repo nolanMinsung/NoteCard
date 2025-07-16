@@ -15,26 +15,9 @@ final class MemoDetailView: UIView {
     private var isSpreaded: Bool = false
     
     let titleTextField = UITextField()
+    let selectedImageCollectionView = MemoDetailViewSelectedImageCollectionView()
     
-    let selectedImageCollectionView: MemoDetailViewSelectedImageCollectionView = {
-        let flowLayout = LeftAlignedFlowLayout()
-        flowLayout.scrollDirection = UICollectionView.ScrollDirection.horizontal
-        flowLayout.itemSize = CGSizeConstant.detailViewThumbnailSize
-        flowLayout.minimumInteritemSpacing = 10
-        
-        let collectionView = MemoDetailViewSelectedImageCollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
-        collectionView.register(MemoDetailViewSelectedImageCell.self, forCellWithReuseIdentifier: MemoDetailViewSelectedImageCell.cellID)
-        collectionView.isScrollEnabled = true
-        collectionView.backgroundColor = .clear
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 20)
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.clipsToBounds = false
-        return collectionView
-    }()
-    
-    let activityIndicatorView = UIActivityIndicatorView()
-    
+    private let activityIndicatorView = UIActivityIndicatorView()
     private let spreadCategoriesButton = UIButton(configuration: .plain())
     private let collectionViewBackgroundBlurView = UIVisualEffectView()
     
@@ -112,6 +95,7 @@ final class MemoDetailView: UIView {
         self.backgroundColor = .detailViewBackground
         setupTitleTextField()
         setupTitleTextFieldInputAccessoryView()
+        setupSelectedImageCollectionView()
         setupTextView()
         setupTextViewInputAccessoryView()
         setupSpreadCategoriesButton()
@@ -505,6 +489,19 @@ extension MemoDetailView {
         bar.sizeToFit()
         bar.tintColor = .currentTheme()
         titleTextField.inputAccessoryView = bar
+    }
+    
+    private func setupSelectedImageCollectionView() {
+        selectedImageCollectionView.register(
+            MemoDetailViewSelectedImageCell.self,
+            forCellWithReuseIdentifier: MemoDetailViewSelectedImageCell.cellID
+        )
+        selectedImageCollectionView.isScrollEnabled = true
+        selectedImageCollectionView.backgroundColor = .clear
+        selectedImageCollectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 20)
+        selectedImageCollectionView.showsHorizontalScrollIndicator = false
+        selectedImageCollectionView.showsVerticalScrollIndicator = false
+        selectedImageCollectionView.clipsToBounds = false
     }
     
     private func setupTextView() {

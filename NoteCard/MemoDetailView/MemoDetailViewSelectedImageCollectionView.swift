@@ -9,6 +9,18 @@ import UIKit
 
 class MemoDetailViewSelectedImageCollectionView: UICollectionView {
     
+    init() {
+        let leftAlignedFlowLayout = LeftAlignedFlowLayout()
+        leftAlignedFlowLayout.scrollDirection = UICollectionView.ScrollDirection.horizontal
+        leftAlignedFlowLayout.itemSize = CGSizeConstant.detailViewThumbnailSize
+        leftAlignedFlowLayout.minimumInteritemSpacing = 10
+        super.init(frame: .zero, collectionViewLayout: leftAlignedFlowLayout)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if !self.clipsToBounds && !self.isHidden && self.alpha > 0.0 {
             let subviews = self.subviews.reversed()
