@@ -47,35 +47,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // 초기 화면은 홈 화면으로 설정.
         mainTabBarCon.selectedIndex = 0
-//        while true {
-//            print("^____^")
-////            if uncategorizedMemoVC.largeCardCollectionView.window != nil && uncategorizedMemoVC.smallCardCollectionView.window != nil {
-//            if uncategorizedMemoVC.viewIfLoaded != nil {
-//                mainTabBarCon.selectedIndex = 0
-//                break
-//            } else {
-//                continue
-//            }
-//        }
-        
-        
-//        let memoEntitiesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash(inOrderOf: .modificationDate, isAscending: false)
-//        memoEntitiesInTrash.forEach { memo in
-//            
-//            guard let deletedDate = memo.deletedDate else { fatalError() }
-//            let calendar = Calendar.init(identifier: Calendar.Identifier.gregorian)
-//            
-//            guard let dayAfterDeleted = calendar.dateComponents([.day], from: deletedDate, to: Date()).day else { fatalError() }
-//            guard let hourAfterDeleted = calendar.dateComponents([.hour], from: deletedDate, to: Date()).hour else { fatalError() }
-//            
-//            if dayAfterDeleted >= 14 {
-//                print(dayAfterDeleted)
-//                print("~~~")
-//                MemoEntityManager.shared.deleteMemoEntity(memoEntity: memo)
-//            }
-//        }
-        
-        
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

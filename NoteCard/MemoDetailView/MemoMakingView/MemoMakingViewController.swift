@@ -26,11 +26,10 @@ class MemoMakingViewController: UIViewController {
     
     private let rootView = MemoDetailView()
     
-    private lazy var selectedImageCollectionView = rootView.selectedImageCollectionView
+    private lazy var selectedImageCollectionView = rootView.imageCollectionView
     private lazy var categoryListCollectionView = rootView.categoryListCollectionView
     private lazy var titleTextField = rootView.titleTextField
     private lazy var memoTextView = rootView.memoTextView
-    private lazy var memoTextViewBottomConstraint = rootView.memoTextViewBottomConstraint
     
     var categoryEntityArray: [CategoryEntity] {
         return CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
@@ -170,7 +169,6 @@ class MemoMakingViewController: UIViewController {
         let cancelCancelingAction = UIAlertAction(title: "계속 작성".localized(), style: UIAlertAction.Style.default)
         let cancelingAction = UIAlertAction(title: "메모 작성 취소".localized(), style: UIAlertAction.Style.destructive) { action in
             self.memoEntityManager.deleteMemoEntity(memoEntity: temporaryMemoEntity)
-            self.memoTextViewBottomConstraint.isActive = false
             
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             appDelegate.memoMakingVC = nil
@@ -224,7 +222,6 @@ class MemoMakingViewController: UIViewController {
         
         guard let temporaryMemoEntity else { fatalError() }
         NotificationCenter.default.post(name: NSNotification.Name("createdMemoNotification"), object: nil, userInfo: ["memo": temporaryMemoEntity])
-        self.memoTextViewBottomConstraint.isActive = false
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
         appDelegate.memoMakingVC = nil

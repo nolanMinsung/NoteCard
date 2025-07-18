@@ -13,6 +13,10 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         return String(describing: self)
     }
     
+    private let deselectedTextColor: UIColor = .init(dynamicProvider: {
+        return $0.userInterfaceStyle == .dark ? .lightGray : .darkGray
+    })
+    
     var categoryEntity: CategoryEntity!
     
     let selectionAnimator = UIViewPropertyAnimator(duration: 0.2, curve: UIView.AnimationCurve.easeOut)
@@ -29,22 +33,15 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
                     self.label.textColor = .label
                     self.label.alpha = 1.0
                     self.contentView.backgroundColor = .detailViewCategoryCellSelectedBackground
-                    self.contentView.layer.borderColor = UIColor.currentTheme().cgColor
                     self.contentView.layer.borderWidth = 1
                 }
                 self.selectionAnimator.startAnimation()
                 
             case false:
                 self.selectionAnimator.stopAnimation(true)
-                self.deselectionAnimator.addAnimations {
-                    let detailViewCategoryCellLabelColor = UIColor { traitCollection in
-                        if traitCollection.userInterfaceStyle == .dark {
-                            return UIColor.lightGray
-                        } else {
-                            return UIColor.darkGray
-                        }
-                    }
-                    self.label.textColor = detailViewCategoryCellLabelColor
+                self.deselectionAnimator.addAnimations { [weak self] in
+                    guard let self else { return }
+                    self.label.textColor = self.deselectedTextColor
                     self.label.alpha = 0.5
                     self.contentView.backgroundColor = .detailViewCategoryCellDeselectedBackground
                     self.contentView.layer.borderWidth = 0
@@ -93,12 +90,17 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
     }
     
     
-//    override func prepareForReuse() {
+    override func prepareForReuse() {
+        super.prepareForReuse()
 //        if self.isSelected {
 //            self.contentView.backgroundColor = .systemGray5
 //            self.label.alpha = 1
 //        }
-//    }
+        
+        self.label.textColor = self.deselectedTextColor
+        self.label.alpha = 0.5
+        self.contentView.layer.borderWidth = 0
+    }
     
     
     required init?(coder: NSCoder) {
@@ -112,6 +114,7 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         self.contentView.layer.cornerCurve = .continuous
         self.contentView.backgroundColor = .detailViewCategoryCellDeselectedBackground
         self.contentView.layer.borderWidth = 0
+        self.contentView.layer.borderColor = UIColor.currentTheme().cgColor
     }
     
     

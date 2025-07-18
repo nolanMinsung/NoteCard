@@ -29,11 +29,10 @@ class MemoEditingViewController: UIViewController {
     
     private let rootView = MemoDetailView()
     
-    private lazy var selectedImageCollectionView = rootView.selectedImageCollectionView
+    private lazy var selectedImageCollectionView = rootView.imageCollectionView
     private lazy var categoryListCollectionView = rootView.categoryListCollectionView
     private lazy var titleTextField = rootView.titleTextField
     private lazy var memoTextView = rootView.memoTextView
-    private lazy var memoTextViewBottomConstraint = rootView.memoTextViewBottomConstraint
     
     // category Entity들
     let categoryEntityArray: [CategoryEntity] = CategoryEntityManager.shared.getCategoryEntities(
@@ -222,7 +221,6 @@ class MemoEditingViewController: UIViewController {
             imageEntity.isTemporaryAppended = false
             imageEntity.temporaryOrderIndex = imageEntity.orderIndex
         }
-        self.memoTextViewBottomConstraint.isActive = false
         self.dismiss(animated: true)
         
     }
@@ -296,8 +294,6 @@ class MemoEditingViewController: UIViewController {
         
         //-> 아니면 현재 메모 정보를 Notification 에 같이 담아서 보낸 후, Notification 받는 곳에서 결정하기
         NotificationCenter.default.post(name: NSNotification.Name("editingCompleteNotification"), object: nil, userInfo: ["memo": self.selectedMemoEntity])
-        
-        self.memoTextViewBottomConstraint.isActive = false
         
         if let popupCardVC = self.presentingViewController as? PopupCardViewController {
             popupCardVC.popupCardView.isEdited = true

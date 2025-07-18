@@ -12,18 +12,18 @@ final class MemoDetailView: UIView {
     private let blurAnimator = UIViewPropertyAnimator(duration: 0.5, curve: .linear)
     private let imageShowingAnimator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
     
-    private var isSpreaded: Bool = false
+    private var isCatgorySpreaded: Bool = false
     
     let titleTextField = UITextField()
-    let selectedImageCollectionView = MemoDetailViewSelectedImageCollectionView()
+    let imageCollectionView = MemoDetailViewSelectedImageCollectionView()
     
     private let activityIndicatorView = UIActivityIndicatorView()
-    private let spreadCategoriesButton = UIButton(configuration: .plain())
+    private let categoryButton = UIButton(configuration: .plain())
     private let collectionViewBackgroundBlurView = UIVisualEffectView()
     
     let categoryListCollectionView = CategoryListCollectionView()
     
-    lazy var memoTextView: UITextView = {
+    let memoTextView: UITextView = {
         if #available(iOS 16.0, *) {
             return UITextView(usingTextLayoutManager: false)
         } else {
@@ -33,29 +33,23 @@ final class MemoDetailView: UIView {
     
     // MARK: NSLayoutConstraint Instances
     
-    private lazy var selectedImageCollectionViewTopConstraint =
-    self.selectedImageCollectionView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 0)
+    private lazy var imageCollectionViewTopConstraint =
+    self.imageCollectionView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 0)
     
-    private lazy var selectedImageCollectionViewHeightConstraint =
-    self.selectedImageCollectionView.heightAnchor.constraint(equalToConstant: 0)
+    private lazy var imageCollectionViewHeightConstraint =
+    self.imageCollectionView.heightAnchor.constraint(equalToConstant: 0)
     
     private lazy var categoryListCollectionViewCenterYConstraint =
-    self.categoryListCollectionView.centerYAnchor.constraint(equalTo: spreadCategoriesButton.centerYAnchor)
+    self.categoryListCollectionView.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor)
     
     private lazy var categoryListCollectionViewTopConstraint =
-    self.categoryListCollectionView.topAnchor.constraint(equalTo: selectedImageCollectionView.bottomAnchor, constant: 7)
+    self.categoryListCollectionView.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 7)
     
     private lazy var categoryListCollectionViewTrailingConstraint =
     self.categoryListCollectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: 0)
     
     private lazy var categoryListCollectionViewHeightConstraint =
     self.categoryListCollectionView.heightAnchor.constraint(equalToConstant: 32)
-    
-    lazy var memoTextViewBottomConstraint =
-    self.memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -5)
-    
-    private lazy var memoTextViewHeightConstraint =
-    self.memoTextView.heightAnchor.constraint(equalToConstant: 300)
     
     
     override init(frame: CGRect) {
@@ -83,9 +77,9 @@ final class MemoDetailView: UIView {
     
     private func configureViewHierarchy() {
         self.addSubview(titleTextField)
-        self.addSubview(selectedImageCollectionView)
+        self.addSubview(imageCollectionView)
         self.addSubview(activityIndicatorView)
-        self.addSubview(spreadCategoriesButton)
+        self.addSubview(categoryButton)
         self.addSubview(memoTextView)
         self.addSubview(collectionViewBackgroundBlurView)
         self.addSubview(categoryListCollectionView)
@@ -97,13 +91,13 @@ final class MemoDetailView: UIView {
         setupTitleTextFieldInputAccessoryView()
         setupSelectedImageCollectionView()
         setupTextView()
-        setupTextViewInputAccessoryView()
-        setupSpreadCategoriesButton()
+        setupTextViewInputAccessories()
+        setupCategoryButton()
         setupCollectionViewBackgroundBlurView()
     }
     
     private func setupActions() {
-        self.spreadCategoriesButton.addTarget(
+        self.categoryButton.addTarget(
             self,
             action: #selector(spreadCategoriesButtonTapped),
             for: .touchUpInside
@@ -111,16 +105,11 @@ final class MemoDetailView: UIView {
     }
     
     @objc private func spreadCategoriesButtonTapped(_ sender: UIButton) {
-        if sender.isSelected {
-            self.gatherCategories()
-        } else {
-            self.spreadCategories()
-        }
         sender.isSelected.toggle()
     }
     
     private func spreadCategories() {
-        self.isSpreaded = true
+        self.isCatgorySpreaded = true
         self.endEditing(true)
         
         self.categoryListCollectionViewCenterYConstraint.isActive = false
@@ -159,14 +148,13 @@ final class MemoDetailView: UIView {
     
     
     private func gatherCategories() {
-        self.isSpreaded = false
+        self.isCatgorySpreaded = false
+        self.categoryButton.isSelected = false
         let scrollAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
         let gatheringAnimator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
         
         scrollAnimator.addAnimations { [weak self] in
             guard let self else { fatalError() }
-//            guard let chevronImageView = self.spreadCategoriesButton.imageView else { fatalError() }
-//            chevronImageView.transform = CGAffineTransform.identity
             self.categoryListCollectionView.setContentOffset(CGPoint(x: -10, y: -10), animated: false)
         }
         
@@ -176,8 +164,6 @@ final class MemoDetailView: UIView {
         
         gatheringAnimator.addAnimations { [weak self] in
             guard let self else { return }
-            guard let chevronImageView = self.spreadCategoriesButton.imageView else { fatalError() }
-            chevronImageView.transform = CGAffineTransform.identity
             
             self.blurAnimator.stopAnimation(true)
             self.collectionViewBackgroundBlurView.alpha = 0
@@ -214,18 +200,18 @@ final class MemoDetailView: UIView {
             titleTextField.heightAnchor.constraint(equalToConstant: 50)
         ])
         
-        selectedImageCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        imageCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            selectedImageCollectionViewTopConstraint,
-            selectedImageCollectionView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 0),
-            selectedImageCollectionView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: 0),
-            selectedImageCollectionViewHeightConstraint,
+            imageCollectionViewTopConstraint,
+            imageCollectionView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 0),
+            imageCollectionView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: 0),
+            imageCollectionViewHeightConstraint,
         ])
         
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            activityIndicatorView.centerXAnchor.constraint(equalTo: self.selectedImageCollectionView.centerXAnchor, constant: 0),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: self.selectedImageCollectionView.centerYAnchor, constant: 0),
+            activityIndicatorView.centerXAnchor.constraint(equalTo: self.imageCollectionView.centerXAnchor, constant: 0),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: self.imageCollectionView.centerYAnchor, constant: 0),
         ])
         
         collectionViewBackgroundBlurView.translatesAutoresizingMaskIntoConstraints = false
@@ -236,29 +222,27 @@ final class MemoDetailView: UIView {
             collectionViewBackgroundBlurView.bottomAnchor.constraint(equalTo: self.categoryListCollectionView.bottomAnchor, constant: 0),
         ])
         
-        spreadCategoriesButton.translatesAutoresizingMaskIntoConstraints = false
+        categoryButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            spreadCategoriesButton.topAnchor.constraint(equalTo: self.selectedImageCollectionView.bottomAnchor, constant: 7),
-            spreadCategoriesButton.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            spreadCategoriesButton.heightAnchor.constraint(equalToConstant: 40),
+            categoryButton.topAnchor.constraint(equalTo: self.imageCollectionView.bottomAnchor, constant: 7),
+            categoryButton.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            categoryButton.heightAnchor.constraint(equalToConstant: 40),
         ])
         
         categoryListCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             categoryListCollectionViewCenterYConstraint,
-            categoryListCollectionView.leadingAnchor.constraint(equalTo: self.spreadCategoriesButton.trailingAnchor, constant: 0),
+            categoryListCollectionView.leadingAnchor.constraint(equalTo: self.categoryButton.trailingAnchor, constant: 0),
             categoryListCollectionViewTrailingConstraint,
             categoryListCollectionViewHeightConstraint,
         ])
         
         memoTextView.translatesAutoresizingMaskIntoConstraints = false
-        memoTextViewHeightConstraint.priority = UILayoutPriority(751)
         NSLayoutConstraint.activate([
-            memoTextView.topAnchor.constraint(equalTo: self.spreadCategoriesButton.bottomAnchor, constant: 7),
+            memoTextView.topAnchor.constraint(equalTo: self.categoryButton.bottomAnchor, constant: 7),
             memoTextView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 10),
             memoTextView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            memoTextViewHeightConstraint,
-            memoTextViewBottomConstraint,
+            memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -5),
         ])
     }
     
@@ -282,7 +266,7 @@ final class MemoDetailView: UIView {
     
     @objc func keyboardWillShow() {
         
-        if self.isSpreaded {
+        if self.isCatgorySpreaded {
             self.gatherCategories()
         }
         
@@ -290,54 +274,55 @@ final class MemoDetailView: UIView {
         
         guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
         let aspectRatio = screenSize.height / screenSize.width
+        let isImageEmpty = imageCollectionView.numberOfSections == 0
         
-        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
-        animator.addAnimations { [weak self] in
-            guard let self else { fatalError() }
-            
-            if self.selectedImageCollectionView.numberOfSections != 0, aspectRatio < 2 {
-//            if let themeColor = UserDefaults.standard.value(forKey: KeysForUserDefaults.themeColor.rawValue) as? String, themeColor == ThemeColor.blue.rawValue {
-                self.selectedImageCollectionViewTopConstraint.constant = 0
-                self.selectedImageCollectionViewHeightConstraint.constant = 0
-                self.layoutIfNeeded()
+        // 키보드가 올라올 때 이미지가 접히는 기준: 이미지가 존재하는데, 홈 버튼이 있는 아이폰 비율일 때
+        if !isImageEmpty &&  aspectRatio < 2 {
+            UIView.springAnimate(withDuration: 0.5) { [weak self] in
+                self?.imageCollectionViewTopConstraint.constant = 0
+                self?.imageCollectionViewHeightConstraint.constant = 0
+                self?.layoutIfNeeded()
             }
         }
-        
-        animator.startAnimation()
+//        
+//        
+//        
+//        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
+//        animator.addAnimations { [weak self] in
+//            guard let self else { fatalError() }
+//            
+//            if self.imageCollectionView.numberOfSections != 0, aspectRatio < 2 {
+//                self.imageCollectionViewTopConstraint.constant = 0
+//                self.imageCollectionViewHeightConstraint.constant = 0
+//                self.layoutIfNeeded()
+//            }
+//        }
+//        
+//        animator.startAnimation()
     }
     
     
     @objc func keyboardWillHide() {
         guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
         let aspectRatio = screenSize.height / screenSize.width
-        guard self.selectedImageCollectionView.numberOfSections != 0 else { return }
+        guard self.imageCollectionView.numberOfSections != 0 else { return }
         
         let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
         animator.addAnimations { [weak self] in
             guard let self else { fatalError() }
-            if self.selectedImageCollectionView.numberOfSections != 0, aspectRatio < 2 {
-//            if let themeColor = UserDefaults.standard.value(forKey: KeysForUserDefaults.themeColor.rawValue) as? String, themeColor == ThemeColor.blue.rawValue {
-                self.selectedImageCollectionViewTopConstraint.constant = 17
-                self.selectedImageCollectionViewHeightConstraint.constant = CGSizeConstant.detailViewThumbnailSize.height
+            if self.imageCollectionView.numberOfSections != 0, aspectRatio < 2 {
+                self.imageCollectionViewTopConstraint.constant = 17
+                self.imageCollectionViewHeightConstraint.constant = CGSizeConstant.detailViewThumbnailSize.height
                 self.layoutIfNeeded()
             }
         }
         
         animator.startAnimation()
-//        if self.selectedImageCollectionView.numberOfItems(inSection: 0) != 0 {
-//            UIView.animate(withDuration: 0.5) {
-////                self.selectedImageCollectionViewHeightConstraint.constant = 120
-//                self.layoutIfNeeded()
-//            }
-//        } else {
-//            return
-//        }
     }
     
     @objc private func keyboardHideButtonTapped() {
         self.endEditing(true)
     }
-    
     
 }
 
@@ -352,8 +337,8 @@ extension MemoDetailView {
     func showImageCollectionView(targetHeight: CGFloat, animated: Bool = true) {
         imageShowingAnimator.stopAnimation(true)
         imageShowingAnimator.addAnimations { [weak self] in
-            self?.selectedImageCollectionViewTopConstraint.constant = 17
-            self?.selectedImageCollectionViewHeightConstraint.constant = targetHeight
+            self?.imageCollectionViewTopConstraint.constant = 17
+            self?.imageCollectionViewHeightConstraint.constant = targetHeight
         }
         imageShowingAnimator.startAnimation()
     }
@@ -363,8 +348,8 @@ extension MemoDetailView {
     func hideImageCollectionView(animated: Bool = true) {
         imageShowingAnimator.stopAnimation(true)
         imageShowingAnimator.addAnimations { [weak self] in
-            self?.selectedImageCollectionViewTopConstraint.constant = 0
-            self?.selectedImageCollectionViewHeightConstraint.constant = 0
+            self?.imageCollectionViewTopConstraint.constant = 0
+            self?.imageCollectionViewHeightConstraint.constant = 0
             
             self?.layoutIfNeeded()
         }
@@ -492,16 +477,16 @@ extension MemoDetailView {
     }
     
     private func setupSelectedImageCollectionView() {
-        selectedImageCollectionView.register(
+        imageCollectionView.register(
             MemoDetailViewSelectedImageCell.self,
             forCellWithReuseIdentifier: MemoDetailViewSelectedImageCell.cellID
         )
-        selectedImageCollectionView.isScrollEnabled = true
-        selectedImageCollectionView.backgroundColor = .clear
-        selectedImageCollectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 20)
-        selectedImageCollectionView.showsHorizontalScrollIndicator = false
-        selectedImageCollectionView.showsVerticalScrollIndicator = false
-        selectedImageCollectionView.clipsToBounds = false
+        imageCollectionView.isScrollEnabled = true
+        imageCollectionView.backgroundColor = .clear
+        imageCollectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 20)
+        imageCollectionView.showsHorizontalScrollIndicator = false
+        imageCollectionView.showsVerticalScrollIndicator = false
+        imageCollectionView.clipsToBounds = false
     }
     
     private func setupTextView() {
@@ -522,7 +507,7 @@ extension MemoDetailView {
         )
     }
     
-    private func setupTextViewInputAccessoryView() {
+    private func setupTextViewInputAccessories() {
         let bar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         let hideKeyboardButton = UIBarButtonItem(
             image: UIImage(systemName: "keyboard.chevron.compact.down"),
@@ -537,21 +522,30 @@ extension MemoDetailView {
         memoTextView.inputAccessoryView = bar
     }
     
-    private func setupSpreadCategoriesButton() {
-        spreadCategoriesButton.configuration?.baseBackgroundColor = .clear
-        spreadCategoriesButton.configuration?.baseForegroundColor = .currentTheme()
-        spreadCategoriesButton.configuration?.image = UIImage(systemName: "chevron.right")
-        // 이미지 회전 시 비율 깨지지 않도록
-        spreadCategoriesButton.configuration?.title = "카테고리".localized()
-        spreadCategoriesButton.configuration?.imagePadding = 5
-        spreadCategoriesButton.configuration?.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
+    private func setupCategoryButton() {
+        var config = UIButton.Configuration.plain()
+        config.baseBackgroundColor = .clear
+        config.baseForegroundColor = .currentTheme()
+        config.image = UIImage(systemName: "chevron.right")
+        config.title = "카테고리".localized()
+        config.imagePadding = 5
+        config.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
         
+        categoryButton.configuration = config
         // chevron 이미지 회전 시 비율 깨지지 않도록
-        spreadCategoriesButton.imageView?.contentMode = .center
-        spreadCategoriesButton.configurationUpdateHandler = { button in
-            button.imageView?.transform = (button.isSelected
-                                          ? CGAffineTransform(rotationAngle: .pi/2)
-                                          : .identity)
+        categoryButton.imageView?.contentMode = .center
+        categoryButton.configurationUpdateHandler = { [weak self] button in
+            if button.isSelected {
+                UIView.springAnimate(withDuration: 0.5) {
+                    button.imageView?.transform = .init(rotationAngle: .pi/2)
+                    self?.spreadCategories()
+                }
+            } else {
+                UIView.springAnimate(withDuration: 0.5) {
+                    button.imageView?.transform = .identity
+                    self?.gatherCategories()
+                }
+            }
         }
     }
     
@@ -561,11 +555,12 @@ extension MemoDetailView {
         collectionViewBackgroundBlurView.layer.cornerCurve = .continuous
     }
     
-    
 }
 
 
 extension MemoDetailView {
+    
+    // nested type 정의
     
     final class CategoryListCollectionView: UICollectionView {
         

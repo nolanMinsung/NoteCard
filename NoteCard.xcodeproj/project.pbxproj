@@ -69,6 +69,7 @@
 		4E3E75782B67D3B60073A951 /* QuickMemoEmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75772B67D3B60073A951 /* QuickMemoEmptyViewController.swift */; };
 		4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75792B67D3D40073A951 /* QuickMemoEmptyView.swift */; };
 		4E3E757C2B6889260073A951 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E757B2B6889260073A951 /* MainTabBarController.swift */; };
+		4E3EC97A2E28802E000C6679 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3EC9792E28802E000C6679 /* UIView+.swift */; };
 		4E3F63562B0B7BFF004DD676 /* CategoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3F63552B0B7BFF004DD676 /* CategoryListView.swift */; };
 		4E4FCCBA2B3C33E7000CBE17 /* DateFormatSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCB92B3C33E7000CBE17 /* DateFormatSettingViewController.swift */; };
 		4E4FCCBC2B3C33FD000CBE17 /* DateFormatSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCBB2B3C33FD000CBE17 /* DateFormatSettingView.swift */; };
@@ -169,6 +170,7 @@
 		4E3E75772B67D3B60073A951 /* QuickMemoEmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoEmptyViewController.swift; sourceTree = "<group>"; };
 		4E3E75792B67D3D40073A951 /* QuickMemoEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoEmptyView.swift; sourceTree = "<group>"; };
 		4E3E757B2B6889260073A951 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
+		4E3EC9792E28802E000C6679 /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		4E3F63552B0B7BFF004DD676 /* CategoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListView.swift; sourceTree = "<group>"; };
 		4E4FCCB92B3C33E7000CBE17 /* DateFormatSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatSettingViewController.swift; sourceTree = "<group>"; };
 		4E4FCCBB2B3C33FD000CBE17 /* DateFormatSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatSettingView.swift; sourceTree = "<group>"; };
@@ -248,11 +250,11 @@
 		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
+				4E3EC9782E288020000C6679 /* Extensions */,
 				4E2712022DA19C730007D53A /* Protocols */,
 				4ED42A842B3D6EDA00D14571 /* Localizable.strings */,
 				4E1384A42AF37B350063817B /* AppDelegate.swift */,
 				4E1384A62AF37B350063817B /* SceneDelegate.swift */,
-				4E0D6A012B08BBB2008447AB /* Extensions.swift */,
 				4ECDA56B2E16262C003D15F5 /* TabBar */,
 				4E1384BB2AF37DE10063817B /* CoreData */,
 				4E1384BC2AF37E070063817B /* Models */,
@@ -423,6 +425,15 @@
 				4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */,
 			);
 			path = DarkModeSettingView;
+			sourceTree = "<group>";
+		};
+		4E3EC9782E288020000C6679 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4E3EC9792E28802E000C6679 /* UIView+.swift */,
+				4E0D6A012B08BBB2008447AB /* Extensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		4E4FCCB82B3C3335000CBE17 /* DateFormatSettingView */ = {
@@ -663,6 +674,7 @@
 				4E1384A92AF37B350063817B /* ViewController.swift in Sources */,
 				4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */,
 				4E1385132AF386AF0063817B /* LargeCardCollectionViewCell.swift in Sources */,
+				4E3EC97A2E28802E000C6679 /* UIView+.swift in Sources */,
 				4E1385222AF387AA0063817B /* CardImageShowingPresentationController.swift in Sources */,
 				4E4FCCBA2B3C33E7000CBE17 /* DateFormatSettingViewController.swift in Sources */,
 				4E6EE9692B201CDF0009DD84 /* LargeCardCollectionView.swift in Sources */,
@@ -858,6 +870,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NoteCard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NoteCard;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "포토 라이브러리 쓰기 권한 요청";
@@ -865,6 +878,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -896,6 +910,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NoteCard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NoteCard;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "포토 라이브러리 쓰기 권한 요청";
@@ -903,6 +918,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
