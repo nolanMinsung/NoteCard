@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,7 +11,6 @@
 		4E0BDF4C2B3D38C400813DCA /* OrderSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF4B2B3D38C000813DCA /* OrderSettingViewController.swift */; };
 		4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF492B3D38C000813DCA /* OrderSettingTableViewCell.swift */; };
 		4E0BDF4E2B3D38C800813DCA /* OrderSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF4A2B3D38C000813DCA /* OrderSettingView.swift */; };
-		4E0D6A022B08BBB2008447AB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0D6A012B08BBB2008447AB /* Extensions.swift */; };
 		4E10F8442B654162007B468A /* NoteCardCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4E10F8422B654162007B468A /* NoteCardCoreData.xcdatamodeld */; };
 		4E1384A52AF37B350063817B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384A42AF37B350063817B /* AppDelegate.swift */; };
 		4E1384A72AF37B350063817B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384A62AF37B350063817B /* SceneDelegate.swift */; };
@@ -69,7 +68,6 @@
 		4E3E75782B67D3B60073A951 /* QuickMemoEmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75772B67D3B60073A951 /* QuickMemoEmptyViewController.swift */; };
 		4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75792B67D3D40073A951 /* QuickMemoEmptyView.swift */; };
 		4E3E757C2B6889260073A951 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E757B2B6889260073A951 /* MainTabBarController.swift */; };
-		4E3EC97A2E28802E000C6679 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3EC9792E28802E000C6679 /* UIView+.swift */; };
 		4E3F63562B0B7BFF004DD676 /* CategoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3F63552B0B7BFF004DD676 /* CategoryListView.swift */; };
 		4E4FCCBA2B3C33E7000CBE17 /* DateFormatSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCB92B3C33E7000CBE17 /* DateFormatSettingViewController.swift */; };
 		4E4FCCBC2B3C33FD000CBE17 /* DateFormatSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCBB2B3C33FD000CBE17 /* DateFormatSettingView.swift */; };
@@ -110,7 +108,6 @@
 		4E0BDF492B3D38C000813DCA /* OrderSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSettingTableViewCell.swift; sourceTree = "<group>"; };
 		4E0BDF4A2B3D38C000813DCA /* OrderSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSettingView.swift; sourceTree = "<group>"; };
 		4E0BDF4B2B3D38C000813DCA /* OrderSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSettingViewController.swift; sourceTree = "<group>"; };
-		4E0D6A012B08BBB2008447AB /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		4E10F8432B654162007B468A /* NoteCardCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NoteCardCoreData.xcdatamodel; sourceTree = "<group>"; };
 		4E1384A12AF37B350063817B /* NoteCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E1384A42AF37B350063817B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -170,7 +167,6 @@
 		4E3E75772B67D3B60073A951 /* QuickMemoEmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoEmptyViewController.swift; sourceTree = "<group>"; };
 		4E3E75792B67D3D40073A951 /* QuickMemoEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoEmptyView.swift; sourceTree = "<group>"; };
 		4E3E757B2B6889260073A951 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
-		4E3EC9792E28802E000C6679 /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		4E3F63552B0B7BFF004DD676 /* CategoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListView.swift; sourceTree = "<group>"; };
 		4E4FCCB92B3C33E7000CBE17 /* DateFormatSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatSettingViewController.swift; sourceTree = "<group>"; };
 		4E4FCCBB2B3C33FD000CBE17 /* DateFormatSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatSettingView.swift; sourceTree = "<group>"; };
@@ -209,6 +205,10 @@
 		4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingViewController.swift; sourceTree = "<group>"; };
 		4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4E462BA92E29CF4A004C0215 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4E13849E2AF37B350063817B /* Frameworks */ = {
@@ -250,7 +250,7 @@
 		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
-				4E3EC9782E288020000C6679 /* Extensions */,
+				4E462BA92E29CF4A004C0215 /* Extensions */,
 				4E2712022DA19C730007D53A /* Protocols */,
 				4ED42A842B3D6EDA00D14571 /* Localizable.strings */,
 				4E1384A42AF37B350063817B /* AppDelegate.swift */,
@@ -427,15 +427,6 @@
 			path = DarkModeSettingView;
 			sourceTree = "<group>";
 		};
-		4E3EC9782E288020000C6679 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				4E3EC9792E28802E000C6679 /* UIView+.swift */,
-				4E0D6A012B08BBB2008447AB /* Extensions.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
 		4E4FCCB82B3C3335000CBE17 /* DateFormatSettingView */ = {
 			isa = PBXGroup;
 			children = (
@@ -547,6 +538,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4E462BA92E29CF4A004C0215 /* Extensions */,
 			);
 			name = NoteCard;
 			productName = CardMemo;
@@ -668,13 +662,11 @@
 				4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */,
 				4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */,
 				4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */,
-				4E0D6A022B08BBB2008447AB /* Extensions.swift in Sources */,
 				4E1384DC2AF382A40063817B /* MemoEntity+CoreDataClass.swift in Sources */,
 				4E1384FD2AF385580063817B /* HomeViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E1384A92AF37B350063817B /* ViewController.swift in Sources */,
 				4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */,
 				4E1385132AF386AF0063817B /* LargeCardCollectionViewCell.swift in Sources */,
-				4E3EC97A2E28802E000C6679 /* UIView+.swift in Sources */,
 				4E1385222AF387AA0063817B /* CardImageShowingPresentationController.swift in Sources */,
 				4E4FCCBA2B3C33E7000CBE17 /* DateFormatSettingViewController.swift in Sources */,
 				4E6EE9692B201CDF0009DD84 /* LargeCardCollectionView.swift in Sources */,

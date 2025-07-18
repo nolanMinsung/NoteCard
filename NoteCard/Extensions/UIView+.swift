@@ -14,4 +14,10 @@ extension UIView {
         self.animate(withDuration: withDuration, delay: delay, usingSpringWithDamping: 1, initialSpringVelocity: 1, animations: animations)
     }
     
+    func currentWindowScene() -> UIWindowScene? {
+        guard let window = self.window else { return nil }
+        guard let windowScene = window.windowScene else { return nil }
+        return windowScene
+    }
+    
 }
