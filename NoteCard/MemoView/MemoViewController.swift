@@ -43,7 +43,7 @@ class MemoViewController: UIViewController {
     
     lazy var memoView = self.view as! MemoView
     lazy var largeCardCollectionView = memoView.largeCardCollectionView
-    lazy var segmentControl = memoView.segmentControl
+    lazy var segmentControl = memoView.segmentedControl
     lazy var smallCardCollectionView = memoView.smallCardCollectionView
     lazy var categoryNameTextField = memoView.categoryNameTextField
     

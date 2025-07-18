@@ -9,13 +9,30 @@ import UIKit
 
 class LargeCardCollectionView: UICollectionView {
     
-//    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
-//        super.init(frame: frame, collectionViewLayout: layout)
-//        
-//    }
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
+    init() {
+        let screenSize = UIScreen.current?.bounds.size
+        let pagingFlowLayout = UICollectionViewFlowLayout()
+        guard let screenSize else { fatalError() }
+        pagingFlowLayout.scrollDirection = .horizontal
+        pagingFlowLayout.estimatedItemSize = CGSize(width: screenSize.width * 0.9, height: screenSize.height * 0.5)
+        pagingFlowLayout.minimumLineSpacing = 10
+        pagingFlowLayout.minimumInteritemSpacing = 0
+        
+        super.init(frame: .zero, collectionViewLayout: pagingFlowLayout)
+        
+        clipsToBounds = false
+        backgroundColor = .clear
+        contentInset = UIEdgeInsets(top: 0, left: screenSize.width * 0.05, bottom: 0, right: screenSize.width * 0.05)
+        register(LargeCardCollectionViewCell.self,forCellWithReuseIdentifier: LargeCardCollectionViewCell.cellID)
+        isScrollEnabled = true
+        decelerationRate = .fast
+        showsVerticalScrollIndicator = false
+        showsHorizontalScrollIndicator = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if !self.clipsToBounds && !self.isHidden && self.alpha > 0.0 {

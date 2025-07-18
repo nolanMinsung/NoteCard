@@ -69,6 +69,7 @@
 		4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75792B67D3D40073A951 /* QuickMemoEmptyView.swift */; };
 		4E3E757C2B6889260073A951 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E757B2B6889260073A951 /* MainTabBarController.swift */; };
 		4E3F63562B0B7BFF004DD676 /* CategoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3F63552B0B7BFF004DD676 /* CategoryListView.swift */; };
+		4E462D692E2A1AF5004C0215 /* SmallCardCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E462D682E2A1AF5004C0215 /* SmallCardCollectionView.swift */; };
 		4E4FCCBA2B3C33E7000CBE17 /* DateFormatSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCB92B3C33E7000CBE17 /* DateFormatSettingViewController.swift */; };
 		4E4FCCBC2B3C33FD000CBE17 /* DateFormatSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCBB2B3C33FD000CBE17 /* DateFormatSettingView.swift */; };
 		4E4FCCBE2B3C3644000CBE17 /* DateFormatSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCBD2B3C3644000CBE17 /* DateFormatSettingTableViewCell.swift */; };
@@ -168,6 +169,7 @@
 		4E3E75792B67D3D40073A951 /* QuickMemoEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoEmptyView.swift; sourceTree = "<group>"; };
 		4E3E757B2B6889260073A951 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		4E3F63552B0B7BFF004DD676 /* CategoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListView.swift; sourceTree = "<group>"; };
+		4E462D682E2A1AF5004C0215 /* SmallCardCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallCardCollectionView.swift; sourceTree = "<group>"; };
 		4E4FCCB92B3C33E7000CBE17 /* DateFormatSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatSettingViewController.swift; sourceTree = "<group>"; };
 		4E4FCCBB2B3C33FD000CBE17 /* DateFormatSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatSettingView.swift; sourceTree = "<group>"; };
 		4E4FCCBD2B3C3644000CBE17 /* DateFormatSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatSettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -339,6 +341,7 @@
 				4E13850E2AF386750063817B /* MemoViewController.swift */,
 				4E1385102AF386920063817B /* MemoView.swift */,
 				4E6EE9682B201CDF0009DD84 /* LargeCardCollectionView.swift */,
+				4E462D682E2A1AF5004C0215 /* SmallCardCollectionView.swift */,
 				4E1385122AF386AF0063817B /* LargeCardCollectionViewCell.swift */,
 				4E1385182AF387100063817B /* SmallCardCollectionViewCell.swift */,
 				4E1385142AF386D10063817B /* MemoImageCollectionViewCell.swift */,
@@ -684,6 +687,7 @@
 				4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */,
 				4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */,
 				4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */,
+				4E462D692E2A1AF5004C0215 /* SmallCardCollectionView.swift in Sources */,
 				4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */,
 				4E1384A72AF37B350063817B /* SceneDelegate.swift in Sources */,
 				4E0BDF4C2B3D38C400813DCA /* OrderSettingViewController.swift in Sources */,
