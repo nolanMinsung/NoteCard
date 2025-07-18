@@ -20,4 +20,9 @@ extension UIView {
         return windowScene
     }
     
+    // window가 여러 개인 경우는 어떡함?
+    func currentSceneSize() -> CGSize? {
+        return currentWindowScene()?.windows.first?.bounds.size
+    }
+    
 }
