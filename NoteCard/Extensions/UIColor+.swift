@@ -31,6 +31,7 @@ extension UIColor {
     
     static func currentTheme() -> UIColor {
         guard let themeColor = UserDefaults.standard.value(forKey: UserDefaultsKeys.themeColor.rawValue) as? String else {
+            UserDefaults.standard.set("black", forKey: UserDefaultsKeys.themeColor.rawValue)
             return .label
         }
         
