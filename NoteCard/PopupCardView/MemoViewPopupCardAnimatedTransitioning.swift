@@ -175,12 +175,17 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
         self.presentationPropertyAnimator.addAnimations {
             
-            guard let screenRect = popupCardView.window?.windowScene?.screen.bounds else { fatalError() }
-            let screenWidth = screenRect.width
-            let screenHeight = screenRect.height
-            let horizontalInset: CGFloat = screenWidth / 40
-            let verticalInset: CGFloat = screenHeight * 0.145
-            popupCardView.frame = CGRect(x: horizontalInset, y: verticalInset, width: screenWidth - (horizontalInset * 2), height: screenHeight - (verticalInset * 2))
+            guard let windowRect = popupCardView.window?.bounds else { fatalError() }
+            let windowWidth = windowRect.width
+            let windowHeight = windowRect.height
+            let horizontalInset: CGFloat = windowWidth / 40
+            let verticalInset: CGFloat = windowHeight * 0.145
+            popupCardView.frame = CGRect(
+                x: horizontalInset,
+                y: verticalInset,
+                width: windowWidth - (horizontalInset * 2),
+                height: windowHeight - (verticalInset * 2)
+            )
             
             popupCardView.layer.cornerRadius = 37
             popupCardView.layer.cornerCurve = .continuous
@@ -218,10 +223,8 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             popupCardView.cellSnapshot.alpha = 0
         }
         
-        
         self.presentationPropertyAnimator.startAnimation()
         self.presentationPropertyAnimatorForSnapshot.startAnimation()
-        
     }
     
     
