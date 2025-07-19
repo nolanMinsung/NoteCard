@@ -55,7 +55,6 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         case .dismiss:
             self.animationForDismissal(using: transitionContext)
         }
-        
     }
     
     private func animationForPresentation(using transitionContext: UIViewControllerContextTransitioning) {
@@ -69,7 +68,31 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         let popupCardView = popupCardVC.view as! PopupCardView
         weak var selectedCell = popupCardVC.selectedCollectionViewCell
         guard let selectedCell else { fatalError() }
-        popupCardView.frame = selectedCellFrame
+        
+        let popupCardInitialConstraints = [
+            popupCardView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: selectedCellFrame.origin.y),
+            popupCardView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: selectedCellFrame.origin.x),
+            popupCardView.widthAnchor.constraint(equalToConstant: selectedCellFrame.width),
+            popupCardView.heightAnchor.constraint(equalToConstant: selectedCellFrame.height),
+        ]
+        popupCardView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate(popupCardInitialConstraints)
+        containerView.layoutIfNeeded()
+        
+        guard let windowRect = popupCardView.window?.bounds else { fatalError() }
+        let isPadInterface = UIDevice.current.userInterfaceIdiom == .pad
+        let windowWidth = windowRect.width
+        let windowHeight = windowRect.height
+        let horizontalInset: CGFloat = isPadInterface ? 10 :windowWidth / 40
+        let verticalInset: CGFloat = isPadInterface ? (containerView.safeAreaInsets.top + 50) : windowHeight * 0.145
+        
+        let popupCardFinalConstraints = [
+            popupCardView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: verticalInset),
+            popupCardView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: horizontalInset),
+            popupCardView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -horizontalInset),
+            popupCardView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -verticalInset),
+        ]
+        
         popupCardView.layer.cornerRadius = cornerRadius
         popupCardView.selectedImageCollectionViewTopConstraint.constant = 0
         popupCardView.selectedImageCollectionViewHeightConstraint.constant = 0
@@ -104,17 +127,9 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         }
         
         self.presentationPropertyAnimator.addAnimations {
-            guard let windowRect = popupCardView.window?.bounds else { fatalError() }
-            let windowWidth = windowRect.width
-            let windowHeight = windowRect.height
-            let horizontalInset: CGFloat = windowWidth / 40
-            let verticalInset: CGFloat = windowHeight * 0.145
-            popupCardView.frame = CGRect(
-                x: horizontalInset,
-                y: verticalInset,
-                width: windowWidth - (horizontalInset * 2),
-                height: windowHeight - (verticalInset * 2)
-            )
+            NSLayoutConstraint.deactivate(popupCardInitialConstraints)
+            NSLayoutConstraint.activate(popupCardFinalConstraints)
+            
             popupCardView.layer.cornerRadius = 37
             popupCardView.layer.cornerCurve = .continuous
             popupCardView.titleTextFieldTopConstraint.constant = 10
@@ -126,7 +141,8 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             popupCardView.memoTextViewLeadingConstraint.constant = 10
             popupCardView.memoTextViewTrailingConstraint.constant = -10
             popupCardView.memoTextView.bounds.origin.x = 0
-            popupCardView.layoutIfNeeded()
+            
+            containerView.layoutIfNeeded()
         }
         self.presentationPropertyAnimator.addCompletion { animatingPosition in transitionContext.completeTransition(true) }
         
@@ -154,6 +170,7 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
         weak var popupCardView = popupCardVC.view as? PopupCardView
         guard let popupCardView else { fatalError() }
+        popupCardView.translatesAutoresizingMaskIntoConstraints = true
         
         weak var selectedCell: UICollectionViewCell?
         
