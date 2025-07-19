@@ -9,221 +9,100 @@ import UIKit
 
 final class PopupCardView: UIView {
     
-//    let CategoryEntityManager.shared = CategoryEntityManager.shared
-//    let MemoEntityManager.shared = MemoEntityManager.shared
-//    let ImageEntityManager.shared = ImageEntityManager.shared
-    
-//    let titleTextFieldTapGesture = UITapGestureRecognizer()
-    let heartImageViewTapGesture = UITapGestureRecognizer()
+    private let heartImageViewTapGesture = UITapGestureRecognizer()
     let memoTextViewTapGesture = UITapGestureRecognizer()
-    let screenSize = UIScreen.current?.bounds.size
+    private let screenSize = UIScreen.current?.bounds.size
     
-    var memoEntity: MemoEntity?
+    private var memoEntity: MemoEntity?
     
     weak var delegate: LargeCardCollectionViewCellDelegate?
     
     var sortedImageEntitiesArray: [ImageEntity] = []
-    var thumbnailArray: [UIImage] = []
-    var imageArray: [UIImage] = []
+    private var thumbnailArray: [UIImage] = []
+    private var imageArray: [UIImage] = []
     var numberOfImages: Int = 0
-    var keyboardFrame: CGRect = .zero
-    var isViewShiftedUp: Bool = false
-    var isTextFieldChanged: Bool = false
+    private var keyboardFrame: CGRect = .zero
+    private var isViewShiftedUp: Bool = false
+    private var isTextFieldChanged: Bool = false
     var isTextViewChanged: Bool = false
     var isEdited: Bool = false
-//    var categoryMayHaveChanged: Bool = false
     
-    lazy var popupCardVerticalPadding = (screenSize!.height - self.bounds.height) / 2
-    lazy var titleTextFieldTopConstraint = self.titleTextField.topAnchor.constraint(equalTo: self.topAnchor, constant: 15)
-    lazy var selectedImageCollectionViewTopConstraint = self.selectedImageCollectionView.topAnchor.constraint(equalTo: self.selectedCategoryCollectionView.bottomAnchor, constant: 0)
-    lazy var selectedImageCollectionViewHeightConstraint = self.selectedImageCollectionView.heightAnchor.constraint(equalToConstant: 0)
-    lazy var titleTextFieldLeadingConstraint = self.titleTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 25)
+    private lazy var popupCardVerticalPadding
+    = (screenSize!.height - bounds.height) / 2
     
-    lazy var heartImageViewTopConstraint = self.heartImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 14)
-    lazy var heartImageViewLeadingConstraint = self.heartImageView.leadingAnchor.constraint(equalTo: self.titleTextField.trailingAnchor, constant: 10)
-    lazy var heartImageViewTrailingConstraint = self.heartImageView.trailingAnchor.constraint(equalTo: self.ellipsisButton.leadingAnchor, constant: 0)
-    lazy var heartImageViewTrailingToPopupCardViewConstraint = self.heartImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
-    lazy var heartImageViewWidthConstraint = self.heartImageView.widthAnchor.constraint(equalToConstant: 27)
-    lazy var heartImageViewHeightConstraint = self.heartImageView.heightAnchor.constraint(equalToConstant: 27)
+    lazy var titleTextFieldTopConstraint
+    = titleTextField.topAnchor.constraint(equalTo: topAnchor, constant: 15)
     
-    lazy var memoTextViewLeadingConstraint = self.memoTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10)
-    lazy var memoTextViewTrailingConstraint = self.memoTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10)
+    lazy var selectedImageCollectionViewTopConstraint
+    = self.selectedImageCollectionView.topAnchor.constraint(
+        equalTo: selectedCategoryCollectionView.bottomAnchor,
+        constant: 0
+    )
+    lazy var selectedImageCollectionViewHeightConstraint
+    = self.selectedImageCollectionView.heightAnchor.constraint(equalToConstant: 0)
+    
+    lazy var titleTextFieldLeadingConstraint
+    = titleTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25)
+    
+    
+    lazy var heartImageViewTopConstraint
+    = heartImageView.topAnchor.constraint(equalTo: topAnchor, constant: 14)
+    
+    lazy var heartImageViewLeadingConstraint
+    = heartImageView.leadingAnchor.constraint(equalTo: titleTextField.trailingAnchor, constant: 10)
+    
+    lazy var heartImageViewTrailingConstraint
+    = heartImageView.trailingAnchor.constraint(equalTo: ellipsisButton.leadingAnchor, constant: 0)
+    
+    lazy var heartImageViewTrailingToPopupCardViewConstraint
+    = self.heartImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
+    
+    lazy var heartImageViewWidthConstraint
+    = heartImageView.widthAnchor.constraint(equalToConstant: 27)
+    
+    lazy var heartImageViewHeightConstraint
+    = heartImageView.heightAnchor.constraint(equalToConstant: 27)
+    
+    lazy var memoTextViewLeadingConstraint
+    = memoTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10)
+    
+    lazy var memoTextViewTrailingConstraint
+    = memoTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
     
     var cellSnapshot: UIView!
     var popupCardSnapshot: UIView!
     
-    lazy var titleTextField: UITextField = { [weak self] in
-        guard let self else { fatalError() }
-        let textField = UITextField()
-        
-        let bar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
-        let hideKeyboardButton = UIBarButtonItem(image: UIImage(systemName: "keyboard.chevron.compact.down"),
-                                                 style: .plain,
-                                                 target: self,
-                                                 action: #selector(keyboardHideButtonTapped))
-        let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
-        bar.items = [flexibleBarButton, hideKeyboardButton]
-        bar.sizeToFit()
-        bar.tintColor = .currentTheme()
-        textField.inputAccessoryView = bar
-        
-        textField.font = UIFont.systemFont(ofSize: 18)
-        textField.placeholder = "제목 없음".localized()
-        textField.borderStyle = .none
-        textField.text = ""
-        textField.textAlignment = .left
-        textField.backgroundColor = .clear
-        textField.textColor = UIColor.label
-        textField.tintColor = .currentTheme()
-        textField.minimumFontSize = 16 //같은 셀의 textView의 폰트는 13.5 <- 이보다는 커야 한다.
-        textField.adjustsFontSizeToFitWidth = true
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
-    }()
+    let titleTextField = UITextField()
+    let heartImageView = UIImageView(image: .init(systemName: "heart"))
+    let ellipsisButton = UIButton()
     
+    private let makeCategoryFlowLayout = {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.minimumLineSpacing = 10
+        flowLayout.scrollDirection = .horizontal
+        flowLayout.estimatedItemSize = CGSize(width: 50, height: 25)
+        return flowLayout
+    }
+    lazy var selectedCategoryCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: makeCategoryFlowLayout()
+    )
     
-    let heartImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "heart")
-        imageView.tintColor = .systemRed
-        imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .clear
-        imageView.isUserInteractionEnabled = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    lazy var ellipsisButton: UIButton = {
-        var configuration = UIButton.Configuration.plain()
-        configuration.image = UIImage(systemName: "ellipsis.circle")
-        configuration.title = ""
-        configuration.contentInsets = .zero
-        configuration.imagePlacement = .all
-        configuration.background.backgroundColor = .clear
-
-        let button = UIButton(configuration: configuration)
-        
-        button.configurationUpdateHandler = { button in
-            switch button.state {
-            case .normal:
-                button.configuration?.image = UIImage(systemName: "ellipsis.circle")
-                button.tintColor = UIColor.currentTheme()
-            case .highlighted:
-                button.tintColor = .lightGray
-            default:
-                return
-            }
-        }
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.showsMenuAsPrimaryAction = true
-        
-        return button
-    }()
-    
-    let selectedCategoryCollectionView: UICollectionView = {
-        let flowLayout: UICollectionViewFlowLayout = {
-            let layout = UICollectionViewFlowLayout()
-            layout.minimumLineSpacing = 10
-            layout.scrollDirection = .horizontal
-            layout.estimatedItemSize = CGSize(width: 50, height: 25)
-            return layout
-        }()
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.backgroundColor = .clear
-        collectionView.register(TotalListCellCategoryCell.self, forCellWithReuseIdentifier: TotalListCellCategoryCell.cellID)
-        collectionView.clipsToBounds = true
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        return collectionView
-    }()
-    
-    let selectedImageCollectionView: UICollectionView = {
+    private let makeImageFlowLayout = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = 10
         flowLayout.sectionInset = .zero
         flowLayout.itemSize = CGSize(width: 70, height: 70)
         flowLayout.scrollDirection = .horizontal
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.register(MemoImageCollectionViewCell.self, forCellWithReuseIdentifier: MemoImageCollectionViewCell.cellID)
-        collectionView.isScrollEnabled = true
-        collectionView.backgroundColor = .clear
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        collectionView.clipsToBounds = true
-        collectionView.layer.cornerRadius = 13
-        collectionView.layer.cornerCurve = .continuous
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        return collectionView
-    }()
+        return flowLayout
+    }
+    lazy var selectedImageCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: makeImageFlowLayout()
+    )
     
-    lazy var memoTextView: UITextView = { [weak self] in
-        guard let self else { fatalError() }
-        //https://stackoverflow.com/questions/74517550/siwiftui-uitextview-is-switching-to-textkit-1
-        //이 텍스트뷰는 layoutManager를 사용하는 것으로 인식했기 때문에 TextKit1으로 사용한다.
-        //만약 UITextView() 의 방식으로 텍스트뷰를 생성한다면
-        //iOS16+ 에서는 default로 TextKit2를 사용하는 것으로 되어있는데, 앞서 언급한 것처럼 TextKit1을 사용해야 하기 때문에
-        //이를 TextKit2에서 TextKit1으로 switch 한다고 경고문 뜰 것임.
-//        let view = UITextView(usingTextLayoutManager: false)
-//        let view = UITextView()
-        
-        var view: UITextView
-        
-        if #available(iOS 16.0, *) {
-            view = UITextView(usingTextLayoutManager: false)
-        } else {
-            view = UITextView()
-        }
-        
-        let bar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
-        let hideKeyboardButton = UIBarButtonItem(image: UIImage(systemName: "keyboard.chevron.compact.down"), style: .plain, target: self, action: #selector(keyboardHideButtonTapped))
-        let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
-        bar.items = [flexibleBarButton, hideKeyboardButton]
-        bar.sizeToFit()
-        bar.tintColor = .currentTheme()
-        view.inputAccessoryView = bar
-        
-        let mutableParagraphStyle = NSMutableParagraphStyle()
-        mutableParagraphStyle.lineSpacing = 5
-        let attributes = [
-            NSAttributedString.Key.paragraphStyle: mutableParagraphStyle,
-            .font: UIFont.systemFont(ofSize: 15),
-            .foregroundColor: UIColor.label
-        ]
-        view.typingAttributes = attributes
-        
-        view.backgroundColor = .clear
-        view.textInputView.backgroundColor = .clear
-        view.bounces = true
-        view.tintColor = .currentTheme()
-        view.isEditable = false
-        view.isScrollEnabled = true
-        view.dataDetectorTypes = .link
-        view.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
-        view.textContainerInset  = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        view.textContainer.lineFragmentPadding = 0
-        view.clipsToBounds = true
-        view.layer.cornerRadius = 25
-        view.layer.cornerCurve = .continuous
-        view.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMaxXMaxYCorner, .layerMinXMaxYCorner)
-        
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    let memoDateLabel: UILabel = {
-        let label = UILabel()
-        label.text = "1998.12.22.에 생성됨"
-        label.textColor = .lightGray
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.numberOfLines = 1
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    var memoTextView: UITextView!
+    let memoDateLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -243,37 +122,42 @@ final class PopupCardView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        if self.traitCollection.userInterfaceStyle == .dark {
-            self.layer.shadowPath = nil
-            self.layer.shadowColor = nil
+        if traitCollection.userInterfaceStyle == .dark {
+            layer.shadowPath = nil
+            layer.shadowColor = nil
             
         } else {
             let bezierPath = UIBezierPath(rect: self.bounds)
-            self.layer.shadowPath = bezierPath.cgPath
-            self.layer.shadowColor = UIColor.currentTheme().cgColor
-            self.layer.shadowOffset = CGSize(width: 0, height: 0)
-            self.layer.shadowOpacity = 0.25
-            self.layer.shadowRadius = 60
-            
+            layer.shadowPath = bezierPath.cgPath
+            layer.shadowColor = UIColor.currentTheme().cgColor
+            layer.shadowOffset = CGSize(width: 0, height: 0)
+            layer.shadowOpacity = 0.25
+            layer.shadowRadius = 60
         }
     }
     
-    
     private func setupUI() {
-        self.backgroundColor = UIColor.memoBackground
-        self.layer.cornerRadius = 37
-        self.layer.cornerCurve = .continuous
+        backgroundColor = UIColor.memoBackground
+        layer.cornerRadius = 37
+        layer.cornerCurve = .continuous
+        
+        setupTitleTextField()
+        setupHeartImageView()
+        setupEllipsisButton()
+        setupCategoryCollectionView()
+        setupImageCollectionView()
+        setupMemoTextView()
+        setupMemoDateLabel()
     }
     
-    
     private func configureHierarchy() {
-        self.addSubview(self.titleTextField)
-        self.addSubview(self.heartImageView)
-        self.addSubview(self.ellipsisButton)
-        self.addSubview(self.selectedCategoryCollectionView)
-        self.addSubview(self.selectedImageCollectionView)
-        self.addSubview(self.memoTextView)
-        self.addSubview(self.memoDateLabel)
+        addSubview(titleTextField)
+        addSubview(heartImageView)
+        addSubview(ellipsisButton)
+        addSubview(selectedCategoryCollectionView)
+        addSubview(selectedImageCollectionView)
+        addSubview(memoTextView)
+        addSubview(memoDateLabel)
     }
     
     private func setupGestures() {
@@ -285,8 +169,6 @@ final class PopupCardView: UIView {
     }
     
     @objc private func heartImageViewTapped() {
-        
-        let heartImageChangeAnimator = UIViewPropertyAnimator(duration: 0.2, dampingRatio: 1)
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
         guard let memoEntity else { fatalError() }
         memoEntity.isFavorite.toggle()
@@ -298,20 +180,26 @@ final class PopupCardView: UIView {
         }
         
         appDelegate.saveContext()
-        
     }
     
     @objc private func memoTextViewTapped(_ gesture: UITapGestureRecognizer) {
         print(#function)
-        let tappedPoint = gesture.location(in: self.memoTextView)
-        let glyphIndex = self.memoTextView.layoutManager.glyphIndex(for: tappedPoint, in: self.memoTextView.textContainer)
+        let tappedPoint = gesture.location(in: memoTextView)
+        let glyphIndex = memoTextView.layoutManager.glyphIndex(
+            for: tappedPoint,
+            in: memoTextView.textContainer
+        )
         
         //Ensure the glyphIndex actually matches the point and isn't just the closest glyph to the point
-        let glyphRect = self.memoTextView.layoutManager.boundingRect(forGlyphRange: NSRange(location: glyphIndex, length: 1), in: self.memoTextView.textContainer)
+        let glyphRect = memoTextView.layoutManager.boundingRect(forGlyphRange: NSRange(location: glyphIndex, length: 1), in: memoTextView.textContainer)
         
-        if glyphIndex < self.memoTextView.textStorage.length,
+        if glyphIndex < memoTextView.textStorage.length,
            glyphRect.contains(tappedPoint),
-           let linkURL = self.memoTextView.textStorage.attribute(NSAttributedString.Key.link, at: glyphIndex, effectiveRange: nil) {
+           let linkURL = memoTextView.textStorage.attribute(
+            NSAttributedString.Key.link,
+            at: glyphIndex,
+            effectiveRange: nil
+           ) {
             //해당 링크를 이용해서 인터넷 열리게끔 설정
             print(type(of: linkURL))
             print(linkURL)
@@ -320,58 +208,60 @@ final class PopupCardView: UIView {
             
         } else {
             
-            let characterIndex = self.memoTextView.layoutManager.characterIndex(for: tappedPoint, in: self.memoTextView.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
-            //            let characterIndex = self.memoTextView.layoutManager.glyphIndex(for: tappedPoint, in: self.memoTextView.textContainer)
+            let characterIndex = memoTextView.layoutManager.characterIndex(
+                for: tappedPoint,
+                in: memoTextView.textContainer,
+                fractionOfDistanceBetweenInsertionPoints: nil
+            )
             
-            let glyphRect = self.memoTextView.layoutManager.boundingRect(
+            let glyphRect = memoTextView.layoutManager.boundingRect(
                 forGlyphRange: NSRange(location: glyphIndex, length: 1), in: self.memoTextView.textContainer
             )
             
-            //이거 필요없는 코드. boundingRect는 GlyphRange를 기반으로 한 Rect를 반환하기 때문에, characterIndex를 쓰는 건 옳지 않다!
-            //(합자-ligature-를 쓸 경우 잘못된 결과가 나올 수 있음) -> 기억하라고 코드 남겨둠.
-//            let characterRect = self.memoTextView.layoutManager.boundingRect(
-//                forGlyphRange: NSRange(location: characterIndex, length: 1), in: self.memoTextView.textContainer
-//            )
+            //아래와 같이 쓰면 안됨. boundingRect는 GlyphRange를 기반으로 한 Rect를 반환하기 때문에, characterIndex를 쓰는 건 옳지 않다!
+            //(합자-ligature-를 쓸 경우 잘못된 결과가 나올 수 있음) -> 메모용 주석
+            // let characterRect = self.memoTextView.layoutManager.boundingRect(forGlyphRange: NSRange(location: characterIndex, length: 1), in: self.memoTextView.textContainer)
+//            print(characterRect, "<-characterRect")
+//            print(characterIndex, "<-characterIndex")
+            
             print("???")
             print(glyphRect, "<-glyphRect")
-//            print(characterRect, "<-characterRect")
             print(glyphIndex, "<-glyphIndex")
-//            print(characterIndex, "<-characterIndex")
             print(self.memoTextView.textStorage.length, "<-textStorage's length")
             
             switch self.memoTextView.isEditable {
-                
-            case true:
-                return
-                
+            case true: return
             case false:
-//                if titleTextField.isFirstResponder {
-//                    self.titleTextFieldTapGesture.isEnabled = true
-//                }
-                
                 let tappedPosition: UITextPosition?
                 
                 print(characterIndex < self.memoTextView.textStorage.length)
                 print(glyphRect.contains(tappedPoint))
                 
                 if characterIndex < self.memoTextView.textStorage.length && glyphRect.contains(tappedPoint) {
-                    tappedPosition = self.memoTextView.position(from: self.memoTextView.beginningOfDocument, offset: characterIndex)
+                    tappedPosition = self.memoTextView.position(
+                        from: self.memoTextView.beginningOfDocument,
+                        offset: characterIndex
+                    )
                     
                 } else if characterIndex >= self.memoTextView.textStorage.length - 1 {
                     tappedPosition = self.memoTextView.endOfDocument
                     
                 } else {
-                    tappedPosition = self.memoTextView.position(from: self.memoTextView.beginningOfDocument, offset: glyphIndex)
+                    tappedPosition = self.memoTextView.position(
+                        from: self.memoTextView.beginningOfDocument,
+                        offset: glyphIndex
+                    )
                     
                 }
                 
                 guard let tappedPosition else { return }
                 self.memoTextView.isEditable = true
                 self.memoTextViewTapGesture.isEnabled = false
-                
-                self.memoTextView.selectedTextRange = self.memoTextView.textRange(from: tappedPosition, to: tappedPosition)
+                self.memoTextView.selectedTextRange = self.memoTextView.textRange(
+                    from: tappedPosition,
+                    to: tappedPosition
+                )
                 self.memoTextView.becomeFirstResponder()
-                
             }
         }
     }
@@ -388,63 +278,73 @@ final class PopupCardView: UIView {
     
     private func setupDelegates() {
         self.selectedCategoryCollectionView.dataSource = self
-//        self.selectedCategoryCollectionView.delegate = self
-        
         self.selectedImageCollectionView.dataSource = self
-//        self.selectedImageCollectionView.delegate = self
-        
         self.titleTextField.delegate = self
         self.memoTextView.delegate = self
     }
     
     private func setupConstraints() {
-        self.titleTextFieldTopConstraint.isActive = true
-        self.titleTextFieldLeadingConstraint.isActive = true
-        self.titleTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        NSLayoutConstraint.activate([
+            titleTextFieldTopConstraint,
+            titleTextFieldLeadingConstraint,
+            titleTextField.heightAnchor.constraint(equalToConstant: 30),
+        ])
         
-        self.heartImageViewTopConstraint.isActive = true
-        self.heartImageViewLeadingConstraint.isActive = true
-        self.heartImageViewTrailingConstraint.isActive = true
-        self.heartImageViewWidthConstraint.isActive = true
-        self.heartImageViewHeightConstraint.isActive = true
+        NSLayoutConstraint.activate([
+            heartImageViewTopConstraint,
+            heartImageViewLeadingConstraint,
+            heartImageViewTrailingConstraint,
+            heartImageViewWidthConstraint,
+            heartImageViewHeightConstraint,
+        ])
         
-        self.ellipsisButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 14).isActive = true
-//        self.ellipsisButton.leadingAnchor.constraint(equalTo: self.heartImageView.trailingAnchor, constant: 0).isActive = true
-        self.ellipsisButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -14).isActive = true
-        self.ellipsisButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        self.ellipsisButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        NSLayoutConstraint.activate([
+            ellipsisButton.topAnchor.constraint(equalTo: topAnchor, constant: 14),
+            ellipsisButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -14),
+            ellipsisButton.widthAnchor.constraint(equalToConstant: 30),
+            ellipsisButton.heightAnchor.constraint(equalToConstant: 30),
+        ])
         
-        self.selectedCategoryCollectionView.topAnchor.constraint(equalTo: self.titleTextField.bottomAnchor, constant: 10).isActive = true
-        self.selectedCategoryCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10).isActive = true
-        self.selectedCategoryCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10).isActive = true
-        self.selectedCategoryCollectionView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        NSLayoutConstraint.activate([
+            selectedCategoryCollectionView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 10),
+            selectedCategoryCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            selectedCategoryCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            selectedCategoryCollectionView.heightAnchor.constraint(equalToConstant: 25),
+        ])
         
-        self.selectedImageCollectionViewTopConstraint.isActive = true
-//        self.selectedImageCollectionView.topAnchor.constraint(equalTo: self.selectedCategoryCollectionView.bottomAnchor, constant: 0).isActive = true
-        self.selectedImageCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10).isActive = true
-        self.selectedImageCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10).isActive = true
-        self.selectedImageCollectionViewHeightConstraint.priority = UILayoutPriority(751)
-        self.selectedImageCollectionViewHeightConstraint.isActive = true
+        selectedImageCollectionViewHeightConstraint.priority = UILayoutPriority(751)
+        NSLayoutConstraint.activate([
+            selectedImageCollectionViewTopConstraint,
+            selectedImageCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            selectedImageCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            selectedImageCollectionViewHeightConstraint,
+        ])
         
-        self.memoTextView.topAnchor.constraint(equalTo: self.selectedImageCollectionView.bottomAnchor, constant: 10).isActive = true
-        self.memoTextViewLeadingConstraint.isActive = true
-        self.memoTextViewTrailingConstraint.isActive = true
-//        self.memoTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10).isActive = true
-//        self.memoTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10).isActive = true
-        self.memoTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10).isActive = true
+        NSLayoutConstraint.activate([
+            memoTextView.topAnchor.constraint(equalTo: selectedImageCollectionView.bottomAnchor, constant: 10),
+            memoTextViewLeadingConstraint,
+            memoTextViewTrailingConstraint,
+            memoTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+        ])
         
-        self.memoDateLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -30).isActive = true
-        self.memoDateLabel.topAnchor.constraint(equalTo: self.bottomAnchor, constant: 10).isActive = true
+        NSLayoutConstraint.activate([
+            memoDateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
+            memoDateLabel.topAnchor.constraint(equalTo: bottomAnchor, constant: 10),
+        ])
     }
     
     private func setupObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow(_:)),
+            name: UIResponder.keyboardWillShowNotification, object: nil
+        )
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide),
-                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification, object: nil
+        )
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {
@@ -467,7 +367,6 @@ final class PopupCardView: UIView {
         self.memoTextViewTapGesture.isEnabled = true
         
         if self.isEdited {
-            
             if self.isTextFieldChanged {
                 self.updateTitleTextField()
             }
@@ -477,7 +376,11 @@ final class PopupCardView: UIView {
             
             memoEntity.modificationDate = Date()
             self.configureView(with: memoEntity)
-            NotificationCenter.default.post(name: NSNotification.Name("editingCompleteNotification"), object: nil, userInfo: ["memo": memoEntity])
+            NotificationCenter.default.post(
+                name: NSNotification.Name("editingCompleteNotification"),
+                object: nil,
+                userInfo: ["memo": memoEntity]
+            )
         }
     }
     
@@ -503,7 +406,6 @@ final class PopupCardView: UIView {
     
     func shiftDownView() {
         guard let screenSize else { fatalError() }
-//        let lengthToExpand = self.keyboardFrame.height - self.popupCardVerticalPadding
         let aspectRatio = screenSize.height / screenSize.width
         let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
         animator.addAnimations { [weak self] in
@@ -512,7 +414,6 @@ final class PopupCardView: UIView {
             self.frame.size.height = screenSize.height - (self.popupCardVerticalPadding * 2)
             
             if numberOfImages != 0, aspectRatio < 2 {
-//            if let themeColor = UserDefaults.standard.value(forKey: KeysForUserDefaults.themeColor.rawValue) as? String, themeColor == ThemeColor.blue.rawValue {
                 self.selectedImageCollectionViewHeightConstraint.constant = 70
                 self.layoutIfNeeded()
             }
@@ -527,7 +428,6 @@ final class PopupCardView: UIView {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             guard let text = self.titleTextField.text else { fatalError() }
             self.memoEntity?.memoTitle = text
-//            self.memoEntity?.modificationDate = Date()
             appDelegate.saveContext()
         }
     }
@@ -537,10 +437,10 @@ final class PopupCardView: UIView {
         if self.isTextViewChanged {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             self.memoEntity?.memoText = self.memoTextView.text
-//            self.memoEntity?.modificationDate = Date()
             appDelegate.saveContext()
         }
     }
+    
     
     func configureView(with memo: MemoEntity) {
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
@@ -570,13 +470,10 @@ final class PopupCardView: UIView {
             self.memoTextView.isEditable = false
             self.memoTextView.isSelectable = false
             
-//            self.ellipsisButton.menu = UIMenu(children: [self.restoreMemoAction, self.deleteMemoAction])
         } else if orderCriterion == OrderCriterion.creationDate.rawValue {
             self.memoDateLabel.text = String(format: "%@에 생성됨".localized(), memo.getCreationDateInString())
-//            self.ellipsisButton.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
         } else {
             self.memoDateLabel.text = String(format: "%@에 수정됨".localized(), memo.getModificationDateString())
-//            self.ellipsisButton.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
         }
         
         self.titleTextField.text = memo.memoTitle
@@ -594,7 +491,6 @@ final class PopupCardView: UIView {
             self.memoTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.currentTheme()]
         }
         
-        
         self.sortedImageEntitiesArray = ImageEntityManager.shared.getImageEntities(from: self.memoEntity!, inOrderOf: ImageOrderIndexKind.orderIndex)
         
         self.numberOfImages = self.sortedImageEntitiesArray.count
@@ -607,16 +503,9 @@ final class PopupCardView: UIView {
             guard let self else { return }
             guard let thumbnail = ImageEntityManager.shared.getThumbnailImage(imageEntity: imageEntity) else { return }
             self.thumbnailArray.append(thumbnail)
-            
-//            DispatchQueue.global().async { [weak self] in
-//                guard let self else { return }
-////                guard let image = ImageEntityManager.shared.getImage(memoEntity: memoEntity, uuid: imageEntity.uuid) else { return }
-//                guard let image = ImageEntityManager.shared.getImage(imageEntity: imageEntity) else { fatalError() }
-//                //MARK: imageArray에 append를 비동기적으로 하면 순서가 뒤바뀐다!!
-//                self.imageArray.append(image)
-//            }
         }
         self.imageArray = []
+        
         //고화질 이미지를 가져오는 일은 오래 걸릴 수 있으므로 비동기적으로 구현.
         DispatchQueue.global().async {
             self.sortedImageEntitiesArray.forEach { [weak self] imageEntity in
@@ -634,8 +523,10 @@ final class PopupCardView: UIView {
         self.endEditing(true)
     }
     
-    
 }
+
+
+// MARK: - UICollectionViewDataSource
 
 extension PopupCardView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -651,7 +542,6 @@ extension PopupCardView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         if collectionView == self.selectedCategoryCollectionView {
             let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(memo: self.memoEntity, inOrderOf: CategoryProperties.modificationDate, isAscending: false)
             let cell = self.selectedCategoryCollectionView.dequeueReusableCell(withReuseIdentifier: TotalListCellCategoryCell.cellID, for: indexPath) as! TotalListCellCategoryCell
@@ -664,10 +554,12 @@ extension PopupCardView: UICollectionViewDataSource {
             cell.imageView.image = self.thumbnailArray[indexPath.row]
             return cell
         }
-        
     }
     
 }
+
+
+// MARK: - UITextFieldDelegate
 
 extension PopupCardView: UITextFieldDelegate {
     
@@ -685,6 +577,8 @@ extension PopupCardView: UITextFieldDelegate {
 }
 
 
+// MARK: - UITextViewDelegate
+
 extension PopupCardView: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
@@ -700,6 +594,153 @@ extension PopupCardView: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         print(#function)
         self.updateMemoTextView()
+    }
+    
+}
+
+
+// MARK: - Initial UI Properties Settings
+
+extension PopupCardView {
+    
+    private func setupTitleTextField() {
+        let bar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
+        let hideKeyboardButton = UIBarButtonItem(image: UIImage(systemName: "keyboard.chevron.compact.down"),
+                                                 style: .plain,
+                                                 target: self,
+                                                 action: #selector(keyboardHideButtonTapped))
+        let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
+        bar.items = [flexibleBarButton, hideKeyboardButton]
+        bar.sizeToFit()
+        bar.tintColor = .currentTheme()
+        titleTextField.inputAccessoryView = bar
+        
+        titleTextField.font = UIFont.systemFont(ofSize: 18)
+        titleTextField.placeholder = "제목 없음".localized()
+        titleTextField.borderStyle = .none
+        titleTextField.text = ""
+        titleTextField.textAlignment = .left
+        titleTextField.backgroundColor = .clear
+        titleTextField.textColor = UIColor.label
+        titleTextField.tintColor = .currentTheme()
+        titleTextField.minimumFontSize = 16 //같은 셀의 textView의 폰트는 13.5 <- 이보다는 커야 한다.
+        titleTextField.adjustsFontSizeToFitWidth = true
+        titleTextField.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupHeartImageView() {
+        heartImageView.tintColor = .systemRed
+        heartImageView.contentMode = .scaleAspectFit
+        heartImageView.backgroundColor = .clear
+        heartImageView.isUserInteractionEnabled = true
+        heartImageView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupEllipsisButton() {
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = UIImage(systemName: "ellipsis.circle")
+        configuration.title = ""
+        configuration.contentInsets = .zero
+        configuration.imagePlacement = .all
+        configuration.background.backgroundColor = .clear
+        ellipsisButton.configuration = configuration
+        ellipsisButton.configurationUpdateHandler = { button in
+            switch button.state {
+            case .normal:
+                button.configuration?.image = UIImage(systemName: "ellipsis.circle")
+                button.tintColor = UIColor.currentTheme()
+            case .highlighted:
+                button.tintColor = .lightGray
+            default:
+                return
+            }
+        }
+        
+        ellipsisButton.translatesAutoresizingMaskIntoConstraints = false
+        ellipsisButton.showsMenuAsPrimaryAction = true
+    }
+    
+    private func setupCategoryCollectionView() {
+        selectedCategoryCollectionView.backgroundColor = .clear
+        selectedCategoryCollectionView.register(
+            TotalListCellCategoryCell.self,
+            forCellWithReuseIdentifier: TotalListCellCategoryCell.cellID
+        )
+        selectedCategoryCollectionView.clipsToBounds = true
+        selectedCategoryCollectionView.showsHorizontalScrollIndicator = false
+        selectedCategoryCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        selectedCategoryCollectionView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupImageCollectionView() {
+        selectedImageCollectionView.register(
+            MemoImageCollectionViewCell.self,
+            forCellWithReuseIdentifier: MemoImageCollectionViewCell.cellID
+        )
+        selectedImageCollectionView.isScrollEnabled = true
+        selectedImageCollectionView.backgroundColor = .clear
+        selectedImageCollectionView.showsHorizontalScrollIndicator = false
+        selectedImageCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        selectedImageCollectionView.clipsToBounds = true
+        selectedImageCollectionView.layer.cornerRadius = 13
+        selectedImageCollectionView.layer.cornerCurve = .continuous
+        selectedImageCollectionView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupMemoTextView() {
+        if #available(iOS 16.0, *) {
+            // iOS 16.0 이후에서는 TextKit2 사용기 기본값이기 때문에,
+            // TextKit1 사용으로 통일하기 위해 usingTextLayoutManager 매개변수에 false 할당.
+            memoTextView = UITextView(usingTextLayoutManager: false)
+        } else {
+            memoTextView = UITextView()
+        }
+        
+        let bar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
+        let hideKeyboardButton = UIBarButtonItem(
+            image: .init(systemName: "keyboard.chevron.compact.down"),
+            style: .plain,
+            target: self,
+            action: #selector(keyboardHideButtonTapped)
+        )
+        let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
+        bar.items = [flexibleBarButton, hideKeyboardButton]
+        bar.sizeToFit()
+        bar.tintColor = .currentTheme()
+        memoTextView.inputAccessoryView = bar
+        
+        let mutableParagraphStyle = NSMutableParagraphStyle()
+        mutableParagraphStyle.lineSpacing = 5
+        let attributes = [
+            NSAttributedString.Key.paragraphStyle: mutableParagraphStyle,
+            .font: UIFont.systemFont(ofSize: 15),
+            .foregroundColor: UIColor.label
+        ]
+        memoTextView.typingAttributes = attributes
+        
+        memoTextView.backgroundColor = .clear
+        memoTextView.textInputView.backgroundColor = .clear
+        memoTextView.bounces = true
+        memoTextView.tintColor = .currentTheme()
+        memoTextView.isEditable = false
+        memoTextView.isScrollEnabled = true
+        memoTextView.dataDetectorTypes = .link
+        memoTextView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
+        memoTextView.textContainerInset  = .zero
+        memoTextView.textContainer.lineFragmentPadding = 0
+        memoTextView.clipsToBounds = true
+        memoTextView.layer.cornerRadius = 25
+        memoTextView.layer.cornerCurve = .continuous
+        memoTextView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        memoTextView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupMemoDateLabel() {
+        memoDateLabel.text = "----.--.--.에 생성됨"
+        memoDateLabel.textColor = .lightGray
+        memoDateLabel.font = .systemFont(ofSize: 14)
+        memoDateLabel.numberOfLines = 1
+        memoDateLabel.translatesAutoresizingMaskIntoConstraints = false
     }
     
 }
