@@ -34,16 +34,15 @@ final class PopupCardView: UIView {
     = titleTextField.topAnchor.constraint(equalTo: topAnchor, constant: 15)
     
     lazy var selectedImageCollectionViewTopConstraint
-    = self.selectedImageCollectionView.topAnchor.constraint(
-        equalTo: selectedCategoryCollectionView.bottomAnchor,
+    = self.imageCollectionView.topAnchor.constraint(
+        equalTo: categoryCollectionView.bottomAnchor,
         constant: 0
     )
     lazy var selectedImageCollectionViewHeightConstraint
-    = self.selectedImageCollectionView.heightAnchor.constraint(equalToConstant: 0)
+    = self.imageCollectionView.heightAnchor.constraint(equalToConstant: 0)
     
     lazy var titleTextFieldLeadingConstraint
     = titleTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25)
-    
     
     lazy var heartImageViewTopConstraint
     = heartImageView.topAnchor.constraint(equalTo: topAnchor, constant: 14)
@@ -83,7 +82,7 @@ final class PopupCardView: UIView {
         flowLayout.estimatedItemSize = CGSize(width: 50, height: 25)
         return flowLayout
     }
-    lazy var selectedCategoryCollectionView = UICollectionView(
+    lazy var categoryCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: makeCategoryFlowLayout()
     )
@@ -96,7 +95,7 @@ final class PopupCardView: UIView {
         flowLayout.scrollDirection = .horizontal
         return flowLayout
     }
-    lazy var selectedImageCollectionView = UICollectionView(
+    lazy var imageCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: makeImageFlowLayout()
     )
@@ -154,8 +153,8 @@ final class PopupCardView: UIView {
         addSubview(titleTextField)
         addSubview(heartImageView)
         addSubview(ellipsisButton)
-        addSubview(selectedCategoryCollectionView)
-        addSubview(selectedImageCollectionView)
+        addSubview(categoryCollectionView)
+        addSubview(imageCollectionView)
         addSubview(memoTextView)
         addSubview(memoDateLabel)
     }
@@ -277,8 +276,8 @@ final class PopupCardView: UIView {
     }
     
     private func setupDelegates() {
-        self.selectedCategoryCollectionView.dataSource = self
-        self.selectedImageCollectionView.dataSource = self
+        self.categoryCollectionView.dataSource = self
+        self.imageCollectionView.dataSource = self
         self.titleTextField.delegate = self
         self.memoTextView.delegate = self
     }
@@ -306,22 +305,22 @@ final class PopupCardView: UIView {
         ])
         
         NSLayoutConstraint.activate([
-            selectedCategoryCollectionView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 10),
-            selectedCategoryCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            selectedCategoryCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            selectedCategoryCollectionView.heightAnchor.constraint(equalToConstant: 25),
+            categoryCollectionView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 10),
+            categoryCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            categoryCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            categoryCollectionView.heightAnchor.constraint(equalToConstant: 25),
         ])
         
         selectedImageCollectionViewHeightConstraint.priority = UILayoutPriority(751)
         NSLayoutConstraint.activate([
             selectedImageCollectionViewTopConstraint,
-            selectedImageCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            selectedImageCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            imageCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            imageCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             selectedImageCollectionViewHeightConstraint,
         ])
         
         NSLayoutConstraint.activate([
-            memoTextView.topAnchor.constraint(equalTo: selectedImageCollectionView.bottomAnchor, constant: 10),
+            memoTextView.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 10),
             memoTextViewLeadingConstraint,
             memoTextViewTrailingConstraint,
             memoTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
@@ -515,8 +514,8 @@ final class PopupCardView: UIView {
             }
         }
         
-        self.selectedCategoryCollectionView.reloadData()
-        self.selectedImageCollectionView.reloadData()
+        self.categoryCollectionView.reloadData()
+        self.imageCollectionView.reloadData()
     }
     
     @objc private func keyboardHideButtonTapped() {
@@ -530,7 +529,7 @@ final class PopupCardView: UIView {
 
 extension PopupCardView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == self.selectedCategoryCollectionView {
+        if collectionView == self.categoryCollectionView {
             let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(memo: self.memoEntity, inOrderOf: CategoryProperties.modificationDate, isAscending: false)
             return categoriesArray.count
             
@@ -542,15 +541,15 @@ extension PopupCardView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == self.selectedCategoryCollectionView {
+        if collectionView == self.categoryCollectionView {
             let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(memo: self.memoEntity, inOrderOf: CategoryProperties.modificationDate, isAscending: false)
-            let cell = self.selectedCategoryCollectionView.dequeueReusableCell(withReuseIdentifier: TotalListCellCategoryCell.cellID, for: indexPath) as! TotalListCellCategoryCell
+            let cell = self.categoryCollectionView.dequeueReusableCell(withReuseIdentifier: TotalListCellCategoryCell.cellID, for: indexPath) as! TotalListCellCategoryCell
             cell.categoryLabel.text = categoriesArray[indexPath.row].name
             return cell
             
         //if collectionView == self.selectedImageCollectionView
         } else {
-            let cell = self.selectedImageCollectionView.dequeueReusableCell(withReuseIdentifier: MemoImageCollectionViewCell.cellID, for: indexPath) as! MemoImageCollectionViewCell
+            let cell = self.imageCollectionView.dequeueReusableCell(withReuseIdentifier: MemoImageCollectionViewCell.cellID, for: indexPath) as! MemoImageCollectionViewCell
             cell.imageView.image = self.thumbnailArray[indexPath.row]
             return cell
         }
@@ -661,30 +660,30 @@ extension PopupCardView {
     }
     
     private func setupCategoryCollectionView() {
-        selectedCategoryCollectionView.backgroundColor = .clear
-        selectedCategoryCollectionView.register(
+        categoryCollectionView.backgroundColor = .clear
+        categoryCollectionView.register(
             TotalListCellCategoryCell.self,
             forCellWithReuseIdentifier: TotalListCellCategoryCell.cellID
         )
-        selectedCategoryCollectionView.clipsToBounds = true
-        selectedCategoryCollectionView.showsHorizontalScrollIndicator = false
-        selectedCategoryCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        selectedCategoryCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        categoryCollectionView.clipsToBounds = true
+        categoryCollectionView.showsHorizontalScrollIndicator = false
+        categoryCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        categoryCollectionView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func setupImageCollectionView() {
-        selectedImageCollectionView.register(
+        imageCollectionView.register(
             MemoImageCollectionViewCell.self,
             forCellWithReuseIdentifier: MemoImageCollectionViewCell.cellID
         )
-        selectedImageCollectionView.isScrollEnabled = true
-        selectedImageCollectionView.backgroundColor = .clear
-        selectedImageCollectionView.showsHorizontalScrollIndicator = false
-        selectedImageCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        selectedImageCollectionView.clipsToBounds = true
-        selectedImageCollectionView.layer.cornerRadius = 13
-        selectedImageCollectionView.layer.cornerCurve = .continuous
-        selectedImageCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        imageCollectionView.isScrollEnabled = true
+        imageCollectionView.backgroundColor = .clear
+        imageCollectionView.showsHorizontalScrollIndicator = false
+        imageCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        imageCollectionView.clipsToBounds = true
+        imageCollectionView.layer.cornerRadius = 13
+        imageCollectionView.layer.cornerCurve = .continuous
+        imageCollectionView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func setupMemoTextView() {

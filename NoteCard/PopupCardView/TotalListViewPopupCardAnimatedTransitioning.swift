@@ -470,7 +470,7 @@ extension TotalListViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedT
 //            이렇게 bounds.origin.y = 0 으로 할당하면 textView의 맨 위로 올라갈 것 같지만, 현재 로딩돼있는 content의 제일 위로만 가는 것 같음.
 //            어쨌든 UITextView도 UIScrollView이다 보니, 아마 dequeue 하는 형식으로 진행될 것 같음.
 //            if popupCardView.memoTextView.contentOffset.y > 0 {
-            popupCardView.selectedCategoryCollectionView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+            popupCardView.categoryCollectionView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
             popupCardView.memoTextView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
 //            }
 //            popupCardView.memoTextView.bounds.origin = CGPoint(x: 0, y: 0)

@@ -10,7 +10,7 @@ import UIKit
 class PopupCardViewController: UIViewController {
     
     lazy var popupCardView = self.view as! PopupCardView
-    lazy var selectedImageCollectionView = self.popupCardView.selectedImageCollectionView
+    lazy var selectedImageCollectionView = self.popupCardView.imageCollectionView
     lazy var memoTextView = popupCardView.memoTextView
     
     let selectedCollectionViewCell: UICollectionViewCell
