@@ -17,16 +17,8 @@ enum AnimationType {
 
 final class HomeViewPopupCardAnimatedTransitioning: NSObject {
     
-    let screenSize = UIScreen.current?.bounds.size
-    
     let presentationPropertyAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 0.85)
     let presentationPropertyAnimatorForSnapshot = UIViewPropertyAnimator(duration: 0.1, dampingRatio: 1)
-    
-//    let presentationPropertyAnimatorForBars: UIViewPropertyAnimator = {
-//        let animator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
-//        animator.isInterruptible = true
-//        return animator
-//    }()
     
     let dismissalPropertyAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 0.8)
     let dismissalPropertyForPopupCardSnapshot = UIViewPropertyAnimator(duration: 0.25, dampingRatio: 1)
@@ -55,56 +47,6 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         return 2
     }
     
-    
-    /*
-    func interruptibleAnimator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
-        //interruptibleAnimator은 dismiss 시에만 쓰는 것으로 가정하였으므로 fromVC 가 사실상 popupCardVC임.
-        //이 아래 guard문에 fataError() 넣으니까 present 할 때 에러뜨네...? -> 이유 분석!!
-        guard let popupCardVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from) as? PopupCardViewController else { return UIViewPropertyAnimator() }
-        guard let tabBarCon = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as? UITabBarController else { return UIViewPropertyAnimator() }
-        guard let naviCon = tabBarCon.selectedViewController as? UINavigationController else { return UIViewPropertyAnimator() }
-        
-        let selectedCellFrame = popupCardVC.selectedCellFrame
-        
-        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.7)
-        
-        animator.addAnimations { [weak tabBarCon, weak popupCardVC] in
-            guard let tabBarCon else { fatalError() }
-            guard let popupCardVC else { fatalError() }
-            tabBarCon.view.alpha = 1.0
-            popupCardVC.view.frame = selectedCellFrame
-            let popupCardView = popupCardVC.view as! PopupCardView
-            popupCardView.memoTitleLabelTopConstraint.constant = 6
-            popupCardView.memoTitleLabelLeadingConstraint.constant = 15
-            popupCardView.selectedImageCollectionViewHeightConstraint.constant = 0
-            popupCardView.memoTextViewLeadingConstraint.constant = 15
-            popupCardView.memoTextViewTrailingConstraint.constant = -15
-            popupCardView.memoTextView.bounds.origin = CGPoint(x: 0, y: 0)
-            popupCardVC.view.layer.cornerRadius = 20
-            popupCardView.layoutIfNeeded()
-//            popupCardView.selectedImageCollectionView.frame.size = CGSize(width: 0, height: 0)
-            
-        }
-        
-        //내비게이션바와 탭바를 화면 안쪽으로 들여오는 코드
-        animator.addAnimations({
-            popupCardVC.view.alpha = 1
-            naviCon.navigationBar.bounds.origin.y = 0
-            tabBarCon.tabBar.frame.origin.y = 844 - tabBarCon.tabBar.frame.height
-            
-        }, delayFactor: 0.5)
-        
-        
-        animator.addCompletion { (position) in
-            //애니메이션이 취소되지 않고 완료했음을 알리는 코드
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-        }
-        
-        return animator
-    }
-    */
-    
-    
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         print(#function)
         switch self.animationType {
@@ -116,11 +58,7 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
     }
     
-    
-    
     private func animationForPresentation(using transitionContext: UIViewControllerContextTransitioning) {
-        
-        guard let screenSize else { return }
         
         guard let popupCardVC = transitionContext.viewController(forKey: .to) as? PopupCardViewController else { return }
         let selectedCellFrame = popupCardVC.selectedCellFrame
@@ -177,13 +115,6 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             popupCardView.titleTextFieldTopConstraint.constant = 10
             popupCardView.titleTextFieldLeadingConstraint.constant = 20
             
-//            switch popupCardView.numberOfImages {
-//            case 0:
-//                popupCardView.selectedImageCollectionViewHeightConstraint.constant = 0
-//            default:
-//                popupCardView.selectedImageCollectionViewHeightConstraint.constant = 70
-//            }
-            
             popupCardView.selectedImageCollectionViewTopConstraint.constant = 6
             popupCardView.selectedImageCollectionViewHeightConstraint.constant = popupCardView.numberOfImages == 0 ? 0 : 70
             
@@ -204,20 +135,11 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
     
     
     
-    
-    
-    
-//---------------------------------------------------------------------------------------------------------------------
-    
-    
-    
-    
+// MARK: - Present / Dismiss 구분선
     
     
     
     private func animationForDismissal(using transitionContext: UIViewControllerContextTransitioning) {
-        
-        guard let screenSize else { return }
         guard let popupCardVC = transitionContext.viewController(forKey: .from) as? PopupCardViewController else { return }
         
         guard let tabBarCon = transitionContext.viewController(forKey: .to) as? UITabBarController else { fatalError() }
@@ -225,18 +147,10 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         guard let homeVC = naviCon.topViewController as? HomeViewController else { fatalError() }
         guard let homeView = homeVC.view as? HomeView else { fatalError() }
         
-//        let selectedCell = popupCardVC.selectedCell
-//        let selectedCellFrame = popupCardVC.selectedCellFrame
-        
         weak var popupCardView = popupCardVC.view as? PopupCardView
         guard let popupCardView else { fatalError() }
-        //guard let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as? UITabBarController else { return }
-        //guard let selectedNaviCon = toVC.selectedViewController as? UINavigationController else { return }
         
-//        var selectedCell: HomeCollectionViewFavoriteCell
         weak var selectedCell: UICollectionViewCell?
-        
-        
         
         self.disappearingPropertyAnimator.addAnimations {
             popupCardView.transform = CGAffineTransform(scaleX: 0.3, y: 0.3)
@@ -253,8 +167,6 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             naviCon.navigationBar.bounds.origin.y = 0
             tabBarCon.tabBar.bounds.origin.y = 0
         }, delayFactor: 0.5)
-        
-        
         
         
         if self.userDefaultCriterion == OrderCriterion.modificationDate.rawValue {
@@ -297,52 +209,6 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             }
             
         }
-        
-//        if popupCardView.isEdited {
-//            homeView.homeCollectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .init(), animated: false)
-//            homeView.homeCollectionView.layoutIfNeeded()
-//            selectedCell =
-//            popupCardVC.selectedIndexPath.section == 1 ?
-//            homeView.homeCollectionView.cellForItem(at: IndexPath(row: 0, section: 1)) as! HomeCollectionViewFavoriteCell :
-//            homeView.homeCollectionView.cellForItem(at: IndexPath(row: 0, section: 2)) as! HomeCollectionViewRecentCell
-//
-//        } else {
-//            selectedCell =
-//            popupCardVC.selectedIndexPath.section == 1 ?
-//            homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeCollectionViewFavoriteCell :
-//            homeView.homeCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as! HomeCollectionViewRecentCell
-//        }
-        
-//
-//        let cellSnapshot: UIView = { [weak selectedCell] in
-//            guard let selectedCell else { fatalError() }
-//            guard let snapshot = selectedCell.snapshotView(afterScreenUpdates: true) else { fatalError() }
-//            snapshot.translatesAutoresizingMaskIntoConstraints = false
-//            return snapshot
-//        }()
-//
-//        popupCardView.cellSnapshot.removeFromSuperview()
-//        popupCardView.addSubview(cellSnapshot)
-//        cellSnapshot.topAnchor.constraint(equalTo: popupCardView.topAnchor, constant: 0).isActive = true
-//        cellSnapshot.leadingAnchor.constraint(equalTo: popupCardView.leadingAnchor, constant: 0).isActive = true
-//        cellSnapshot.trailingAnchor.constraint(equalTo: popupCardView.trailingAnchor, constant: 0).isActive = true
-//        cellSnapshot.bottomAnchor.constraint(equalTo: popupCardView.bottomAnchor, constant: 0).isActive = true
-//
-//
-        
-//        var convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: homeVC.homeView)
-        
-        
-//        guard let cellSnapshot = selectedCell.snapshotView(afterScreenUpdates: false) else { fatalError() }
-//        cellSnapshot.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        //        popupCardView.cellSnapshot.removeFromSuperview()
-//        popupCardView.addSubview(cellSnapshot)
-//        cellSnapshot.topAnchor.constraint(equalTo: popupCardView.topAnchor, constant: 0).isActive = true
-//        cellSnapshot.leadingAnchor.constraint(equalTo: popupCardView.leadingAnchor, constant: 0).isActive = true
-//        cellSnapshot.trailingAnchor.constraint(equalTo: popupCardView.trailingAnchor, constant: 0).isActive = true
-//        cellSnapshot.bottomAnchor.constraint(equalTo: popupCardView.bottomAnchor, constant: 0).isActive = true
-        
         
         guard let selectedCell else { fatalError() }
         selectedCell.alpha = 0
@@ -390,7 +256,6 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
                 let animation = CABasicAnimation(keyPath: "shadowPath")
                 animation.toValue = path.cgPath
                 animation.timingFunction = CAMediaTimingFunction(controlPoints: 0.46, 1.32, 0.31, 1)
-//                animation.timingFunction = CAMediaTimingFunction(controlPoints: 0, 0, 1, 1)
                 animation.duration = 0.1
                 animation.autoreverses = false
                 animation.isRemovedOnCompletion = false
@@ -398,9 +263,6 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
                 return animation
             }()
             popupCardView.layer.add(shadowPathAnimation, forKey: "shadowPathAnimation")
-            
-//            let path = UIBezierPath(roundedRect: selectedCell.bounds, cornerRadius: 13)
-//            popupCardView.layer.shadowPath = path.cgPath
             
             let shadowColorAnimation: CASpringAnimation = {
                 let animation = CASpringAnimation(keyPath: "shadowColor")

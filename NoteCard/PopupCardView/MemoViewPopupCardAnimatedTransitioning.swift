@@ -17,24 +17,7 @@ import UIKit
 
 final class MemoViewPopupCardAnimatedTransitioning: NSObject {
     
-    
-    
-    var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
-    
-//    static let newGradientLayer: CAGradientLayer = {
-//        let layer = CAGradientLayer()
-//        layer.colors = [UIColor.white.withAlphaComponent(0).cgColor, UIColor.white.withAlphaComponent(0).cgColor]
-////            layer.frame = memoView.blurView.bounds
-//        layer.startPoint = CGPoint(x: 0.5, y: 0.0)
-//        layer.endPoint = CGPoint(x: 0.5, y: 1.0)
-//        layer.type = .axial
-//        return layer
-//    }()
-    
-    
     let screenSize = UIScreen.current?.bounds.size
-//    lazy var screenWidth = self.screenSize?.width
-//    lazy var screenHeight = self.screenSize?.height
     
     let presentationPropertyAnimator: UIViewPropertyAnimator = {
         let animator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 0.85)
@@ -45,12 +28,6 @@ final class MemoViewPopupCardAnimatedTransitioning: NSObject {
         let animator = UIViewPropertyAnimator(duration: 0.1, dampingRatio: 1)
         return animator
     }()
-    
-//    let presentationPropertyAnimatorForBars: UIViewPropertyAnimator = {
-//        let animator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
-//        animator.isInterruptible = true
-//        return animator
-//    }()
     
     let dismissalPropertyAnimator: UIViewPropertyAnimator = {
         let animator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 0.8)
@@ -125,7 +102,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         let selectedCellFrame = popupCardVC.selectedCellFrame
         let cornerRadius = popupCardVC.cornerRadius
         let containerView = transitionContext.containerView
-//        let selectedCell: UICollectionViewCell!
         let selectedCell = popupCardVC.selectedCollectionViewCell
         
         containerView.addSubview(popupCardView)
@@ -141,7 +117,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         popupCardView.memoDateLabel.alpha = 0
         
         if memoVC.isEditing {
-//            popupCardView.titleTextFieldTapGesture.isEnabled = false
             popupCardView.titleTextField.isEnabled = false
             popupCardView.heartImageView.isUserInteractionEnabled = false
             popupCardView.heartImageView.tintColor = .lightGray
@@ -187,8 +162,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         let blurView = memoView.blurView
         let viewUnderNaviBar = memoView.viewUnderNaviBar
         
-        
-//        selectedCell.alpha = 0
         if #available(iOS 16.0, *) {
             memoVC.deleteBarButtonItem.isHidden = true
             memoVC.ellipsisBarButtonItem.isHidden = true
@@ -222,19 +195,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             print(selectedNaviCon.toolbar.bounds.height + memoVC.view.safeAreaInsets.bottom)
             print(selectedNaviCon.toolbar.bounds.height)
             
-//            tabBarCon.view.alpha = 0.5
-//            tabBarCon.tabBar.frame.origin.y = screenSize.height
-//            selectedNaviCon.navigationBar.bounds.origin.y = selectedNaviCon.navigationBar.frame.height + 47
-//            selectedNaviCon.toolbar.bounds.origin.y = -(selectedNaviCon.toolbar.bounds.height + 34)
-            
-            
-//            switch popupCardView.numberOfImages {
-//            case 0:
-//                popupCardView.selectedImageCollectionViewHeightConstraint.constant = 0
-//            default:
-//                popupCardView.selectedImageCollectionViewHeightConstraint.constant = 70
-//            }
-            
             popupCardView.selectedImageCollectionViewTopConstraint.constant = 6
             popupCardView.selectedImageCollectionViewHeightConstraint.constant = popupCardView.numberOfImages == 0 ? 0 : 70
             
@@ -255,7 +215,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
         
         self.presentationPropertyAnimatorForSnapshot.addAnimations {
-//            cellSnapshot.alpha = 0
             popupCardView.cellSnapshot.alpha = 0
         }
         
@@ -267,33 +226,13 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-//--------------------------------------------------------------------------------------------------------------------------------
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    // MARK: - Present / Dismiss 구분선
     
     
     
     
     private func animationForDismissal(using transitionContext: UIViewControllerContextTransitioning) {
         
-        guard let userDefaultCriterion else { fatalError() }
         guard let screenSize else { fatalError() }
         guard let popupCardVC = transitionContext.viewController(forKey: .from) as? PopupCardViewController else { fatalError() }
         guard let popupCardView = popupCardVC.view as? PopupCardView else { fatalError() }
@@ -317,8 +256,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         popupCardSnapshot.trailingAnchor.constraint(equalTo: popupCardView.trailingAnchor, constant: 0).isActive = true
         popupCardSnapshot.bottomAnchor.constraint(equalTo: popupCardView.bottomAnchor, constant: 0).isActive = true
         
-        //        var convertedRect: CGRect = .zero
-        
         var selectedCell: SmallCardCollectionViewCell?
         
         if memoVC.memoEntitiesArray.contains(popupCardVC.memoEntity) {
@@ -327,51 +264,9 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             selectedCell = nil
         }
         
-        /*
-        if popupCardView.isEdited,
-           memoVC.memoEntitiesArray.contains(popupCardVC.memoEntity),
-           userDefaultCriterion == OrderCriterion.modificationDate.rawValue {
-            selectedCell = memoVC.smallCardCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as? SmallCardCollectionViewCell
-                
-        } else if popupCardView.isEdited,
-                  memoVC.memoEntitiesArray.contains(popupCardVC.memoEntity),
-                  userDefaultCriterion == OrderCriterion.creationDate.rawValue {
-            selectedCell = memoVC.smallCardCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as? SmallCardCollectionViewCell
-            
-        } else if popupCardView.isEdited, !memoVC.memoEntitiesArray.contains(popupCardVC.memoEntity) {
-            selectedCell = nil
-            
-        } else if !popupCardView.isEdited, memoVC.memoEntitiesArray.contains(popupCardVC.memoEntity) {
-            print(popupCardVC.selectedIndexPath)
-//            selectedCell = memoVC.smallCardCollectionView.cellForItem(at: popupCardVC.selectedIndexPath) as? SmallCardCollectionViewCell
-//            guard let selectedCell else { fatalError() }
-            selectedCell = popupCardVC.selectedCollectionViewCell as? SmallCardCollectionViewCell
-        }
-         */
-        
-        
-        
-        
         tabBarCon.view.alpha = 1.0
         
         memoView.categoryNameTextFieldTopConstraint.constant = -200
-        
-//        let newBlurView: UIVisualEffectView = {
-//            let view = UIVisualEffectView()
-//            view.translatesAutoresizingMaskIntoConstraints = false
-//            return view
-//        }()
-        
-//        memoView.addSubview(newBlurView)
-//        newBlurView.topAnchor.constraint(equalTo: memoView.topAnchor, constant: 0).isActive = true
-//        newBlurView.leadingAnchor.constraint(equalTo: memoView.leadingAnchor, constant: 0).isActive = true
-//        newBlurView.trailingAnchor.constraint(equalTo: memoView.trailingAnchor, constant: 0).isActive = true
-//        newBlurView.heightAnchor.constraint(equalToConstant: 200).isActive = true
-//        memoView.layoutSubviews()
-//        
-//        memoView.blurView = newBlurView
-//        
-//        memoView.insertSubview(newBlurView, aboveSubview: memoView.smallCardCollectionView)
         
         memoView.layoutSubviews()
         
@@ -400,15 +295,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
                 popupCardView.layer.borderWidth = 2
             }
             
-//            popupCardView.titleTextFieldTopConstraint.constant = 6
-//            popupCardView.tiㄴ딛tleTextFieldLeadingConstraint.constant = 15
-//            popupCardView.ellipsisButton.alpha = 0
-//            popupCardView.selectedImageCollectionViewTopConstraint.constant = 0
-//            popupCardView.selectedImageCollectionViewHeightConstraint.constant = 0
-//            popupCardView.memoTextViewLeadingConstraint.constant = 15
-//            popupCardView.memoTextViewTrailingConstraint.constant = -15
-            
-            
             popupCardView.titleTextField.alpha = 0 //iPhone SE(3rd Gen) 의 화면 비율에서는 팝업 카드가 작아질 때 titleTextField가 카드 밖으로 나와 보인다.
             
             popupCardView.layoutIfNeeded()
@@ -421,7 +307,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
                 let animation = CABasicAnimation(keyPath: "shadowPath")
                 animation.toValue = path.cgPath
                 animation.timingFunction = CAMediaTimingFunction(controlPoints: 0.46, 1.32, 0.31, 1)
-//                animation.timingFunction = CAMediaTimingFunction(controlPoints: 0, 0, 1, 1)
                 animation.duration = 0.1
                 animation.autoreverses = false
                 animation.isRemovedOnCompletion = false
@@ -429,10 +314,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
                 return animation
             }()
             popupCardView.layer.add(shadowPathAnimation, forKey: "shadowPathAnimation")
-            
-//            let path = UIBezierPath(roundedRect: selectedCell.bounds, cornerRadius: 13)
-//            popupCardView.layer.shadowPath = path.cgPath
-            
             
             let shadowColorAnimation: CASpringAnimation = {
                 
@@ -508,8 +389,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
         
-        
-        
         self.dismissalPropertyAnimatorForBars.addAnimations({
             selectedNaviCon.navigationBar.bounds.origin.y = 0
             selectedNaviCon.toolbar.bounds.origin.y = 0
@@ -528,11 +407,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         self.dismissalPropertyAnimatorForPopupCardSnapshot.addAnimations ({
             popupCardView.popupCardSnapshot.alpha = 0
         }, delayFactor: 0.5)
-        
-        
-        
-        
-        
         
         self.disappearingPropertyAnimator.addAnimations {
             popupCardView.transform = CGAffineTransform(scaleX: 0.3, y: 0.3)
@@ -553,8 +427,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             transitionContext.completeTransition(true)
         }
         
-        
-        
         if memoVC.memoEntitiesArray.contains(popupCardVC.memoEntity) {
             guard let selectedCell else { fatalError() }
             selectedCell.alpha = 0
@@ -567,8 +439,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         self.dismissalPropertyAnimatorForBars.startAnimation()
         self.dismissalPropertyAnimatorForBlurView.startAnimation()
         self.dismissalPropertyAnimatorForGradientView.startAnimation()
-        
     }
-    
     
 }
