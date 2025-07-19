@@ -170,7 +170,6 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
         weak var popupCardView = popupCardVC.view as? PopupCardView
         guard let popupCardView else { fatalError() }
-        popupCardView.translatesAutoresizingMaskIntoConstraints = true
         
         weak var selectedCell: UICollectionViewCell?
         
@@ -262,6 +261,7 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             guard let selectedCell else { fatalError() }
             
             tabBarCon.view.alpha = 1.0
+            popupCardView.translatesAutoresizingMaskIntoConstraints = true
             popupCardView.frame = selectedCell.convert(selectedCell.contentView.frame, to: homeVC.homeView)
             popupCardView.titleTextFieldTopConstraint.constant = 6
             popupCardView.titleTextFieldLeadingConstraint.constant = 15

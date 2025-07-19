@@ -106,7 +106,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
         containerView.addSubview(popupCardView)
         
-//        popupCardView.frame = selectedCellFrame
         let popupCardInitialConstraints = [
             popupCardView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: selectedCellFrame.origin.y),
             popupCardView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: selectedCellFrame.origin.x),

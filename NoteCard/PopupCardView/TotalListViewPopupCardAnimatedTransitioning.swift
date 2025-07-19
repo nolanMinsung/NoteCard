@@ -74,7 +74,37 @@ extension TotalListViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedT
         selectedCell.alpha = 0
         
         let popupCardView = popupCardVC.view as! PopupCardView
-        popupCardView.frame = selectedCellFrame
+        
+        
+        
+        // popupCardView.frame = selectedCellFrame
+        let popupCardInitialConstraints = [
+            popupCardView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: selectedCellFrame.origin.y),
+            popupCardView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: selectedCellFrame.origin.x),
+            popupCardView.widthAnchor.constraint(equalToConstant: selectedCellFrame.width),
+            popupCardView.heightAnchor.constraint(equalToConstant: selectedCellFrame.height),
+        ]
+        popupCardView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate(popupCardInitialConstraints)
+        containerView.layoutIfNeeded()
+        
+        guard let windowRect = popupCardView.window?.bounds else { fatalError() }
+        let isPadInterface = UIDevice.current.userInterfaceIdiom == .pad
+        let windowWidth = windowRect.width
+        let windowHeight = windowRect.height
+        let horizontalInset: CGFloat = isPadInterface ? 10 :windowWidth / 40
+        let verticalInset: CGFloat = isPadInterface ? (containerView.safeAreaInsets.top + 50) : windowHeight * 0.145
+        
+        let popupCardFinalConstraints = [
+            popupCardView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: verticalInset),
+            popupCardView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: horizontalInset),
+            popupCardView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -horizontalInset),
+            popupCardView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -verticalInset),
+        ]
+        
+        
+        
+        
         popupCardView.layer.cornerRadius = cornerRadius
         popupCardView.titleTextFieldTopConstraint.constant = 10
         popupCardView.titleTextFieldLeadingConstraint.constant = 15
@@ -101,17 +131,8 @@ extension TotalListViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedT
         }
         
         self.presentationPropertyAnimator.addAnimations {
-            guard let windowRect = popupCardView.window?.bounds else { fatalError() }
-            let windowWidth = windowRect.width
-            let windowHeight = windowRect.height
-            let horizontalInset: CGFloat = windowWidth / 40
-            let verticalInset: CGFloat = windowHeight * 0.145
-            popupCardView.frame = CGRect(
-                x: horizontalInset,
-                y: verticalInset,
-                width: windowWidth - (horizontalInset * 2),
-                height: windowHeight - (verticalInset * 2)
-            )
+            NSLayoutConstraint.deactivate(popupCardInitialConstraints)
+            NSLayoutConstraint.activate(popupCardFinalConstraints)
             
             popupCardView.layer.cornerRadius = 37
             popupCardView.layer.cornerCurve = .continuous
@@ -131,7 +152,8 @@ extension TotalListViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedT
             popupCardView.memoTextViewLeadingConstraint.constant = 10
             popupCardView.memoTextViewTrailingConstraint.constant = -10
             popupCardView.memoTextView.bounds.origin.y = 0
-            popupCardView.layoutIfNeeded()
+            
+            containerView.layoutIfNeeded()
         }
         
         self.presentationPropertyAnimator.addAnimations ({
@@ -198,6 +220,7 @@ extension TotalListViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedT
         convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: totalListVC.totalListView)
         
         self.dismissalPropertyAnimator.addAnimations {
+            popupCardView.translatesAutoresizingMaskIntoConstraints = true
             popupCardView.frame = convertedRect
             popupCardView.layer.cornerRadius = 20
             popupCardView.titleTextFieldTopConstraint.constant = 6
