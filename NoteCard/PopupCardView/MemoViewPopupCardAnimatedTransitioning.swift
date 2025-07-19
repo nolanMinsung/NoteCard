@@ -106,7 +106,31 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
         containerView.addSubview(popupCardView)
         
-        popupCardView.frame = selectedCellFrame
+//        popupCardView.frame = selectedCellFrame
+        let popupCardInitialConstraints = [
+            popupCardView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: selectedCellFrame.origin.y),
+            popupCardView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: selectedCellFrame.origin.x),
+            popupCardView.widthAnchor.constraint(equalToConstant: selectedCellFrame.width),
+            popupCardView.heightAnchor.constraint(equalToConstant: selectedCellFrame.height),
+        ]
+        popupCardView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate(popupCardInitialConstraints)
+        containerView.layoutIfNeeded()
+        
+        guard let windowRect = popupCardView.window?.bounds else { fatalError() }
+        let isPadInterface = UIDevice.current.userInterfaceIdiom == .pad
+        let windowWidth = windowRect.width
+        let windowHeight = windowRect.height
+        let horizontalInset: CGFloat = isPadInterface ? 10 :windowWidth / 40
+        let verticalInset: CGFloat = isPadInterface ? (containerView.safeAreaInsets.top + 50) : windowHeight * 0.145
+        
+        let popupCardFinalConstraints = [
+            popupCardView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: verticalInset),
+            popupCardView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: horizontalInset),
+            popupCardView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -horizontalInset),
+            popupCardView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -verticalInset),
+        ]
+        
         popupCardView.layer.cornerRadius = cornerRadius
         popupCardView.titleTextFieldTopConstraint.constant = 10
         popupCardView.titleTextFieldLeadingConstraint.constant = 15
@@ -174,18 +198,8 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         memoVC.memoView.smallCardCollectionViewBottomConstraint.constant = 0
         
         self.presentationPropertyAnimator.addAnimations {
-            
-            guard let windowRect = popupCardView.window?.bounds else { fatalError() }
-            let windowWidth = windowRect.width
-            let windowHeight = windowRect.height
-            let horizontalInset: CGFloat = windowWidth / 40
-            let verticalInset: CGFloat = windowHeight * 0.145
-            popupCardView.frame = CGRect(
-                x: horizontalInset,
-                y: verticalInset,
-                width: windowWidth - (horizontalInset * 2),
-                height: windowHeight - (verticalInset * 2)
-            )
+            NSLayoutConstraint.deactivate(popupCardInitialConstraints)
+            NSLayoutConstraint.activate(popupCardFinalConstraints)
             
             popupCardView.layer.cornerRadius = 37
             popupCardView.layer.cornerCurve = .continuous
@@ -209,6 +223,8 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             
             blurView.effect = .none
             viewUnderNaviBar.alpha = 0
+            
+            containerView.layoutIfNeeded()
         }
         
         self.presentationPropertyAnimator.addAnimations({
@@ -290,6 +306,7 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         self.dismissalPropertyAnimator.addAnimations {
             guard let selectedCell else { fatalError() }
             let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: memoVC.memoView)
+            popupCardView.translatesAutoresizingMaskIntoConstraints = true
             popupCardView.frame = convertedRect
             popupCardView.layer.cornerRadius = 13
             
@@ -301,7 +318,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             popupCardView.titleTextField.alpha = 0 //iPhone SE(3rd Gen) 의 화면 비율에서는 팝업 카드가 작아질 때 titleTextField가 카드 밖으로 나와 보인다.
             
             popupCardView.layoutIfNeeded()
-            
             
             let shadowPathAnimation: CABasicAnimation = {
                 
