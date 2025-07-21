@@ -265,6 +265,7 @@
 				4E1384BB2AF37DE10063817B /* CoreData */,
 				4E1384BC2AF37E070063817B /* Models */,
 				4E1384BD2AF37E0D0063817B /* HomeView */,
+				4EF65B442E2DE74100C483BB /* CardView */,
 				4E1384C42AF37E800063817B /* PopupCardView */,
 				4E1384C02AF37E430063817B /* MemoView */,
 				4E13851A2AF387220063817B /* CardImageShowingView */,
@@ -391,8 +392,6 @@
 		4E1384C42AF37E800063817B /* PopupCardView */ = {
 			isa = PBXGroup;
 			children = (
-				4EF65B1C2E2DBA2B00C483BB /* CardViewController.swift */,
-				4EF65B1E2E2DBA5B00C483BB /* CardView.swift */,
 				4E1384F62AF385090063817B /* PopupCardViewController.swift */,
 				4E1384F82AF3851B0063817B /* PopupCardView.swift */,
 				4E1384FA2AF385340063817B /* PopupCardPresentationController.swift */,
@@ -522,6 +521,15 @@
 				4E1384BE2AF37E130063817B /* MemoEditingView */,
 			);
 			path = MemoDetailView;
+			sourceTree = "<group>";
+		};
+		4EF65B442E2DE74100C483BB /* CardView */ = {
+			isa = PBXGroup;
+			children = (
+				4EF65B1C2E2DBA2B00C483BB /* CardViewController.swift */,
+				4EF65B1E2E2DBA5B00C483BB /* CardView.swift */,
+			);
+			path = CardView;
 			sourceTree = "<group>";
 		};
 		4EFC02DC2B42924900C778DF /* TextSizeSettingView */ = {
