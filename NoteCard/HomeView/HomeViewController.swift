@@ -9,6 +9,8 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
+    lazy var cardTransitioningDelegate = CardTransitioningDelegate(presenting: self)
+    
     let sectionHederTitleArray: [String] = [
         "카테고리".localized(),
         "즐겨찾기".localized(),
@@ -271,11 +273,17 @@ extension HomeViewController: UICollectionViewDelegate {
                 guard let selectedMemoEntity = selectedCell.memoEntity else { return }
                 
                 let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
-                let popupCardVC = PopupCardViewController(memo: selectedMemoEntity, selectedCollectionViewCell: selectedCell, indexPath: indexPath, selectedCellFrame: convertedRect, cornerRadius: 20, isInteractive: true)
-                popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
-                popupCardVC.transitioningDelegate = self
+//                let popupCardVC = PopupCardViewController(memo: selectedMemoEntity, selectedCollectionViewCell: selectedCell, indexPath: indexPath, selectedCellFrame: convertedRect, cornerRadius: 20, isInteractive: true)
+//                popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
+//                popupCardVC.transitioningDelegate = self
+                let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
+                cardTransitioningDelegate.selectedIndexPath = indexPath
+                cardTransitioningDelegate.startFrame = convertedRect
+                cardViewController.transitioningDelegate = cardTransitioningDelegate
+                cardViewController.modalPresentationStyle = .custom
+                self.present(cardViewController, animated: true)
                 
-                self.tabBarController?.present(popupCardVC, animated: true)
+                self.tabBarController?.present(cardViewController, animated: true)
             }
             
         case 2:
@@ -289,11 +297,16 @@ extension HomeViewController: UICollectionViewDelegate {
 //            
 //            self.tabBarController?.present(popupCardVC, animated: true)
             
+            let convertedCellFrame = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
+            print("selectedCell frame: \(selectedCell.frame)")
+            print("convertedCell frame: \(convertedCellFrame)")
+            
             let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
-            cardViewController.modalPresentationStyle = .overFullScreen
-            self.present(cardViewController, animated: false)
-            
-            
+            cardTransitioningDelegate.selectedIndexPath = indexPath
+            cardTransitioningDelegate.startFrame = convertedCellFrame
+            cardViewController.transitioningDelegate = cardTransitioningDelegate
+            cardViewController.modalPresentationStyle = .custom
+            self.present(cardViewController, animated: true)
             
         default:
             fatalError("HomeCollectionView's number of sections is 3")
@@ -337,6 +350,15 @@ extension HomeViewController: UIViewControllerTransitioningDelegate {
               percentDrivenInteractiveTransition.interactionInProgress
         else { return nil }
         return percentDrivenInteractiveTransition
+    }
+    
+}
+
+extension HomeViewController: CardFrameRestorable {
+    
+    func getFrameOfCell(indexPath: IndexPath) -> CGRect? {
+        guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) else { return nil }
+        return selectedCell.convert(selectedCell.contentView.frame, to: view)
     }
     
 }

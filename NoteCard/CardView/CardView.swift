@@ -10,11 +10,32 @@ import UIKit
 
 final class CardView: UIView {
     
-    let backgroundBlurView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+    // .6,.32,.57,1
+    private let cardShowingAnimator = UIViewPropertyAnimator(
+        duration: 0.5,
+        controlPoint1: .init(x: 0.24, y: 0.42),
+        controlPoint2: .init(x: 0.0, y: 1)
+    )
+    
+    private let cardDisappearingAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
+    
+    let backgroundBlurView = UIVisualEffectView(effect: nil)
+    
+    // transition 시 card에 띄울 blur view.
+//    let cellSnapshotView = UIImageView()
+    let cardBlurView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+    
+    
     private let card = UIView()
     private let titleTextField = UITextField()
     private let heartImageView = UIButton(configuration: .plain())
     private let ellipsisButton = UIButton(configuration: .plain())
+    
+    private var cardTopAnchor: NSLayoutConstraint!
+    private var cardLeadingAnchor: NSLayoutConstraint!
+    private var cardTrailingAnchor: NSLayoutConstraint!
+    private var cardBottomAnchor: NSLayoutConstraint!
+    
     
     private var makeCategorySingleLineLayout = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -66,7 +87,7 @@ final class CardView: UIView {
 private extension CardView {
     
     func setupDesign() {
-        backgroundBlurView.alpha = 0.9
+        backgroundBlurView.alpha = 1
         card.backgroundColor = UIColor.memoBackground
         card.layer.cornerRadius = 37
         card.layer.cornerCurve = .continuous
@@ -247,11 +268,16 @@ private extension CardView {
         ])
         
         card.translatesAutoresizingMaskIntoConstraints = false
+        
+        cardTopAnchor = card.topAnchor.constraint(equalTo: topAnchor, constant: 120)
+        cardLeadingAnchor = card.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10)
+        cardTrailingAnchor = card.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
+        cardBottomAnchor = card.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -120)
         NSLayoutConstraint.activate([
-            card.topAnchor.constraint(equalTo: topAnchor, constant: 120),
-            card.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            card.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            card.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -120),
+            cardTopAnchor,
+            cardLeadingAnchor,
+            cardTrailingAnchor,
+            cardBottomAnchor,
         ])
         
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -374,6 +400,61 @@ extension CardView {
     
     func configureImages(with images: [ImageEntity]) {
         
+    }
+    
+}
+
+
+// MARK: - Custom Transition Related
+
+extension CardView {
+    
+    func animateCardShowing(startFrame: CGRect, completion: ((Bool) -> Void)? = nil) {
+        let cardFinalFrame = card.frame
+        
+        let centerDiffX = startFrame.center.x - cardFinalFrame.center.x
+        let centerDiffY = startFrame.center.y - cardFinalFrame.center.y
+        
+        let cardWidthScaleDiff = startFrame.width / cardFinalFrame.width
+        let cardHeightScaleDiff = startFrame.height / cardFinalFrame.height
+        
+        let scaleTransform = CGAffineTransform(scaleX: cardWidthScaleDiff, y: cardHeightScaleDiff)
+        let centerTransform = CGAffineTransform(translationX: centerDiffX, y: centerDiffY)
+        let cardTransform = scaleTransform.concatenating(centerTransform)
+        card.transform = cardTransform
+        
+        cardShowingAnimator.addAnimations { [weak self] in
+            self?.card.transform = .identity
+            self?.backgroundBlurView.effect = UIBlurEffect(style: .regular)
+        }
+        cardShowingAnimator.addCompletion { _ in
+            completion?(true)
+        }
+        cardShowingAnimator.startAnimation()
+    }
+    
+    func animateCardDisappearing(endFrame: CGRect, completion: ((Bool) -> Void)? = nil) {
+        let cardOriginalFrame = card.frame
+        
+        let centerDiffX = endFrame.center.x - cardOriginalFrame.center.x
+        let centerDiffY = endFrame.center.y - cardOriginalFrame.center.y
+        
+        let cardWidthScaleDiff = endFrame.width / cardOriginalFrame.width
+        let cardHeightScaleDiff = endFrame.height / cardOriginalFrame.height
+        
+        let scaleTransform = CGAffineTransform(scaleX: cardWidthScaleDiff, y: cardHeightScaleDiff)
+        let centerTransform = CGAffineTransform(translationX: centerDiffX, y: centerDiffY)
+        let cardTransform = scaleTransform.concatenating(centerTransform)
+        card.transform = .identity
+        
+        cardDisappearingAnimator.addAnimations { [weak self] in
+            self?.card.transform = cardTransform
+            self?.backgroundBlurView.effect = nil
+        }
+        cardDisappearingAnimator.addCompletion { _ in
+            completion?(true)
+        }
+        cardDisappearingAnimator.startAnimation()
     }
     
 }

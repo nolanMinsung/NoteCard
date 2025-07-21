@@ -32,7 +32,7 @@ class CardViewController: UIViewController {
         rootView.configure(with: memoEntity)
         setupGestures()
     }
-        
+    
 }
 
 
@@ -44,7 +44,7 @@ extension CardViewController {
     }
     
     @objc private func backgroundBlurTapped(_ sender: UITapGestureRecognizer) {
-        dismiss(animated: false)
+        dismiss(animated: true)
     }
     
 }

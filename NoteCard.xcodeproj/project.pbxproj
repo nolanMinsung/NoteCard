@@ -101,6 +101,12 @@
 		4EEFF4082B5CC155008F0BBB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4EEFF40A2B5CC155008F0BBB /* InfoPlist.strings */; };
 		4EF65B1D2E2DBA2B00C483BB /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B1C2E2DBA2B00C483BB /* CardViewController.swift */; };
 		4EF65B1F2E2DBA5B00C483BB /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B1E2E2DBA5B00C483BB /* CardView.swift */; };
+		4EF65B472E2DE7C000C483BB /* CardPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B462E2DE7C000C483BB /* CardPresentationController.swift */; };
+		4EF65B532E2DEA5400C483BB /* CardPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B522E2DEA5400C483BB /* CardPresentationAnimator.swift */; };
+		4EF65B552E2DF51A00C483BB /* CardTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */; };
+		4EF65B572E2E0B2200C483BB /* CardDismissalAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */; };
+		4EF65B592E2E11E500C483BB /* CardFrameRestorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B582E2E11E500C483BB /* CardFrameRestorable.swift */; };
+		4EF65B5B2E2E175800C483BB /* CardTransitioningInteractivceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B5A2E2E175800C483BB /* CardTransitioningInteractivceDelegate.swift */; };
 		4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */; };
 		4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */; };
 		4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */; };
@@ -207,6 +213,12 @@
 		4EEFF40C2B5CC167008F0BBB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4EF65B1C2E2DBA2B00C483BB /* CardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
 		4EF65B1E2E2DBA5B00C483BB /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		4EF65B462E2DE7C000C483BB /* CardPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPresentationController.swift; sourceTree = "<group>"; };
+		4EF65B522E2DEA5400C483BB /* CardPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPresentationAnimator.swift; sourceTree = "<group>"; };
+		4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTransitioningDelegate.swift; sourceTree = "<group>"; };
+		4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDismissalAnimator.swift; sourceTree = "<group>"; };
+		4EF65B582E2E11E500C483BB /* CardFrameRestorable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFrameRestorable.swift; sourceTree = "<group>"; };
+		4EF65B5A2E2E175800C483BB /* CardTransitioningInteractivceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTransitioningInteractivceDelegate.swift; sourceTree = "<group>"; };
 		4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedFlowLayout.swift; sourceTree = "<group>"; };
 		4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingViewController.swift; sourceTree = "<group>"; };
 		4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingView.swift; sourceTree = "<group>"; };
@@ -526,10 +538,24 @@
 		4EF65B442E2DE74100C483BB /* CardView */ = {
 			isa = PBXGroup;
 			children = (
+				4EF65B452E2DE79800C483BB /* custom transition */,
 				4EF65B1C2E2DBA2B00C483BB /* CardViewController.swift */,
 				4EF65B1E2E2DBA5B00C483BB /* CardView.swift */,
 			);
 			path = CardView;
+			sourceTree = "<group>";
+		};
+		4EF65B452E2DE79800C483BB /* custom transition */ = {
+			isa = PBXGroup;
+			children = (
+				4EF65B462E2DE7C000C483BB /* CardPresentationController.swift */,
+				4EF65B522E2DEA5400C483BB /* CardPresentationAnimator.swift */,
+				4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */,
+				4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */,
+				4EF65B582E2E11E500C483BB /* CardFrameRestorable.swift */,
+				4EF65B5A2E2E175800C483BB /* CardTransitioningInteractivceDelegate.swift */,
+			);
+			path = "custom transition";
 			sourceTree = "<group>";
 		};
 		4EFC02DC2B42924900C778DF /* TextSizeSettingView */ = {
@@ -622,6 +648,7 @@
 				4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */,
 				4E1384FB2AF385340063817B /* PopupCardPresentationController.swift in Sources */,
 				4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */,
+				4EF65B5B2E2E175800C483BB /* CardTransitioningInteractivceDelegate.swift in Sources */,
 				4E1384F32AF384C80063817B /* HomeCardCell.swift in Sources */,
 				4E1384DD2AF382A40063817B /* MemoEntity+CoreDataProperties.swift in Sources */,
 				4E1384D92AF382A40063817B /* CategoryEntity+CoreDataProperties.swift in Sources */,
@@ -646,6 +673,7 @@
 				4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */,
 				4E1384FF2AF385750063817B /* PercentDrivenInteractiveTransition.swift in Sources */,
 				4E1385242AF387DE0063817B /* CardImageShowingAnimatedTransitioning.swift in Sources */,
+				4EF65B532E2DEA5400C483BB /* CardPresentationAnimator.swift in Sources */,
 				4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */,
 				4E4FCCBC2B3C33FD000CBE17 /* DateFormatSettingView.swift in Sources */,
 				4E4FCCC42B3C5873000CBE17 /* TimeFormatSettingView.swift in Sources */,
@@ -658,6 +686,7 @@
 				4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */,
 				4E1384DA2AF382A40063817B /* ImageEntity+CoreDataClass.swift in Sources */,
 				4E3E75782B67D3B60073A951 /* QuickMemoEmptyViewController.swift in Sources */,
+				4EF65B472E2DE7C000C483BB /* CardPresentationController.swift in Sources */,
 				4E1385152AF386D10063817B /* MemoImageCollectionViewCell.swift in Sources */,
 				4EA4011D2B14456700EB2FD3 /* TotalListViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E1385052AF385F20063817B /* CreateCategoryViewController.swift in Sources */,
@@ -671,6 +700,7 @@
 				4E1384DB2AF382A40063817B /* ImageEntity+CoreDataProperties.swift in Sources */,
 				4E1385012AF3859D0063817B /* CategoryListViewController.swift in Sources */,
 				4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */,
+				4EF65B552E2DF51A00C483BB /* CardTransitioningDelegate.swift in Sources */,
 				4E5960352B072E640029BA3D /* TotalListCollectionViewCell.swift in Sources */,
 				4E1384E32AF3839F0063817B /* CategoryEntityManager.swift in Sources */,
 				4EF65B1D2E2DBA2B00C483BB /* CardViewController.swift in Sources */,
@@ -683,6 +713,7 @@
 				4E1384DC2AF382A40063817B /* MemoEntity+CoreDataClass.swift in Sources */,
 				4E1384FD2AF385580063817B /* HomeViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E1384A92AF37B350063817B /* ViewController.swift in Sources */,
+				4EF65B592E2E11E500C483BB /* CardFrameRestorable.swift in Sources */,
 				4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */,
 				4E1385132AF386AF0063817B /* LargeCardCollectionViewCell.swift in Sources */,
 				4E1385222AF387AA0063817B /* CardImageShowingPresentationController.swift in Sources */,
@@ -703,6 +734,7 @@
 				4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */,
 				4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */,
 				4E462D692E2A1AF5004C0215 /* SmallCardCollectionView.swift in Sources */,
+				4EF65B572E2E0B2200C483BB /* CardDismissalAnimator.swift in Sources */,
 				4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */,
 				4E1384A72AF37B350063817B /* SceneDelegate.swift in Sources */,
 				4E0BDF4C2B3D38C400813DCA /* OrderSettingViewController.swift in Sources */,
