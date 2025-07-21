@@ -282,12 +282,18 @@ extension HomeViewController: UICollectionViewDelegate {
             guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
             guard let selectedMemoEntity = selectedCell.memoEntity else { return }
             
-            let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
-            let popupCardVC = PopupCardViewController(memo: selectedMemoEntity, selectedCollectionViewCell: selectedCell, indexPath: indexPath, selectedCellFrame: convertedRect, cornerRadius: 20, isInteractive: true)
-            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
-            popupCardVC.transitioningDelegate = self
+//            let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
+//            let popupCardVC = PopupCardViewController(memo: selectedMemoEntity, selectedCollectionViewCell: selectedCell, indexPath: indexPath, selectedCellFrame: convertedRect, cornerRadius: 20, isInteractive: true)
+//            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
+//            popupCardVC.transitioningDelegate = self
+//            
+//            self.tabBarController?.present(popupCardVC, animated: true)
             
-            self.tabBarController?.present(popupCardVC, animated: true)
+            let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
+            cardViewController.modalPresentationStyle = .overFullScreen
+            self.present(cardViewController, animated: false)
+            
+            
             
         default:
             fatalError("HomeCollectionView's number of sections is 3")

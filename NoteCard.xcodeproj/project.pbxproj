@@ -99,6 +99,8 @@
 		4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */; };
 		4EEF141B2B14A74B001EB295 /* MemoViewPopupCardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEF141A2B14A74B001EB295 /* MemoViewPopupCardAnimatedTransitioning.swift */; };
 		4EEFF4082B5CC155008F0BBB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4EEFF40A2B5CC155008F0BBB /* InfoPlist.strings */; };
+		4EF65B1D2E2DBA2B00C483BB /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B1C2E2DBA2B00C483BB /* CardViewController.swift */; };
+		4EF65B1F2E2DBA5B00C483BB /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B1E2E2DBA5B00C483BB /* CardView.swift */; };
 		4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */; };
 		4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */; };
 		4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */; };
@@ -203,6 +205,8 @@
 		4EEF141A2B14A74B001EB295 /* MemoViewPopupCardAnimatedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoViewPopupCardAnimatedTransitioning.swift; sourceTree = "<group>"; };
 		4EEFF4092B5CC155008F0BBB /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4EEFF40C2B5CC167008F0BBB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4EF65B1C2E2DBA2B00C483BB /* CardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
+		4EF65B1E2E2DBA5B00C483BB /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedFlowLayout.swift; sourceTree = "<group>"; };
 		4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingViewController.swift; sourceTree = "<group>"; };
 		4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingView.swift; sourceTree = "<group>"; };
@@ -387,6 +391,8 @@
 		4E1384C42AF37E800063817B /* PopupCardView */ = {
 			isa = PBXGroup;
 			children = (
+				4EF65B1C2E2DBA2B00C483BB /* CardViewController.swift */,
+				4EF65B1E2E2DBA5B00C483BB /* CardView.swift */,
 				4E1384F62AF385090063817B /* PopupCardViewController.swift */,
 				4E1384F82AF3851B0063817B /* PopupCardView.swift */,
 				4E1384FA2AF385340063817B /* PopupCardPresentationController.swift */,
@@ -659,6 +665,7 @@
 				4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */,
 				4E5960352B072E640029BA3D /* TotalListCollectionViewCell.swift in Sources */,
 				4E1384E32AF3839F0063817B /* CategoryEntityManager.swift in Sources */,
+				4EF65B1D2E2DBA2B00C483BB /* CardViewController.swift in Sources */,
 				4E1384ED2AF3846C0063817B /* HomeView.swift in Sources */,
 				4E1385192AF387100063817B /* SmallCardCollectionViewCell.swift in Sources */,
 				4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */,
@@ -693,6 +700,7 @@
 				4E0BDF4C2B3D38C400813DCA /* OrderSettingViewController.swift in Sources */,
 				4E13854C2AF38BE40063817B /* DetailViewSelectedImageViewController.swift in Sources */,
 				4E87D09F2B7A55200081D3D4 /* MemoSearchingCollectionView.swift in Sources */,
+				4EF65B1F2E2DBA5B00C483BB /* CardView.swift in Sources */,
 				4E13852A2AF389930063817B /* MemoDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
