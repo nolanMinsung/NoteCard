@@ -26,7 +26,7 @@ final class CardView: UIView {
     let cardBlurView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
     
     
-    private let card = UIView()
+    let card = UIView()
     private let titleTextField = UITextField()
     private let heartImageView = UIButton(configuration: .plain())
     private let ellipsisButton = UIButton(configuration: .plain())
@@ -186,7 +186,8 @@ private extension CardView {
         
         memoTextView.textInputView.backgroundColor = .clear
         memoTextView.tintColor = .currentTheme()
-        memoTextView.isEditable = false
+//        memoTextView.isEditable = false
+        memoTextView.isUserInteractionEnabled = false
         memoTextView.dataDetectorTypes = .link
         
         // 텍스트 제외한 모든 inset 제거
@@ -408,6 +409,60 @@ extension CardView {
 // MARK: - Custom Transition Related
 
 extension CardView {
+    
+    func setCardShowingInitialState(startFrame: CGRect) {
+        let cardFinalFrame = card.frame
+        
+        let centerDiffX = startFrame.center.x - cardFinalFrame.center.x
+        let centerDiffY = startFrame.center.y - cardFinalFrame.center.y
+        
+        let cardWidthScaleDiff = startFrame.width / cardFinalFrame.width
+        let cardHeightScaleDiff = startFrame.height / cardFinalFrame.height
+        
+        let scaleTransform = CGAffineTransform(scaleX: cardWidthScaleDiff, y: cardHeightScaleDiff)
+        let centerTransform = CGAffineTransform(translationX: centerDiffX, y: centerDiffY)
+        let cardTransform = scaleTransform.concatenating(centerTransform)
+        card.transform = cardTransform
+    }
+    
+    func setCardShowingFinalState() {
+        card.transform = .identity
+        backgroundBlurView.effect = UIBlurEffect(style: .regular)
+    }
+    
+    func setCardDisappearingInitialState() {
+        card.transform = .identity
+    }
+    
+    func setCardDisappearingFinalState(endFrame: CGRect) {
+        let cardOriginalFrame = card.frame
+        
+        let centerDiffX = endFrame.center.x - cardOriginalFrame.center.x
+        let centerDiffY = endFrame.center.y - cardOriginalFrame.center.y
+        
+        let cardWidthScaleDiff = endFrame.width / cardOriginalFrame.width
+        let cardHeightScaleDiff = endFrame.height / cardOriginalFrame.height
+        
+        let currentT = card.transform
+        
+        let scaleT = CGAffineTransform(scaleX: cardWidthScaleDiff, y: cardHeightScaleDiff)
+        let translationT = CGAffineTransform(translationX: centerDiffX, y: centerDiffY)
+        
+        /// - Important: ⚠️ 순서 매우 중요!!!‼️
+        /// concatenating을 통해 CGAffineTransform 들을 연산할 때 맨 마지막에 추가된 transform부터 역순으로 계산된다.
+        ///
+        /// 현재 상황에서 여러 transform을 엮을 때, 다음 순서를 지켜야 함.
+        /// 1. `scaleT`는 `translationT` 다음에 와야 한다.
+        ///     `scaleT`가 먼저 적용되면 `translationT`의 움직임은 `scaleT`의 비율만큼 적용되기 때문..
+        /// 2. `currentT`는 `translationT` 다음에 와야 한다.
+        ///     `currentT` 자체에 `scale`이 반영되어 있을 수가 있어서 `translationT`를 적용할 때 의도한 것과 다른 값 만큼 이동할 수 있음.
+        card.transform = scaleT
+            // currentTransform 안에 scale 변화가 들어가 있어서, 이게
+            .concatenating(currentT)
+            .concatenating(translationT)
+        
+        backgroundBlurView.effect = nil
+    }
     
     func animateCardShowing(startFrame: CGRect, completion: ((Bool) -> Void)? = nil) {
         let cardFinalFrame = card.frame

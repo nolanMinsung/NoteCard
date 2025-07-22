@@ -10,6 +10,10 @@ import UIKit
 
 protocol CardFrameRestorable: UIViewController {
     
-    func getFrameOfCell(indexPath: IndexPath) -> CGRect?
+    func getFrameOfSelectedCell(indexPath: IndexPath) -> CGRect?
+    
+    func makeSelectedCellInvisible(indexPath: IndexPath)
+    
+    func makeSelectedCellVisible(indexPath: IndexPath)
     
 }

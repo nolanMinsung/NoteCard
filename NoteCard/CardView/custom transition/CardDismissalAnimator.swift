@@ -10,8 +10,6 @@ import UIKit
 
 final class CardDismissalAnimator: NSObject {
     
-    let animator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
-    
     var endFrame: CGRect = .init(x: 100, y: 300, width: 150, height: 225)
     
     init(endFrame: CGRect) {
@@ -24,7 +22,7 @@ final class CardDismissalAnimator: NSObject {
 extension CardDismissalAnimator: UIViewControllerAnimatedTransitioning {
     
     func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
-        0.5
+        0.6
     }
     
     func animateTransition(using transitionContext: any UIViewControllerContextTransitioning) {
@@ -32,15 +30,24 @@ extension CardDismissalAnimator: UIViewControllerAnimatedTransitioning {
         let cardVC = transitionContext.viewController(forKey: .from) as! CardViewController
         let toVC = transitionContext.viewController(forKey: .to)
         containerView.layoutIfNeeded()
-        animator.addAnimations {
+        
+        containerView.isUserInteractionEnabled = false
+        cardVC.rootView.isUserInteractionEnabled = false
+        
+        /// - Important: Interactivce한 트랜지션을 위해서는 UIView.animate를 사용해야 함.
+        /// UIViewPropertyAnimator를 사용하면 interactive한 애니메이션이 제대로 동작하지 않음 주의.
+        UIView.springAnimate(withDuration: transitionDuration(using: transitionContext), options: .allowUserInteraction) { [weak self] in
+            guard let self else { return }
+            
             toVC?.view.transform = .identity
             toVC?.view.layer.cornerRadius = 0
             toVC?.view.clipsToBounds = false
+            
+            cardVC.rootView.setCardDisappearingFinalState(endFrame: self.endFrame)
+        } completion: { _ in
+            transitionContext.completeTransition(true)
         }
-        animator.startAnimation()
-        cardVC.rootView.animateCardDisappearing(endFrame: endFrame) { isFinished in
-            transitionContext.completeTransition(isFinished)
-        }
+        
     }
     
     

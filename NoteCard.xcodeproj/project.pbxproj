@@ -548,14 +548,22 @@
 		4EF65B452E2DE79800C483BB /* custom transition */ = {
 			isa = PBXGroup;
 			children = (
+				4EF65B5C2E2E6CAB00C483BB /* interactivceAnimator */,
 				4EF65B462E2DE7C000C483BB /* CardPresentationController.swift */,
+				4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */,
 				4EF65B522E2DEA5400C483BB /* CardPresentationAnimator.swift */,
 				4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */,
-				4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */,
 				4EF65B582E2E11E500C483BB /* CardFrameRestorable.swift */,
-				4EF65B5A2E2E175800C483BB /* CardTransitioningInteractivceDelegate.swift */,
 			);
 			path = "custom transition";
+			sourceTree = "<group>";
+		};
+		4EF65B5C2E2E6CAB00C483BB /* interactivceAnimator */ = {
+			isa = PBXGroup;
+			children = (
+				4EF65B5A2E2E175800C483BB /* CardTransitioningInteractivceDelegate.swift */,
+			);
+			path = interactivceAnimator;
 			sourceTree = "<group>";
 		};
 		4EFC02DC2B42924900C778DF /* TextSizeSettingView */ = {

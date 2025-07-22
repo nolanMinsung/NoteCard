@@ -272,18 +272,18 @@ extension HomeViewController: UICollectionViewDelegate {
                 guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
                 guard let selectedMemoEntity = selectedCell.memoEntity else { return }
                 
-                let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
+                let convertedCellFrame = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
 //                let popupCardVC = PopupCardViewController(memo: selectedMemoEntity, selectedCollectionViewCell: selectedCell, indexPath: indexPath, selectedCellFrame: convertedRect, cornerRadius: 20, isInteractive: true)
 //                popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
 //                popupCardVC.transitioningDelegate = self
                 let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
                 cardTransitioningDelegate.selectedIndexPath = indexPath
-                cardTransitioningDelegate.startFrame = convertedRect
+                cardTransitioningDelegate.startFrame = convertedCellFrame
                 cardViewController.transitioningDelegate = cardTransitioningDelegate
                 cardViewController.modalPresentationStyle = .custom
-                self.present(cardViewController, animated: true)
                 
-                self.tabBarController?.present(cardViewController, animated: true)
+                // 실제로는 tab bar controller 가 present
+                present(cardViewController, animated: true)
             }
             
         case 2:
@@ -356,9 +356,19 @@ extension HomeViewController: UIViewControllerTransitioningDelegate {
 
 extension HomeViewController: CardFrameRestorable {
     
-    func getFrameOfCell(indexPath: IndexPath) -> CGRect? {
+    func getFrameOfSelectedCell(indexPath: IndexPath) -> CGRect? {
         guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) else { return nil }
         return selectedCell.convert(selectedCell.contentView.frame, to: view)
+    }
+    
+    func makeSelectedCellInvisible(indexPath: IndexPath) {
+        guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) else { return }
+        selectedCell.contentView.alpha = 0
+    }
+    
+    func makeSelectedCellVisible(indexPath: IndexPath) {
+        guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) else { return }
+        selectedCell.contentView.alpha = 1
     }
     
 }

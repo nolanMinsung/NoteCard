@@ -10,18 +10,20 @@ import UIKit
 
 final class CardPresentationAnimator: NSObject {
     
-    let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
-    
     // (10.0, 522.0, 145.0, 220.0)
     // (20.0, 1053.0, 145.0, 220.0)
 //    var startFrame: CGRect = .init(x: 10, y: 522, width: 145, height: 220)
     var startFrame: CGRect = .init(x: 20, y: 1053, width: 145, height: 220)
     
-    init(startFrame: CGRect) {
+    let interactor: UIPercentDrivenInteractiveTransition
+    
+    init(startFrame: CGRect, interactor: UIPercentDrivenInteractiveTransition) {
         self.startFrame = startFrame
+        self.interactor = interactor
     }
     
 }
+
 extension CardPresentationAnimator: UIViewControllerAnimatedTransitioning {
     
     func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
@@ -42,15 +44,27 @@ extension CardPresentationAnimator: UIViewControllerAnimatedTransitioning {
             cardView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
         containerView.layoutIfNeeded()
-        animator.addAnimations {
-            fromVC?.view.transform = .init(scaleX: 0.95, y: 0.95)
-            fromVC?.view.layer.cornerRadius = 20
-            fromVC?.view.clipsToBounds = true
+        cardVC.rootView.setCardShowingInitialState(startFrame: startFrame)
+        
+        /// - Important: Interactivce한 트랜지션을 위해서는 UIView.animate를 사용해야 함.
+        /// UIViewPropertyAnimator를 사용하면 interactive한 애니메이션이 제대로 동작하지 않음 주의.
+        UIView.springAnimate(
+            withDuration: transitionDuration(using: transitionContext),
+            options: .allowUserInteraction,
+            animations: {
+                fromVC?.view.transform = .init(scaleX: 0.95, y: 0.95)
+                fromVC?.view.layer.cornerRadius = 20
+                fromVC?.view.clipsToBounds = true
+                
+                cardVC.rootView.setCardShowingFinalState()
+            },
+            completion: { _ in transitionContext.completeTransition(!transitionContext.transitionWasCancelled) }
+        )
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.interactor.finish()
         }
-        animator.startAnimation()
-        cardVC.rootView.animateCardShowing(startFrame: startFrame) { isFinished in
-            transitionContext.completeTransition(isFinished)
-        }
+        
     }
     
 }

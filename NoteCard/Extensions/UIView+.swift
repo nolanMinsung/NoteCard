@@ -10,8 +10,22 @@ import UIKit
 
 extension UIView {
     
-    static func springAnimate(withDuration: TimeInterval, delay: TimeInterval = 0, animations: @escaping () -> Void) {
-        self.animate(withDuration: withDuration, delay: delay, usingSpringWithDamping: 1, initialSpringVelocity: 1, animations: animations)
+    static func springAnimate(
+        withDuration: TimeInterval,
+        delay: TimeInterval = 0,
+        options: AnimationOptions = [],
+        animations: @escaping () -> Void,
+        completion: ((Bool) -> Void)? = nil
+    ) {
+        self.animate(
+            withDuration: withDuration,
+            delay: delay,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 1,
+            options: options,
+            animations: animations,
+            completion: completion
+        )
     }
     
     func currentWindowScene() -> UIWindowScene? {

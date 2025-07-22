@@ -10,6 +10,11 @@ import UIKit
 
 final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
     
+    let presentationInteractor = UIPercentDrivenInteractiveTransition()
+    let dismissInteractor = UIPercentDrivenInteractiveTransition()
+    
+    var isInteractivce: Bool = false
+    
     var selectedIndexPath: IndexPath? = nil
     var startFrame: CGRect = .zero
     var endFrame: CGRect = .zero
@@ -33,7 +38,7 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
         presenting: UIViewController,
         source: UIViewController
     ) -> (any UIViewControllerAnimatedTransitioning)? {
-        return CardPresentationAnimator(startFrame: startFrame)
+        return CardPresentationAnimator(startFrame: startFrame, interactor: presentationInteractor)
     }
     
     func animationController(
@@ -43,10 +48,24 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
         guard let selectedIndexPath else {
             return CardDismissalAnimator(endFrame: dummyFrame)
         }
-        let endFrame = presentingViewController?.getFrameOfCell(
+        let endFrame = presentingViewController?.getFrameOfSelectedCell(
             indexPath: selectedIndexPath
         ) ?? dummyFrame
         return CardDismissalAnimator(endFrame: endFrame)
     }
+    
+    func interactionControllerForPresentation(
+        using animator: UIViewControllerAnimatedTransitioning
+    ) -> UIViewControllerInteractiveTransitioning? {
+//        return self.isInteractivce ? self.presentationInteractor : nil
+        return self.presentationInteractor
+    }
+    
+    func interactionControllerForDismissal(
+        using animator: UIViewControllerAnimatedTransitioning
+    ) -> UIViewControllerInteractiveTransitioning? {
+        return self.isInteractivce ? self.dismissInteractor : nil
+    }
+    
     
 }
