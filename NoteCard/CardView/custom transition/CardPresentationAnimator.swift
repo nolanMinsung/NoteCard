@@ -52,10 +52,11 @@ extension CardPresentationAnimator: UIViewControllerAnimatedTransitioning {
             withDuration: transitionDuration(using: transitionContext),
             options: .allowUserInteraction,
             animations: {
-                fromVC?.view.transform = .init(scaleX: 0.95, y: 0.95)
-                fromVC?.view.layer.cornerRadius = 20
-                fromVC?.view.clipsToBounds = true
-                
+//                if UIDevice.current.userInterfaceIdiom == .phone {
+//                    fromVC?.view.transform = .init(scaleX: 0.95, y: 0.95)
+//                    fromVC?.view.layer.cornerRadius = 20
+//                    fromVC?.view.clipsToBounds = true
+//                }
                 cardVC.rootView.setCardShowingFinalState()
             },
             completion: { _ in transitionContext.completeTransition(!transitionContext.transitionWasCancelled) }

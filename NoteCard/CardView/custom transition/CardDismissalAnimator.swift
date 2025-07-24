@@ -22,7 +22,7 @@ final class CardDismissalAnimator: NSObject {
 extension CardDismissalAnimator: UIViewControllerAnimatedTransitioning {
     
     func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
-        0.6
+        0.4
     }
     
     func animateTransition(using transitionContext: any UIViewControllerContextTransitioning) {
@@ -36,13 +36,16 @@ extension CardDismissalAnimator: UIViewControllerAnimatedTransitioning {
         
         /// - Important: Interactivce한 트랜지션을 위해서는 UIView.animate를 사용해야 함.
         /// UIViewPropertyAnimator를 사용하면 interactive한 애니메이션이 제대로 동작하지 않음 주의.
-        UIView.springAnimate(withDuration: transitionDuration(using: transitionContext), options: .allowUserInteraction) { [weak self] in
+        UIView.springAnimate(
+            withDuration: transitionDuration(using: transitionContext),
+            options: .allowUserInteraction
+        ) { [weak self] in
             guard let self else { return }
-            
-            toVC?.view.transform = .identity
-            toVC?.view.layer.cornerRadius = 0
-            toVC?.view.clipsToBounds = false
-            
+//            if UIDevice.current.userInterfaceIdiom == .phone {
+//                toVC?.view.transform = .identity
+//                toVC?.view.layer.cornerRadius = 0
+//                toVC?.view.clipsToBounds = true
+//            }
             cardVC.rootView.setCardDisappearingFinalState(endFrame: self.endFrame)
         } completion: { _ in
             transitionContext.completeTransition(true)

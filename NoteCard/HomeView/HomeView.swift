@@ -9,10 +9,19 @@ import UIKit
 
 final class HomeView: UIView {
     
-    let homeCollectionView = HomeCollectionView()
+    let restoringCard = RestoringCard()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    let homeCollectionView: HomeCollectionView
+    
+    init(
+        favoriteSectionHandler: @escaping NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
+        allSectionHandler: @escaping NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
+    ) {
+        self.homeCollectionView = HomeCollectionView(
+            favoriteSectionHandler: favoriteSectionHandler,
+            allSectionHandler: allSectionHandler
+        )
+        super.init(frame: .zero)
         
         self.setupCollectionView()
         self.setupStyle()
@@ -52,18 +61,16 @@ final class HomeView: UIView {
     
     private func setupViewHierarchy() {
         self.addSubview(homeCollectionView)
+        addSubview(restoringCard)
     }
     
     private func setupLayoutConstraints() {
         NSLayoutConstraint.activate([
-            self.homeCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
-            self.homeCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
-            self.homeCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
-            self.homeCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0)
+            homeCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+            homeCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
+            homeCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
+            homeCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
         ])
     }
     
 }
-
-
-

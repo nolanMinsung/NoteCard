@@ -13,6 +13,7 @@ extension UIView {
     static func springAnimate(
         withDuration: TimeInterval,
         delay: TimeInterval = 0,
+        dampingRatio: CGFloat = 1,
         options: AnimationOptions = [],
         animations: @escaping () -> Void,
         completion: ((Bool) -> Void)? = nil
@@ -20,7 +21,7 @@ extension UIView {
         self.animate(
             withDuration: withDuration,
             delay: delay,
-            usingSpringWithDamping: 1,
+            usingSpringWithDamping: dampingRatio,
             initialSpringVelocity: 1,
             options: options,
             animations: animations,

@@ -122,11 +122,12 @@ final class HomeCardCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
     func setupUI() {
         //cell의 contentView의 backgroundColor 대신에 cell의 backgroundColor에 직접 색을 넣어주는 이유는
         //팝업카드가 올라왔을 때 다크모드가 바뀌어도 셀 스냅샷의 배경을 투명하게 함으로써 최대한 덜 어색하게 보이게 하기 위함
-        self.backgroundColor = UIColor.memoBackground
-        self.clipsToBounds = true
-        self.layer.masksToBounds = false
-        self.layer.cornerRadius = 20
-        self.layer.cornerCurve = .continuous
+        // -> 다시 contentView로 변경...
+        self.contentView.backgroundColor = UIColor.memoBackground
+        self.contentView.clipsToBounds = true
+        self.contentView.layer.masksToBounds = false
+        self.contentView.layer.cornerRadius = 20
+        self.contentView.layer.cornerCurve = .continuous
         
         self.contentView.addSubview(self.titleTextField)
         self.contentView.addSubview(self.pictureImageLabel)

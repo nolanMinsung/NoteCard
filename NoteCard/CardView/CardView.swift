@@ -427,7 +427,7 @@ extension CardView {
     
     func setCardShowingFinalState() {
         card.transform = .identity
-        backgroundBlurView.effect = UIBlurEffect(style: .regular)
+//        backgroundBlurView.effect = UIBlurEffect(style: .regular)
     }
     
     func setCardDisappearingInitialState() {

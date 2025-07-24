@@ -83,17 +83,26 @@ final class HomeCollectionView: UICollectionView {
         return cardSection
     }
     
-    init() {
-        let layout = UICollectionViewCompositionalLayout(sectionProvider: { sectionIndex, env in
-            switch sectionIndex {
-            case 0:
-                return Self.categoryLayoutSection
-            default:
-                return Self.cardLayoutSection
-            }
-        })
-        super.init(frame: .zero, collectionViewLayout: layout)
-    }
+    init(
+            favoriteSectionHandler: @escaping NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
+            allSectionHandler: @escaping NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
+        ) {
+            let layout = UICollectionViewCompositionalLayout(sectionProvider: { sectionIndex, env in
+                switch sectionIndex {
+                case 0:
+                    return Self.categoryLayoutSection
+                case 1:
+                    let favoriteSection = Self.cardLayoutSection
+                    favoriteSection.visibleItemsInvalidationHandler = favoriteSectionHandler
+                    return favoriteSection
+                default:
+                    let allSection = Self.cardLayoutSection
+                    allSection.visibleItemsInvalidationHandler = allSectionHandler
+                    return allSection
+                }
+            })
+            super.init(frame: .zero, collectionViewLayout: layout)
+        }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

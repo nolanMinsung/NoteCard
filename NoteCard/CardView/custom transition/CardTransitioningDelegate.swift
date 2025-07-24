@@ -15,14 +15,34 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
     
     var isInteractivce: Bool = false
     
-    var selectedIndexPath: IndexPath? = nil
+    var collectionView: UICollectionView
+    var presentingIndexPath: IndexPath
+    var restoringIndexPath: IndexPath? = nil
     var startFrame: CGRect = .zero
     var endFrame: CGRect = .zero
     
+    var cellSnapshot: UIView? = nil
+    var viewSnapshot: UIView? = nil
+    
     weak var presentingViewController: (any CardFrameRestorable)?
     
-    init(presenting: any CardFrameRestorable) {
+    init(
+        presenting: any CardFrameRestorable,
+        collectionView: UICollectionView,
+        selectedIndexPath: IndexPath,
+        startFrame: CGRect,
+        cellSnapshot: UIView? = nil
+    ) {
+        print("transitioning Delegate 생성됨")
         self.presentingViewController = presenting
+        self.collectionView = collectionView
+        self.presentingIndexPath = selectedIndexPath
+        self.startFrame = startFrame
+        self.cellSnapshot = cellSnapshot
+    }
+    
+    deinit {
+        print("transitioning Delegate 사라짐")
     }
     
     func presentationController(
@@ -45,11 +65,8 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
         forDismissed dismissed: UIViewController
     ) -> (any UIViewControllerAnimatedTransitioning)? {
         let dummyFrame = CGRect(x: 100, y: 300, width: 150, height: 225)
-        guard let selectedIndexPath else {
-            return CardDismissalAnimator(endFrame: dummyFrame)
-        }
         let endFrame = presentingViewController?.getFrameOfSelectedCell(
-            indexPath: selectedIndexPath
+            indexPath: presentingIndexPath
         ) ?? dummyFrame
         return CardDismissalAnimator(endFrame: endFrame)
     }
@@ -57,7 +74,6 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
     func interactionControllerForPresentation(
         using animator: UIViewControllerAnimatedTransitioning
     ) -> UIViewControllerInteractiveTransitioning? {
-//        return self.isInteractivce ? self.presentationInteractor : nil
         return self.presentationInteractor
     }
     
