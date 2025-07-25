@@ -17,11 +17,11 @@ protocol CardFrameRestorable: UIViewController {
     
     //------*Stored Property*------//
     
-    func getFrameOfSelectedCell(indexPath: IndexPath) -> CGRect?
+//    func getFrameOfSelectedCell(indexPath: IndexPath) -> CGRect?
     
-//    func makeSelectedCellInvisible(indexPath: IndexPath)
-//    
-//    func makeSelectedCellVisible(indexPath: IndexPath)
+    func makeSelectedCellInvisible(indexPath: IndexPath)
+    
+    func makeSelectedCellVisible(indexPath: IndexPath)
     
     func restore(startFrame: CGRect, indexPath: IndexPath)
     

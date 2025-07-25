@@ -9,6 +9,7 @@ import UIKit
 
 final class HomeView: UIView {
     
+    let blur = CustomIntensityBlurView(blurStyle: .regular, intensity: 0.0)
     let restoringCard = RestoringCard()
     
     let homeCollectionView: HomeCollectionView
@@ -57,10 +58,13 @@ final class HomeView: UIView {
         self.homeCollectionView.backgroundColor = UIColor.clear
         self.homeCollectionView.translatesAutoresizingMaskIntoConstraints = false
         self.homeCollectionView.delaysContentTouches = false
+        
+        self.blur.isUserInteractionEnabled = false
     }
     
     private func setupViewHierarchy() {
         self.addSubview(homeCollectionView)
+        addSubview(blur)
         addSubview(restoringCard)
     }
     
@@ -70,6 +74,14 @@ final class HomeView: UIView {
             homeCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
             homeCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
             homeCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
+        ])
+        
+        blur.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            blur.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+            blur.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
+            blur.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
+            blur.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
         ])
     }
     

@@ -41,12 +41,8 @@ extension CardDismissalAnimator: UIViewControllerAnimatedTransitioning {
             options: .allowUserInteraction
         ) { [weak self] in
             guard let self else { return }
-//            if UIDevice.current.userInterfaceIdiom == .phone {
-//                toVC?.view.transform = .identity
-//                toVC?.view.layer.cornerRadius = 0
-//                toVC?.view.clipsToBounds = true
-//            }
             cardVC.rootView.setCardDisappearingFinalState(endFrame: self.endFrame)
+            cardVC.rootView.backgroundBlurView.removeBlur(animated: true)
         } completion: { _ in
             transitionContext.completeTransition(true)
         }

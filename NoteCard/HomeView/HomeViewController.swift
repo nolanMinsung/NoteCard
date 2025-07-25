@@ -350,6 +350,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 
                 // 실제로는 tab bar controller 가 present
                 present(cardViewController, animated: true)
+                homeView.blur.setBlurFromZero(intensity: 0.15, animated: true, duration: 0.3)
             }
             
         case 2:
@@ -359,7 +360,6 @@ extension HomeViewController: UICollectionViewDelegate {
             makeSelectedCellInvisible(indexPath: indexPath)
             
             let convertedCellFrame = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
-            
             let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
             cardTransitioningDelegate = CardTransitioningDelegate(
                 presenting: self,
@@ -371,52 +371,13 @@ extension HomeViewController: UICollectionViewDelegate {
             cardViewController.transitioningDelegate = cardTransitioningDelegate
             cardViewController.modalPresentationStyle = .custom
             self.present(cardViewController, animated: true)
-            
+            homeView.blur.setBlurFromZero(intensity: 0.15, animated: true, duration: 0.3)
         default:
             fatalError("HomeCollectionView's number of sections is 3")
         }
     }
     
 }
-
-// MARK: - UIViewControllerTransitioningDelegate
-
-//extension HomeViewController: UIViewControllerTransitioningDelegate {
-//    
-//    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-//        
-//        if source == self.tabBarController {
-//            return PopupCardPresentationController(presentedViewController: presented, presenting: presenting, blurBrightness: UIBlurEffect.Style.extraLight)
-//        } else {
-//            return nil
-//        }
-//    }
-//    
-//    
-//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        return HomeViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
-//    }
-//    
-//    
-//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        
-//        if let popupCardVC = dismissed as? PopupCardViewController {
-//            return HomeViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss, interactiveTransition: popupCardVC.percentDrivenInteractiveTransition)
-//        } else {
-//            return nil
-//        }
-//    }
-//    
-//    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-//        
-//        guard let homeViewPopupCardAnimatedTransitioning = animator as? HomeViewPopupCardAnimatedTransitioning,
-//              let percentDrivenInteractiveTransition = homeViewPopupCardAnimatedTransitioning.interactiveTransition,
-//              percentDrivenInteractiveTransition.interactionInProgress
-//        else { return nil }
-//        return percentDrivenInteractiveTransition
-//    }
-//    
-//}
 
 
 // MARK: - CardFrameRestorable
@@ -435,13 +396,6 @@ extension HomeViewController: CardFrameRestorable {
     func makeSelectedCellVisible(indexPath: IndexPath) {
         guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
         selectedCell.alpha = 1
-    }
-    
-    func getTranslationT(startFrame: CGRect, endFrame: CGRect) -> CGAffineTransform {
-        return .init(
-            translationX: startFrame.center.x - endFrame.center.x,
-            y: startFrame.center.y - endFrame.center.y
-        )
     }
     
     func getDistanceDiff(startFrame: CGRect, endFrame: CGRect) -> CGPoint {
@@ -474,12 +428,16 @@ extension HomeViewController: CardFrameRestorable {
         homeView.restoringCard.center.y += distanceDiff.y
         homeView.restoringCard.transform = scaleT
         
-        // restoring card 초기 디자인 설정
+        // restoring card 초기 디자인 설정 - 기본
         homeView.restoringCard.blurView.effect = UIBlurEffect(style: .regular)
         homeView.restoringCard.isHidden = false
         homeView.restoringCard.alpha = 1
-        homeView.restoringCard.layer.cornerRadius = 20
         homeView.restoringCard.clipsToBounds = true
+        // restoring card 초기 디자인 설정 - 기본
+        
+        // restoring card 초기 디자인 설정 - 커스텀
+        homeView.restoringCard.layer.cornerRadius = 20
+        // restoring card 초기 디자인 설정 - 커스텀
         
         // restoring card snapshot 설정
         homeView.restoringCard.setupSnapshots(
@@ -496,6 +454,7 @@ extension HomeViewController: CardFrameRestorable {
         cardRestoringSizeAnimator.addAnimations { [weak self] in
             self?.homeView.restoringCard.switchSnapshots()
             self?.homeView.restoringCard.transform = .identity
+            self?.homeView.blur.removeBlur(animated: true)
             self?.view.layoutIfNeeded()
         }
         

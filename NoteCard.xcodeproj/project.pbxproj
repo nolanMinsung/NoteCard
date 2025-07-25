@@ -94,6 +94,7 @@
 		4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A92B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift */; };
 		4ED42A822B3D6EDA00D14571 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4ED42A842B3D6EDA00D14571 /* Localizable.strings */; };
 		4ED7B0792E310405005A90CC /* CardRestoringCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED7B0782E310405005A90CC /* CardRestoringCollectionViewCell.swift */; };
+		4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */; };
 		4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */; };
 		4EE2E00F2E2FBAE400CAA7E0 /* RestoringCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE2E00E2E2FBAE400CAA7E0 /* RestoringCard.swift */; };
 		4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */; };
@@ -206,6 +207,7 @@
 		4ED42A962B3DA69300D14571 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		4ED42A972B3DA6E000D14571 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4ED7B0782E310405005A90CC /* CardRestoringCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardRestoringCollectionViewCell.swift; sourceTree = "<group>"; };
+		4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomIntensityBlurView.swift; sourceTree = "<group>"; };
 		4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectionViewController.swift; sourceTree = "<group>"; };
 		4EE2E00E2E2FBAE400CAA7E0 /* RestoringCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoringCard.swift; sourceTree = "<group>"; };
 		4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingScrollView.swift; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
+				4EDD36FF2E33027A002AF29B /* CustomDesign */,
 				4E462BA92E29CF4A004C0215 /* Extensions */,
 				4E2712022DA19C730007D53A /* Protocols */,
 				4ED42A842B3D6EDA00D14571 /* Localizable.strings */,
@@ -522,6 +525,14 @@
 			path = cell;
 			sourceTree = "<group>";
 		};
+		4EDD36FF2E33027A002AF29B /* CustomDesign */ = {
+			isa = PBXGroup;
+			children = (
+				4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */,
+			);
+			path = CustomDesign;
+			sourceTree = "<group>";
+		};
 		4EDF43152B2EB31200AFEEB5 /* CategorySelectionView */ = {
 			isa = PBXGroup;
 			children = (
@@ -729,6 +740,7 @@
 				4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */,
 				4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */,
 				4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */,
+				4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */,
 				4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */,
 				4E1384DC2AF382A40063817B /* MemoEntity+CoreDataClass.swift in Sources */,
 				4E1384FD2AF385580063817B /* HomeViewPopupCardAnimatedTransitioning.swift in Sources */,
