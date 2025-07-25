@@ -350,7 +350,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 
                 // 실제로는 tab bar controller 가 present
                 present(cardViewController, animated: true)
-                homeView.blur.setBlurFromZero(intensity: 0.15, animated: true, duration: 0.3)
+                homeView.blur.setBlurFromZero(intensity: 0.3, animated: true, duration: 0.3)
             }
             
         case 2:
@@ -371,7 +371,7 @@ extension HomeViewController: UICollectionViewDelegate {
             cardViewController.transitioningDelegate = cardTransitioningDelegate
             cardViewController.modalPresentationStyle = .custom
             self.present(cardViewController, animated: true)
-            homeView.blur.setBlurFromZero(intensity: 0.15, animated: true, duration: 0.3)
+            homeView.blur.setBlurFromZero(intensity: 0.3, animated: true, duration: 0.3)
         default:
             fatalError("HomeCollectionView's number of sections is 3")
         }
@@ -418,7 +418,18 @@ extension HomeViewController: CardFrameRestorable {
         self.restoringIndexPath = restoringIndexPath
         guard let targetCell = homeCollectionView.cellForItem(
             at: restoringIndexPath
-        ) as? HomeCardCell else { fatalError() }
+        ) as? HomeCardCell else {
+            // 돌아갈 indexPath의 cell이 존재하지 않는 경우, 뒤처리 후 바로 return (iPadOS에서 화면 크기를 줄였다든가 등..)
+            // - restoringCard 상태 정리
+            // - 블러 지우기
+            // - 선택된 셀 다시 보이도록 설정
+            // - self.restoringIndexPath에 nil 할당.
+            self.homeView.restoringCard.setStateAfterRestore()
+            self.homeView.blur.removeBlur(animated: true)
+            self.makeSelectedCellVisible(indexPath: indexPath)
+            self.restoringIndexPath = nil
+            return
+        }
         
         // restoring card 초기 위치, 크기 설정
         let convertedCellFrame = targetCell.convert(targetCell.contentView.frame, to: self.view)
@@ -455,6 +466,8 @@ extension HomeViewController: CardFrameRestorable {
             self?.homeView.restoringCard.switchSnapshots()
             self?.homeView.restoringCard.transform = .identity
             self?.homeView.blur.removeBlur(animated: true)
+            
+            self?.tabBarController?.view.transform = .identity
             self?.view.layoutIfNeeded()
         }
         

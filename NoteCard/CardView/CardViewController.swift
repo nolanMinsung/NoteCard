@@ -14,8 +14,8 @@ class CardViewController: UIViewController {
     let rootView = CardView()
     lazy var dynamicAnimator = UIDynamicAnimator(referenceView: rootView)
     
-    lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundBlurTapped))
-    lazy var dragPanGesture = UIPanGestureRecognizer(target: self, action: #selector(dragPanGesturehandler))
+    let tapGesture = UITapGestureRecognizer()
+    let dragPanGesture = UIPanGestureRecognizer()
     
     init(memoEntity: MemoEntity) {
         self.memoEntity = memoEntity
@@ -37,12 +37,45 @@ class CardViewController: UIViewController {
         setupGestures()
     }
     
+    /*
+     https://developer.apple.com/documentation/UIKit/handling-key-presses-made-on-a-physical-keyboard#Detect-a-key-press
+     */
+    // Handle someone pressing a key on a physical keyboard.
+    override func pressesBegan(_ presses: Set<UIPress>,
+                               with event: UIPressesEvent?) {
+        
+        var didHandleEvent = false
+        
+        for press in presses {
+            
+            // Get the pressed key.
+            guard let key = press.key else { continue }
+            
+            if key.charactersIgnoringModifiers == UIKeyCommand.inputEscape {
+                // Someone pressed the escape key.
+                // Respond to the key-press event.
+                didHandleEvent = true
+                dismissCard()
+            }
+        }
+        
+        if didHandleEvent == false {
+            // If someone presses a key that you're not handling,
+            // pass the event to the next responder.
+            super.pressesBegan(presses, with: event)
+        }
+    }
+    
 }
 
 
 extension CardViewController {
     
     private func setupGestures() {
+        tapGesture.addTarget(self, action: #selector(backgroundBlurTapped))
+        dragPanGesture.addTarget(self, action: #selector(dragPanGesturehandler))
+        dragPanGesture.allowedScrollTypesMask = [.continuous]
+        
         rootView.backgroundBlurView.addGestureRecognizer(tapGesture)
         rootView.card.addGestureRecognizer(dragPanGesture)
     }

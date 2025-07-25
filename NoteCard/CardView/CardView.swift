@@ -188,7 +188,6 @@ private extension CardView {
         memoTextView.textInputView.backgroundColor = .clear
         memoTextView.tintColor = .currentTheme()
 //        memoTextView.isEditable = false
-        memoTextView.isUserInteractionEnabled = false
         memoTextView.dataDetectorTypes = .link
         
         // 텍스트 제외한 모든 inset 제거

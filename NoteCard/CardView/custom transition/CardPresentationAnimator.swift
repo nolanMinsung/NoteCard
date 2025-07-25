@@ -47,12 +47,23 @@ extension CardPresentationAnimator: UIViewControllerAnimatedTransitioning {
         cardVC.rootView.setCardShowingInitialState(startFrame: startFrame)
         cardVC.rootView.backgroundBlurView.setBlurFromZero(intensity: 0.1, animated: true)
         
+        let homeViewBackgroundColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return UIColor.systemGray6
+            } else {
+                return UIColor.black
+            }
+        }
+        fromVC?.view.window?.backgroundColor = homeViewBackgroundColor
+        
+        
         /// - Important: Interactivce한 트랜지션을 위해서는 UIView.animate를 사용해야 함.
         /// UIViewPropertyAnimator를 사용하면 interactive한 애니메이션이 제대로 동작하지 않음 주의.
         UIView.springAnimate(
             withDuration: transitionDuration(using: transitionContext),
             options: .allowUserInteraction,
             animations: {
+                fromVC?.view.transform = .init(scaleX: 0.95, y: 0.95)
                 cardVC.rootView.setCardShowingFinalState()
             },
             completion: { _ in transitionContext.completeTransition(!transitionContext.transitionWasCancelled) }
