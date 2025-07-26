@@ -15,37 +15,34 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
     
     var isInteractivce: Bool = false
     
-    var collectionView: UICollectionView
-    
     // IndexPath 두 개로 구분하는 경우는, dismiss중에 다른 셀을 또 탭 할 수도 있기 때문.
-    var presentingIndexPath: IndexPath
+    private(set) var presentingIndexPath: IndexPath
     var restoringIndexPath: IndexPath? = nil
-    var startCellFrame: CGRect = .zero
-//    var endFrame: CGRect = .zero
+    private var startCellFrame: CGRect = .zero
     
+    private var cardInset: NSDirectionalEdgeInsets
+    
+    // Snapshots
     var cellSnapshot: UIView? = nil
     var viewSnapshot: UIView? = nil
     
-    weak var presentingViewController: (any CardFrameRestorable)?
+    weak var presentingViewController: (any CardPoppingManagerDelegate)?
     
     init(
-        presenting: any CardFrameRestorable,
+        presenting: any CardPoppingManagerDelegate,
         collectionView: UICollectionView,
         selectedIndexPath: IndexPath,
-        startFrame: CGRect,
+        cardInset: NSDirectionalEdgeInsets,
         cellSnapshot: UIView? = nil
     ) {
-        print("transitioning Delegate 생성됨")
         self.presentingViewController = presenting
-        self.collectionView = collectionView
         self.presentingIndexPath = selectedIndexPath
         // 시작할 때 셀 frame
-        self.startCellFrame = startFrame
+        guard let selectedCell = collectionView.cellForItem(at: selectedIndexPath) else { fatalError() }
+        let convertedCellFrame = selectedCell.convert(selectedCell.contentView.frame, to: nil)
+        self.startCellFrame = convertedCellFrame
+        self.cardInset = cardInset
         self.cellSnapshot = cellSnapshot
-    }
-    
-    deinit {
-        print("transitioning Delegate 사라짐")
     }
     
     // MARK: - Presentation Controller
@@ -57,7 +54,6 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
         return CardPresentationController(presentedViewController: presented, presenting: presenting)
     }
     
-    
     // MARK: - Presentation Animator
     func animationController(
         forPresented presented: UIViewController,
@@ -67,30 +63,11 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
         return CardPresentationAnimator(startFrame: startCellFrame, interactor: presentationInteractor)
     }
     
-//    func animationController(
-//        forDismissed dismissed: UIViewController
-//    ) -> (any UIViewControllerAnimatedTransitioning)? {
-//        let dummyFrame = CGRect(x: 100, y: 300, width: 150, height: 225)
-//        let endFrame = presentingViewController?.getFrameOfSelectedCell(
-//            indexPath: presentingIndexPath
-//        ) ?? dummyFrame
-//        return CardDismissalAnimator(endFrame: endFrame)
-//    }
-    
     // MARK: - Presentation Animator (Interaction)
     func interactionControllerForPresentation(
         using animator: UIViewControllerAnimatedTransitioning
     ) -> UIViewControllerInteractiveTransitioning? {
         return self.presentationInteractor
     }
-    
-    
-    // MARK: - Dismissal Animator (Interaction)
-    func interactionControllerForDismissal(
-        using animator: UIViewControllerAnimatedTransitioning
-    ) -> UIViewControllerInteractiveTransitioning? {
-        return self.isInteractivce ? self.dismissInteractor : nil
-    }
-    
     
 }

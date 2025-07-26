@@ -9,31 +9,7 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
-    private let cardRestoringSizeAnimator = UIViewPropertyAnimator(
-        duration: 0.7,
-        dampingRatio: 1
-    )
-    
-    private let cardRestoringMovingAnimator = UIViewPropertyAnimator(
-        duration: 0.6,
-        dampingRatio: 0.8
-    )
-    
-    // 현재 선택된 셀의 IndexPath
-    var restoringIndexPath: IndexPath? {
-        didSet {
-            guard let restoringIndexPath else { return }
-            guard let cell = self.homeCollectionView.cellForItem(at: restoringIndexPath) else { return }
-            let convertedFrame = cell.convert(cell.contentView.frame, to: self.view)
-            print("convertedFrame: \(convertedFrame)")
-            homeView.restoringCard.frame = convertedFrame
-            view.layoutIfNeeded()
-        }
-    }
-    
     /// 이 속성이 `present`될 (Card)뷰컨트롤러의 `transitioningDelegate`가 됨.
-    /// 원래 뷰컨트롤러는 본인의 `transitioningDelegate` 를 약하게 참조.
-    /// 따라서 dismiss하기 전에
     var cardTransitioningDelegate: CardTransitioningDelegate? = nil
     
     let sectionHederTitleArray: [String] = [
@@ -42,36 +18,9 @@ class HomeViewController: UIViewController {
         "전체 메모".localized()
     ]
     
-    lazy var favoriteSectionHandler: NSCollectionLayoutSectionVisibleItemsInvalidationHandler
-    = { [weak self] visibleItems, offset, env in
-        guard let self else { return }
-        print("offset: \(offset)")
-        guard let restoringIndexPath, restoringIndexPath.section == 1 else { return }
-        guard let cell = self.homeCollectionView.cellForItem(at: restoringIndexPath) else { return }
-        let convertedFrame = cell.convert(cell.contentView.frame, to: self.view)
-        print("convertedFrame: \(convertedFrame)")
-        homeView.restoringCard.frame = convertedFrame
-        view.layoutIfNeeded()
-    }
+    lazy var homeView = HomeView()
     
-    lazy var allSectionHandler: NSCollectionLayoutSectionVisibleItemsInvalidationHandler
-    = { [weak self] visibleItems, offset, env in
-        guard let self else { return }
-        print("offset: \(offset)")
-        guard let restoringIndexPath, restoringIndexPath.section == 2 else { return }
-        guard let cell = self.homeCollectionView.cellForItem(at: restoringIndexPath) else { return }
-        let convertedFrame = cell.convert(cell.contentView.frame, to: self.view)
-        print("convertedFrame: \(convertedFrame)")
-        homeView.restoringCard.frame = convertedFrame
-        view.layoutIfNeeded()
-    }
-    
-    lazy var homeView = HomeView(
-        favoriteSectionHandler: favoriteSectionHandler,
-        allSectionHandler: allSectionHandler
-    )
-    
-    var homeCollectionView: HomeCollectionView { self.homeView.homeCollectionView }
+    var homeCollectionView: UICollectionView { self.homeView.homeCollectionView }
     
     private var favoriteMemoArray: [MemoEntity] {
         return MemoEntityManager.shared.getFavoriteMemoEntities()
@@ -83,6 +32,8 @@ class HomeViewController: UIViewController {
     override func loadView() {
         self.view = homeView
     }
+    
+    let poppingManager = CardPoppingManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -126,6 +77,7 @@ class HomeViewController: UIViewController {
     private func setupDelegates() {
         self.homeCollectionView.dataSource = self
         self.homeCollectionView.delegate = self
+        self.poppingManager.delegate = self
     }
     
     private func setupObserver() {
@@ -253,8 +205,8 @@ extension HomeViewController: UICollectionViewDataSource {
         switch indexPath.section {
         case 0:
             let categoryCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCategoryCell.reuseIdentifier, for: indexPath) as! HomeCategoryCell
-            // 앱을 새로 구성할 때, 숨김 표시 여부 확인
-            categoryCell.isHidden = (restoringIndexPath == indexPath)
+            // 셀이 재사용될 때, 숨김 표시 여부 확인
+            categoryCell.isHidden = (poppingManager.restoringIndexPath == indexPath)
             
             let categoryEntityArray = CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
             
@@ -272,8 +224,8 @@ extension HomeViewController: UICollectionViewDataSource {
             
         case 1:
             let favoriteCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
-            
-            favoriteCell.isHidden = (restoringIndexPath == indexPath)
+            // 셀이 재사용될 때, 숨김 표시 여부 확인
+//            favoriteCell.isHidden = (poppingManager.restoringIndexPath == indexPath)
             
             switch MemoEntityManager.shared.getFavoriteMemoEntities().count {
             case 0:
@@ -292,8 +244,8 @@ extension HomeViewController: UICollectionViewDataSource {
             
         case 2:
             let recentCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
-            
-            recentCell.isHidden = (restoringIndexPath == indexPath)
+            // 셀이 재사용될 때, 숨김 표시 여부 확인
+//            recentCell.isHidden = (poppingManager.restoringIndexPath == indexPath)
             
             let memoEntity = recentMemoArray[indexPath.row]
             recentCell.configureCell(with: memoEntity)
@@ -335,14 +287,12 @@ extension HomeViewController: UICollectionViewDelegate {
                 
                 makeSelectedCellInvisible(indexPath: indexPath)
                 
-                let convertedCellFrame = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
-                
                 let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
                 cardTransitioningDelegate = CardTransitioningDelegate(
                     presenting: self,
-                    collectionView: homeCollectionView,
+                    collectionView: collectionView,
                     selectedIndexPath: indexPath,
-                    startFrame: convertedCellFrame,
+                    cardInset: .zero,
                     cellSnapshot: selectedCell.snapshotView(afterScreenUpdates: false)
                 )
                 cardViewController.transitioningDelegate = cardTransitioningDelegate
@@ -359,13 +309,16 @@ extension HomeViewController: UICollectionViewDelegate {
             
             makeSelectedCellInvisible(indexPath: indexPath)
             
-            let convertedCellFrame = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
-            let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
+            let cardViewController = CardViewController(
+                memoEntity: selectedMemoEntity,
+                cardInset: .zero,
+                usingSafeArea: true
+            )
             cardTransitioningDelegate = CardTransitioningDelegate(
                 presenting: self,
-                collectionView: homeCollectionView,
+                collectionView: collectionView,
                 selectedIndexPath: indexPath,
-                startFrame: convertedCellFrame,
+                cardInset: .zero,
                 cellSnapshot: selectedCell.snapshotView(afterScreenUpdates: false)
             )
             cardViewController.transitioningDelegate = cardTransitioningDelegate
@@ -381,12 +334,7 @@ extension HomeViewController: UICollectionViewDelegate {
 
 
 // MARK: - CardFrameRestorable
-extension HomeViewController: CardFrameRestorable {
-    
-    func getFrameOfSelectedCell(indexPath: IndexPath) -> CGRect? {
-        guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) else { return nil }
-        return selectedCell.convert(selectedCell.contentView.frame, to: view)
-    }
+extension HomeViewController: CardPoppingManagerDelegate {
     
     func makeSelectedCellInvisible(indexPath: IndexPath) {
         guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
@@ -398,89 +346,24 @@ extension HomeViewController: CardFrameRestorable {
         selectedCell.alpha = 1
     }
     
-    func getDistanceDiff(startFrame: CGRect, endFrame: CGRect) -> CGPoint {
-        return .init(
-            x: startFrame.center.x - endFrame.center.x,
-            y: startFrame.center.y - endFrame.center.y
-        )
+    func collectionView() -> UICollectionView {
+        return homeCollectionView
     }
     
-    func getScaleT(startFrame: CGRect, endFrame: CGRect) -> CGAffineTransform {
-        return.init(
-            scaleX: startFrame.width / endFrame.width,
-            y: startFrame.height / endFrame.height
-        )
+    func restoringCard() -> RestoringCard {
+        return homeView.restoringCard
     }
     
-    func restore(startFrame: CGRect, indexPath: IndexPath) {
-        guard let cardTransitioningDelegate else { return }
-        guard let restoringIndexPath = cardTransitioningDelegate.restoringIndexPath else { return }
-        self.restoringIndexPath = restoringIndexPath
-        guard let targetCell = homeCollectionView.cellForItem(
-            at: restoringIndexPath
-        ) as? HomeCardCell else {
-            // 돌아갈 indexPath의 cell이 존재하지 않는 경우, 뒤처리 후 바로 return (iPadOS에서 화면 크기를 줄였다든가 등..)
-            // - restoringCard 상태 정리
-            // - 블러 지우기
-            // - 선택된 셀 다시 보이도록 설정
-            // - self.restoringIndexPath에 nil 할당.
-            self.homeView.restoringCard.setStateAfterRestore()
-            self.homeView.blur.removeBlur(animated: true)
-            self.makeSelectedCellVisible(indexPath: indexPath)
-            self.restoringIndexPath = nil
-            return
+    func numberOfSections() -> Int {
+        3
+    }
+    
+    func layoutCollectionSection(in section: Int) -> NSCollectionLayoutSection {
+        switch section {
+        case 0: return homeView.categorySection
+        case 1: return homeView.favoriteSection
+        default: return homeView.allMemoSection
         }
-        
-        // restoring card 초기 위치, 크기 설정
-        let convertedCellFrame = targetCell.convert(targetCell.contentView.frame, to: self.view)
-        let scaleT = getScaleT(startFrame: startFrame, endFrame: convertedCellFrame)
-        let distanceDiff = getDistanceDiff(startFrame: startFrame, endFrame: convertedCellFrame)
-        homeView.restoringCard.center.x += distanceDiff.x
-        homeView.restoringCard.center.y += distanceDiff.y
-        homeView.restoringCard.transform = scaleT
-        
-        // restoring card 초기 디자인 설정 - 기본
-        homeView.restoringCard.blurView.effect = UIBlurEffect(style: .regular)
-        homeView.restoringCard.isHidden = false
-        homeView.restoringCard.alpha = 1
-        homeView.restoringCard.clipsToBounds = true
-        // restoring card 초기 디자인 설정 - 기본
-        
-        // restoring card 초기 디자인 설정 - 커스텀
-        homeView.restoringCard.layer.cornerRadius = 20
-        // restoring card 초기 디자인 설정 - 커스텀
-        
-        // restoring card snapshot 설정
-        homeView.restoringCard.setupSnapshots(
-            viewSnapshot: cardTransitioningDelegate.viewSnapshot,
-            cellSnapshot: cardTransitioningDelegate.cellSnapshot
-        )
-        
-        cardRestoringMovingAnimator.addAnimations { [weak self] in
-            self?.homeView.restoringCard.center.x -= distanceDiff.x
-            self?.homeView.restoringCard.center.y -= distanceDiff.y
-            self?.view.layoutIfNeeded()
-        }
-        
-        cardRestoringSizeAnimator.addAnimations { [weak self] in
-            self?.homeView.restoringCard.switchSnapshots()
-            self?.homeView.restoringCard.transform = .identity
-            self?.homeView.blur.removeBlur(animated: true)
-            
-            self?.tabBarController?.view.transform = .identity
-            self?.view.layoutIfNeeded()
-        }
-        
-        cardRestoringSizeAnimator.addCompletion { [weak self] stoppedPosition in
-            self?.homeView.restoringCard.setStateAfterRestore()
-            self?.makeSelectedCellVisible(indexPath: indexPath)
-            self?.restoringIndexPath = nil
-        }
-        
-        cardRestoringMovingAnimator.startAnimation()
-        cardRestoringSizeAnimator.startAnimation()
     }
     
 }
-
-

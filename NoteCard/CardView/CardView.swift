@@ -10,6 +10,9 @@ import UIKit
 
 final class CardView: UIView {
     
+    private let cardInset: NSDirectionalEdgeInsets
+    private let usingSafeArea: Bool
+    
     // .6,.32,.57,1
     private let cardShowingAnimator = UIViewPropertyAnimator(
         duration: 0.5,
@@ -67,9 +70,10 @@ final class CardView: UIView {
     var memoTextView: UITextView!
     let memoDateLabel = UILabel()
     
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(cardInset: NSDirectionalEdgeInsets, usingSafeArea: Bool) {
+        self.cardInset = cardInset
+        self.usingSafeArea = usingSafeArea
+        super.init(frame: .zero)
         
         setupDesign()
         setupViewHierarchy()
@@ -187,7 +191,6 @@ private extension CardView {
         
         memoTextView.textInputView.backgroundColor = .clear
         memoTextView.tintColor = .currentTheme()
-//        memoTextView.isEditable = false
         memoTextView.dataDetectorTypes = .link
         
         // 텍스트 제외한 모든 inset 제거
@@ -269,12 +272,34 @@ private extension CardView {
         ])
         
         card.translatesAutoresizingMaskIntoConstraints = false
-        let cardEdgesConstraints = [
-            card.topAnchor.constraint(equalTo: topAnchor, constant: 120),
-            card.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            card.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            card.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -120),
-        ]
+        let cardEdgesConstraints: [NSLayoutConstraint]
+        if usingSafeArea {
+            cardEdgesConstraints = [
+                card.topAnchor.constraint(
+                    equalTo: safeAreaLayoutGuide.topAnchor,
+                    constant: cardInset.top
+                ),
+                card.leadingAnchor.constraint(
+                    equalTo: safeAreaLayoutGuide.leadingAnchor,
+                    constant: cardInset.leading
+                ),
+                card.trailingAnchor.constraint(
+                    equalTo: safeAreaLayoutGuide.trailingAnchor,
+                    constant: cardInset.trailing
+                ),
+                card.bottomAnchor.constraint(
+                    equalTo: safeAreaLayoutGuide.bottomAnchor,
+                    constant: cardInset.bottom
+                ),
+            ]
+        } else {
+            cardEdgesConstraints = [
+                card.topAnchor.constraint(equalTo: topAnchor, constant: cardInset.top),
+                card.leadingAnchor.constraint(equalTo: leadingAnchor, constant: cardInset.leading),
+                card.trailingAnchor.constraint(equalTo: trailingAnchor, constant: cardInset.trailing),
+                card.bottomAnchor.constraint(equalTo: bottomAnchor, constant: cardInset.bottom),
+            ]
+        }
         NSLayoutConstraint.activate(cardEdgesConstraints)
         
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -456,53 +481,5 @@ extension CardView {
             .concatenating(currentT)
             .concatenating(translationT)
     }
-    
-//    func animateCardShowing(startFrame: CGRect, completion: ((Bool) -> Void)? = nil) {
-//        let cardFinalFrame = card.frame
-//        
-//        let centerDiffX = startFrame.center.x - cardFinalFrame.center.x
-//        let centerDiffY = startFrame.center.y - cardFinalFrame.center.y
-//        
-//        let cardWidthScaleDiff = startFrame.width / cardFinalFrame.width
-//        let cardHeightScaleDiff = startFrame.height / cardFinalFrame.height
-//        
-//        let scaleTransform = CGAffineTransform(scaleX: cardWidthScaleDiff, y: cardHeightScaleDiff)
-//        let centerTransform = CGAffineTransform(translationX: centerDiffX, y: centerDiffY)
-//        let cardTransform = scaleTransform.concatenating(centerTransform)
-//        card.transform = cardTransform
-//        
-//        cardShowingAnimator.addAnimations { [weak self] in
-//            self?.card.transform = .identity
-//            self?.backgroundBlurView.effect = UIBlurEffect(style: .regular)
-//        }
-//        cardShowingAnimator.addCompletion { _ in
-//            completion?(true)
-//        }
-//        cardShowingAnimator.startAnimation()
-//    }
-    
-//    func animateCardDisappearing(endFrame: CGRect, completion: ((Bool) -> Void)? = nil) {
-//        let cardOriginalFrame = card.frame
-//        
-//        let centerDiffX = endFrame.center.x - cardOriginalFrame.center.x
-//        let centerDiffY = endFrame.center.y - cardOriginalFrame.center.y
-//        
-//        let cardWidthScaleDiff = endFrame.width / cardOriginalFrame.width
-//        let cardHeightScaleDiff = endFrame.height / cardOriginalFrame.height
-//        
-//        let scaleTransform = CGAffineTransform(scaleX: cardWidthScaleDiff, y: cardHeightScaleDiff)
-//        let centerTransform = CGAffineTransform(translationX: centerDiffX, y: centerDiffY)
-//        let cardTransform = scaleTransform.concatenating(centerTransform)
-//        card.transform = .identity
-//        
-//        cardDisappearingAnimator.addAnimations { [weak self] in
-//            self?.card.transform = cardTransform
-//            self?.backgroundBlurView.effect = nil
-//        }
-//        cardDisappearingAnimator.addCompletion { _ in
-//            completion?(true)
-//        }
-//        cardDisappearingAnimator.startAnimation()
-//    }
     
 }

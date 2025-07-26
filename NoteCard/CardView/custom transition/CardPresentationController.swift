@@ -17,23 +17,20 @@ class CardPresentationController: UIPresentationController {
     ) {
         guard let cardVC = presentedViewController as? CardViewController else { fatalError() }
         self.cardVC = cardVC
-        super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
+        super.init(
+            presentedViewController: presentedViewController,
+            presenting: presentingViewController
+        )
     }
     
     override func presentationTransitionWillBegin() {
-        print(#function)
+        
     }
     
-    override func presentationTransitionDidEnd(_ completed: Bool) {
-        print(#function)
-    }
+    override func presentationTransitionDidEnd(_ completed: Bool) { }
     
-    override func dismissalTransitionWillBegin() {
-        print(#function)
-    }
+    override func dismissalTransitionWillBegin() { }
     
-    override func dismissalTransitionDidEnd(_ completed: Bool) {
-        print(#function)
-    }
+    override func dismissalTransitionDidEnd(_ completed: Bool) { }
     
 }

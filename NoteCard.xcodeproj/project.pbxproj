@@ -61,7 +61,6 @@
 		4E2712042DA19C8C0007D53A /* ReuseIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */; };
 		4E2712062DA1A12A0007D53A /* Shrinkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712052DA1A12A0007D53A /* Shrinkable.swift */; };
 		4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */; };
-		4E27120A2DA214C70007D53A /* HomeCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712092DA214C70007D53A /* HomeCollectionView.swift */; };
 		4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */; };
 		4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */; };
 		4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */; };
@@ -93,10 +92,8 @@
 		4ED333A82B332FF000492B0F /* ThemeColorPickingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */; };
 		4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A92B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift */; };
 		4ED42A822B3D6EDA00D14571 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4ED42A842B3D6EDA00D14571 /* Localizable.strings */; };
-		4ED7B0792E310405005A90CC /* CardRestoringCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED7B0782E310405005A90CC /* CardRestoringCollectionViewCell.swift */; };
 		4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */; };
 		4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */; };
-		4EE2E00F2E2FBAE400CAA7E0 /* RestoringCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE2E00E2E2FBAE400CAA7E0 /* RestoringCard.swift */; };
 		4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */; };
 		4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */; };
 		4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */; };
@@ -108,8 +105,11 @@
 		4EF65B532E2DEA5400C483BB /* CardPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B522E2DEA5400C483BB /* CardPresentationAnimator.swift */; };
 		4EF65B552E2DF51A00C483BB /* CardTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */; };
 		4EF65B572E2E0B2200C483BB /* CardDismissalAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */; };
-		4EF65B592E2E11E500C483BB /* CardFrameRestorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B582E2E11E500C483BB /* CardFrameRestorable.swift */; };
 		4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */; };
+		4EFBF61A2E33A91E0044A206 /* CardPoppingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBF6192E33A91E0044A206 /* CardPoppingManager.swift */; };
+		4EFBF6862E33F60B0044A206 /* CardPoppinManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBF6852E33F60B0044A206 /* CardPoppinManagerDelegate.swift */; };
+		4EFBF6882E348A380044A206 /* WispVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBF6872E348A380044A206 /* WispVC.swift */; };
+		4EFBF68C2E348B6B0044A206 /* RestoringCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBF68A2E348B6B0044A206 /* RestoringCard.swift */; };
 		4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */; };
 		4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */; };
 /* End PBXBuildFile section */
@@ -171,7 +171,6 @@
 		4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseIdentifiable.swift; sourceTree = "<group>"; };
 		4E2712052DA1A12A0007D53A /* Shrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shrinkable.swift; sourceTree = "<group>"; };
 		4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderButton.swift; sourceTree = "<group>"; };
-		4E2712092DA214C70007D53A /* HomeCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionView.swift; sourceTree = "<group>"; };
 		4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingViewController.swift; sourceTree = "<group>"; };
 		4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingView.swift; sourceTree = "<group>"; };
 		4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -206,10 +205,8 @@
 		4ED42A922B3DA5CE00D14571 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4ED42A962B3DA69300D14571 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		4ED42A972B3DA6E000D14571 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		4ED7B0782E310405005A90CC /* CardRestoringCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardRestoringCollectionViewCell.swift; sourceTree = "<group>"; };
 		4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomIntensityBlurView.swift; sourceTree = "<group>"; };
 		4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectionViewController.swift; sourceTree = "<group>"; };
-		4EE2E00E2E2FBAE400CAA7E0 /* RestoringCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoringCard.swift; sourceTree = "<group>"; };
 		4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingScrollView.swift; sourceTree = "<group>"; };
 		4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewSelectedImageCell.swift; sourceTree = "<group>"; };
 		4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewCategoryListCell.swift; sourceTree = "<group>"; };
@@ -222,8 +219,11 @@
 		4EF65B522E2DEA5400C483BB /* CardPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPresentationAnimator.swift; sourceTree = "<group>"; };
 		4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTransitioningDelegate.swift; sourceTree = "<group>"; };
 		4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDismissalAnimator.swift; sourceTree = "<group>"; };
-		4EF65B582E2E11E500C483BB /* CardFrameRestorable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFrameRestorable.swift; sourceTree = "<group>"; };
 		4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedFlowLayout.swift; sourceTree = "<group>"; };
+		4EFBF6192E33A91E0044A206 /* CardPoppingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPoppingManager.swift; sourceTree = "<group>"; };
+		4EFBF6852E33F60B0044A206 /* CardPoppinManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPoppinManagerDelegate.swift; sourceTree = "<group>"; };
+		4EFBF6872E348A380044A206 /* WispVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WispVC.swift; sourceTree = "<group>"; };
+		4EFBF68A2E348B6B0044A206 /* RestoringCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoringCard.swift; sourceTree = "<group>"; };
 		4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingViewController.swift; sourceTree = "<group>"; };
 		4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -331,7 +331,6 @@
 			children = (
 				4E1384EA2AF3843A0063817B /* HomeViewController.swift */,
 				4E1384EC2AF3846C0063817B /* HomeView.swift */,
-				4E2712092DA214C70007D53A /* HomeCollectionView.swift */,
 				4E1384EE2AF384880063817B /* HomeHeaderView.swift */,
 				4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */,
 				4E1384F02AF384A70063817B /* HomeCategoryCell.swift */,
@@ -516,15 +515,6 @@
 			path = ThemeColorPickingView;
 			sourceTree = "<group>";
 		};
-		4ED7B1482E31EDDB005A90CC /* cell */ = {
-			isa = PBXGroup;
-			children = (
-				4ED7B0782E310405005A90CC /* CardRestoringCollectionViewCell.swift */,
-				4EE2E00E2E2FBAE400CAA7E0 /* RestoringCard.swift */,
-			);
-			path = cell;
-			sourceTree = "<group>";
-		};
 		4EDD36FF2E33027A002AF29B /* CustomDesign */ = {
 			isa = PBXGroup;
 			children = (
@@ -544,7 +534,8 @@
 		4EE2E0102E2FBDEB00CAA7E0 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				4EF65B582E2E11E500C483BB /* CardFrameRestorable.swift */,
+				4EFBF6192E33A91E0044A206 /* CardPoppingManager.swift */,
+				4EFBF6852E33F60B0044A206 /* CardPoppinManagerDelegate.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -578,7 +569,8 @@
 		4EF65B452E2DE79800C483BB /* custom transition */ = {
 			isa = PBXGroup;
 			children = (
-				4ED7B1482E31EDDB005A90CC /* cell */,
+				4EFBF68B2E348B6B0044A206 /* cell */,
+				4EFBF61B2E33F0560044A206 /* Extension */,
 				4EE2E0102E2FBDEB00CAA7E0 /* Protocols */,
 				4EF65B462E2DE7C000C483BB /* CardPresentationController.swift */,
 				4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */,
@@ -586,6 +578,22 @@
 				4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */,
 			);
 			path = "custom transition";
+			sourceTree = "<group>";
+		};
+		4EFBF61B2E33F0560044A206 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				4EFBF6872E348A380044A206 /* WispVC.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		4EFBF68B2E348B6B0044A206 /* cell */ = {
+			isa = PBXGroup;
+			children = (
+				4EFBF68A2E348B6B0044A206 /* RestoringCard.swift */,
+			);
+			path = cell;
 			sourceTree = "<group>";
 		};
 		4EFC02DC2B42924900C778DF /* TextSizeSettingView */ = {
@@ -710,7 +718,6 @@
 				4E1384F92AF3851B0063817B /* PopupCardView.swift in Sources */,
 				4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */,
 				4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */,
-				4E27120A2DA214C70007D53A /* HomeCollectionView.swift in Sources */,
 				4EEF141B2B14A74B001EB295 /* MemoViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */,
 				4E1384DA2AF382A40063817B /* ImageEntity+CoreDataClass.swift in Sources */,
@@ -726,14 +733,14 @@
 				4E1384E92AF3840A0063817B /* DateManager.swift in Sources */,
 				4E5960332B072E380029BA3D /* TotalListViewController.swift in Sources */,
 				4E2712042DA19C8C0007D53A /* ReuseIdentifiable.swift in Sources */,
+				4EFBF61A2E33A91E0044A206 /* CardPoppingManager.swift in Sources */,
 				4E1384DB2AF382A40063817B /* ImageEntity+CoreDataProperties.swift in Sources */,
 				4E1385012AF3859D0063817B /* CategoryListViewController.swift in Sources */,
 				4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */,
 				4EF65B552E2DF51A00C483BB /* CardTransitioningDelegate.swift in Sources */,
+				4EFBF6862E33F60B0044A206 /* CardPoppinManagerDelegate.swift in Sources */,
 				4E5960352B072E640029BA3D /* TotalListCollectionViewCell.swift in Sources */,
 				4E1384E32AF3839F0063817B /* CategoryEntityManager.swift in Sources */,
-				4EE2E00F2E2FBAE400CAA7E0 /* RestoringCard.swift in Sources */,
-				4ED7B0792E310405005A90CC /* CardRestoringCollectionViewCell.swift in Sources */,
 				4EF65B1D2E2DBA2B00C483BB /* CardViewController.swift in Sources */,
 				4E1384ED2AF3846C0063817B /* HomeView.swift in Sources */,
 				4E1385192AF387100063817B /* SmallCardCollectionViewCell.swift in Sources */,
@@ -745,11 +752,11 @@
 				4E1384DC2AF382A40063817B /* MemoEntity+CoreDataClass.swift in Sources */,
 				4E1384FD2AF385580063817B /* HomeViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E1384A92AF37B350063817B /* ViewController.swift in Sources */,
-				4EF65B592E2E11E500C483BB /* CardFrameRestorable.swift in Sources */,
 				4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */,
 				4E1385132AF386AF0063817B /* LargeCardCollectionViewCell.swift in Sources */,
 				4E1385222AF387AA0063817B /* CardImageShowingPresentationController.swift in Sources */,
 				4E4FCCBA2B3C33E7000CBE17 /* DateFormatSettingViewController.swift in Sources */,
+				4EFBF68C2E348B6B0044A206 /* RestoringCard.swift in Sources */,
 				4E6EE9692B201CDF0009DD84 /* LargeCardCollectionView.swift in Sources */,
 				4E1385202AF387890063817B /* CardImageShowingCollectionViewCell.swift in Sources */,
 				4E3F63562B0B7BFF004DD676 /* CategoryListView.swift in Sources */,
@@ -761,6 +768,7 @@
 				4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */,
 				4E1385092AF386260063817B /* InsetTextField.swift in Sources */,
 				4E1384DF2AF382F70063817B /* ImageEntityManager.swift in Sources */,
+				4EFBF6882E348A380044A206 /* WispVC.swift in Sources */,
 				4E1384A52AF37B350063817B /* AppDelegate.swift in Sources */,
 				4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */,
 				4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */,
@@ -953,7 +961,7 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "포토 라이브러리 읽기 권한 요청";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -993,7 +1001,7 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "포토 라이브러리 읽기 권한 요청";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;

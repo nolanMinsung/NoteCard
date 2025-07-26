@@ -10,11 +10,7 @@ import UIKit
 
 final class CardPresentationAnimator: NSObject {
     
-    // (10.0, 522.0, 145.0, 220.0)
-    // (20.0, 1053.0, 145.0, 220.0)
-//    var startFrame: CGRect = .init(x: 10, y: 522, width: 145, height: 220)
-    var startFrame: CGRect = .init(x: 20, y: 1053, width: 145, height: 220)
-    
+    var startFrame: CGRect
     let interactor: UIPercentDrivenInteractiveTransition
     
     init(startFrame: CGRect, interactor: UIPercentDrivenInteractiveTransition) {
@@ -63,12 +59,15 @@ extension CardPresentationAnimator: UIViewControllerAnimatedTransitioning {
             withDuration: transitionDuration(using: transitionContext),
             options: .allowUserInteraction,
             animations: {
-                fromVC?.view.transform = .init(scaleX: 0.95, y: 0.95)
+//                fromVC?.view.transform = .init(scaleX: 0.95, y: 0.95)
                 cardVC.rootView.setCardShowingFinalState()
             },
             completion: { _ in transitionContext.completeTransition(!transitionContext.transitionWasCancelled) }
         )
         
+        // interactivce한 transition이나, 사용자와 지속적으로 상호작용하면서 present하지는 않는다.
+        // 단지 뷰가 자동으로 펼쳐지는데, 펼쳐지는 중간에 사용자가 이 뷰를 잡을 수 있는 것.
+        // 그래서 처음에는 그냥 자동으로 애니메이션이 실행되도록 구현함.
         DispatchQueue.main.async { [weak self] in
             self?.interactor.finish()
         }

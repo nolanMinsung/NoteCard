@@ -10,15 +10,19 @@ import UIKit
 class CardViewController: UIViewController {
     
     let memoEntity: MemoEntity
-    
-    let rootView = CardView()
+    let rootView: CardView
     lazy var dynamicAnimator = UIDynamicAnimator(referenceView: rootView)
     
-    let tapGesture = UITapGestureRecognizer()
-    let dragPanGesture = UIPanGestureRecognizer()
+    private let tapGesture = UITapGestureRecognizer()
+    private let dragPanGesture = UIPanGestureRecognizer()
     
-    init(memoEntity: MemoEntity) {
+    init(
+        memoEntity: MemoEntity,
+        cardInset: NSDirectionalEdgeInsets = .init(top: 120, leading: 10, bottom: -120, trailing: -10),
+        usingSafeArea: Bool = false
+    ) {
         self.memoEntity = memoEntity
+        self.rootView = CardView(cardInset: cardInset, usingSafeArea: usingSafeArea)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -117,8 +121,7 @@ extension CardViewController {
         default:
             let velocity = gesture.velocity(in: view)
             let velocityScalar = sqrt(pow(velocity.x, 2) + pow(velocity.y, 2))
-            let shouldDismiss = ((hypotenuse > 130 || velocityScalar > 1000) &&
-                                 (translation.y > abs(translation.x)/2))
+            let shouldDismiss = (hypotenuse > 130 || velocityScalar > 1000) && (translation.y > 0)
             
             if shouldDismiss {
 //                let itemBehavior = UIDynamicItemBehavior(items: [rootView.card])
@@ -141,13 +144,13 @@ extension CardViewController {
     private func dismissCard() {
         print(#function)
         guard let transitioningDelegate = transitioningDelegate as? CardTransitioningDelegate else { return }
-        guard let cardFrameRestorable = transitioningDelegate.presentingViewController else { fatalError() }
+        guard let poppingDelegate = transitioningDelegate.presentingViewController else { fatalError() }
         
         dragPanGesture.state = .cancelled
         transitioningDelegate.presentationInteractor.pause()
         transitioningDelegate.restoringIndexPath = transitioningDelegate.presentingIndexPath
         transitioningDelegate.viewSnapshot = rootView.card.snapshotView(afterScreenUpdates: false)
-        cardFrameRestorable.restore(
+        poppingDelegate.restore(
             // 이것때문에 카드 나타나는 중간에 배경 빠르게 탭 해서 dismiss하면 순간적으로 커졌다 작아지는 현상 생김.
             // 근데 이 시점에 card는 이미 layout이 잡힌 상태라서 startFrame에 들어가는 rootView.card.frame은
             // 어쩔 수 없이 정상적인 present가 됐을 때의 card의 frame이 된다..

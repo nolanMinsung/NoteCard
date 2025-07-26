@@ -113,6 +113,7 @@ final class HomeCardCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         self.titleTextField.textColor = .label
         self.pictureImageLabel.alpha = 1
         self.imageCountLabel.alpha = 1
