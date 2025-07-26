@@ -26,19 +26,18 @@ final class CardTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
     var cellSnapshot: UIView? = nil
     var viewSnapshot: UIView? = nil
     
-    weak var presentingViewController: (any CardPoppingManagerDelegate)?
+    let wispableCollectionView: WispableCollectionView
     
     init(
-        presenting: any CardPoppingManagerDelegate,
-        collectionView: UICollectionView,
+        wispableCollectionView: WispableCollectionView,
         selectedIndexPath: IndexPath,
         cardInset: NSDirectionalEdgeInsets,
         cellSnapshot: UIView? = nil
     ) {
-        self.presentingViewController = presenting
         self.presentingIndexPath = selectedIndexPath
+        self.wispableCollectionView = wispableCollectionView
         // 시작할 때 셀 frame
-        guard let selectedCell = collectionView.cellForItem(at: selectedIndexPath) else { fatalError() }
+        guard let selectedCell = wispableCollectionView.cellForItem(at: selectedIndexPath) else { fatalError() }
         let convertedCellFrame = selectedCell.convert(selectedCell.contentView.frame, to: nil)
         self.startCellFrame = convertedCellFrame
         self.cardInset = cardInset

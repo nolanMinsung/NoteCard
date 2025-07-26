@@ -23,9 +23,7 @@ class CardPresentationController: UIPresentationController {
         )
     }
     
-    override func presentationTransitionWillBegin() {
-        
-    }
+    override func presentationTransitionWillBegin() { }
     
     override func presentationTransitionDidEnd(_ completed: Bool) { }
     

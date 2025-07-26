@@ -83,47 +83,27 @@ final class HomeView: UIView {
         return cardSection
     }
     
-    private(set) var categorySection: NSCollectionLayoutSection!// = HomeView.categoryLayoutSection
-    private(set) var favoriteSection: NSCollectionLayoutSection!// = HomeView.cardLayoutSection
-    private(set) var allMemoSection: NSCollectionLayoutSection!// = HomeView.cardLayoutSection
-    
-    
     let blur = CustomIntensityBlurView(blurStyle: .regular, intensity: 0.0)
     let restoringCard = RestoringCard()
     
-    let homeCollectionView: UICollectionView
+    let homeCollectionView: WispableCollectionView
     
-    init(
-//        favoriteSectionHandler: @escaping NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
-//        allSectionHandler: @escaping NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
-    ) {
-//        self.homeCollectionView = HomeCollectionView(
-//            favoriteSectionHandler: favoriteSectionHandler,
-//            allSectionHandler: allSectionHandler
-//        )
-        
-        let categorySection = HomeView.categoryLayoutSection
-        let favoriteSection = HomeView.cardLayoutSection
-        let allMemoSection = HomeView.cardLayoutSection
-        
-        let layout = UICollectionViewCompositionalLayout { sectionIndex, env in
+    init() {
+        let layout = CustomCompositionalLayout { sectionIndex, env in
             switch sectionIndex {
-            case 0: return categorySection
-            case 1: return favoriteSection
-            default: return allMemoSection
+            case 0: return HomeView.categoryLayoutSection
+            case 1: return HomeView.cardLayoutSection
+            default: return HomeView.cardLayoutSection
             }
         }
-        self.categorySection = categorySection
-        self.favoriteSection = favoriteSection
-        self.allMemoSection = allMemoSection
         
-        homeCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        homeCollectionView = WispableCollectionView(
+            frame: .zero,
+            collectionViewLayout: layout,
+            restoringCard: restoringCard
+        )
+        
         super.init(frame: .zero)
-//        (homeCollectionView.collectionViewLayout as! UICollectionViewCompositionalLayout).
-//        homeCollectionView.collectionViewLayout = layout
-//        favoriteSection.visibleItemsInvalidationHandler = favoriteSectionHandler
-//        allMemoSection.visibleItemsInvalidationHandler = allSectionHandler
-        
         
         self.setupCollectionView()
         self.setupStyle()

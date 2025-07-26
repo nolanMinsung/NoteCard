@@ -26,3 +26,14 @@ extension WispVC: UITextViewDelegate {
     
     
 }
+
+
+
+import UIKit
+
+//// 델리게이트 프로토콜 정의
+//protocol CustomCompositionalLayoutDelegate: AnyObject {
+//    func layoutDidInvalidate(layout: CustomCompositionalLayout, context: UICollectionViewLayoutInvalidationContext)
+//}
+
+

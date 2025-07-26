@@ -20,7 +20,7 @@ class HomeViewController: UIViewController {
     
     lazy var homeView = HomeView()
     
-    var homeCollectionView: UICollectionView { self.homeView.homeCollectionView }
+    var homeCollectionView: WispableCollectionView { self.homeView.homeCollectionView }
     
     private var favoriteMemoArray: [MemoEntity] {
         return MemoEntityManager.shared.getFavoriteMemoEntities()
@@ -32,8 +32,6 @@ class HomeViewController: UIViewController {
     override func loadView() {
         self.view = homeView
     }
-    
-    let poppingManager = CardPoppingManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,7 +75,6 @@ class HomeViewController: UIViewController {
     private func setupDelegates() {
         self.homeCollectionView.dataSource = self
         self.homeCollectionView.delegate = self
-        self.poppingManager.delegate = self
     }
     
     private func setupObserver() {
@@ -206,7 +203,7 @@ extension HomeViewController: UICollectionViewDataSource {
         case 0:
             let categoryCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCategoryCell.reuseIdentifier, for: indexPath) as! HomeCategoryCell
             // 셀이 재사용될 때, 숨김 표시 여부 확인
-            categoryCell.isHidden = (poppingManager.restoringIndexPath == indexPath)
+//            categoryCell.isHidden = (poppingManager.restoringIndexPath == indexPath)
             
             let categoryEntityArray = CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
             
@@ -289,8 +286,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 
                 let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
                 cardTransitioningDelegate = CardTransitioningDelegate(
-                    presenting: self,
-                    collectionView: collectionView,
+                    wispableCollectionView: collectionView as! WispableCollectionView,
                     selectedIndexPath: indexPath,
                     cardInset: .zero,
                     cellSnapshot: selectedCell.snapshotView(afterScreenUpdates: false)
@@ -300,7 +296,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 
                 // 실제로는 tab bar controller 가 present
                 present(cardViewController, animated: true)
-                homeView.blur.setBlurFromZero(intensity: 0.3, animated: true, duration: 0.3)
+//                homeView.blur.setBlurFromZero(intensity: 0.3, animated: true, duration: 0.3)
             }
             
         case 2:
@@ -315,8 +311,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 usingSafeArea: true
             )
             cardTransitioningDelegate = CardTransitioningDelegate(
-                presenting: self,
-                collectionView: collectionView,
+                wispableCollectionView: collectionView as! WispableCollectionView,
                 selectedIndexPath: indexPath,
                 cardInset: .zero,
                 cellSnapshot: selectedCell.snapshotView(afterScreenUpdates: false)
@@ -324,7 +319,7 @@ extension HomeViewController: UICollectionViewDelegate {
             cardViewController.transitioningDelegate = cardTransitioningDelegate
             cardViewController.modalPresentationStyle = .custom
             self.present(cardViewController, animated: true)
-            homeView.blur.setBlurFromZero(intensity: 0.3, animated: true, duration: 0.3)
+//            homeView.blur.setBlurFromZero(intensity: 0.3, animated: true, duration: 0.3)
         default:
             fatalError("HomeCollectionView's number of sections is 3")
         }
@@ -334,7 +329,7 @@ extension HomeViewController: UICollectionViewDelegate {
 
 
 // MARK: - CardFrameRestorable
-extension HomeViewController: CardPoppingManagerDelegate {
+extension HomeViewController {
     
     func makeSelectedCellInvisible(indexPath: IndexPath) {
         guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
@@ -346,24 +341,12 @@ extension HomeViewController: CardPoppingManagerDelegate {
         selectedCell.alpha = 1
     }
     
-    func collectionView() -> UICollectionView {
+    func wispableCollectionView() -> WispableCollectionView {
         return homeCollectionView
     }
     
     func restoringCard() -> RestoringCard {
         return homeView.restoringCard
-    }
-    
-    func numberOfSections() -> Int {
-        3
-    }
-    
-    func layoutCollectionSection(in section: Int) -> NSCollectionLayoutSection {
-        switch section {
-        case 0: return homeView.categorySection
-        case 1: return homeView.favoriteSection
-        default: return homeView.allMemoSection
-        }
     }
     
 }

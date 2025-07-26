@@ -106,8 +106,6 @@
 		4EF65B552E2DF51A00C483BB /* CardTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */; };
 		4EF65B572E2E0B2200C483BB /* CardDismissalAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */; };
 		4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */; };
-		4EFBF61A2E33A91E0044A206 /* CardPoppingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBF6192E33A91E0044A206 /* CardPoppingManager.swift */; };
-		4EFBF6862E33F60B0044A206 /* CardPoppinManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBF6852E33F60B0044A206 /* CardPoppinManagerDelegate.swift */; };
 		4EFBF6882E348A380044A206 /* WispVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBF6872E348A380044A206 /* WispVC.swift */; };
 		4EFBF68C2E348B6B0044A206 /* RestoringCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFBF68A2E348B6B0044A206 /* RestoringCard.swift */; };
 		4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */; };
@@ -220,8 +218,6 @@
 		4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTransitioningDelegate.swift; sourceTree = "<group>"; };
 		4EF65B562E2E0B2200C483BB /* CardDismissalAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDismissalAnimator.swift; sourceTree = "<group>"; };
 		4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedFlowLayout.swift; sourceTree = "<group>"; };
-		4EFBF6192E33A91E0044A206 /* CardPoppingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPoppingManager.swift; sourceTree = "<group>"; };
-		4EFBF6852E33F60B0044A206 /* CardPoppinManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPoppinManagerDelegate.swift; sourceTree = "<group>"; };
 		4EFBF6872E348A380044A206 /* WispVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WispVC.swift; sourceTree = "<group>"; };
 		4EFBF68A2E348B6B0044A206 /* RestoringCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoringCard.swift; sourceTree = "<group>"; };
 		4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingViewController.swift; sourceTree = "<group>"; };
@@ -230,6 +226,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4E462BA92E29CF4A004C0215 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
+		4EFBF68D2E349D970044A206 /* Wisp */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Wisp; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +269,7 @@
 		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
+				4EFBF68D2E349D970044A206 /* Wisp */,
 				4EDD36FF2E33027A002AF29B /* CustomDesign */,
 				4E462BA92E29CF4A004C0215 /* Extensions */,
 				4E2712022DA19C730007D53A /* Protocols */,
@@ -531,15 +529,6 @@
 			path = CategorySelectionView;
 			sourceTree = "<group>";
 		};
-		4EE2E0102E2FBDEB00CAA7E0 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				4EFBF6192E33A91E0044A206 /* CardPoppingManager.swift */,
-				4EFBF6852E33F60B0044A206 /* CardPoppinManagerDelegate.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
 		4EEEB2612B0870140027AF01 /* MemoDetailView */ = {
 			isa = PBXGroup;
 			children = (
@@ -571,7 +560,6 @@
 			children = (
 				4EFBF68B2E348B6B0044A206 /* cell */,
 				4EFBF61B2E33F0560044A206 /* Extension */,
-				4EE2E0102E2FBDEB00CAA7E0 /* Protocols */,
 				4EF65B462E2DE7C000C483BB /* CardPresentationController.swift */,
 				4EF65B542E2DF51A00C483BB /* CardTransitioningDelegate.swift */,
 				4EF65B522E2DEA5400C483BB /* CardPresentationAnimator.swift */,
@@ -622,6 +610,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				4E462BA92E29CF4A004C0215 /* Extensions */,
+				4EFBF68D2E349D970044A206 /* Wisp */,
 			);
 			name = NoteCard;
 			productName = CardMemo;
@@ -733,12 +722,10 @@
 				4E1384E92AF3840A0063817B /* DateManager.swift in Sources */,
 				4E5960332B072E380029BA3D /* TotalListViewController.swift in Sources */,
 				4E2712042DA19C8C0007D53A /* ReuseIdentifiable.swift in Sources */,
-				4EFBF61A2E33A91E0044A206 /* CardPoppingManager.swift in Sources */,
 				4E1384DB2AF382A40063817B /* ImageEntity+CoreDataProperties.swift in Sources */,
 				4E1385012AF3859D0063817B /* CategoryListViewController.swift in Sources */,
 				4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */,
 				4EF65B552E2DF51A00C483BB /* CardTransitioningDelegate.swift in Sources */,
-				4EFBF6862E33F60B0044A206 /* CardPoppinManagerDelegate.swift in Sources */,
 				4E5960352B072E640029BA3D /* TotalListCollectionViewCell.swift in Sources */,
 				4E1384E32AF3839F0063817B /* CategoryEntityManager.swift in Sources */,
 				4EF65B1D2E2DBA2B00C483BB /* CardViewController.swift in Sources */,
