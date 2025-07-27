@@ -1,5 +1,5 @@
 //
-//  CardPresentationAnimator.swift
+//  WispPresentationAnimator.swift
 //  NoteCard
 //
 //  Created by 김민성 on 7/21/25.
@@ -8,7 +8,7 @@
 import UIKit
 
 
-final class CardPresentationAnimator: NSObject {
+final class WispPresentationAnimator: NSObject {
     
     var startFrame: CGRect
     let interactor: UIPercentDrivenInteractiveTransition
@@ -20,7 +20,7 @@ final class CardPresentationAnimator: NSObject {
     
 }
 
-extension CardPresentationAnimator: UIViewControllerAnimatedTransitioning {
+extension WispPresentationAnimator: UIViewControllerAnimatedTransitioning {
     
     func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
         return 0.5
@@ -29,7 +29,7 @@ extension CardPresentationAnimator: UIViewControllerAnimatedTransitioning {
     func animateTransition(using transitionContext: any UIViewControllerContextTransitioning) {
         let containerView = transitionContext.containerView
         let fromVC = transitionContext.viewController(forKey: .from)
-        let cardVC = transitionContext.viewController(forKey: .to) as! CardViewController
+        let cardVC = transitionContext.viewController(forKey: .to) as! WispViewController
         let cardView = cardVC.rootView
         containerView.addSubview(cardView)
         cardView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +41,7 @@ extension CardPresentationAnimator: UIViewControllerAnimatedTransitioning {
         ])
         containerView.layoutIfNeeded()
         cardVC.rootView.setCardShowingInitialState(startFrame: startFrame)
-        cardVC.rootView.backgroundBlurView.setBlurFromZero(intensity: 0.1, animated: true)
+//        cardVC.rootView.backgroundBlurView.setBlurFromZero(intensity: 0.1, animated: true)
         
         let homeViewBackgroundColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {

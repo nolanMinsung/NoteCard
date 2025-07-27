@@ -100,7 +100,6 @@ final class HomeView: UIView {
         homeCollectionView = WispableCollectionView(
             frame: .zero,
             collectionViewLayout: layout,
-            restoringCard: restoringCard
         )
         
         super.init(frame: .zero)

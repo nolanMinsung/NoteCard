@@ -1,5 +1,5 @@
 //
-//  CardPresentationController.swift
+//  WispPresentationController.swift
 //  NoteCard
 //
 //  Created by 김민성 on 7/21/25.
@@ -7,15 +7,15 @@
 
 import UIKit
 
-class CardPresentationController: UIPresentationController {
+class WispPresentationController: UIPresentationController {
     
-    let cardVC: CardViewController
+    let cardVC: WispViewController
     
     override init(
         presentedViewController: UIViewController,
         presenting presentingViewController: UIViewController?
     ) {
-        guard let cardVC = presentedViewController as? CardViewController else { fatalError() }
+        guard let cardVC = presentedViewController as? WispViewController else { fatalError() }
         self.cardVC = cardVC
         super.init(
             presentedViewController: presentedViewController,
@@ -29,6 +29,8 @@ class CardPresentationController: UIPresentationController {
     
     override func dismissalTransitionWillBegin() { }
     
-    override func dismissalTransitionDidEnd(_ completed: Bool) { }
+    override func dismissalTransitionDidEnd(_ completed: Bool) {
+        print(#function)
+    }
     
 }

@@ -19,7 +19,7 @@ extension UICollectionView {
         return collectionView
     }
     
-    // 만약 단일 섹션 레이아웃만 지원한다면:
+    // 단일 섹션 레이아웃만 지원
     public static func makeWispable(
         frame: CGRect = .zero,
         section: NSCollectionLayoutSection,

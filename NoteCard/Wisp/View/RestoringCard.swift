@@ -106,11 +106,4 @@ extension RestoringCard {
         isHidden = true
     }
     
-//    func willRestore() {
-//        blurView.effect = UIBlurEffect(style: .regular)
-//        isHidden = false
-//        alpha = 1
-//    }
-    
-    
 }

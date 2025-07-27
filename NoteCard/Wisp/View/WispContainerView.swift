@@ -1,5 +1,5 @@
 //
-//  CardView.swift
+//  WispContainerView.swift
 //  NoteCard
 //
 //  Created by 김민성 on 7/21/25.
@@ -8,7 +8,7 @@
 import UIKit
 
 
-final class CardView: UIView {
+final class WispContainerView: UIView {
     
     private let cardInset: NSDirectionalEdgeInsets
     private let usingSafeArea: Bool
@@ -89,7 +89,7 @@ final class CardView: UIView {
 
 // MARK: - Design, Properties Settings
 
-private extension CardView {
+private extension WispContainerView {
     
     func setupDesign() {
         backgroundBlurView.alpha = 1
@@ -248,7 +248,7 @@ private extension CardView {
 
 // MARK: - View Layout Setting
 
-private extension CardView {
+private extension WispContainerView {
     
     func setupViewHierarchy() {
         addSubview(backgroundBlurView)
@@ -362,7 +362,7 @@ private extension CardView {
 
 // MARK: - Configurint Data
 
-extension CardView {
+extension WispContainerView {
     
     func configure(with memo: MemoEntity) {
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
@@ -429,7 +429,7 @@ extension CardView {
 
 // MARK: - Custom Transition Related
 
-extension CardView {
+extension WispContainerView {
     
     func setCardShowingInitialState(startFrame: CGRect) {
         let cardFinalFrame = card.frame

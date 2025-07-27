@@ -1,5 +1,5 @@
 //
-//  CardDismissalAnimator.swift
+//  WispDismissalAnimator.swift
 //  NoteCard
 //
 //  Created by 김민성 on 7/21/25.
@@ -8,7 +8,7 @@
 import UIKit
 
 
-final class CardDismissalAnimator: NSObject {
+final class WispDismissalAnimator: NSObject {
     
     var endFrame: CGRect = .init(x: 100, y: 300, width: 150, height: 225)
     
@@ -19,7 +19,7 @@ final class CardDismissalAnimator: NSObject {
 }
 
 
-extension CardDismissalAnimator: UIViewControllerAnimatedTransitioning {
+extension WispDismissalAnimator: UIViewControllerAnimatedTransitioning {
     
     func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
         0.4
@@ -27,7 +27,7 @@ extension CardDismissalAnimator: UIViewControllerAnimatedTransitioning {
     
     func animateTransition(using transitionContext: any UIViewControllerContextTransitioning) {
         let containerView = transitionContext.containerView
-        let cardVC = transitionContext.viewController(forKey: .from) as! CardViewController
+        let cardVC = transitionContext.viewController(forKey: .from) as! WispViewController
         let toVC = transitionContext.viewController(forKey: .to)
         containerView.layoutIfNeeded()
         

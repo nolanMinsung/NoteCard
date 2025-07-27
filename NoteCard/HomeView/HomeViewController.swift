@@ -10,7 +10,7 @@ import UIKit
 class HomeViewController: UIViewController {
     
     /// 이 속성이 `present`될 (Card)뷰컨트롤러의 `transitioningDelegate`가 됨.
-    var cardTransitioningDelegate: CardTransitioningDelegate? = nil
+    var cardTransitioningDelegate: WispTransitioningDelegate? = nil
     
     let sectionHederTitleArray: [String] = [
         "카테고리".localized(),
@@ -282,13 +282,15 @@ extension HomeViewController: UICollectionViewDelegate {
                 guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
                 guard let selectedMemoEntity = selectedCell.memoEntity else { return }
                 
-                makeSelectedCellInvisible(indexPath: indexPath)
+                homeCollectionView.cellForItem(at: indexPath)?.alpha = 0
                 
-                let cardViewController = CardViewController(memoEntity: selectedMemoEntity)
-                cardTransitioningDelegate = CardTransitioningDelegate(
-                    wispableCollectionView: collectionView as! WispableCollectionView,
+                let cardViewController = WispViewController(
+                    memoEntity: selectedMemoEntity,
+                    cardInset: .init(top: 130, leading: 10, bottom: -130, trailing: -10)
+                )
+                cardTransitioningDelegate = WispTransitioningDelegate(
+                    presenting: self,
                     selectedIndexPath: indexPath,
-                    cardInset: .zero,
                     cellSnapshot: selectedCell.snapshotView(afterScreenUpdates: false)
                 )
                 cardViewController.transitioningDelegate = cardTransitioningDelegate
@@ -296,30 +298,27 @@ extension HomeViewController: UICollectionViewDelegate {
                 
                 // 실제로는 tab bar controller 가 present
                 present(cardViewController, animated: true)
-//                homeView.blur.setBlurFromZero(intensity: 0.3, animated: true, duration: 0.3)
             }
             
         case 2:
             guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
             guard let selectedMemoEntity = selectedCell.memoEntity else { return }
             
-            makeSelectedCellInvisible(indexPath: indexPath)
+            homeCollectionView.cellForItem(at: indexPath)?.alpha = 0
             
-            let cardViewController = CardViewController(
+            let cardViewController = WispViewController(
                 memoEntity: selectedMemoEntity,
                 cardInset: .zero,
                 usingSafeArea: true
             )
-            cardTransitioningDelegate = CardTransitioningDelegate(
-                wispableCollectionView: collectionView as! WispableCollectionView,
+            cardTransitioningDelegate = WispTransitioningDelegate(
+                presenting: self,
                 selectedIndexPath: indexPath,
-                cardInset: .zero,
                 cellSnapshot: selectedCell.snapshotView(afterScreenUpdates: false)
             )
             cardViewController.transitioningDelegate = cardTransitioningDelegate
             cardViewController.modalPresentationStyle = .custom
             self.present(cardViewController, animated: true)
-//            homeView.blur.setBlurFromZero(intensity: 0.3, animated: true, duration: 0.3)
         default:
             fatalError("HomeCollectionView's number of sections is 3")
         }
@@ -328,25 +327,10 @@ extension HomeViewController: UICollectionViewDelegate {
 }
 
 
-// MARK: - CardFrameRestorable
-extension HomeViewController {
-    
-    func makeSelectedCellInvisible(indexPath: IndexPath) {
-        guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
-        selectedCell.alpha = 0
-    }
-    
-    func makeSelectedCellVisible(indexPath: IndexPath) {
-        guard let selectedCell = homeCollectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
-        selectedCell.alpha = 1
-    }
+extension HomeViewController: WispPresentable {
     
     func wispableCollectionView() -> WispableCollectionView {
-        return homeCollectionView
-    }
-    
-    func restoringCard() -> RestoringCard {
-        return homeView.restoringCard
+        return homeView.homeCollectionView
     }
     
 }
