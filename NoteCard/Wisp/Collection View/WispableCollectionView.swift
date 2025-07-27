@@ -9,16 +9,9 @@ import UIKit
 
 import Combine
 
-public final class WispableCollectionView: UICollectionView {
+public class WispableCollectionView: UICollectionView {
     
     private(set) var scrollDetected: PassthroughSubject<Void, Never> = .init()
-    
-    var restoringIndexPath: IndexPath? = nil {
-        didSet {
-            print("restoringIndexPath에 새 값이 할당되었습니다. nil인가? \(restoringIndexPath == nil)")
-            scrollDetected.send()
-        }
-    }
     
     init(frame: CGRect, collectionViewLayout layout: CustomCompositionalLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
@@ -42,7 +35,6 @@ extension WispableCollectionView {
     }
     
 }
-
 
 
 extension WispableCollectionView: CustomCompositionalLayoutDelegate {

@@ -29,7 +29,6 @@ final class WispContainerView: UIView {
 //    let cellSnapshotView = UIImageView()
     let cardBlurView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
     
-    
     let card = UIView()
     private let titleTextField = UITextField()
     private let heartImageView = UIButton(configuration: .plain())

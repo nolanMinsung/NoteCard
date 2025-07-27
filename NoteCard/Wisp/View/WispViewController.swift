@@ -100,7 +100,6 @@ extension WispViewController {
         let indexPathToRestore = transitioningDelegate.presentingIndexPath
         transitioningDelegate.restoringIndexPath = indexPathToRestore
         transitioningDelegate.presentationInteractor.pause()
-        transitioningDelegate.wispableCollectionView.restoringIndexPath = consume indexPathToRestore
         transitioningDelegate.viewSnapshot = rootView.card.snapshotView(afterScreenUpdates: false)
         transitioningDelegate.restore(
             startFrame: rootView.card.frame,

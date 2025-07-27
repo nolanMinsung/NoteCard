@@ -18,7 +18,11 @@ final class WispTransitioningDelegate: NSObject, UIViewControllerTransitioningDe
     
     // IndexPath 두 개로 구분하는 경우는, dismiss중에 다른 셀을 또 탭 할 수도 있기 때문.
     private(set) var presentingIndexPath: IndexPath
-    var restoringIndexPath: IndexPath? = nil
+    var restoringIndexPath: IndexPath? = nil {
+        didSet {
+            syncRestoringCardFrameToCell()
+        }
+    }
     
     private var restoringCard = RestoringCard()
     private var startCellFrame: CGRect = .zero
