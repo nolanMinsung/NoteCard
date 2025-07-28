@@ -61,6 +61,9 @@ extension WispDismissable {
         view.layer.cornerRadius = screenCornerRadius
         view.layer.cornerCurve = .continuous
         
+        WispManager.shared.activeContext?.presentedSnapshot = view.snapshotView(
+            afterScreenUpdates: false
+        )
         WispManager.shared.handleInteractiveDismissEnded(startFrame: view.frame)
         dismiss(animated: false)
         view.alpha = 0
