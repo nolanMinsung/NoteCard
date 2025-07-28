@@ -8,9 +8,9 @@
 import UIKit
 
 
-extension UICollectionView {
+public extension UICollectionView {
     
-    public static func makeWispable(
+    static func makeWispable(
         frame: CGRect = .zero,
         sectionProvider: @escaping UICollectionViewCompositionalLayoutSectionProvider,
     ) -> UICollectionView {
@@ -20,7 +20,7 @@ extension UICollectionView {
     }
     
     // 단일 섹션 레이아웃만 지원
-    public static func makeWispable(
+    static func makeWispable(
         frame: CGRect = .zero,
         section: NSCollectionLayoutSection,
     ) -> UICollectionView {
@@ -31,3 +31,12 @@ extension UICollectionView {
     
 }
 
+
+
+public extension WispableCollectionView {
+    
+    var wisp: WispPresenter {
+        return WispPresenter(collectionView: self)
+    }
+    
+}

@@ -7,16 +7,12 @@
 
 import UIKit
 
-class WispPresentationController: UIPresentationController {
-    
-    let cardVC: WispViewController
+internal class WispPresentationController: UIPresentationController {
     
     override init(
         presentedViewController: UIViewController,
         presenting presentingViewController: UIViewController?
     ) {
-        guard let cardVC = presentedViewController as? WispViewController else { fatalError() }
-        self.cardVC = cardVC
         super.init(
             presentedViewController: presentedViewController,
             presenting: presentingViewController

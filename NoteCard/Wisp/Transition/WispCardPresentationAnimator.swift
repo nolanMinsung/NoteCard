@@ -1,5 +1,5 @@
 //
-//  WispPresentationAnimator.swift
+//  WispCardPresentationAnimator.swift
 //  NoteCard
 //
 //  Created by 김민성 on 7/21/25.
@@ -8,7 +8,7 @@
 import UIKit
 
 
-final class WispPresentationAnimator: NSObject {
+internal final class WispCardPresentationAnimator: NSObject {
     
     var startFrame: CGRect
     let interactor: UIPercentDrivenInteractiveTransition
@@ -20,7 +20,7 @@ final class WispPresentationAnimator: NSObject {
     
 }
 
-extension WispPresentationAnimator: UIViewControllerAnimatedTransitioning {
+extension WispCardPresentationAnimator: UIViewControllerAnimatedTransitioning {
     
     func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
         return 0.5
@@ -29,7 +29,7 @@ extension WispPresentationAnimator: UIViewControllerAnimatedTransitioning {
     func animateTransition(using transitionContext: any UIViewControllerContextTransitioning) {
         let containerView = transitionContext.containerView
         let fromVC = transitionContext.viewController(forKey: .from)
-        let cardVC = transitionContext.viewController(forKey: .to) as! WispViewController
+        let cardVC = transitionContext.viewController(forKey: .to) as! WispCardViewController
         let cardView = cardVC.rootView
         containerView.addSubview(cardView)
         cardView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +41,7 @@ extension WispPresentationAnimator: UIViewControllerAnimatedTransitioning {
         ])
         containerView.layoutIfNeeded()
         cardVC.rootView.setCardShowingInitialState(startFrame: startFrame)
-//        cardVC.rootView.backgroundBlurView.setBlurFromZero(intensity: 0.1, animated: true)
+        cardVC.rootView.backgroundBlurView.setBlurFromZero(intensity: 0.1, animated: true)
         
         let homeViewBackgroundColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
@@ -59,7 +59,6 @@ extension WispPresentationAnimator: UIViewControllerAnimatedTransitioning {
             withDuration: transitionDuration(using: transitionContext),
             options: .allowUserInteraction,
             animations: {
-//                fromVC?.view.transform = .init(scaleX: 0.95, y: 0.95)
                 cardVC.rootView.setCardShowingFinalState()
             },
             completion: { _ in transitionContext.completeTransition(!transitionContext.transitionWasCancelled) }

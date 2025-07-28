@@ -1,17 +1,15 @@
 //
-//  WispViewController.swift
+//  WispCardViewController.swift
 //  NoteCard
 //
-//  Created by 김민성 on 7/21/25.
+//  Created by 김민성 on 7/28/25.
 //
 
 import UIKit
 
-class WispViewController: UIViewController {
+class WispCardViewController: UIViewController {
     
-    let rootView: WispContainerView
-    lazy var dynamicAnimator = UIDynamicAnimator(referenceView: rootView)
-    
+    let rootView: WispCardView
     private let tapGesture = UITapGestureRecognizer()
     private let dragPanGesture = UIPanGestureRecognizer()
     
@@ -19,7 +17,7 @@ class WispViewController: UIViewController {
         cardInset: NSDirectionalEdgeInsets,
         usingSafeArea: Bool = false
     ) {
-        self.rootView = WispContainerView(cardInset: cardInset, usingSafeArea: usingSafeArea)
+        self.rootView = WispCardView(cardInset: cardInset, usingSafeArea: usingSafeArea)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -33,14 +31,13 @@ class WispViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupGestures()
     }
     
 }
 
-
-extension WispViewController {
+extension WispCardViewController {
     
     private func setupGestures() {
         tapGesture.addTarget(self, action: #selector(backgroundBlurTapped))
@@ -101,8 +98,10 @@ extension WispViewController {
     
 }
 
+
+
 // 키보드 esc 키 입력 감지
-extension WispViewController {
+extension WispCardViewController {
     
     /*
      https://developer.apple.com/documentation/UIKit/handling-key-presses-made-on-a-physical-keyboard#Detect-a-key-press

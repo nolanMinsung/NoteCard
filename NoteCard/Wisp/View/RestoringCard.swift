@@ -102,7 +102,6 @@ extension RestoringCard {
         blurView.effect = nil
         viewSnapshot?.removeFromSuperview()
         viewSnapshot = nil
-        
         isHidden = true
     }
     

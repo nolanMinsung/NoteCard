@@ -9,9 +9,6 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
-    /// 이 속성이 `present`될 (Card)뷰컨트롤러의 `transitioningDelegate`가 됨.
-    var cardTransitioningDelegate: WispTransitioningDelegate? = nil
-    
     let sectionHederTitleArray: [String] = [
         "카테고리".localized(),
         "즐겨찾기".localized(),
@@ -202,8 +199,6 @@ extension HomeViewController: UICollectionViewDataSource {
         switch indexPath.section {
         case 0:
             let categoryCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCategoryCell.reuseIdentifier, for: indexPath) as! HomeCategoryCell
-            // 셀이 재사용될 때, 숨김 표시 여부 확인
-//            categoryCell.isHidden = (poppingManager.restoringIndexPath == indexPath)
             
             let categoryEntityArray = CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
             
@@ -221,8 +216,6 @@ extension HomeViewController: UICollectionViewDataSource {
             
         case 1:
             let favoriteCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
-            // 셀이 재사용될 때, 숨김 표시 여부 확인
-//            favoriteCell.isHidden = (poppingManager.restoringIndexPath == indexPath)
             
             switch MemoEntityManager.shared.getFavoriteMemoEntities().count {
             case 0:
@@ -241,8 +234,6 @@ extension HomeViewController: UICollectionViewDataSource {
             
         case 2:
             let recentCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
-            // 셀이 재사용될 때, 숨김 표시 여부 확인
-//            recentCell.isHidden = (poppingManager.restoringIndexPath == indexPath)
             
             let memoEntity = recentMemoArray[indexPath.row]
             recentCell.configureCell(with: memoEntity)
@@ -279,58 +270,20 @@ extension HomeViewController: UICollectionViewDelegate {
                 return
                 
             default:
-                guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
-                guard let selectedMemoEntity = selectedCell.memoEntity else { return }
-                
-                homeCollectionView.cellForItem(at: indexPath)?.alpha = 0
-                
-                let cardViewController = WispViewController(
-                    memoEntity: selectedMemoEntity,
+                let cardViewController = WispCardViewController(
                     cardInset: .init(top: 130, leading: 10, bottom: -130, trailing: -10)
                 )
-                cardTransitioningDelegate = WispTransitioningDelegate(
-                    presenting: self,
-                    selectedIndexPath: indexPath,
-                    cellSnapshot: selectedCell.snapshotView(afterScreenUpdates: false)
-                )
-                cardViewController.transitioningDelegate = cardTransitioningDelegate
-                cardViewController.modalPresentationStyle = .custom
-                
-                // 실제로는 tab bar controller 가 present
-                present(cardViewController, animated: true)
+                homeView.homeCollectionView.wisp.present(cardViewController, from: indexPath, in: self)
             }
-            
         case 2:
-            guard let selectedCell = collectionView.cellForItem(at: indexPath) as? HomeCardCell else { return }
-            guard let selectedMemoEntity = selectedCell.memoEntity else { return }
-            
-            homeCollectionView.cellForItem(at: indexPath)?.alpha = 0
-            
-            let cardViewController = WispViewController(
-                memoEntity: selectedMemoEntity,
-                cardInset: .zero,
-                usingSafeArea: true
+            let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+            let cardViewController = WispCardViewController(
+                cardInset: .init(top: topInset, leading: 0, bottom: 0, trailing: 0),
             )
-            cardTransitioningDelegate = WispTransitioningDelegate(
-                presenting: self,
-                selectedIndexPath: indexPath,
-                cellSnapshot: selectedCell.snapshotView(afterScreenUpdates: false)
-            )
-            cardViewController.transitioningDelegate = cardTransitioningDelegate
-            cardViewController.modalPresentationStyle = .custom
-            self.present(cardViewController, animated: true)
+            homeView.homeCollectionView.wisp.present(cardViewController, from: indexPath, in: self)
         default:
             fatalError("HomeCollectionView's number of sections is 3")
         }
-    }
-    
-}
-
-
-extension HomeViewController: WispPresentable {
-    
-    func wispableCollectionView() -> WispableCollectionView {
-        return homeView.homeCollectionView
     }
     
 }
