@@ -72,7 +72,7 @@ internal class WispPresentationController: UIPresentationController {
         let translation = gesture.translation(in: view)
         /// pan gesture의 시작점으로부터의 거리.
         let hypotenuse = sqrt(pow(translation.x, 2) + pow(translation.y,2))
-        let scaleValue = 1.0 + 0.3 * (exp(-(abs(translation.x)/400.0 + translation.y/100.0)) - 1.0)
+        let scaleValue = 1.0 + 0.3 * (exp(-(abs(translation.x)/400.0 + translation.y/500.0)) - 1.0)
         let scale = min(1.05, max(0.7, scaleValue))
         
         let yPosition = translation.y < 0 ? translation.y / 3 : translation.y

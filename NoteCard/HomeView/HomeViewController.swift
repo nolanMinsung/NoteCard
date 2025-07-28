@@ -270,17 +270,26 @@ extension HomeViewController: UICollectionViewDelegate {
                 return
                 
             default:
+                let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+                let inset: NSDirectionalEdgeInsets = ((indexPath.item % 2 == 0)
+                                                    ? .init(top: 130, leading: 10, bottom: 130, trailing: 10)
+                                                    : .init(top: topInset, leading: 0, bottom: 0, trailing: 0))
                 let cardVC = WispViewController(
-                    viewInset: .init(top: 130, leading: 10, bottom: 130, trailing: 10)
+//                    viewInset: .init(top: 130, leading: 10, bottom: 130, trailing: 10)
+                    viewInset: inset
                 )
                 homeView.homeCollectionView.wisp.present(cardVC, from: indexPath, in: self)
             }
         case 2:
             let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
 //            let cardViewController = WispViewController(viewInset: .init(top: topInset, leading: 0, bottom: 0, trailing: 0))
+            let inset: NSDirectionalEdgeInsets = ((indexPath.item % 2 == 0)
+                                                ? .init(top: 130, leading: 10, bottom: 130, trailing: 10)
+                                                : .init(top: topInset, leading: 0, bottom: 0, trailing: 0))
+            
             
             let naviCon = SampleOrangeNavigationController(
-                viewInset: .init(top: topInset, leading: 0, bottom: 0, trailing: 0)
+                viewInset: inset
             )
             
             homeView.homeCollectionView.wisp.present(naviCon, from: indexPath, in: self)

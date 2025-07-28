@@ -11,11 +11,13 @@ import UIKit
 
 internal final class WispTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
     
+    let cellSnapshot: UIView?
     let presentationInteractor = UIPercentDrivenInteractiveTransition()
     private var startCellFrame: CGRect = .zero
     private var cancellables: Set<AnyCancellable> = []
     
     init(context: WispContext) {
+        self.cellSnapshot = context.sourceCellSnapshot
         super.init()
         // 시작할 때 셀 frame
         guard let selectedCell = context.collectionView?.cellForItem(at: context.indexPath) else { fatalError() }

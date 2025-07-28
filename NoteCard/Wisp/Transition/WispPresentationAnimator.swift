@@ -31,9 +31,12 @@ extension WispPresentationAnimator: UIViewControllerAnimatedTransitioning {
         let wispVC = transitionContext.viewController(forKey: .to) as! WispDismissable
         let wispView = wispVC.view!
         containerView.addSubview(wispView)
-        wispView.translatesAutoresizingMaskIntoConstraints = false
         
         wispVC.setViewShowingInitialState(startFrame: startFrame)
+        containerView.layoutIfNeeded()
+        wispView.layoutIfNeeded()
+        /// - Important: 반드시 setViewShowingInitialState 메서드 뒤에 호출되어야 함.
+        wispView.translatesAutoresizingMaskIntoConstraints = false
         
         /// - Important: Interactivce한 트랜지션을 위해서는 UIView.animate를 사용해야 함.
         /// UIViewPropertyAnimator를 사용하면 interactive한 애니메이션이 제대로 동작하지 않음 주의.

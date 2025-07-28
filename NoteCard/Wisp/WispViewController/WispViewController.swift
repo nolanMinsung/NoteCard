@@ -11,9 +11,20 @@ class WispViewController: UIViewController, WispDismissable {
     
     var viewInset: NSDirectionalEdgeInsets// = .init(top: 130, leading: 10, bottom: 130, trailing: 10)
     
+    let imageView = UIImageView(image: .launchScreenImage2)
+    
     init(viewInset: NSDirectionalEdgeInsets) {
         self.viewInset = viewInset
         super.init(nibName: nil, bundle: nil)
+        
+        imageView.contentMode = .scaleAspectFit
+        view.addSubview(imageView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
     }
     
     required init?(coder: NSCoder) {
