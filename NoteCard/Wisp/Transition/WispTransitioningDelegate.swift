@@ -29,8 +29,11 @@ internal final class WispTransitioningDelegate: NSObject, UIViewControllerTransi
         presenting: UIViewController?,
         source: UIViewController
     ) -> UIPresentationController? {
+        guard let wispDismissableVC = presented as? WispDismissable else {
+            fatalError()
+        }
         return WispPresentationController(
-            presentedViewController: presented,
+            presentedViewController: wispDismissableVC,
             presenting: presenting,
         )
     }
@@ -41,7 +44,7 @@ internal final class WispTransitioningDelegate: NSObject, UIViewControllerTransi
         presenting: UIViewController,
         source: UIViewController
     ) -> (any UIViewControllerAnimatedTransitioning)? {
-        return WispCardPresentationAnimator(startFrame: startCellFrame, interactor: presentationInteractor)
+        return WispPresentationAnimator(startFrame: startCellFrame, interactor: presentationInteractor)
     }
     
     // MARK: - Presentation Animator (Interaction)

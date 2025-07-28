@@ -270,17 +270,28 @@ extension HomeViewController: UICollectionViewDelegate {
                 return
                 
             default:
-                let cardViewController = WispCardViewController(
-                    cardInset: .init(top: 130, leading: 10, bottom: -130, trailing: -10)
+//                let cardViewController = WispCardViewController(
+//                    cardInset: .init(top: 130, leading: 10, bottom: -130, trailing: -10)
+//                )
+                let cardViewController = WispViewController(
+                    viewInset: .init(top: 130, leading: 10, bottom: 130, trailing: 10)
                 )
                 homeView.homeCollectionView.wisp.present(cardViewController, from: indexPath, in: self)
             }
         case 2:
             let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
-            let cardViewController = WispCardViewController(
-                cardInset: .init(top: topInset, leading: 0, bottom: 0, trailing: 0),
+//            let cardViewController = WispCardViewController(
+//                cardInset: .init(top: topInset, leading: 0, bottom: 0, trailing: 0),
+//            )
+            let cardViewController = WispViewController(
+                viewInset: .init(top: topInset, leading: 0, bottom: 0, trailing: 0)
             )
-            homeView.homeCollectionView.wisp.present(cardViewController, from: indexPath, in: self)
+            
+            let naviCon = SampleOrangeNavigationController(
+                viewInset: .init(top: topInset, leading: 0, bottom: 0, trailing: 0)
+            )
+            
+            homeView.homeCollectionView.wisp.present(naviCon, from: indexPath, in: self)
         default:
             fatalError("HomeCollectionView's number of sections is 3")
         }

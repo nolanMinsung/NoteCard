@@ -17,7 +17,7 @@ public final class WispPresenter {
     }
     
     @MainActor func present(
-        _ viewControllerToPresent: WispCardViewController,
+        _ viewControllerToPresent: any WispDismissable,
         from indexPath: IndexPath,
         in presentingViewController: UIViewController,
         configuration: WispConfiguration = .default

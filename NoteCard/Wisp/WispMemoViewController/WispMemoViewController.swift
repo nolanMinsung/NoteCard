@@ -1,5 +1,5 @@
 //
-//  WispViewController.swift
+//  WispMemoViewController.swift
 //  NoteCard
 //
 //  Created by 김민성 on 7/21/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WispViewController: UIViewController {
+class WispMemoViewController: UIViewController {
     
     let rootView: WispContainerView
     lazy var dynamicAnimator = UIDynamicAnimator(referenceView: rootView)
@@ -40,7 +40,7 @@ class WispViewController: UIViewController {
 }
 
 
-extension WispViewController {
+extension WispMemoViewController {
     
     private func setupGestures() {
         tapGesture.addTarget(self, action: #selector(backgroundBlurTapped))
@@ -102,7 +102,7 @@ extension WispViewController {
 }
 
 // 키보드 esc 키 입력 감지
-extension WispViewController {
+extension WispMemoViewController {
     
     /*
      https://developer.apple.com/documentation/UIKit/handling-key-presses-made-on-a-physical-keyboard#Detect-a-key-press

@@ -52,7 +52,6 @@ extension WispCardPresentationAnimator: UIViewControllerAnimatedTransitioning {
         }
         fromVC?.view.window?.backgroundColor = homeViewBackgroundColor
         
-        
         /// - Important: Interactivce한 트랜지션을 위해서는 UIView.animate를 사용해야 함.
         /// UIViewPropertyAnimator를 사용하면 interactive한 애니메이션이 제대로 동작하지 않음 주의.
         UIView.springAnimate(
@@ -61,7 +60,8 @@ extension WispCardPresentationAnimator: UIViewControllerAnimatedTransitioning {
             animations: {
                 cardVC.rootView.setCardShowingFinalState()
             },
-            completion: { _ in transitionContext.completeTransition(!transitionContext.transitionWasCancelled) }
+            completion: { _ in transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            }
         )
         
         // interactivce한 transition이나, 사용자와 지속적으로 상호작용하면서 present하지는 않는다.

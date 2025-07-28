@@ -22,7 +22,7 @@ import Combine
     private let restoringCard = RestoringCard()
     private var cancellables: Set<AnyCancellable> = []
     internal var activeContext: WispContext?
-
+    
     func handleInteractiveDismissEnded(startFrame: CGRect) {
         guard let context = activeContext else { return }
         // 컬렉션뷰 구독 초기화
