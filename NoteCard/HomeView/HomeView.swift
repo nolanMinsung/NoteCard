@@ -7,6 +7,8 @@
 
 import UIKit
 
+import Wisp
+
 final class HomeView: UIView {
     
     /// 홈 컬렉션뷰에서 category Section의 레이아웃
@@ -84,22 +86,20 @@ final class HomeView: UIView {
     }
     
     let blur = CustomIntensityBlurView(blurStyle: .regular, intensity: 0.0)
-    let restoringCard = RestoringCard()
     
     let homeCollectionView: WispableCollectionView
     
     init() {
-        let layout = CustomCompositionalLayout { sectionIndex, env in
+        let sectionProvider: UICollectionViewCompositionalLayoutSectionProvider = { sectionIndex, env in
             switch sectionIndex {
             case 0: return HomeView.categoryLayoutSection
             case 1: return HomeView.cardLayoutSection
             default: return HomeView.cardLayoutSection
             }
         }
-        
         homeCollectionView = WispableCollectionView(
             frame: .zero,
-            collectionViewLayout: layout,
+            sectionProvider: sectionProvider
         )
         
         super.init(frame: .zero)
@@ -115,7 +115,6 @@ final class HomeView: UIView {
     }
     
     private func setupCollectionView() {
-        // reusable views registering
         self.homeCollectionView.register(
             HomeHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -145,7 +144,6 @@ final class HomeView: UIView {
     private func setupViewHierarchy() {
         self.addSubview(homeCollectionView)
         addSubview(blur)
-        addSubview(restoringCard)
     }
     
     private func setupLayoutConstraints() {

@@ -7,6 +7,8 @@
 
 import UIKit
 
+import Wisp
+
 class HomeViewController: UIViewController {
     
     let sectionHederTitleArray: [String] = [
