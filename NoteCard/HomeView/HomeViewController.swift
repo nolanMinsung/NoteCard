@@ -280,7 +280,7 @@ extension HomeViewController: UICollectionViewDelegate {
 //                    viewInset: .init(top: 130, leading: 10, bottom: 130, trailing: 10)
                     viewInset: inset
                 )
-                homeView.homeCollectionView.wisp.present(cardVC, from: indexPath, in: self)
+                wisp.present(cardVC, collectionView: homeCollectionView, at: indexPath)
             }
         case 2:
             let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
@@ -293,8 +293,7 @@ extension HomeViewController: UICollectionViewDelegate {
             let naviCon = SampleOrangeNavigationController(
                 viewInset: inset
             )
-            
-            homeView.homeCollectionView.wisp.present(naviCon, from: indexPath, in: self)
+            wisp.present(naviCon, collectionView: homeCollectionView, at: indexPath)
         default:
             fatalError("HomeCollectionView's number of sections is 3")
         }
