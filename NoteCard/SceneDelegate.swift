@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         self.window = UIWindow(windowScene: windowScene)
         self.window?.makeKeyAndVisible()
-        self.window?.tintColor = UIColor.currentTheme()
+        self.window?.tintColor = UIColor.currentTheme
         
         let mainTabBarCon = MainTabBarController()
         self.window?.rootViewController = mainTabBarCon

@@ -51,7 +51,7 @@ final class OrderSettingViewController: UIViewController {
     private func setupNaviBar() {
         self.title = "메모 순서 표시".localized()
         self.navigationItem.largeTitleDisplayMode = .never
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
+        self.navigationController?.navigationBar.tintColor = .currentTheme
     }
     
     

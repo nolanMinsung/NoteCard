@@ -47,7 +47,7 @@ class MainTabBarController: UITabBarController {
         standardAppearance.configureWithDefaultBackground()
         tabBar.standardAppearance = standardAppearance
         
-        tabBar.tintColor = UIColor.currentTheme()
+        tabBar.tintColor = UIColor.currentTheme
     }
     
     /// Note:
@@ -65,7 +65,7 @@ class MainTabBarController: UITabBarController {
         // tab 1: 카테고리 없음.
         let uncategorizedMemoVC = MemoViewController(memoVCType: .uncategorized)
         let noCategoriesCardNaviCon = UINavigationController(rootViewController: uncategorizedMemoVC)
-        noCategoriesCardNaviCon.navigationController?.toolbar.tintColor = .currentTheme()
+        noCategoriesCardNaviCon.navigationController?.toolbar.tintColor = .currentTheme
         noCategoriesCardNaviCon.tabBarItem = UITabBarItem(
             title: "카테고리 없음".localized(),
             image: UIImage(systemName: "app.dashed"),

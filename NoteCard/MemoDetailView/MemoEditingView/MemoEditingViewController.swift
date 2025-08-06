@@ -55,7 +55,7 @@ class MemoEditingViewController: UIViewController {
     let photoBarButtonItem: UIBarButtonItem = {
         let item = UIBarButtonItem()
         item.image = UIImage(systemName: "photo")
-        item.tintColor = UIColor.currentTheme()
+        item.tintColor = UIColor.currentTheme
         return item
     }()
     
@@ -329,7 +329,7 @@ class MemoEditingViewController: UIViewController {
         }()
         
         let phPickerVC = PHPickerViewController(configuration: phPickerConfiguration)
-        phPickerVC.view.tintColor = .currentTheme()
+        phPickerVC.view.tintColor = .currentTheme
         phPickerVC.delegate = self
         
         
@@ -346,7 +346,7 @@ class MemoEditingViewController: UIViewController {
     private func setupNaviBar() {
         self.title = "편집 모드".localized()
         
-        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme()
+        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
         self.navigationController?.isToolbarHidden = false
         self.navigationItem.leftBarButtonItem = cancelBarButtonItem
         self.navigationItem.rightBarButtonItem = completeBarButtonItem

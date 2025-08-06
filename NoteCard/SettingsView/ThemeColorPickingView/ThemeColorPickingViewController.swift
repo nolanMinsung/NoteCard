@@ -96,11 +96,9 @@ extension ThemeColorPickingViewController: UITableViewDelegate {
         guard let cell = tableView.cellForRow(at: indexPath) as? ThemeColorPickingTableViewCell else { fatalError() }
         cell.isSelected = true
         
-        guard UserDefaults.standard.object(forKey: UserDefaultsKeys.themeColor.rawValue) as! String != ThemeColor.allCases[indexPath.row].rawValue else { return }
-        UserDefaults.standard.set(ThemeColor.allCases[indexPath.row].rawValue, forKey: UserDefaultsKeys.themeColor.rawValue)
-        NotificationCenter.default.post(name: NSNotification.Name("themeColorChangedNotification"), object: nil)
-        UIWindow.current?.tintColor = .currentTheme()
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
+        ThemeManager.shared.setThemeColor(ThemeColor.allCases[indexPath.row])
+        UIWindow.current?.tintColor = .currentTheme
+        self.navigationController?.navigationBar.tintColor = .currentTheme
     }
     
     

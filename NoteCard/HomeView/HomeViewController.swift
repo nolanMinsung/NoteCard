@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/02.
 //
 
+import Combine
 import UIKit
 
 import Wisp
@@ -27,6 +28,8 @@ class HomeViewController: UIViewController {
     private var recentMemoArray: [MemoEntity] {
         return MemoEntityManager.shared.getMemoEntitiesFromCoreData()
     }
+    
+    private var cancellables: Set<AnyCancellable> = []
     
     override func loadView() {
         self.view = homeView
@@ -67,8 +70,8 @@ class HomeViewController: UIViewController {
         self.navigationController?.navigationBar.standardAppearance = standardAppearance
         self.navigationController?.navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
         
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
-        self.navigationController?.toolbar.tintColor = .currentTheme()
+        self.navigationController?.navigationBar.tintColor = .currentTheme
+        self.navigationController?.toolbar.tintColor = .currentTheme
     }
     
     private func setupDelegates() {
@@ -84,12 +87,9 @@ class HomeViewController: UIViewController {
             object: nil
         )
         
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(themeColorChanged),
-            name: NSNotification.Name("themeColorChangedNotification"),
-            object: nil
-        )
+        ThemeManager.shared.currentThemeSubject.sink { [weak self] color in
+            self?.themeColorChanged()
+        }.store(in: &cancellables)
         
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name("didCreateNewCategoryNotification"),
@@ -131,9 +131,9 @@ class HomeViewController: UIViewController {
     }
     
     @objc private func themeColorChanged() {
-        self.tabBarController?.tabBar.tintColor = UIColor.currentTheme()
-        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme()
-        self.navigationController?.toolbar.tintColor = UIColor.currentTheme()
+        self.tabBarController?.tabBar.tintColor = UIColor.currentTheme
+        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
+        self.navigationController?.toolbar.tintColor = UIColor.currentTheme
         self.homeCollectionView.reloadData()
     }
     
@@ -188,7 +188,7 @@ extension HomeViewController: UICollectionViewDataSource {
             fatalError()
         }
         
-        headerView.button.configuration?.baseForegroundColor = UIColor.currentTheme()
+        headerView.button.configuration?.baseForegroundColor = UIColor.currentTheme
         // 헤더 안의 버튼은 section 정보를 button의 tag로 저장함.
         headerView.button.tag = indexPath.section
         headerView.button.configuration?.title = sectionHederTitleArray[indexPath.section] + " "

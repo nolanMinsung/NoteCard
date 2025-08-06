@@ -54,7 +54,7 @@ class CreateCategoryViewController: UIViewController {
             return appearance
         }()
         
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
+        self.navigationController?.navigationBar.tintColor = .currentTheme
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.navigationController?.navigationBar.standardAppearance = appearanceForStandard
         

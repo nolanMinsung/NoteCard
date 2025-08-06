@@ -28,7 +28,7 @@ class PopupCardViewController: UIViewController {
     
     lazy var restoreMemoAction = UIAction(
         title: "카테고리 없는 메모로 복구".localized(),
-        image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme(), renderingMode: UIImage.RenderingMode.alwaysOriginal),
+        image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme, renderingMode: UIImage.RenderingMode.alwaysOriginal),
         handler: { [weak self, weak memoEntity] action in
             guard let self else { fatalError() }
             guard let memoEntity else { fatalError() }
@@ -93,7 +93,7 @@ class PopupCardViewController: UIViewController {
             } else {
                 alertCon = UIAlertController(title: "메모 삭제".localized(), message: "메모를 삭제하시겠습니까?".localized(), preferredStyle: UIAlertController.Style.alert)
             }
-            alertCon.view.tintColor = .currentTheme()
+            alertCon.view.tintColor = .currentTheme
             
             let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
             let deleteAction = UIAlertAction(title: "삭제".localized(), style: .destructive) { [weak memoEntity] action in

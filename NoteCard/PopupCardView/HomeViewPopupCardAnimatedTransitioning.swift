@@ -292,7 +292,7 @@ extension HomeViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
                 if popupCardView.traitCollection.userInterfaceStyle == .dark {
                     animation.toValue = UIColor.clear.cgColor
                 } else {
-                    animation.toValue = UIColor.currentTheme().cgColor
+                    animation.toValue = UIColor.currentTheme.cgColor
                 }
                 
                 

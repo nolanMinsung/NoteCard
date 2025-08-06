@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/17.
 //
 
+import Combine
 import UIKit
 
 class TotalListViewController: UIViewController {
@@ -29,6 +30,8 @@ class TotalListViewController: UIViewController {
     var percentDrivenInteractiveTransition: PercentDrivenInteractiveTransition?
     var memoEntitySearhResult: [MemoEntity] = []
     var selectedIndexPath: IndexPath?
+    
+    private var cancellables: Set<AnyCancellable> = []
     
     override func loadView() {
         self.view = TotalListView()
@@ -84,8 +87,8 @@ class TotalListViewController: UIViewController {
         let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         bar.items = [flexibleBarButton, hideKeyboardButton]
         bar.sizeToFit()
-        bar.tintColor = .currentTheme()
-        searchController.searchBar.tintColor = .currentTheme()
+        bar.tintColor = .currentTheme
+        searchController.searchBar.tintColor = .currentTheme
         searchController.searchBar.inputAccessoryView = bar
         
         self.navigationItem.searchController = searchController
@@ -123,7 +126,9 @@ class TotalListViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(memoSentToTrash(_:)), name: NSNotification.Name("memoTrashedNotification"), object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(themeColorChanged), name: NSNotification.Name("themeColorChangedNotification"), object: nil)
+        ThemeManager.shared.currentThemeSubject.sink { [weak self] color in
+            self?.themeColorChanged()
+        }.store(in: &cancellables)
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(memoRecoveredToUncategorized(_:)), name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil)
     }
@@ -228,8 +233,8 @@ class TotalListViewController: UIViewController {
     
     @objc private func themeColorChanged() {
         guard let searchCon = self.navigationItem.searchController else { fatalError() }
-        searchCon.searchBar.tintColor = .currentTheme()
-        searchCon.searchBar.inputAccessoryView?.tintColor = .currentTheme()
+        searchCon.searchBar.tintColor = .currentTheme
+        searchCon.searchBar.inputAccessoryView?.tintColor = .currentTheme
         
         self.totalListCollectionView.reloadItems(at: self.totalListCollectionView.indexPathsForVisibleItems)
 //        self.totalListCollectionView.reconfigureItems(at: self.totalListCollectionView.indexPathsForVisibleItems)

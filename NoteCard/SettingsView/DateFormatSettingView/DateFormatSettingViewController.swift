@@ -50,7 +50,7 @@ final class DateFormatSettingViewController: UIViewController {
     private func setupNaviBar() {
         self.title = "날짜 표시 형식".localized()
         self.navigationItem.largeTitleDisplayMode = .never
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
+        self.navigationController?.navigationBar.tintColor = .currentTheme
     }
     
     

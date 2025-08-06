@@ -318,11 +318,11 @@ extension SettingsViewController {
 //            if numberOfMemoesInTrash == 0 {
 //                cell.nameLabel.textColor = .lightGray
 //            } else {
-//                cell.nameLabel.textColor = .currentTheme()
+//                cell.nameLabel.textColor = .currentTheme
 //            }
             
             cell.configureCell(text: self.settingTitles[indexPath.section][indexPath.row],
-                               textColor: numberOfMemoesInTrash == 0 ? .lightGray : .currentTheme(),
+                               textColor: numberOfMemoesInTrash == 0 ? .lightGray : .currentTheme,
                                accesoryType: UITableViewCell.AccessoryType.none
             )
             

@@ -53,7 +53,7 @@ final class DarkModeSettingTableViewCell: UITableViewCell {
         defaultContentConfig.secondaryText = secondaryText
         defaultContentConfig.textProperties.color = textColor
 //        defaultContentConfig.imageProperties.tintColor = .label
-//        defaultContentConfig.imageProperties.tintColor = .currentTheme().withAlphaComponent(0.7)
+//        defaultContentConfig.imageProperties.tintColor = .currentTheme.withAlphaComponent(0.7)
         
         switch userInterfaceStyle {
         case .light:

@@ -28,7 +28,7 @@ final class DateFormatSettingTableViewCell: UITableViewCell {
         let image = UIImage(systemName: "checkmark", withConfiguration: imageConfiguration)
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .currentTheme()
+        imageView.tintColor = .currentTheme
         imageView.isHidden = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView

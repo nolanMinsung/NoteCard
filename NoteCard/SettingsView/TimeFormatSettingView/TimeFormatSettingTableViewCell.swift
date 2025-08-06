@@ -24,7 +24,7 @@ final class TimeFormatSettingTableViewCell: UITableViewCell {
     
     let switchInCell: UISwitch = {
         let switchInCell = UISwitch()
-        switchInCell.onTintColor = .currentTheme()
+        switchInCell.onTintColor = .currentTheme
         switchInCell.translatesAutoresizingMaskIntoConstraints = false
         return switchInCell
     }()

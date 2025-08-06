@@ -86,7 +86,7 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.sizeToFit()
-        self.contentView.layer.borderColor = UIColor.currentTheme().cgColor
+        self.contentView.layer.borderColor = UIColor.currentTheme.cgColor
     }
     
     
@@ -114,7 +114,7 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         self.contentView.layer.cornerCurve = .continuous
         self.contentView.backgroundColor = .detailViewCategoryCellDeselectedBackground
         self.contentView.layer.borderWidth = 0
-        self.contentView.layer.borderColor = UIColor.currentTheme().cgColor
+        self.contentView.layer.borderColor = UIColor.currentTheme.cgColor
     }
     
     

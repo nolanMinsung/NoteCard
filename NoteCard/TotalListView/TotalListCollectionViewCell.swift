@@ -143,7 +143,7 @@ class TotalListCollectionViewCell: UICollectionViewCell {
         } else {
             let roundBezierPath = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height), cornerRadius: 20)
             self.layer.shadowPath = roundBezierPath.cgPath
-            self.layer.shadowColor = UIColor.currentTheme().cgColor
+            self.layer.shadowColor = UIColor.currentTheme.cgColor
             self.layer.shadowOffset = CGSize(width: 0, height: 0)
             self.layer.shadowOpacity = 0.1
             self.layer.shadowRadius = 8
@@ -297,7 +297,7 @@ class TotalListCollectionViewCell: UICollectionViewCell {
                 NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue
             ]
         } else {
-            self.memoTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.currentTheme()]
+            self.memoTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.currentTheme]
         }
         switch self.memoEntity!.isFavorite {
         case true:

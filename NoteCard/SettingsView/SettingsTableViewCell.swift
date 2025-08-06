@@ -50,7 +50,7 @@ class SettingsTableViewCell: UITableViewCell {
         defaultContentConfig.text = text
         defaultContentConfig.secondaryText = secondaryText
         defaultContentConfig.textProperties.color = textColor
-        defaultContentConfig.imageProperties.tintColor = .currentTheme().withAlphaComponent(0.8)
+        defaultContentConfig.imageProperties.tintColor = .currentTheme.withAlphaComponent(0.8)
         self.contentConfiguration = defaultContentConfig
         
         self.accessoryType = accesoryType

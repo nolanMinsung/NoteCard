@@ -50,7 +50,7 @@ class MemoMakingViewController: UIViewController {
     let photoBarButtonItem: UIBarButtonItem = {
         let item = UIBarButtonItem()
         item.image = UIImage(systemName: "photo")
-        item.tintColor = UIColor.currentTheme()
+        item.tintColor = UIColor.currentTheme
         return item
     }()
     
@@ -176,7 +176,7 @@ class MemoMakingViewController: UIViewController {
         }
         alertCon.addAction(cancelCancelingAction)
         alertCon.addAction(cancelingAction)
-        alertCon.view.tintColor = .currentTheme()
+        alertCon.view.tintColor = .currentTheme
         
         self.present(alertCon, animated: true)
     }
@@ -252,7 +252,7 @@ class MemoMakingViewController: UIViewController {
         
         if phPickerConfiguration.selectionLimit != 0 {
             let phPickerVC = PHPickerViewController(configuration: phPickerConfiguration)
-            phPickerVC.view.tintColor = .currentTheme()
+            phPickerVC.view.tintColor = .currentTheme
             phPickerVC.delegate = self
             present(phPickerVC, animated: true)
         } else {
@@ -267,7 +267,7 @@ class MemoMakingViewController: UIViewController {
     private func setupNaviBar() {
         self.title = "메모 추가하기".localized()
         
-        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme()
+        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
         self.navigationController?.isToolbarHidden = false
         self.navigationItem.leftBarButtonItem = self.cancelBarButtonItem
         self.navigationItem.rightBarButtonItem = self.completeBarButtonItem

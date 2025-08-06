@@ -35,7 +35,7 @@ final class TimeFormatSettingViewController: UIViewController {
     private func setupNaviBar() {
         self.title = "시간 표시 형식".localized()
         self.navigationItem.largeTitleDisplayMode = .never
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
+        self.navigationController?.navigationBar.tintColor = .currentTheme
     }
     
     

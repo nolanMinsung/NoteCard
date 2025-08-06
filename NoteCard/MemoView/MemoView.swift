@@ -65,7 +65,7 @@ final class MemoView: UIView {
     private func setupTextField() {
         categoryNameTextField.placeholder = ""
         categoryNameTextField.borderStyle = .none
-        categoryNameTextField.tintColor = .currentTheme()
+        categoryNameTextField.tintColor = .currentTheme
         categoryNameTextField.textAlignment = .center
         categoryNameTextField.font = UIFont.boldSystemFont(ofSize: 35)
         categoryNameTextField.adjustsFontSizeToFitWidth = true
@@ -81,7 +81,7 @@ final class MemoView: UIView {
         let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         bar.items = [flexibleBarButton, hideKeyboardButton]
         bar.sizeToFit()
-        bar.tintColor = .currentTheme()
+        bar.tintColor = .currentTheme
         categoryNameTextField.inputAccessoryView = bar
     }
     

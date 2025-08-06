@@ -310,7 +310,7 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             popupCardView.layer.cornerRadius = 13
             
             if selectedCell.isSelected {
-                popupCardView.layer.borderColor = UIColor.currentTheme().cgColor
+                popupCardView.layer.borderColor = UIColor.currentTheme.cgColor
                 popupCardView.layer.borderWidth = 2
             }
             
@@ -340,7 +340,7 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
                 if memoView.traitCollection.userInterfaceStyle == .dark {
                     animation.toValue = UIColor.clear.cgColor
                 } else {
-                    animation.toValue = UIColor.currentTheme().cgColor
+                    animation.toValue = UIColor.currentTheme.cgColor
                 }
                 
                 animation.initialVelocity = 0

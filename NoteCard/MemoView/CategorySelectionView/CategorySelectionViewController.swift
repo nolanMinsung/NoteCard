@@ -75,7 +75,7 @@ class CategorySelectionViewController: UIViewController {
     
     private func setupNaviBar() {
         self.title = "카테고리 선택하기".localized()
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
+        self.navigationController?.navigationBar.tintColor = .currentTheme
         let cancelBarButtonItem = UIBarButtonItem(title: "취소".localized(), style: UIBarButtonItem.Style.done, target: self, action: #selector(cancelCategorySelection))
         let appendBarButtonItem = UIBarButtonItem(title: "추가".localized(), style: UIBarButtonItem.Style.done, target: self, action: #selector(appendCategories))
         let removeBarButtonItem = UIBarButtonItem(title: "해제".localized(), style: UIBarButtonItem.Style.done, target: self, action: #selector(removeCategories))

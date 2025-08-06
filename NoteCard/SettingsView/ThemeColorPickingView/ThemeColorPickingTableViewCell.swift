@@ -47,7 +47,7 @@ final class ThemeColorPickingTableViewCell: UITableViewCell {
         defaultContentConfig.text = text
         defaultContentConfig.secondaryText = secondaryText
         defaultContentConfig.textProperties.color = textColor
-        defaultContentConfig.imageProperties.tintColor = .currentTheme()//.withAlphaComponent(0.7)
+        defaultContentConfig.imageProperties.tintColor = .currentTheme//.withAlphaComponent(0.7)
         
         switch themeColor {
 

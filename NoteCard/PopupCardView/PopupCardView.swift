@@ -128,7 +128,7 @@ final class PopupCardView: UIView {
         } else {
             let bezierPath = UIBezierPath(rect: self.bounds)
             layer.shadowPath = bezierPath.cgPath
-            layer.shadowColor = UIColor.currentTheme().cgColor
+            layer.shadowColor = UIColor.currentTheme.cgColor
             layer.shadowOffset = CGSize(width: 0, height: 0)
             layer.shadowOpacity = 0.25
             layer.shadowRadius = 60
@@ -487,7 +487,7 @@ final class PopupCardView: UIView {
             [NSAttributedString.Key.foregroundColor: UIColor.systemGray,
              NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
         } else {
-            self.memoTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.currentTheme()]
+            self.memoTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.currentTheme]
         }
         
         self.sortedImageEntitiesArray = ImageEntityManager.shared.getImageEntities(from: self.memoEntity!, inOrderOf: ImageOrderIndexKind.orderIndex)
@@ -611,7 +611,7 @@ extension PopupCardView {
         let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         bar.items = [flexibleBarButton, hideKeyboardButton]
         bar.sizeToFit()
-        bar.tintColor = .currentTheme()
+        bar.tintColor = .currentTheme
         titleTextField.inputAccessoryView = bar
         
         titleTextField.font = UIFont.systemFont(ofSize: 18)
@@ -621,7 +621,7 @@ extension PopupCardView {
         titleTextField.textAlignment = .left
         titleTextField.backgroundColor = .clear
         titleTextField.textColor = UIColor.label
-        titleTextField.tintColor = .currentTheme()
+        titleTextField.tintColor = .currentTheme
         titleTextField.minimumFontSize = 16 //같은 셀의 textView의 폰트는 13.5 <- 이보다는 커야 한다.
         titleTextField.adjustsFontSizeToFitWidth = true
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -647,7 +647,7 @@ extension PopupCardView {
             switch button.state {
             case .normal:
                 button.configuration?.image = UIImage(systemName: "ellipsis.circle")
-                button.tintColor = UIColor.currentTheme()
+                button.tintColor = UIColor.currentTheme
             case .highlighted:
                 button.tintColor = .lightGray
             default:
@@ -705,7 +705,7 @@ extension PopupCardView {
         let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         bar.items = [flexibleBarButton, hideKeyboardButton]
         bar.sizeToFit()
-        bar.tintColor = .currentTheme()
+        bar.tintColor = .currentTheme
         memoTextView.inputAccessoryView = bar
         
         let mutableParagraphStyle = NSMutableParagraphStyle()
@@ -720,7 +720,7 @@ extension PopupCardView {
         memoTextView.backgroundColor = .clear
         memoTextView.textInputView.backgroundColor = .clear
         memoTextView.bounces = true
-        memoTextView.tintColor = .currentTheme()
+        memoTextView.tintColor = .currentTheme
         memoTextView.isEditable = false
         memoTextView.isScrollEnabled = true
         memoTextView.dataDetectorTypes = .link

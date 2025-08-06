@@ -85,7 +85,6 @@
 		4E87D09F2B7A55200081D3D4 /* MemoSearchingCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E87D09E2B7A55200081D3D4 /* MemoSearchingCollectionView.swift */; };
 		4EA4011D2B14456700EB2FD3 /* TotalListViewPopupCardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA4011C2B14456700EB2FD3 /* TotalListViewPopupCardAnimatedTransitioning.swift */; };
 		4EAF4F2C2E38580500A1AA36 /* Wisp in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF4F2B2E38580500A1AA36 /* Wisp */; };
-		4EB46F982B0B215E00B4633F /* ColorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB46F972B0B215E00B4633F /* ColorModel.swift */; };
 		4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */; };
 		4EC220262B077F6B007C9326 /* TotalListCellCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC220252B077F6B007C9326 /* TotalListCellCategoryCell.swift */; };
 		4ECDA56F2E162753003D15F5 /* ThirdTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */; };
@@ -187,7 +186,6 @@
 		4E6EE9682B201CDF0009DD84 /* LargeCardCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeCardCollectionView.swift; sourceTree = "<group>"; };
 		4E87D09E2B7A55200081D3D4 /* MemoSearchingCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingCollectionView.swift; sourceTree = "<group>"; };
 		4EA4011C2B14456700EB2FD3 /* TotalListViewPopupCardAnimatedTransitioning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TotalListViewPopupCardAnimatedTransitioning.swift; sourceTree = "<group>"; };
-		4EB46F972B0B215E00B4633F /* ColorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorModel.swift; sourceTree = "<group>"; };
 		4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListTableViewDiffableDataSource.swift; sourceTree = "<group>"; };
 		4EC220252B077F6B007C9326 /* TotalListCellCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListCellCategoryCell.swift; sourceTree = "<group>"; };
 		4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdTabViewController.swift; sourceTree = "<group>"; };
@@ -215,6 +213,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4E462BA92E29CF4A004C0215 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
+		4EC9B5162E4248B80031250B /* Global */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Global; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +257,7 @@
 		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
+				4EC9B5162E4248B80031250B /* Global */,
 				4EDD36FF2E33027A002AF29B /* CustomDesign */,
 				4E462BA92E29CF4A004C0215 /* Extensions */,
 				4E2712022DA19C730007D53A /* Protocols */,
@@ -307,7 +307,6 @@
 			children = (
 				4E1384E42AF383D70063817B /* DataManager.swift */,
 				4E1384E82AF3840A0063817B /* DateManager.swift */,
-				4EB46F972B0B215E00B4633F /* ColorModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -568,6 +567,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				4E462BA92E29CF4A004C0215 /* Extensions */,
+				4EC9B5162E4248B80031250B /* Global */,
 			);
 			name = NoteCard;
 			productName = CardMemo;
@@ -655,7 +655,6 @@
 				4E1384F12AF384A70063817B /* HomeCategoryCell.swift in Sources */,
 				4E3E757C2B6889260073A951 /* MainTabBarController.swift in Sources */,
 				4E10F8442B654162007B468A /* NoteCardCoreData.xcdatamodeld in Sources */,
-				4EB46F982B0B215E00B4633F /* ColorModel.swift in Sources */,
 				4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */,
 				4E1384FF2AF385750063817B /* PercentDrivenInteractiveTransition.swift in Sources */,
 				4E1385242AF387DE0063817B /* CardImageShowingAnimatedTransitioning.swift in Sources */,

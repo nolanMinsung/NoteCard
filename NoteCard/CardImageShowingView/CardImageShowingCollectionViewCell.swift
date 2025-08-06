@@ -83,7 +83,7 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupUI() {
-        self.contentView.backgroundColor = .currentTheme().withAlphaComponent(0.1)
+        self.contentView.backgroundColor = .currentTheme.withAlphaComponent(0.1)
         self.contentView.clipsToBounds = true
         self.contentView.layer.cornerRadius = 5
         self.contentView.layer.cornerCurve = .continuous

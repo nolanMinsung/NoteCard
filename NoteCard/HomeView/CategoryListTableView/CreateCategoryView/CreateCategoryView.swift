@@ -18,7 +18,7 @@ final class CreateCategoryView: UIView {
         textField.layer.cornerRadius = 10
         textField.layer.cornerCurve = .continuous
         textField.backgroundColor = UIColor.createCategoryTextField
-        textField.tintColor = .currentTheme()
+        textField.tintColor = .currentTheme
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()

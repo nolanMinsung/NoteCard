@@ -64,7 +64,7 @@ class HomeCategoryCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
             self.layer.shadowPath = roundBezierPath.cgPath
             self.layer.shadowOpacity = 0.2
             self.layer.shadowRadius = 5
-            self.layer.shadowColor = UIColor.currentTheme().cgColor
+            self.layer.shadowColor = UIColor.currentTheme.cgColor
         }
         
     }

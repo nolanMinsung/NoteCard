@@ -21,13 +21,13 @@ final class CardImageShowingView: UIView {
         let button = UIButton()
         button.setImage(UIImage(systemName: "xmark"), for: UIControl.State.normal)
         button.contentMode = .scaleAspectFit
-        button.tintColor = .currentTheme()
+        button.tintColor = .currentTheme
         button.backgroundColor = .systemBackground
         button.clipsToBounds = true
         button.alpha = 0.1
         button.layer.cornerRadius = 30
         button.layer.masksToBounds = false
-        button.layer.shadowColor = UIColor.currentTheme().cgColor
+        button.layer.shadowColor = UIColor.currentTheme.cgColor
         button.layer.shadowOffset = CGSize.zero
         button.layer.shadowRadius = 7
         button.layer.shadowOpacity = 0.3
@@ -76,7 +76,7 @@ final class CardImageShowingView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.dismissButton.layer.shadowColor = UIColor.currentTheme().cgColor
+        self.dismissButton.layer.shadowColor = UIColor.currentTheme.cgColor
     }
     
     

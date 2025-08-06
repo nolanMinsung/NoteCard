@@ -44,7 +44,7 @@ final class OrderSettingTableViewCell: UITableViewCell {
         defaultContentConfig.text = text
         defaultContentConfig.secondaryText = secondaryText
         defaultContentConfig.textProperties.color = textColor
-        defaultContentConfig.imageProperties.tintColor = .currentTheme()
+        defaultContentConfig.imageProperties.tintColor = .currentTheme
         self.contentConfiguration = defaultContentConfig
         
         self.accessoryType = accesoryType

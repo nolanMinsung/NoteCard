@@ -99,7 +99,7 @@ class MemoViewController: UIViewController {
         guard let self else { fatalError() }
         let action = UIAction(
             title: "카테고리 없는 메모들로 복구".localized(),
-            image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme(), renderingMode: UIImage.RenderingMode.alwaysOriginal),
+            image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme, renderingMode: UIImage.RenderingMode.alwaysOriginal),
             handler: { [weak self] action in
                 guard let self else { fatalError() }
                 guard let selectedIndexPaths = self.smallCardCollectionView.indexPathsForSelectedItems else { fatalError() }
@@ -145,7 +145,7 @@ class MemoViewController: UIViewController {
             title: self.memoVCType == .trash ? "복구할 카테고리 선택".localized() : "카테고리 일괄 추가".localized(),
             image: self.memoVCType == .trash || self.memoVCType == .uncategorized 
             ? UIImage(systemName: "tag")?.withTintColor(.label, renderingMode: UIImage.RenderingMode.alwaysOriginal)
-            : UIImage(systemName: "tag")?.withTintColor(.currentTheme(), renderingMode: UIImage.RenderingMode.alwaysOriginal)
+            : UIImage(systemName: "tag")?.withTintColor(.currentTheme, renderingMode: UIImage.RenderingMode.alwaysOriginal)
         ) { [weak self] action in
             guard let self else { fatalError() }
             //여기에 선택된 메모들에 일괄적으로 추가할 카테고리 띄운 후에 선택할 수 있게끔
@@ -166,7 +166,7 @@ class MemoViewController: UIViewController {
             title: "카테고리 일괄 해제".localized(),
             image: self.memoVCType == .trash || self.memoVCType == .uncategorized
             ? UIImage(systemName: "tag")?.withTintColor(.label, renderingMode: UIImage.RenderingMode.alwaysOriginal)
-            : UIImage(systemName: "tag")?.withTintColor(.currentTheme(), renderingMode: UIImage.RenderingMode.alwaysOriginal)
+            : UIImage(systemName: "tag")?.withTintColor(.currentTheme, renderingMode: UIImage.RenderingMode.alwaysOriginal)
         ) { [weak self] action in
             guard let self else { fatalError() }
             
@@ -518,7 +518,7 @@ class MemoViewController: UIViewController {
         self.navigationController?.navigationBar.standardAppearance = appearance
         self.navigationController?.navigationBar.compactAppearance = appearance
         self.navigationController?.navigationBar.compactScrollEdgeAppearance = appearance
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
+        self.navigationController?.navigationBar.tintColor = .currentTheme
         
         let toolbarAppearance = UIToolbarAppearance()
         toolbarAppearance.configureWithDefaultBackground()
@@ -562,7 +562,7 @@ class MemoViewController: UIViewController {
         } else {
             alertCon = UIAlertController(title: "선택된 메모 삭제".localized(), message: "선택한 메모들을 모두 삭제하시겠습니까?".localized(), preferredStyle: UIAlertController.Style.alert)
         }
-        alertCon.view.tintColor = .currentTheme()
+        alertCon.view.tintColor = .currentTheme
         let cancelAction = UIAlertAction(title: "취소".localized(), style: UIAlertAction.Style.cancel)
         let deleteAction = UIAlertAction(title: "삭제".localized(), style: UIAlertAction.Style.destructive) { [weak self] action in
             guard let self else { fatalError() }
@@ -654,8 +654,6 @@ class MemoViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(memoCreated(_:)), name: NSNotification.Name("createdMemoNotification"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(memoEdited(_:)), name: NSNotification.Name("editingCompleteNotification"), object: nil)
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(themeColorChanged), name: NSNotification.Name("themeColorChangedNotification"), object: nil)
         
         if self.memoVCType == MemoVCType.uncategorized {
             NotificationCenter.default.addObserver(self, selector: #selector(memoRecoveredToUncategorized(_:)), name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil)
@@ -788,7 +786,7 @@ class MemoViewController: UIViewController {
 //        
 //        self.reloadAll()
 //        
-//        self.navigationController?.toolbar.tintColor = .currentTheme()
+//        self.navigationController?.toolbar.tintColor = .currentTheme
 //        self.setupToolbar(animated: false)
 //    }
     

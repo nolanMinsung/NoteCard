@@ -97,7 +97,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         textField.textAlignment = .left
         textField.backgroundColor = .clear
         textField.textColor = UIColor.label
-        textField.tintColor = .currentTheme()
+        textField.tintColor = .currentTheme
         textField.minimumFontSize = 16 //같은 셀의 textView의 폰트는 15 <- 이보다는 커야 한다.
         textField.adjustsFontSizeToFitWidth = true
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -107,7 +107,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         bar.items = [flexibleBarButton, hideKeyboardButton]
         bar.sizeToFit()
-        bar.tintColor = .currentTheme()
+        bar.tintColor = .currentTheme
         textField.inputAccessoryView = bar
         
         return textField
@@ -128,7 +128,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
     
     lazy var addCategoryAction = UIAction(
         title: memoEntity?.isInTrash == true ? "복구할 카테고리 선택".localized() : "카테고리 일괄 추가".localized(),
-        image: UIImage(systemName: "tag")?.withTintColor(.currentTheme(), renderingMode: UIImage.RenderingMode.alwaysOriginal),
+        image: UIImage(systemName: "tag")?.withTintColor(.currentTheme, renderingMode: UIImage.RenderingMode.alwaysOriginal),
         handler: { [weak self] action in
             guard let self else { fatalError() }
             guard let delegate else { fatalError() }
@@ -146,7 +146,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
     
     lazy var restoreMemoAction = UIAction(
         title: "카테고리 없는 메모로 복구".localized(),
-        image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme(), renderingMode: UIImage.RenderingMode.alwaysOriginal),
+        image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme, renderingMode: UIImage.RenderingMode.alwaysOriginal),
         handler: { [weak self] action in
             guard let self else { fatalError() }
             guard let memoEntity else { fatalError() }
@@ -201,7 +201,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         } else {
             alertCon = UIAlertController(title: "메모 삭제".localized(), message: "메모를 삭제하시겠습니까?".localized(), preferredStyle: UIAlertController.Style.alert)
         }
-        alertCon.view.tintColor = .currentTheme()
+        alertCon.view.tintColor = .currentTheme
         let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
         let deleteAction = UIAlertAction(title: "삭제".localized(), style: .destructive) { [weak self] action in
             guard let self else { return }
@@ -241,7 +241,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
             switch button.state {
             case .normal:
                 button.configuration?.image = UIImage(systemName: "ellipsis.circle")
-                button.tintColor = UIColor.currentTheme()
+                button.tintColor = UIColor.currentTheme
             case .highlighted:
                 button.tintColor = .lightGray
             default:
@@ -365,7 +365,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         bar.items = [flexibleBarButton, hideKeyboardButton]
         bar.sizeToFit()
-        bar.tintColor = .currentTheme()
+        bar.tintColor = .currentTheme
         view.inputAccessoryView = bar
         
         //NSAttributedString.Key 중에는 paragraphStyle이라는 게 있는데, 이는 text 전체(여러 줄)에 걸쳐서 적용되는 글의 속성을 뜻하는 듯.
@@ -383,7 +383,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         view.backgroundColor = .clear
         view.inputView?.backgroundColor = .clear
         view.bounces = true
-        view.tintColor = .currentTheme()
+        view.tintColor = .currentTheme
         view.isEditable = false
         view.isScrollEnabled = true
         view.dataDetectorTypes = .link
@@ -437,7 +437,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         } else {
             let bezierPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: 33)
             self.layer.shadowPath = bezierPath.cgPath
-            self.layer.shadowColor = UIColor.currentTheme().cgColor
+            self.layer.shadowColor = UIColor.currentTheme.cgColor
             self.layer.shadowOpacity = 0.5
             self.layer.shadowOffset = CGSize(width: 0, height: 0)
             self.layer.shadowRadius = 5
@@ -656,7 +656,7 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
 //            self.bounds.origin.y = 0
             self.titleTextField.textColor = .label
             self.heartImageView.tintColor = .systemRed
-            self.ellipsisButton.imageView?.tintColor = .currentTheme()
+            self.ellipsisButton.imageView?.tintColor = .currentTheme
         }
         guard let completion else { return }
         animator.addCompletion(completion)
@@ -862,13 +862,13 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
                 NSAttributedString.Key.foregroundColor: UIColor.systemGray,
                 NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
         } else {
-            self.memoTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.currentTheme()]
+            self.memoTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.currentTheme]
         }
         
         if self.contentView.traitCollection.userInterfaceStyle == .dark {
             self.layer.shadowColor = UIColor.clear.cgColor
         } else {
-            self.layer.shadowColor = UIColor.currentTheme().cgColor
+            self.layer.shadowColor = UIColor.currentTheme.cgColor
         }
         
         if memo.isFavorite {
@@ -911,10 +911,10 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         self.imageArray = []
         self.selectedImageCollectionView.reloadData()
         self.heartImageView.image = UIImage(systemName: "heart")
-        self.titleTextField.tintColor = .currentTheme()
-        self.titleTextField.inputAccessoryView?.tintColor = .currentTheme()
-        self.memoTextView.tintColor = .currentTheme()
-        self.memoTextView.inputAccessoryView?.tintColor = .currentTheme()
+        self.titleTextField.tintColor = .currentTheme
+        self.titleTextField.inputAccessoryView?.tintColor = .currentTheme
+        self.memoTextView.tintColor = .currentTheme
+        self.memoTextView.inputAccessoryView?.tintColor = .currentTheme
         self.isTextFieldChanged = false
         self.isTextViewChanged = false
         self.isEdited = false

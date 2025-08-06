@@ -25,7 +25,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
             case true:
 
                 self.selectionAnimator.addAnimations {
-                    self.layer.borderColor = UIColor.currentTheme().cgColor
+                    self.layer.borderColor = UIColor.currentTheme.cgColor
                     self.layer.borderWidth = 2
                     self.opaqueView.alpha = 0.0
                 }
@@ -133,7 +133,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        self.layer.borderColor = UIColor.currentTheme().cgColor
+        self.layer.borderColor = UIColor.currentTheme.cgColor
         
         if self.contentView.traitCollection.userInterfaceStyle == .dark {
             self.layer.shadowPath = nil
@@ -143,7 +143,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
             let bezierPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: 12)
             self.layer.shadowPath = bezierPath.cgPath
             self.layer.shadowOffset = CGSize(width: 0, height: 0)
-            self.layer.shadowColor = UIColor.currentTheme().cgColor
+            self.layer.shadowColor = UIColor.currentTheme.cgColor
             self.layer.shadowOpacity = 0.3
             self.layer.shadowRadius = 4
         }

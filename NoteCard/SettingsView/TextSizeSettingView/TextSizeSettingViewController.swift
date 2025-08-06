@@ -28,7 +28,7 @@ final class TextSizeSettingViewController: UIViewController {
     private func setupNaviBar() {
         self.title = "메모 글자 크기"
         self.navigationItem.largeTitleDisplayMode = .never
-        self.navigationController?.navigationBar.tintColor = .currentTheme()
+        self.navigationController?.navigationBar.tintColor = .currentTheme
     }
     
     

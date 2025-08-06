@@ -28,38 +28,6 @@ extension UIColor {
                   alpha: alpha)
     }
     
-    
-    static func currentTheme() -> UIColor {
-        guard let themeColor = UserDefaults.standard.value(forKey: UserDefaultsKeys.themeColor.rawValue) as? String else {
-            UserDefaults.standard.set("black", forKey: UserDefaultsKeys.themeColor.rawValue)
-            return .label
-        }
-        
-        switch themeColor {
-        case "black":
-            return UIColor.themeColorBlack
-        case "brown":
-            return UIColor.themeColorBrown
-        case "red":
-            return UIColor.themeColorRed
-        case "orange":
-            return UIColor.themeColorOrange
-        case "yellow":
-            return UIColor.themeColorYellow
-        case "green":
-            return UIColor.themeColorGreen
-        case "skyBlue":
-            return UIColor.themeColorSkyBlue
-        case "blue":
-            return UIColor.themeColorBlue
-        case "purple":
-            return UIColor.themeColorPurple
-        default:
-            return UIColor.label
-        }
-    }
-    
-    
     func toHexString() -> String {
             var r:CGFloat = 0
             var g:CGFloat = 0

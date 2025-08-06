@@ -127,7 +127,7 @@ final class MemoDetailView: UIView {
             )
             self.categoryListCollectionView.layer.cornerRadius = 23
             self.categoryListCollectionView.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-            self.categoryListCollectionView.backgroundColor = .currentTheme().withAlphaComponent(0.07)
+            self.categoryListCollectionView.backgroundColor = .currentTheme.withAlphaComponent(0.07)
             guard let leftAlignedFlowLayout = self.categoryListCollectionView.collectionViewLayout as? LeftAlignedFlowLayout else { fatalError() }
             leftAlignedFlowLayout.scrollDirection = .vertical
             leftAlignedFlowLayout.invalidateLayout()
@@ -450,11 +450,11 @@ extension MemoDetailView {
         titleTextField.backgroundColor = .detailViewTitleTextFieldBackground
         titleTextField.layer.cornerRadius = 15
         titleTextField.layer.cornerCurve = .continuous
-        titleTextField.tintColor = UIColor.currentTheme()
+        titleTextField.tintColor = UIColor.currentTheme
         titleTextField.font = UIFont.systemFont(ofSize: 20)
         titleTextField.placeholder = "제목 없음".localized()
         titleTextField.textAlignment = NSTextAlignment.left
-        titleTextField.tintColor = .currentTheme()
+        titleTextField.tintColor = .currentTheme
         
         let leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
         titleTextField.leftView = leftView
@@ -472,7 +472,7 @@ extension MemoDetailView {
         let flexibleBarButton = UIBarButtonItem(systemItem: UIBarButtonItem.SystemItem.flexibleSpace)
         bar.items = [flexibleBarButton, hideKeyboardButton]
         bar.sizeToFit()
-        bar.tintColor = .currentTheme()
+        bar.tintColor = .currentTheme
         titleTextField.inputAccessoryView = bar
     }
     
@@ -495,7 +495,7 @@ extension MemoDetailView {
         memoTextView.textInputView.backgroundColor = .clear
         memoTextView.clipsToBounds = true
         memoTextView.scrollsToTop = true
-        memoTextView.tintColor = UIColor.currentTheme()
+        memoTextView.tintColor = UIColor.currentTheme
         memoTextView.layer.cornerRadius = 16
         memoTextView.layer.cornerCurve = .continuous
         memoTextView.textContainerInset = UIEdgeInsets(top: 15, left: 6, bottom: 10, right: 6)
@@ -518,14 +518,14 @@ extension MemoDetailView {
         let flexibleBarButton = UIBarButtonItem(systemItem: .flexibleSpace)
         bar.items = [flexibleBarButton, hideKeyboardButton]
         bar.sizeToFit()
-        bar.tintColor = .currentTheme()
+        bar.tintColor = .currentTheme
         memoTextView.inputAccessoryView = bar
     }
     
     private func setupCategoryButton() {
         var config = UIButton.Configuration.plain()
         config.baseBackgroundColor = .clear
-        config.baseForegroundColor = .currentTheme()
+        config.baseForegroundColor = .currentTheme
         config.image = UIImage(systemName: "chevron.right")
         config.title = "카테고리".localized()
         config.imagePadding = 5

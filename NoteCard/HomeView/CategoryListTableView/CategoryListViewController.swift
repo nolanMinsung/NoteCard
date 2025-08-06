@@ -155,7 +155,7 @@ class CategoryListViewController: UITableViewController {
         self.navigationItem.hidesSearchBarWhenScrolling = true
 //        self.navigationItem.rightBarButtonItems = [addCategoryBarButtonItem, searchCategoryBarButtonItem]
         self.navigationItem.setRightBarButtonItems([addCategoryBarButtonItem, searchCategoryBarButtonItem], animated: false)
-        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme()
+        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
         self.navigationController?.navigationBar.standardAppearance = {
             let appearance = UINavigationBarAppearance()
             appearance.configureWithDefaultBackground()

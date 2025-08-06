@@ -12,7 +12,7 @@ final class TotalListView: UIView {
     
 //    let someView: UIView = {
 //        let view = UIView()
-//        view.backgroundColor = .currentTheme()
+//        view.backgroundColor = .currentTheme
 //        view.translatesAutoresizingMaskIntoConstraints = false
 //        return view
 //    }()

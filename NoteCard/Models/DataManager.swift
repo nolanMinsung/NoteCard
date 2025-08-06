@@ -68,8 +68,6 @@ struct CGSizeConstant {
 
 enum NotificationName: String {
     case cellSelectedNotification
-    case themeColorChangedNotification
-    
     case createdMemoNotification
     case editingCompleteNotification
     case memoTrashedNotification
