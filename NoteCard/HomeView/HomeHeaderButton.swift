@@ -7,17 +7,10 @@
 
 import UIKit
 
-final class HomeHeaderButton: UIButton, Shrinkable {
-    var shrinkingAnimator = UIViewPropertyAnimator(duration: 0.2, dampingRatio: 1)
+final class HomeHeaderButton: UIButton, ViewShrinkable {
     
     override var isHighlighted: Bool {
-        didSet {
-            if isHighlighted {
-                shrink(scale: 0.9)
-            } else {
-                restore()
-            }
-        }
+        didSet { isHighlighted ? shrink(scale: 0.9) : restore() }
     }
     
     override init(frame: CGRect) {

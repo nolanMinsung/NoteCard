@@ -13,12 +13,12 @@ class MainTabBarController: UITabBarController {
     
     var isUncategorizedMemoVCHasShown: Bool = false
     
-    var blurView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .regular)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.translatesAutoresizingMaskIntoConstraints = false
-        return blurView
-    }()
+//    var blurView: UIVisualEffectView = {
+//        let blurEffect = UIBlurEffect(style: .regular)
+//        let blurView = UIVisualEffectView(effect: blurEffect)
+//        blurView.translatesAutoresizingMaskIntoConstraints = false
+//        return blurView
+//    }()
     
     // MARK: - Initialize
     
@@ -38,8 +38,8 @@ class MainTabBarController: UITabBarController {
         super.viewDidLoad()
         
         delegate = self
-        configureViewHierarchy()
-        setupConstraints()
+//        configureViewHierarchy()
+//        setupConstraints()
     }
     
     private func setTabBarDesign() {
@@ -87,6 +87,14 @@ class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "magnifyingglass"),
             selectedImage: UIImage(systemName: "magnifyingglass")
         )
+        let memoSearchingVC = MemoSearchingViewController()
+        let memoSearchingNaviCon = UINavigationController(rootViewController: memoSearchingVC)
+        memoSearchingNaviCon.tabBarItem = UITabBarItem(
+            title: "메모 검색".localized(),
+            image: UIImage(systemName: "magnifyingglass"),
+            selectedImage: UIImage(systemName: "magnifyingglass")
+        )
+        
         
         // tab 4: 설정
         let settingNaviCon = UINavigationController(rootViewController: SettingsViewController())
@@ -98,23 +106,30 @@ class MainTabBarController: UITabBarController {
         
         // tab 5: 설정
         self.setViewControllers(
-            [homeNaviCon, noCategoriesCardNaviCon, thirdTabViewController, totalListNaviCon, settingNaviCon],
+            [
+                homeNaviCon,
+                noCategoriesCardNaviCon,
+                thirdTabViewController,
+//                totalListNaviCon,
+                memoSearchingNaviCon,
+                settingNaviCon
+            ],
             animated: true
         )
     }
     
-    private func configureViewHierarchy() {
-        self.view.addSubview(self.blurView)
-    }
+//    private func configureViewHierarchy() {
+//        self.view.addSubview(self.blurView)
+//    }
     
-    private func setupConstraints() {
-        NSLayoutConstraint.activate(
-            [self.blurView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0),
-             self.blurView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0),
-             self.blurView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0),
-             self.blurView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0)]
-        )
-    }
+//    private func setupConstraints() {
+//        NSLayoutConstraint.activate(
+//            [self.blurView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0),
+//             self.blurView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0),
+//             self.blurView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0),
+//             self.blurView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0)]
+//        )
+//    }
     
 }
 

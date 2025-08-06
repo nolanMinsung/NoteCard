@@ -85,8 +85,6 @@ final class HomeView: UIView {
         return cardSection
     }
     
-    let blur = CustomIntensityBlurView(blurStyle: .regular, intensity: 0.0)
-    
     let homeCollectionView: WispableCollectionView
     
     init() {
@@ -97,10 +95,7 @@ final class HomeView: UIView {
             default: return HomeView.cardLayoutSection
             }
         }
-        homeCollectionView = WispableCollectionView(
-            frame: .zero,
-            sectionProvider: sectionProvider
-        )
+        homeCollectionView = WispableCollectionView(frame: .zero, sectionProvider: sectionProvider)
         
         super.init(frame: .zero)
         
@@ -126,24 +121,14 @@ final class HomeView: UIView {
     }
     
     private func setupStyle() {
-        let homeViewBackgroundColor = UIColor { traitCollection in
-            if traitCollection.userInterfaceStyle == .light {
-                return UIColor.systemGray6
-            } else {
-                return UIColor.black
-            }
-        }
-        self.backgroundColor = homeViewBackgroundColor
+        self.backgroundColor = .homeViewBackground
         self.homeCollectionView.backgroundColor = UIColor.clear
         self.homeCollectionView.translatesAutoresizingMaskIntoConstraints = false
         self.homeCollectionView.delaysContentTouches = false
-        
-        self.blur.isUserInteractionEnabled = false
     }
     
     private func setupViewHierarchy() {
         self.addSubview(homeCollectionView)
-        addSubview(blur)
     }
     
     private func setupLayoutConstraints() {
@@ -152,14 +137,6 @@ final class HomeView: UIView {
             homeCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
             homeCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
             homeCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
-        ])
-        
-        blur.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            blur.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
-            blur.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
-            blur.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
-            blur.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
         ])
     }
     

@@ -69,22 +69,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         
-        guard let mainTabBarCon = self.window?.rootViewController as? MainTabBarController else { fatalError() }
-        
-        let blurAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
-        blurAnimator.addAnimations {
-            mainTabBarCon.blurView.effect = nil
-        }
-        
-        blurAnimator.addCompletion { animatingPosition in
-            mainTabBarCon.blurView.isUserInteractionEnabled = false
-            mainTabBarCon.isUncategorizedMemoVCHasShown = true
-        }
-        
-        if !mainTabBarCon.isUncategorizedMemoVCHasShown {
-            mainTabBarCon.selectedIndex = 0
-            blurAnimator.startAnimation()
-        }
+//        guard let mainTabBarCon = self.window?.rootViewController as? MainTabBarController else { fatalError() }
+//        
+//        let blurAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
+//        blurAnimator.addAnimations {
+//            mainTabBarCon.blurView.effect = nil
+//        }
+//        
+//        blurAnimator.addCompletion { animatingPosition in
+//            mainTabBarCon.blurView.isUserInteractionEnabled = false
+//            mainTabBarCon.isUncategorizedMemoVCHasShown = true
+//        }
+//        
+//        if !mainTabBarCon.isUncategorizedMemoVCHasShown {
+//            mainTabBarCon.selectedIndex = 0
+//            blurAnimator.startAnimation()
+//        }
     }
 
     func sceneWillResignActive(_ scene: UIScene) {

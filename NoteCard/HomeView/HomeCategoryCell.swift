@@ -7,18 +7,10 @@
 
 import UIKit
 
-class HomeCategoryCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
-    
-    var shrinkingAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
+class HomeCategoryCell: UICollectionViewCell, ReuseIdentifiable, ViewShrinkable {
     
     override var isHighlighted: Bool {
-        didSet {
-            if isHighlighted {
-                shrink(scale: 0.95)
-            } else {
-                restore()
-            }
-        }
+        didSet { isHighlighted ? shrink(scale: 0.95) : restore() }
     }
     
     let labelCategoryName: UILabel = {

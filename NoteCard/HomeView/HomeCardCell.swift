@@ -7,18 +7,10 @@
 
 import UIKit
 
-final class HomeCardCell: UICollectionViewCell, ReuseIdentifiable, Shrinkable {
-    
-    var shrinkingAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
+final class HomeCardCell: UICollectionViewCell, ReuseIdentifiable, ViewShrinkable {
     
     override var isHighlighted: Bool {
-        didSet {
-            if isHighlighted {
-                shrink(scale: 0.95)
-            } else {
-                restore()
-            }
-        }
+        didSet { isHighlighted ? shrink(scale: 0.95) : restore() }
     }
     
     var memoEntity: MemoEntity?

@@ -273,27 +273,55 @@ extension HomeViewController: UICollectionViewDelegate {
                 
             default:
                 let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
-                let inset: NSDirectionalEdgeInsets = ((indexPath.item % 2 == 0)
-                                                    ? .init(top: 130, leading: 10, bottom: 130, trailing: 10)
-                                                    : .init(top: topInset, leading: 0, bottom: 0, trailing: 0))
-                let cardVC = WispViewController(
-//                    viewInset: .init(top: 130, leading: 10, bottom: 130, trailing: 10)
-                    viewInset: inset
+                let inset: UIEdgeInsets = ((indexPath.item % 2 == 0)
+                                                    ? .init(top: 130, left: 10, bottom: 130, right: 10)
+                                                    : .init(top: topInset, left: 0, bottom: 0, right: 0))
+                let config = WispConfiguration(
+                    presentedAreaInset: inset,
+                    initialCornerRadius: 20,
+                    finalCornerRadius: 37
                 )
-                wisp.present(cardVC, collectionView: homeCollectionView, at: indexPath)
+                
+                // 레거시 코드 대응
+                let memoEntity = favoriteMemoArray[indexPath.row]
+                guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
+                let convertedFrame = selectedCell.convert(selectedCell.contentView.frame, to: view)
+                let popupCardViewCotroller = PopupCardViewController(
+                    memo: memoEntity,
+                    selectedCollectionViewCell: selectedCell,
+                    indexPath: indexPath,
+                    selectedCellFrame: convertedFrame,
+                    cornerRadius: 37,
+                    isInteractive: false
+                )
+                
+                wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
             }
         case 2:
             let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
-//            let cardViewController = WispViewController(viewInset: .init(top: topInset, leading: 0, bottom: 0, trailing: 0))
-            let inset: NSDirectionalEdgeInsets = ((indexPath.item % 2 == 0)
-                                                ? .init(top: 130, leading: 10, bottom: 130, trailing: 10)
-                                                : .init(top: topInset, leading: 0, bottom: 0, trailing: 0))
-            
-            
-            let naviCon = SampleOrangeNavigationController(
-                viewInset: inset
+            let inset: UIEdgeInsets = ((indexPath.item % 2 == 0)
+                                                ? .init(top: 130, left: 10, bottom: 130, right: 10)
+                                                : .init(top: topInset, left: 0, bottom: 0, right: 0))
+            let config = WispConfiguration(
+                presentedAreaInset: inset,
+                initialCornerRadius: 20,
+                finalCornerRadius: 37
             )
-            wisp.present(naviCon, collectionView: homeCollectionView, at: indexPath)
+            
+            // 레거시 코드 대응
+            let memoEntity = recentMemoArray[indexPath.row]
+            guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
+            let convertedFrame = selectedCell.convert(selectedCell.contentView.frame, to: view)
+            let popupCardViewCotroller = PopupCardViewController(
+                memo: memoEntity,
+                selectedCollectionViewCell: selectedCell,
+                indexPath: indexPath,
+                selectedCellFrame: convertedFrame,
+                cornerRadius: 37,
+                isInteractive: false
+            )
+            
+            wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
         default:
             fatalError("HomeCollectionView's number of sections is 3")
         }
