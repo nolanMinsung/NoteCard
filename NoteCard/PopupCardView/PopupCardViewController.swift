@@ -13,11 +13,7 @@ class PopupCardViewController: UIViewController {
     lazy var selectedImageCollectionView = self.popupCardView.imageCollectionView
     lazy var memoTextView = popupCardView.memoTextView
     
-    let selectedCollectionViewCell: UICollectionViewCell
     var selectedIndexPath: IndexPath
-    var selectedCellFrame: CGRect
-    let cornerRadius: CGFloat
-    let isInteractive: Bool
     let memoEntity: MemoEntity
     var isMemoDeleted: Bool = false
     
@@ -122,13 +118,9 @@ class PopupCardViewController: UIViewController {
         }
     )
     
-    init(memo memoEntity: MemoEntity, selectedCollectionViewCell: UICollectionViewCell, indexPath: IndexPath, selectedCellFrame: CGRect, cornerRadius: CGFloat, isInteractive: Bool) {
+    init(memo memoEntity: MemoEntity, indexPath: IndexPath) {
         self.memoEntity = memoEntity
-        self.selectedCollectionViewCell = selectedCollectionViewCell
         self.selectedIndexPath = indexPath
-        self.selectedCellFrame = selectedCellFrame
-        self.cornerRadius = cornerRadius
-        self.isInteractive = isInteractive
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -157,14 +149,7 @@ class PopupCardViewController: UIViewController {
         
     }
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        print(String(describing: self), #function)
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
-        print(#function)
         super.viewWillDisappear(animated)
         if self.popupCardView.isTextViewChanged {
             self.popupCardView.updateMemoTextView()

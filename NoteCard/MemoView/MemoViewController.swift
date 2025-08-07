@@ -800,14 +800,7 @@ extension MemoViewController: UICollectionViewDelegate {
             guard let selectedCell = collectionView.cellForItem(at: indexPath) as? SmallCardCollectionViewCell else { return false }
             guard let selectedMemoEntity = selectedCell.memoEntity else { return false }
             let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
-            let popupCardVC = PopupCardViewController(
-                memo: selectedMemoEntity, 
-                selectedCollectionViewCell: selectedCell,
-                indexPath: indexPath,
-                selectedCellFrame: convertedRect,
-                cornerRadius: 13,
-                isInteractive: false
-            )
+            let popupCardVC = PopupCardViewController(memo: selectedMemoEntity, indexPath: indexPath)
             
             wisp.present(popupCardVC, collectionView: memoView.smallCardCollectionView, at: indexPath)
             return false
@@ -861,8 +854,10 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
         
         if let popupCardVC = presentedVC as? PopupCardViewController {
             let selectedIndexPath = popupCardVC.selectedIndexPath
+            let popupCardTopInset = navigationController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
             let wispConfiguration = WispConfiguration(
-                presentedAreaInset: .init(top: 100, left: 10, bottom: 100, right: 10),
+//                presentedAreaInset: .init(top: 100, left: 10, bottom: 100, right: 10),
+                presentedAreaInset: .init(top: popupCardTopInset, left: 0, bottom: 0, right: 0),
                 initialCornerRadius: 13,
                 finalCornerRadius: 25,
             )
@@ -964,7 +959,6 @@ extension MemoViewController: UICollectionViewDelegateFlowLayout {
         let targetCardIndex = (((targetContentOffset.pointee.x + screenSize.width * 0.05 /*left inset*/ ) / (screenSize.width * 0.9 + 10) + 0.5) / 1).rounded(FloatingPointRoundingRule.down)
         print("targetCardIndex :", targetCardIndex)
         print("velocity.x :", velocity.x)
-//        targetContentOffset.pointee = CGPoint(x: index * cellWidth - scrollView.contentInset.left, y: scrollView.contentInset.top)
         
         if velocity.x < 0 {
             targetContentOffset.pointee.x = -(scrollView.contentInset.left) + ((screenSize.width * 0.9 + 10) * (currentIndex - 1))

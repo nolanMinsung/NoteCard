@@ -154,9 +154,8 @@ class TotalListViewController: UIViewController {
         
         self.selectedIndexPath = selectedIndexPath
         let convertedRect = cell.convert(cell.contentView.frame, to: self.view)
-        let popupCardVC = PopupCardViewController(memo: memoEntity, selectedCollectionViewCell: cell, indexPath: selectedIndexPath, selectedCellFrame: convertedRect, cornerRadius: 20, isInteractive: true)
+        let popupCardVC = PopupCardViewController(memo: memoEntity,indexPath: selectedIndexPath)
         popupCardVC.modalPresentationStyle = .custom
-//        popupCardVC.transitioningDelegate = self
         
         self.tabBarController?.present(popupCardVC, animated: true)
         

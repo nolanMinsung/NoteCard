@@ -87,11 +87,7 @@ extension MemoSearchingViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let popupVC = PopupCardViewController(
             memo: favoriteMemoArray[indexPath.item],
-            selectedCollectionViewCell: .init(),
             indexPath: indexPath,
-            selectedCellFrame: .zero,
-            cornerRadius: .zero,
-            isInteractive: false
         )
         
         let wispConfiguration = WispConfiguration(

@@ -288,11 +288,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 let convertedFrame = selectedCell.convert(selectedCell.contentView.frame, to: view)
                 let popupCardViewCotroller = PopupCardViewController(
                     memo: memoEntity,
-                    selectedCollectionViewCell: selectedCell,
                     indexPath: indexPath,
-                    selectedCellFrame: convertedFrame,
-                    cornerRadius: 37,
-                    isInteractive: false
                 )
                 
                 wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
@@ -314,11 +310,7 @@ extension HomeViewController: UICollectionViewDelegate {
             let convertedFrame = selectedCell.convert(selectedCell.contentView.frame, to: view)
             let popupCardViewCotroller = PopupCardViewController(
                 memo: memoEntity,
-                selectedCollectionViewCell: selectedCell,
                 indexPath: indexPath,
-                selectedCellFrame: convertedFrame,
-                cornerRadius: 37,
-                isInteractive: false
             )
             
             wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)

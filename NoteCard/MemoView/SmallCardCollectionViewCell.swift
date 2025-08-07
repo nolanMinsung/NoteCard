@@ -236,11 +236,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
             self.delegate?.triggerPresentMethod(
                 presented: PopupCardViewController(
                     memo: memoEntity,
-                    selectedCollectionViewCell: self,
                     indexPath: self.indexPath,
-                    selectedCellFrame: .zero,
-                    cornerRadius: 13,
-                    isInteractive: false
                 ),
                 animated: true
             )
@@ -274,14 +270,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
                     guard let memoEntity else { return }
                     
                     self.delegate?.triggerPresentMethod(
-                        presented: PopupCardViewController(
-                            memo: memoEntity,
-                            selectedCollectionViewCell: self,
-                            indexPath: self.indexPath,
-                            selectedCellFrame: .zero,
-                            cornerRadius: 13,
-                            isInteractive: false
-                        ),
+                        presented: PopupCardViewController(memo: memoEntity,indexPath: self.indexPath,),
                         animated: true
                     )
                 }
