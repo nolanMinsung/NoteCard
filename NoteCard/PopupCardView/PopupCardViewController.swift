@@ -24,7 +24,7 @@ class PopupCardViewController: UIViewController {
     var isMemoDeleted: Bool = false
     
     //강한 순환 참조가 돼버려서 weak var로 선언하려고 했는데, 그러면 또 값을 할당할 때 문제가 생긴다. (변수를 하나 더 만들어야 한다. 그렇게 큰 문제는 아닐 수 있지만 혹시 모를 부작용 조심)
-    var percentDrivenInteractiveTransition: PercentDrivenInteractiveTransition?
+//    var percentDrivenInteractiveTransition: PercentDrivenInteractiveTransition?
     
     lazy var restoreMemoAction = UIAction(
         title: "카테고리 없는 메모로 복구".localized(),
@@ -157,9 +157,9 @@ class PopupCardViewController: UIViewController {
         
         setupObserver()
         setupDelegates()
-        if self.isInteractive {
-            self.percentDrivenInteractiveTransition = PercentDrivenInteractiveTransition(viewController: self)
-        }
+//        if self.isInteractive {
+//            self.percentDrivenInteractiveTransition = PercentDrivenInteractiveTransition(viewController: self)
+//        }
         
         self.popupCardView.configureView(with: self.memoEntity)
         
@@ -271,33 +271,33 @@ extension PopupCardViewController: UIViewControllerTransitioningDelegate {
 //        }
     }
     
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        print(#function)
-        return CardImageShowingAnimatedTransitioning(animationType: AnimationType.present)
-        
-//        if presented is PopupCardViewController {
-//            return HomeViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
-//        } else {
-//            return nil
-//        }
-    }
+//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        print(#function)
+////        return CardImageShowingAnimatedTransitioning(animationType: AnimationType.present)
+//        
+////        if presented is PopupCardViewController {
+////            return HomeViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
+////        } else {
+////            return nil
+////        }
+//    }
     
     
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        print(#function)
-        return CardImageShowingAnimatedTransitioning(animationType: .dismiss)
-        
-//        if dismissed is CardImageShowingViewController {
-//            guard let cardImageShowingVC = dismissed as? CardImageShowingViewController else { return nil }
-//            let animatedTransition = CardImageShowingDismissalAnimatedTransitioning(interactionController: cardImageShowingVC.interactionController)
-//            return animatedTransition
-//            
-//        } else if dismissed is PopupCardViewController {
-//            return HomeViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss)
-//        } else {
-//            return nil
-//        }
-    }
+//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        print(#function)
+////        return CardImageShowingAnimatedTransitioning(animationType: .dismiss)
+//        
+////        if dismissed is CardImageShowingViewController {
+////            guard let cardImageShowingVC = dismissed as? CardImageShowingViewController else { return nil }
+////            let animatedTransition = CardImageShowingDismissalAnimatedTransitioning(interactionController: cardImageShowingVC.interactionController)
+////            return animatedTransition
+////            
+////        } else if dismissed is PopupCardViewController {
+////            return HomeViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss)
+////        } else {
+////            return nil
+////        }
+//    }
     
     
 //    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {

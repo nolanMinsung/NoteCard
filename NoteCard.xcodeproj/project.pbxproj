@@ -35,9 +35,6 @@
 		4E1384F32AF384C80063817B /* HomeCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F22AF384C80063817B /* HomeCardCell.swift */; };
 		4E1384F72AF385090063817B /* PopupCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F62AF385090063817B /* PopupCardViewController.swift */; };
 		4E1384F92AF3851B0063817B /* PopupCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F82AF3851B0063817B /* PopupCardView.swift */; };
-		4E1384FB2AF385340063817B /* PopupCardPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384FA2AF385340063817B /* PopupCardPresentationController.swift */; };
-		4E1384FD2AF385580063817B /* HomeViewPopupCardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384FC2AF385580063817B /* HomeViewPopupCardAnimatedTransitioning.swift */; };
-		4E1384FF2AF385750063817B /* PercentDrivenInteractiveTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384FE2AF385750063817B /* PercentDrivenInteractiveTransition.swift */; };
 		4E1385012AF3859D0063817B /* CategoryListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385002AF3859D0063817B /* CategoryListViewController.swift */; };
 		4E1385032AF385B00063817B /* CategoryListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385022AF385B00063817B /* CategoryListTableViewCell.swift */; };
 		4E1385052AF385F20063817B /* CreateCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385042AF385F20063817B /* CreateCategoryViewController.swift */; };
@@ -83,7 +80,6 @@
 		4E5960372B072E6F0029BA3D /* TotalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960362B072E6F0029BA3D /* TotalListView.swift */; };
 		4E6EE9692B201CDF0009DD84 /* LargeCardCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6EE9682B201CDF0009DD84 /* LargeCardCollectionView.swift */; };
 		4E87D09F2B7A55200081D3D4 /* MemoSearchingCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E87D09E2B7A55200081D3D4 /* MemoSearchingCollectionView.swift */; };
-		4EA4011D2B14456700EB2FD3 /* TotalListViewPopupCardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA4011C2B14456700EB2FD3 /* TotalListViewPopupCardAnimatedTransitioning.swift */; };
 		4EAF4F2C2E38580500A1AA36 /* Wisp in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF4F2B2E38580500A1AA36 /* Wisp */; };
 		4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */; };
 		4EC220262B077F6B007C9326 /* TotalListCellCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC220252B077F6B007C9326 /* TotalListCellCategoryCell.swift */; };
@@ -101,7 +97,6 @@
 		4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */; };
 		4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */; };
 		4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */; };
-		4EEF141B2B14A74B001EB295 /* MemoViewPopupCardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEF141A2B14A74B001EB295 /* MemoViewPopupCardAnimatedTransitioning.swift */; };
 		4EEFF4082B5CC155008F0BBB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4EEFF40A2B5CC155008F0BBB /* InfoPlist.strings */; };
 		4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */; };
 		4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */; };
@@ -639,7 +634,6 @@
 				4E1384E12AF3833E0063817B /* MemoEntityManager.swift in Sources */,
 				4E0126A82B4D5400007110CC /* MemoDetailViewSelectedImageCollectionView.swift in Sources */,
 				4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */,
-				4E1384FB2AF385340063817B /* PopupCardPresentationController.swift in Sources */,
 				4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */,
 				4E1384F32AF384C80063817B /* HomeCardCell.swift in Sources */,
 				4E1384DD2AF382A40063817B /* MemoEntity+CoreDataProperties.swift in Sources */,
@@ -662,7 +656,6 @@
 				4E3E757C2B6889260073A951 /* MainTabBarController.swift in Sources */,
 				4E10F8442B654162007B468A /* NoteCardCoreData.xcdatamodeld in Sources */,
 				4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */,
-				4E1384FF2AF385750063817B /* PercentDrivenInteractiveTransition.swift in Sources */,
 				4E1385242AF387DE0063817B /* CardImageShowingAnimatedTransitioning.swift in Sources */,
 				4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */,
 				4E4FCCBC2B3C33FD000CBE17 /* DateFormatSettingView.swift in Sources */,
@@ -671,12 +664,10 @@
 				4E1384F92AF3851B0063817B /* PopupCardView.swift in Sources */,
 				4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */,
 				4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */,
-				4EEF141B2B14A74B001EB295 /* MemoViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */,
 				4E1384DA2AF382A40063817B /* ImageEntity+CoreDataClass.swift in Sources */,
 				4E3E75782B67D3B60073A951 /* QuickMemoEmptyViewController.swift in Sources */,
 				4E1385152AF386D10063817B /* MemoImageCollectionViewCell.swift in Sources */,
-				4EA4011D2B14456700EB2FD3 /* TotalListViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E1385052AF385F20063817B /* CreateCategoryViewController.swift in Sources */,
 				4ED333A82B332FF000492B0F /* ThemeColorPickingView.swift in Sources */,
 				4ECDA56F2E162753003D15F5 /* ThirdTabViewController.swift in Sources */,
@@ -700,7 +691,6 @@
 				4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */,
 				4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */,
 				4E1384DC2AF382A40063817B /* MemoEntity+CoreDataClass.swift in Sources */,
-				4E1384FD2AF385580063817B /* HomeViewPopupCardAnimatedTransitioning.swift in Sources */,
 				4E1384A92AF37B350063817B /* ViewController.swift in Sources */,
 				4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */,
 				4E1385132AF386AF0063817B /* LargeCardCollectionViewCell.swift in Sources */,

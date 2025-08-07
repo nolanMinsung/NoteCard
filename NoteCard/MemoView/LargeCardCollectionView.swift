@@ -7,22 +7,34 @@
 
 import UIKit
 
-class LargeCardCollectionView: UICollectionView {
+import Wisp
+
+class LargeCardCollectionView: WispableCollectionView {
     
     init() {
-        let screenSize = UIScreen.current?.bounds.size
-        let pagingFlowLayout = UICollectionViewFlowLayout()
-        guard let screenSize else { fatalError() }
-        pagingFlowLayout.scrollDirection = .horizontal
-        pagingFlowLayout.estimatedItemSize = CGSize(width: screenSize.width * 0.9, height: screenSize.height * 0.5)
-        pagingFlowLayout.minimumLineSpacing = 10
-        pagingFlowLayout.minimumInteritemSpacing = 0
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(0.9),
+            heightDimension: .fractionalHeight(1.0)
+        )
+        let group = NSCollectionLayoutGroup.vertical(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 10
+        section.contentInsets = .init(top: 40, leading: 0, bottom: 40, trailing: 0)
+        section.orthogonalScrollingBehavior = .groupPagingCentered
         
-        super.init(frame: .zero, collectionViewLayout: pagingFlowLayout)
+        super.init(frame: .zero, section: section)
         
+        bounces = false
         clipsToBounds = false
         backgroundColor = .clear
-        contentInset = UIEdgeInsets(top: 0, left: screenSize.width * 0.05, bottom: 0, right: screenSize.width * 0.05)
         register(LargeCardCollectionViewCell.self,forCellWithReuseIdentifier: LargeCardCollectionViewCell.cellID)
         isScrollEnabled = true
         decelerationRate = .fast

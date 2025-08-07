@@ -24,14 +24,6 @@ final class MemoView: UIView {
     let largeCardCollectionView = LargeCardCollectionView()
     let smallCardCollectionView = SmallCardCollectionView()
     
-    // MARK: - Layout Constraints
-    
-    lazy var categoryNameTextFieldTopConstraint
-    = self.categoryNameTextField.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 0)
-    
-    lazy var smallCardCollectionViewBottomConstraint
-    = self.smallCardCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0)
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -58,8 +50,7 @@ final class MemoView: UIView {
         segmentedControl.selectedSegmentIndex = 0
         viewUnderNaviBar.backgroundColor = .memoViewBackground
         
-        smallCardCollectionView.isHidden = UIDevice.current.userInterfaceIdiom == .phone
-        largeCardCollectionView.isHidden = !smallCardCollectionView.isHidden
+        smallCardCollectionView.isHidden = true
     }
     
     private func setupTextField() {
@@ -97,7 +88,7 @@ final class MemoView: UIView {
     func setupConstraints() {
         categoryNameTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            categoryNameTextFieldTopConstraint,
+            categoryNameTextField.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0),
             categoryNameTextField.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
             categoryNameTextField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
             categoryNameTextField.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor, constant: 0),
@@ -130,6 +121,7 @@ final class MemoView: UIView {
             largeCardCollectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 0),
             largeCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             largeCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
+//            largeCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0),
             largeCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0),
         ])
         
@@ -138,7 +130,7 @@ final class MemoView: UIView {
             smallCardCollectionView.topAnchor.constraint(equalTo: topAnchor, constant: 0),
             smallCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             smallCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            smallCardCollectionViewBottomConstraint,
+            smallCardCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
         ])
     }
     

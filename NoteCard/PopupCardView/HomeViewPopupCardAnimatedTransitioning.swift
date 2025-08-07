@@ -10,10 +10,10 @@ import UIKit
 
 
 
-enum AnimationType {
-    case present
-    case dismiss
-}
+//enum AnimationType {
+//    case present
+//    case dismiss
+//}
 
 final class HomeViewPopupCardAnimatedTransitioning: NSObject {
     

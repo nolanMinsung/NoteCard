@@ -194,8 +194,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
 //            memoVC.ellipsisBarButtonItem.isHidden = true
         }
         
-        memoVC.memoView.smallCardCollectionViewBottomConstraint.constant = 0
-        
         self.presentationPropertyAnimator.addAnimations {
             NSLayoutConstraint.deactivate(popupCardInitialConstraints)
             NSLayoutConstraint.activate(popupCardFinalConstraints)
@@ -284,8 +282,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
         
         tabBarCon.view.alpha = 1.0
         
-        memoView.categoryNameTextFieldTopConstraint.constant = -200
-        
         memoView.layoutSubviews()
         
         let blurView = memoView.blurView
@@ -293,8 +289,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
 //        blurView.effect = nil
         
         
-        
-        memoVC.memoView.smallCardCollectionViewBottomConstraint.constant = 0
         memoVC.smallCardCollectionView.clipsToBounds = false
         popupCardView.cellSnapshot.alpha = 1
         
@@ -411,7 +405,6 @@ extension MemoViewPopupCardAnimatedTransitioning: UIViewControllerAnimatedTransi
             selectedNaviCon.navigationBar.bounds.origin.y = 0
             selectedNaviCon.toolbar.bounds.origin.y = 0
             tabBarCon.tabBar.frame.origin.y = screenSize.height - tabBarCon.tabBar.frame.height
-            memoView.categoryNameTextFieldTopConstraint.constant = 0
             memoView.layoutIfNeeded()
         }, delayFactor: 0.5)
         

@@ -619,29 +619,29 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
     }
     
     
-    private func shiftUpCell() {
-        print(self.frame)
-        guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
-        guard let largeCardCollectionView = self.superview as? LargeCardCollectionView else { fatalError() }
-        
-        let cellUpperPadding = (self.collectionViewHeight - screenSize.height * 0.6) / 2
-        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
-        animator.addAnimations { [weak self] in
-            guard let self else { fatalError() }
-            
-            //self.frame.origin.y의 기본값은 cellUpperPadding. 위로 shift하고 싶은 만큼 cellUpperPadding에서 빼 준다.
-            //self.frame.origin.y = cellUpperPadding - self.keyboardFrame.height + self.cellLowerPadding
-//            self.bounds.origin.y = self.keyboardFrame.height - cellUpperPadding
-            self.frame.origin.y = -largeCardCollectionView.frame.origin.y + UIWindow.current!.safeAreaInsets.top
-            self.frame.size.height = CGSizeConstant.screenSize.height - UIWindow.current!.safeAreaInsets.top - self.keyboardFrame.height
-            
-            self.titleTextField.textColor = .systemGray4
-            self.heartImageView.tintColor = .systemGray4
-            self.ellipsisButton.imageView?.tintColor = .systemGray4
-        }
-        
-        animator.startAnimation()
-    }
+//    private func shiftUpCell() {
+//        print(self.frame)
+//        guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
+//        guard let largeCardCollectionView = self.superview as? LargeCardCollectionView else { fatalError() }
+//        
+//        let cellUpperPadding = (self.collectionViewHeight - screenSize.height * 0.6) / 2
+//        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
+//        animator.addAnimations { [weak self] in
+//            guard let self else { fatalError() }
+//            
+//            //self.frame.origin.y의 기본값은 cellUpperPadding. 위로 shift하고 싶은 만큼 cellUpperPadding에서 빼 준다.
+//            //self.frame.origin.y = cellUpperPadding - self.keyboardFrame.height + self.cellLowerPadding
+////            self.bounds.origin.y = self.keyboardFrame.height - cellUpperPadding
+//            self.frame.origin.y = -largeCardCollectionView.frame.origin.y + UIWindow.current!.safeAreaInsets.top
+//            self.frame.size.height = CGSizeConstant.screenSize.height - UIWindow.current!.safeAreaInsets.top - self.keyboardFrame.height
+//            
+//            self.titleTextField.textColor = .systemGray4
+//            self.heartImageView.tintColor = .systemGray4
+//            self.ellipsisButton.imageView?.tintColor = .systemGray4
+//        }
+//        
+//        animator.startAnimation()
+//    }
     
     
     private func shiftDownCell(completion: ((UIViewAnimatingPosition) -> Void)? = nil) {
@@ -737,9 +737,9 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
     @objc private func keyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { fatalError() }
         self.keyboardFrame = keyboardFrame
-        if self.memoTextView.isFirstResponder {
-            self.shiftUpCell()
-        }
+//        if self.memoTextView.isFirstResponder {
+//            self.shiftUpCell()
+//        }
     }
     
     

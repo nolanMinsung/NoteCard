@@ -27,7 +27,7 @@ class TotalListViewController: UIViewController {
     
     var userDefaultCriterion: String? { UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
-    var percentDrivenInteractiveTransition: PercentDrivenInteractiveTransition?
+//    var percentDrivenInteractiveTransition: PercentDrivenInteractiveTransition?
     var memoEntitySearhResult: [MemoEntity] = []
     var selectedIndexPath: IndexPath?
     
@@ -42,7 +42,7 @@ class TotalListViewController: UIViewController {
         
         setupNaviBar()
         setupDelegates()
-        setupInteractiveTransition()
+//        setupInteractiveTransition()
         setupObserver()
 //        updateSearchResult()
         self.memoEntitySearhResult = []
@@ -111,9 +111,9 @@ class TotalListViewController: UIViewController {
         
     }
     
-    private func setupInteractiveTransition() {
-        self.percentDrivenInteractiveTransition = PercentDrivenInteractiveTransition(viewController: self)
-    }
+//    private func setupInteractiveTransition() {
+//        self.percentDrivenInteractiveTransition = PercentDrivenInteractiveTransition(viewController: self)
+//    }
     
     private func setupObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -156,7 +156,7 @@ class TotalListViewController: UIViewController {
         let convertedRect = cell.convert(cell.contentView.frame, to: self.view)
         let popupCardVC = PopupCardViewController(memo: memoEntity, selectedCollectionViewCell: cell, indexPath: selectedIndexPath, selectedCellFrame: convertedRect, cornerRadius: 20, isInteractive: true)
         popupCardVC.modalPresentationStyle = .custom
-        popupCardVC.transitioningDelegate = self
+//        popupCardVC.transitioningDelegate = self
         
         self.tabBarController?.present(popupCardVC, animated: true)
         
@@ -297,49 +297,49 @@ extension TotalListViewController: UICollectionViewDelegate {
 
 
 
-extension TotalListViewController: UIViewControllerTransitioningDelegate {
-    
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        
-        if source == self.tabBarController {
-            return PopupCardPresentationController(presentedViewController: presented, presenting: presenting, blurBrightness: UIBlurEffect.Style.extraLight)
-        } else {
-            return nil
-        }
-    }
-    
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
-        if source == self.tabBarController {
-            return TotalListViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
-        } else {
-            return nil
-        }
-    }
-    
-    
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
-        if let popupCardVC = dismissed as? PopupCardViewController {
-            return TotalListViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss, interactiveTransition: popupCardVC.percentDrivenInteractiveTransition)
-        } else {
-            return nil
-        }
-        
-    }
-    
-    
-//    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+//extension TotalListViewController: UIViewControllerTransitioningDelegate {
+//    
+//    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
 //        
-//        guard let popupCardAnimatedTransitioning = animator as? TotalListViewPopupCardAnimatedTransitioning,
-//              let percentDrivenInteractiveTransitioning = popupCardAnimatedTransitioning.interactiveTransition,
-//                percentDrivenInteractiveTransitioning.interactionInProgress
-//        else { return nil }
-//        return percentDrivenInteractiveTransitioning
+//        if source == self.tabBarController {
+//            return PopupCardPresentationController(presentedViewController: presented, presenting: presenting, blurBrightness: UIBlurEffect.Style.extraLight)
+//        } else {
+//            return nil
+//        }
+//    }
+//    
+//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        
+//        if source == self.tabBarController {
+//            return TotalListViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
+//        } else {
+//            return nil
+//        }
+//    }
+//    
+//    
+//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        
+//        if let popupCardVC = dismissed as? PopupCardViewController {
+//            return TotalListViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss, interactiveTransition: popupCardVC.percentDrivenInteractiveTransition)
+//        } else {
+//            return nil
+//        }
 //        
 //    }
-    
-}
+//    
+//    
+////    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+////        
+////        guard let popupCardAnimatedTransitioning = animator as? TotalListViewPopupCardAnimatedTransitioning,
+////              let percentDrivenInteractiveTransitioning = popupCardAnimatedTransitioning.interactiveTransition,
+////                percentDrivenInteractiveTransitioning.interactionInProgress
+////        else { return nil }
+////        return percentDrivenInteractiveTransitioning
+////        
+////    }
+//    
+//}
 
 
 

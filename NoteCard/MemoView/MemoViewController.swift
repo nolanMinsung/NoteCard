@@ -7,6 +7,7 @@
 
 import UIKit
 
+import Wisp
 
 enum MemoVCType {
     case category
@@ -428,7 +429,6 @@ class MemoViewController: UIViewController {
                 guard let self else { fatalError() }
 //                naviCon.toolbar.frame.origin.y = 0
                 naviCon.isToolbarHidden = false
-                self.memoView.smallCardCollectionViewBottomConstraint.constant = -(self.view.safeAreaInsets.bottom/* + naviCon.toolbar.bounds.height*/)
                 self.memoView.layoutIfNeeded()
             }
             
@@ -459,7 +459,6 @@ class MemoViewController: UIViewController {
             disappearingToolbarAnimator.addAnimations { [weak self] in
                 guard let self else { fatalError() }
                 naviCon.isToolbarHidden = true
-                self.memoView.smallCardCollectionViewBottomConstraint.constant = 0
                 self.memoView.layoutIfNeeded()
             }
             disappearingToolbarAnimator.startAnimation()
@@ -895,11 +894,15 @@ extension MemoViewController: UICollectionViewDelegate {
                 isInteractive: false
             )
             
-            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
-            popupCardVC.transitioningDelegate = self
             
-            self.navigationController?.present(popupCardVC, animated: true)
-            print("poupCardVC에 들어갈 indexPath는", indexPath)
+            wisp.present(popupCardVC, collectionView: memoView.smallCardCollectionView, at: indexPath)
+            
+            
+//            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
+//            popupCardVC.transitioningDelegate = self
+            
+//            self.navigationController?.present(popupCardVC, animated: true)
+//            print("poupCardVC에 들어갈 indexPath는", indexPath)
             return false
         }
     }
@@ -955,7 +958,7 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
         guard indexPath.section == 0 else { return }
         
         let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: imageEntitiesArray)
-        cardImageShowingVC.transitioningDelegate = self
+//        cardImageShowingVC.transitioningDelegate = self
         cardImageShowingVC.modalPresentationStyle = .custom
         self.present(cardImageShowingVC, animated: true)
     }
@@ -973,13 +976,27 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
             
             
             
-            let selectedCollectionViewCell = popupCardVC.selectedCollectionViewCell
-            let convertedRect = selectedCollectionViewCell.convert(selectedCollectionViewCell.contentView.frame, to: self.view)
-            popupCardVC.selectedCellFrame = convertedRect
+            let selectedIndexPath = popupCardVC.selectedIndexPath
+            let wispConfiguration = WispConfiguration(
+                presentedAreaInset: .init(top: 100, left: 10, bottom: 100, right: 10),
+                initialCornerRadius: 13,
+                finalCornerRadius: 25,
+            )
+            wisp.present(
+                popupCardVC,
+                collectionView: memoView.smallCardCollectionView,
+                at: selectedIndexPath,
+                configuration: wispConfiguration
+            )
             
-            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
-            popupCardVC.transitioningDelegate = self
-            self.navigationController?.present(popupCardVC, animated: true)
+            
+//            let selectedCollectionViewCell = popupCardVC.selectedCollectionViewCell
+//            let convertedRect = selectedCollectionViewCell.convert(selectedCollectionViewCell.contentView.frame, to: self.view)
+//            popupCardVC.selectedCellFrame = convertedRect
+//            
+//            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
+//            popupCardVC.transitioningDelegate = self
+//            self.navigationController?.present(popupCardVC, animated: true)
             
 //            smallCardCollectionView.selectItem(at: popupCardVC.selectedIndexPath, animated: false, scrollPosition: UICollectionView.ScrollPosition())
 //            smallCardCollectionView.deselectItem(at: popupCardVC.selectedIndexPath, animated: false)
@@ -1022,59 +1039,59 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
     
 }
 
-extension MemoViewController: UIViewControllerTransitioningDelegate {
-    
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        
-        if presented is CardImageShowingViewController {
-            return CardImageShowingPresentationController(presentedViewController: presented, presenting: presenting)
-            
-        } else if presented is PopupCardViewController {
-            return PopupCardPresentationController(presentedViewController: presented, presenting: presenting, blurBrightness: UIBlurEffect.Style.extraLight)
-        } else {
-            fatalError()
-        }
-    }
-    
-    
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
-        if presented is CardImageShowingViewController {
-            return CardImageShowingAnimatedTransitioning(animationType: .present)
-            
-        } else if presented is PopupCardViewController {
-            return MemoViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
-            
-        } else {
-            fatalError()
-            
-        }
-    }
-    
-    
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
-        if dismissed is CardImageShowingViewController {
-            return CardImageShowingAnimatedTransitioning(animationType: .dismiss)
-            
-        } else if dismissed is PopupCardViewController {
-            return MemoViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss)
-            
-        } else {
-            fatalError()
-            
-        }
-    }
-    
-    
-//    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-//        guard let animationController = animator as? CardImageShowingDismissalAnimatedTransitioning else { return nil }
-//        guard let interactionController = animationController.interactionController as? CardImageShowingInteractionController else { return nil }
-//        guard interactionController.interactionInProgress else { return nil }
-//        return interactionController
+//extension MemoViewController: UIViewControllerTransitioningDelegate {
+//    
+//    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+//        
+//        if presented is CardImageShowingViewController {
+//            return CardImageShowingPresentationController(presentedViewController: presented, presenting: presenting)
+//            
+//        } else if presented is PopupCardViewController {
+//            return PopupCardPresentationController(presentedViewController: presented, presenting: presenting, blurBrightness: UIBlurEffect.Style.extraLight)
+//        } else {
+//            fatalError()
+//        }
 //    }
-    
-}
+//    
+//    
+//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        
+//        if presented is CardImageShowingViewController {
+//            return CardImageShowingAnimatedTransitioning(animationType: .present)
+//            
+//        } else if presented is PopupCardViewController {
+//            return MemoViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
+//            
+//        } else {
+//            fatalError()
+//            
+//        }
+//    }
+//    
+//    
+//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        
+//        if dismissed is CardImageShowingViewController {
+//            return CardImageShowingAnimatedTransitioning(animationType: .dismiss)
+//            
+//        } else if dismissed is PopupCardViewController {
+//            return MemoViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss)
+//            
+//        } else {
+//            fatalError()
+//            
+//        }
+//    }
+//    
+//    
+////    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+////        guard let animationController = animator as? CardImageShowingDismissalAnimatedTransitioning else { return nil }
+////        guard let interactionController = animationController.interactionController as? CardImageShowingInteractionController else { return nil }
+////        guard interactionController.interactionInProgress else { return nil }
+////        return interactionController
+////    }
+//    
+//}
 
 
 

@@ -21,9 +21,9 @@ extension UIColor {
     
     static let msBlack = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
-            return .init(hexCode: "000000")
-        } else {
             return .init(hexCode: "FFFFFF").withAlphaComponent(0.847)
+        } else {
+            return .init(hexCode: "000000")
         }
     }
     

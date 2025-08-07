@@ -7,6 +7,10 @@
 
 import UIKit
 
+enum AnimationType {
+    case present
+    case dismiss
+}
 
 class CardImageShowingAnimatedTransitioning: NSObject {
     
