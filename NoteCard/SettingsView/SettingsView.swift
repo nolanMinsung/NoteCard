@@ -9,7 +9,6 @@ import UIKit
 
 final class SettingsView: UIView {
     
-    
     let settingsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: UITableView.Style.insetGrouped)
         tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.cellID)
@@ -29,8 +28,6 @@ final class SettingsView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
     private func setupUI() {
         self.backgroundColor = .systemBackground

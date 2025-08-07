@@ -60,4 +60,5 @@ class LargeCardCollectionView: WispableCollectionView {
         }
         return super.hitTest(point, with: event)
     }
+    
 }

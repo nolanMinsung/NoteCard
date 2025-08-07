@@ -9,18 +9,13 @@ import UIKit
 
 final class CategoryListView: UIView {
     
-    
     let categoryListTableView: UITableView = {
         let view = UITableView(frame: .zero, style: UITableView.Style.grouped)
         view.register(CategoryListTableViewCell.self, forCellReuseIdentifier: CategoryListTableViewCell.cellID)
-        //view.isEditing = true
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
-    
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,7 +27,6 @@ final class CategoryListView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     private func setupUI() {
         self.addSubview(self.categoryListTableView)

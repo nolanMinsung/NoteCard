@@ -27,46 +27,8 @@ final class PopupCardView: UIView {
     var isTextViewChanged: Bool = false
     var isEdited: Bool = false
     
-//    private lazy var popupCardVerticalPadding
-//    = (screenSize!.height - bounds.height) / 2
-//    
-//    lazy var titleTextFieldTopConstraint
-//    = titleTextField.topAnchor.constraint(equalTo: topAnchor, constant: 15)
-//    
-//    lazy var selectedImageCollectionViewTopConstraint
-//    = self.imageCollectionView.topAnchor.constraint(
-//        equalTo: categoryCollectionView.bottomAnchor,
-//        constant: 0
-//    )
     lazy var selectedImageCollectionViewHeightConstraint
     = self.imageCollectionView.heightAnchor.constraint(equalToConstant: 0)
-//    
-//    lazy var titleTextFieldLeadingConstraint
-//    = titleTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25)
-//    
-//    lazy var heartImageViewTopConstraint
-//    = heartImageView.topAnchor.constraint(equalTo: topAnchor, constant: 14)
-//    
-//    lazy var heartImageViewLeadingConstraint
-//    = heartImageView.leadingAnchor.constraint(equalTo: titleTextField.trailingAnchor, constant: 10)
-//    
-//    lazy var heartImageViewTrailingConstraint
-//    = heartImageView.trailingAnchor.constraint(equalTo: ellipsisButton.leadingAnchor, constant: 0)
-//    
-//    lazy var heartImageViewTrailingToPopupCardViewConstraint
-//    = self.heartImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
-//    
-//    lazy var heartImageViewWidthConstraint
-//    = heartImageView.widthAnchor.constraint(equalToConstant: 27)
-//    
-//    lazy var heartImageViewHeightConstraint
-//    = heartImageView.heightAnchor.constraint(equalToConstant: 27)
-//    
-//    lazy var memoTextViewLeadingConstraint
-//    = memoTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10)
-//    
-//    lazy var memoTextViewTrailingConstraint
-//    = memoTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
     
     var cellSnapshot: UIView!
     var popupCardSnapshot: UIView!
@@ -111,7 +73,6 @@ final class PopupCardView: UIView {
         setupGestures()
         setupActions()
         setupDelegates()
-//        setupObserver()
     }
     
     required init?(coder: NSCoder) {
@@ -326,7 +287,6 @@ final class PopupCardView: UIView {
             memoTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             memoTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             memoTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
-//            memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -10),
         ])
         
         NSLayoutConstraint.activate([
@@ -334,95 +294,6 @@ final class PopupCardView: UIView {
             memoDateLabel.topAnchor.constraint(equalTo: bottomAnchor, constant: 10),
         ])
     }
-    
-//    private func setupObserver() {
-//        NotificationCenter.default.addObserver(
-//            self,
-//            selector: #selector(keyboardWillShow(_:)),
-//            name: UIResponder.keyboardWillShowNotification, object: nil
-//        )
-//        
-//        NotificationCenter.default.addObserver(
-//            self,
-//            selector: #selector(keyboardWillHide),
-//            name: UIResponder.keyboardWillHideNotification, object: nil
-//        )
-//    }
-    
-//    @objc private func keyboardWillShow(_ notification: Notification) {
-//        guard let keyboardFrame =
-//                notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-//        else { fatalError() }
-//        self.keyboardFrame = keyboardFrame
-//        if !self.isViewShiftedUp && self.memoTextView.isFirstResponder {
-//            self.shiftUpView()
-//        }
-//    }
-    
-//    @objc private func keyboardWillHide() {
-//        guard let memoEntity else { fatalError() }
-//        if self.isViewShiftedUp {
-//            self.shiftDownView()
-//        }
-//        
-//        self.memoTextView.isEditable = false
-//        self.memoTextViewTapGesture.isEnabled = true
-//        
-//        if self.isEdited {
-//            if self.isTextFieldChanged {
-//                self.updateTitleTextField()
-//            }
-//            if self.isTextViewChanged {
-//                self.updateMemoTextView()
-//            }
-//            
-//            memoEntity.modificationDate = Date()
-//            self.configureView(with: memoEntity)
-//            NotificationCenter.default.post(
-//                name: NSNotification.Name("editingCompleteNotification"),
-//                object: nil,
-//                userInfo: ["memo": memoEntity]
-//            )
-//        }
-//    }
-    
-//    private func shiftUpView() {
-//        print(#function)
-//        guard let screenSize else { fatalError() }
-//        let aspectRatio = screenSize.height / screenSize.width
-//        let lengthToShrink = self.keyboardFrame.height - self.popupCardVerticalPadding
-//        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
-//        animator.addAnimations { [weak self] in
-//            guard let self else { fatalError() }
-//            self.isViewShiftedUp = true
-//            self.frame.size.height = screenSize.height - (self.popupCardVerticalPadding * 2) - lengthToShrink
-//            
-//            if numberOfImages != 0, aspectRatio < 2 {
-//                self.selectedImageCollectionViewHeightConstraint.constant = 0
-//                self.layoutIfNeeded()
-//            }
-//            
-//        }
-//        animator.startAnimation()
-//    }
-    
-//    func shiftDownView() {
-//        guard let screenSize else { fatalError() }
-//        let aspectRatio = screenSize.height / screenSize.width
-//        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
-//        animator.addAnimations { [weak self] in
-//            guard let self else { fatalError() }
-//            self.isViewShiftedUp = false
-//            self.frame.size.height = screenSize.height - (self.popupCardVerticalPadding * 2)
-//            
-//            if numberOfImages != 0, aspectRatio < 2 {
-//                self.selectedImageCollectionViewHeightConstraint.constant = 70
-//                self.layoutIfNeeded()
-//            }
-//        }
-//        
-//        animator.startAnimation()
-//    }
     
     
     private func updateTitleTextField() {

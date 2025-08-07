@@ -78,7 +78,6 @@ final class ThemeColorPickingTableViewCell: UITableViewCell {
         self.accessoryType = accesoryType
     }
     
-    
     override func prepareForReuse() {
         self.isSelected = false
         self.accessoryType = UITableViewCell.AccessoryType.none

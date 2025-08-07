@@ -64,9 +64,6 @@ class MemoMakingViewController: UIViewController {
         return item
     }
     
-    
-    
-    
     init(category categoryEntity: CategoryEntity? = nil) {
         print("MemoMakingViewController 생성됨.")
         self.selectedCategoryEntity = categoryEntity
@@ -112,7 +109,6 @@ class MemoMakingViewController: UIViewController {
             return cell
         })
     }
-    
     
     /// - Parameters:
     ///   - animatingDifferences: snapshot을 apply하며 애니메이션 할 것인지의 여부
@@ -183,11 +179,6 @@ class MemoMakingViewController: UIViewController {
     
     @objc func completeMaking() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-//        guard self.temporaryMemoEntity?.categories?.count != 0 else {
-//            self.alert(title: "카테고리 선택", message: "최소 1개 이상의 카테고리를 선택하세요", preferredStyle: UIAlertController.Style.alert)
-//            return
-//        }
-        
         guard let titleText = self.titleTextField.text else { return }
         guard let memoText = self.memoTextView.text else { return }
         
@@ -198,7 +189,6 @@ class MemoMakingViewController: UIViewController {
         } else {
             self.temporaryMemoEntity.memoText = memoText
         }
-        
         
         let temporaryAppendedImageEntities = self.imageEntityManager.getImageEntities(from: self.temporaryMemoEntity, inOrderOf: ImageOrderIndexKind.temporaryOrderIndex)
         temporaryAppendedImageEntities.forEach { imageEntity in
@@ -328,7 +318,6 @@ class MemoMakingViewController: UIViewController {
         }
     }
     
-    
     private func changeTemporaryOrderIndex(in collectionView: UICollectionView, from fromIndex: Int, to destinationIndex: Int, animatingDifferences: Bool) {
         
         var imageEntityArray = ImageEntityManager.shared.getImageEntities(from: self.temporaryMemoEntity, inOrderOf: ImageOrderIndexKind.temporaryOrderIndex, isTemporaryDeleted: false)
@@ -344,7 +333,6 @@ class MemoMakingViewController: UIViewController {
         
         self.applySnapshot(animatingDifferences: animatingDifferences, usingReloadData: true)
     }
-    
     
 }
 
@@ -376,7 +364,6 @@ extension MemoMakingViewController: UICollectionViewDataSource {
                 self.setupToolbar()
             } else {
                 self.categoryListCollectionView.deselectItem(at: indexPath, animated: true)
-//                self.setupToolbar()
             }
         }
         
@@ -392,13 +379,6 @@ extension MemoMakingViewController: UICollectionViewDelegate {
         
         //선택된 이미지를 보여주는 컬렉션뷰일 경우
         if collectionView == self.selectedImageCollectionView {
-            
-//            let imageEntityToShow = self.imageEntityManager.getImageEntities(from: self.temporaryMemoEntity, inOrderOf: ImageOrderIndexKind.temporaryOrderIndex, isTemporaryDeleted: false)[indexPath.row]
-//            let imageToShow = self.imageEntityManager.getImage(imageEntity: imageEntityToShow)
-//            let selectedImageVC = DetailViewSelectedImageViewController(image: imageToShow)
-//            selectedImageVC.modalPresentationStyle = .formSheet
-//            self.present(selectedImageVC, animated: true)
-            
             let temporaryImageEntitiesArray = ImageEntityManager.shared.getImageEntities(
                 from: self.temporaryMemoEntity,
                 inOrderOf: ImageOrderIndexKind.temporaryOrderIndex,
@@ -414,7 +394,6 @@ extension MemoMakingViewController: UICollectionViewDelegate {
             cardImageShowingVC.transitioningDelegate = self
             cardImageShowingVC.modalPresentationStyle = .custom
             self.present(cardImageShowingVC, animated: true)
-            
             
         //카테고리를 선택하는 컬렉션뷰일 경우
         } else if collectionView == self.categoryListCollectionView {
@@ -488,7 +467,6 @@ extension MemoMakingViewController: UICollectionViewDropDelegate {
         }
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
         print(#function)
         
@@ -508,11 +486,9 @@ extension MemoMakingViewController: UICollectionViewDropDelegate {
         }
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, dropSessionDidEnd session: UIDropSession) {
         
     }
-    
     
 }
 
@@ -628,7 +604,6 @@ extension MemoMakingViewController: UIViewControllerTransitioningDelegate {
         return CardImageShowingPresentationController(presentedViewController: presented, presenting: presenting)
     }
     
-    
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return CardImageShowingAnimatedTransitioning(animationType: .present)
     }
@@ -637,6 +612,5 @@ extension MemoMakingViewController: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return CardImageShowingAnimatedTransitioning(animationType: .dismiss)
     }
-    
     
 }

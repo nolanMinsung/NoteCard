@@ -22,7 +22,6 @@ final class DateFormatSettingTableViewCell: UITableViewCell {
         return label
     }()
     
-    
     let checkMarkImageView: UIImageView = {
         let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 17, weight: .semibold)
         let image = UIImage(systemName: "checkmark", withConfiguration: imageConfiguration)
@@ -34,7 +33,6 @@ final class DateFormatSettingTableViewCell: UITableViewCell {
         return imageView
     }()
     
-    
     override var isSelected: Bool {
         didSet {
             switch isSelected {
@@ -45,8 +43,6 @@ final class DateFormatSettingTableViewCell: UITableViewCell {
             }
         }
     }
-    
-    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -60,11 +56,9 @@ final class DateFormatSettingTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-    
     
     private func configureHierarchy() {
         self.contentView.addSubview(self.label)

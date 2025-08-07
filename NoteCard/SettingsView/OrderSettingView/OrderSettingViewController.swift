@@ -15,7 +15,6 @@ final class OrderSettingViewController: UIViewController {
     let dataSource = ["수정 시간".localized(), "만든 시간".localized()]
     let isOrderAscending: Bool = false
     
-    
     lazy var orderSettingView = self.view as! OrderSettingView
     lazy var orderSettingTableView = self.orderSettingView.orderSettingTableView
     
@@ -23,14 +22,12 @@ final class OrderSettingViewController: UIViewController {
         self.view = OrderSettingView()
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupDelegates()
         setupNaviBar()
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -54,9 +51,7 @@ final class OrderSettingViewController: UIViewController {
         self.navigationController?.navigationBar.tintColor = .currentTheme
     }
     
-    
 }
-
 
 
 extension OrderSettingViewController: UITableViewDataSource {
@@ -94,8 +89,6 @@ extension OrderSettingViewController: UITableViewDataSource {
         return cell
     }
     
-    
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
             return "메모 정렬 기준".localized()
@@ -104,8 +97,8 @@ extension OrderSettingViewController: UITableViewDataSource {
         }
     }
     
-    
 }
+
 
 extension OrderSettingViewController: UITableViewDelegate {
     
@@ -147,8 +140,6 @@ extension OrderSettingViewController: UITableViewDelegate {
         return nil
     }
     
-    
-    
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
         guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else { fatalError() }
         if selectedIndexPaths.contains(indexPath) {
@@ -157,12 +148,5 @@ extension OrderSettingViewController: UITableViewDelegate {
             return indexPath
         }
     }
-    
-//    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-//        print(#function)
-//        
-//        guard let cell = tableView.cellForRow(at: indexPath) as? OrderSettingTableViewCell else { fatalError() }
-//        cell.isSelected = false
-//    }
     
 }

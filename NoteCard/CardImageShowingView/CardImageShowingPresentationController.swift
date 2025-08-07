@@ -10,7 +10,6 @@ import UIKit
 class CardImageShowingPresentationController: UIPresentationController {
     
     let blurView: UIVisualEffectView = {
-        //let view = UIVisualEffectView(effect: blurEffect)
         let view = UIVisualEffectView()
         view.alpha = 1.0
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -20,7 +19,6 @@ class CardImageShowingPresentationController: UIPresentationController {
     override var shouldRemovePresentersView: Bool {
         return false
     }
-    
     
     override func presentationTransitionWillBegin() {
         
@@ -34,23 +32,13 @@ class CardImageShowingPresentationController: UIPresentationController {
         
         presentingViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] coordinatorContext in
             guard let self else { return }
-            //self.blurView.alpha = 1.0
             self.blurView.effect = UIBlurEffect(style: UIBlurEffect.Style.systemMaterial)
         })
     }
     
-    override func presentationTransitionDidEnd(_ completed: Bool) {
-    }
-    
-    
-    
-    
+    override func presentationTransitionDidEnd(_ completed: Bool) { }
     
     override func dismissalTransitionWillBegin() {
-//        presentingViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] coordinatorContext in
-//            guard let self else { return }
-//            self.blurView.effect = .none
-//        })
         self.blurView.effect = .none
     }
     

@@ -9,20 +9,6 @@ import UIKit
 
 final class DarkModeSettingViewController: UIViewController {
     
-    let themeColorsArray: [UIColor] = [
-        .themeColorBlack,
-        .themeColorBrown,
-        .themeColorRed,
-        .themeColorOrange,
-        .themeColorYellow,
-        .themeColorGreen,
-        .themeColorSkyBlue,
-        .themeColorBlue,
-        .themeColorPurple
-    ]
-    
-    
-    
     let barTintColorChangeAnimation = UIViewPropertyAnimator(duration: 1, dampingRatio: 1)
     
     lazy var darkModeSettingView = self.view as! DarkModeSettingView
@@ -31,7 +17,6 @@ final class DarkModeSettingViewController: UIViewController {
     override func loadView() {
         self.view = DarkModeSettingView()
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,7 +70,6 @@ final class DarkModeSettingViewController: UIViewController {
 }
 
 
-
 extension DarkModeSettingViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -93,9 +77,6 @@ extension DarkModeSettingViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-//        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
-        
         guard let cell = tableView.dequeueReusableCell(withIdentifier: DarkModeSettingTableViewCell.cellID, for: indexPath) as? DarkModeSettingTableViewCell else { fatalError("cell dequeuing failed!") }
         
         switch indexPath.row {

@@ -20,16 +20,11 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         view.contentMode = UIImageView.ContentMode.scaleAspectFit
         view.sizeToFit()
         view.image = UIImage(systemName: "photo")
-//        view.backgroundColor = .systemOrange
         view.backgroundColor = .clear
         view.isUserInteractionEnabled = true
-//        view.clipsToBounds = true
-//        view.layer.cornerRadius = 10
-//        view.layer.cornerCurve = .continuous
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
     
     lazy var scrollView: CardImageShowingScrollView = {
         let view = CardImageShowingScrollView(frame: .zero)
@@ -49,7 +44,6 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    
     lazy var scrollViewCenterXConstraint = self.scrollView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: 0)
     lazy var scrollViewCenterYConstraint = self.scrollView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 0)
     lazy var scrollViewWidthConstraint = self.scrollView.widthAnchor.constraint(equalToConstant: self.contentView.bounds.width)
@@ -59,7 +53,6 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     lazy var imageViewCenterYConstraint = self.imageView.centerYAnchor.constraint(equalTo: self.scrollView.centerYAnchor, constant: 0)
     lazy var imageViewWidthConstraint = self.imageView.widthAnchor.constraint(equalToConstant: self.contentView.bounds.width)
     lazy var imageViewHeightConstraint = self.imageView.heightAnchor.constraint(equalToConstant: self.contentView.bounds.height)
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -90,37 +83,10 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupConstraints() {
-//        self.scrollView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0).isActive = true
-//        self.scrollView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 0).isActive = true
-//        self.scrollView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: 0).isActive = true
-//        self.scrollView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: 0).isActive = true
-        
         self.scrollViewCenterXConstraint.isActive = true
         self.scrollViewCenterYConstraint.isActive = true
         self.scrollViewWidthConstraint.isActive = true
         self.scrollViewHeightConstraint.isActive = true
-        
-//        self.imageView.topAnchor.constraint(equalTo: self.contentView.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
-//        self.imageView.leadingAnchor.constraint(equalTo: self.contentView.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
-//        self.imageView.trailingAnchor.constraint(equalTo: self.contentView.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
-//        self.imageView.bottomAnchor.constraint(equalTo: self.contentView.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
-        
-        
-//        self.imageView.topAnchor.constraint(equalTo: self.scrollView.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
-//        self.imageView.leadingAnchor.constraint(equalTo: self.scrollView.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
-//        self.imageView.trailingAnchor.constraint(equalTo: self.scrollView.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
-//        self.imageView.bottomAnchor.constraint(equalTo: self.scrollView.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
-        
-//        self.imageView.topAnchor.constraint(equalTo: self.scrollView.topAnchor, constant: 0).isActive = true
-//        self.imageView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor, constant: 0).isActive = true
-//        self.imageView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor, constant: 0).isActive = true
-//        self.imageView.bottomAnchor.constraint(equalTo: self.scrollView.bottomAnchor, constant: 0).isActive = true
-        
-//        self.imageView.topAnchor.constraint(equalTo: self.scrollView.frameLayoutGuide.topAnchor, constant: 0).isActive = true
-//        self.imageView.leadingAnchor.constraint(equalTo: self.scrollView.frameLayoutGuide.leadingAnchor, constant: 0).isActive = true
-//        self.imageView.trailingAnchor.constraint(equalTo: self.scrollView.frameLayoutGuide.trailingAnchor, constant: 0).isActive = true
-//        self.imageView.bottomAnchor.constraint(equalTo: self.scrollView.frameLayoutGuide.bottomAnchor, constant: 0).isActive = true
-        
         
         self.imageViewCenterXConstraint.isActive = true
         self.imageViewCenterYConstraint.isActive = true
@@ -148,13 +114,10 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         let location = gesture.location(in: self.scrollView)
         var rectToZoom = CGRect()
         rectToZoom.origin = CGPoint(x: location.x - 50, y: location.y - 50)
-//        rectToZoom.size = CGSize(width: self.contentView.bounds.width / 2, height: self.contentView.bounds.height / 2)
         rectToZoom.size = CGSize(width: 100, height: 100)
         if self.scrollView.zoomScale > 1 {
             self.scrollView.setZoomScale(1.0, animated: true)
-            
         } else {
-//            self.scrollView.setZoomScale(2.0, animated: true)
             self.scrollView.zoom(to: rectToZoom, animated: true)
         }
     }
@@ -170,16 +133,12 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
             
             self.scrollViewHeightConstraint.constant = self.contentView.bounds.width * imageSizeRatio
             self.imageViewHeightConstraint.constant = self.contentView.bounds.width * imageSizeRatio
-            
-            
         } else {
             self.scrollViewHeightConstraint.constant = self.contentView.bounds.height
             self.imageViewHeightConstraint.constant = self.contentView.bounds.height
             
             self.scrollViewWidthConstraint.constant = self.contentView.bounds.height / imageSizeRatio
             self.imageViewWidthConstraint.constant = self.contentView.bounds.height / imageSizeRatio
-            
-            
         }
         updateConstraints()
     }
@@ -191,57 +150,6 @@ extension CardImageShowingCollectionViewCell: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.imageView
     }
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        
-    }
-    
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-    }
-    
-//    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-//        let imageRatio = self.imageView.image!.size.height / self.imageView.image!.size.width
-//        let contentViewRatio = self.contentView.bounds.height / self.contentView.bounds.width
-//        if imageRatio <= contentViewRatio {
-//            let xOffset = scrollView.contentOffset.x
-//            let yOffset = (self.imageView.frame.height - self.scrollView.frame.height) / 2
-//            scrollView.setContentOffset(CGPoint(x: xOffset, y: yOffset), animated: true)
-//        } else {
-//            let xOffset = (self.imageView.frame.width - self.scrollView.frame.width) / 2
-//            let yOffset = scrollView.contentOffset.y
-//            scrollView.setContentOffset(CGPoint(x: xOffset, y: yOffset), animated: true)
-//        }
-//    }
-    
-    func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
-        
-    }
-    
-    func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        
-    }
-    
-    
-//    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-//        print(#function)
-//        
-//        let imageRatio = self.imageView.image!.size.height / self.imageView.image!.size.width
-//        let contentViewRatio = self.contentView.bounds.height / self.contentView.bounds.width
-//        if imageRatio <= contentViewRatio {
-//            let xOffset = scrollView.contentOffset.x
-//            let yOffset = (self.imageView.frame.height - self.scrollView.frame.height) / 2
-//            scrollView.setContentOffset(CGPoint(x: xOffset, y: yOffset), animated: true)
-//        } else {
-//            let xOffset = (self.imageView.frame.width - self.scrollView.frame.width) / 2
-//            let yOffset = scrollView.contentOffset.y
-//            scrollView.setContentOffset(CGPoint(x: xOffset, y: yOffset), animated: true)
-//            
-//        }
-//    }
     
 }
 

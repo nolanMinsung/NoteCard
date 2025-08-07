@@ -30,8 +30,4 @@ class LeftAlignedFlowLayout: UICollectionViewFlowLayout {
         }
     }
     
-    
-    
-    
-    
 }

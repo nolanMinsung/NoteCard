@@ -15,7 +15,6 @@ class SettingsTableViewCell: UITableViewCell {
         case button
     }
     
-    
     static var cellID: String {
         return String(describing: self)
     }
@@ -25,17 +24,12 @@ class SettingsTableViewCell: UITableViewCell {
         setupCellStyle()
     }
     
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-    
     override func prepareForReuse() {
+        super.prepareForReuse()
         self.selectionStyle = .default
     }
     

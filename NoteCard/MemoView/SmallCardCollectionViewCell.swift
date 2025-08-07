@@ -13,7 +13,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         return String(describing: self)
     }
     
-    
     let selectionAnimator = UIViewPropertyAnimator(duration: 0.2, curve: UIView.AnimationCurve.easeOut)
     let deselectionAnimator = UIViewPropertyAnimator(duration: 0.2, curve: UIView.AnimationCurve.easeOut)
     
@@ -62,7 +61,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
     
     weak var delegate: LargeCardCollectionViewCellDelegate?
     
-    
     let opaqueView: UIView = {
         let view = UIView()
         view.backgroundColor = .memoCellOpaqueView
@@ -73,18 +71,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
-    
-//    var titleTextField: UILabel = {
-//        let label = UILabel()
-//        label.font = UIFont.systemFont(ofSize: 15)
-//        label.textAlignment = .center
-//        label.textColor = UIColor.label
-//        label.numberOfLines = 1
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        return label
-//    }()
-    
     
     var titleTextField: UITextField = {
         let textField = UITextField()
@@ -97,7 +83,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
-    
     
     let textViewMemo: UITextView = {
         let textView = UITextView()
@@ -116,8 +101,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
-    
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -165,7 +148,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
     }
     
-    
     func setupUI() {
         //cell의 contentView의 backgroundColor 대신에 cell의 backgroundColor에 직접 색을 넣어주는 이유는
         //팝업카드가 올라왔을 때 다크모드가 바뀌어도 셀 스냅샷의 배경을 투명하게 함으로써 최대한 덜 어색하게 보이게 하기 위함
@@ -203,10 +185,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         self.opaqueView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 0).isActive = true
         self.opaqueView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: 0).isActive = true
         self.opaqueView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: 0).isActive = true
-        
-        //self.textViewMemo.heightAnchor.constraint(equalToConstant: self.textViewMemo.superview!.bounds.height * 0.7).isActive = true
     }
-    
     
     private func setupGesture() {
         self.contentView.addGestureRecognizer(self.longPressGestureToSelect)
@@ -220,7 +199,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         self.longPressGestureToInflate.minimumPressDuration = 0.1
         self.longPressGestureToInflate.addTarget(self, action: #selector(handleLongPressGestureToInflate(_:)))
     }
-    
     
     @objc private func handleLongPressGestureToSelect(_ gesture: UILongPressGestureRecognizer) {
         
@@ -250,10 +228,8 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
             let animator = UIViewPropertyAnimator(duration: 0.2, curve: UIView.AnimationCurve.easeInOut)
             animator.addAnimations {
                 self.transform = CGAffineTransform.identity
-//                self.selectedCategoryCollectionView.setContentOffset(CGPoint(x: -8, y: 0), animated: false)
             }
             animator.startAnimation()
-//            NotificationCenter.default.post(name: NSNotification.Name("cellSelectedNotification"), object: nil, userInfo: ["cell": self])
             
             guard let memoEntity else { return }
             
@@ -278,7 +254,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         }
         
     }
-    
     
     @objc private func handleLongPressGestureToInflate(_ gesture: UILongPressGestureRecognizer) {
         guard let smallCardCollectionView = self.superview as? UICollectionView else { return }
@@ -309,14 +284,12 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
                         ),
                         animated: true
                     )
-                    //                self.transform = CGAffineTransform.identity
                 }
                 
                 self.inflateAnimator.startAnimation()
                 
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + self.inflateAnimator.duration * 0.8) { [weak self] in
                     guard let self else { fatalError() }
-//                    if gesture.state != .ended || gesture.state != .cancelled {
                     if self.inflateAnimator.isRunning {
                         NotificationCenter.default.post(Notification(name: Notification.Name("feedbackGeneratorNotification")))
                     }
@@ -336,11 +309,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
                 
             case .ended:
                 fallthrough
-                //            self.inflateAnimator.stopAnimation(true)
-                //            self.cancelInflateAnimator.addAnimations {
-                //                self.transform = CGAffineTransform.identity
-                //            }
-                //            self.cancelInflateAnimator.startAnimation()
                 
             case .cancelled:
                 self.inflateAnimator.stopAnimation(true)
@@ -370,6 +338,5 @@ extension SmallCardCollectionViewCell: UIGestureRecognizerDelegate {
             return true
         }
     }
-    
     
 }

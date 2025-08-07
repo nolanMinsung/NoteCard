@@ -34,5 +34,4 @@ class MemoDetailViewSelectedImageCollectionView: UICollectionView {
         return super.hitTest(point, with: event)
     }
     
-    
 }

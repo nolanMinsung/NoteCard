@@ -50,6 +50,5 @@ class MemoImageCollectionViewCell: UICollectionViewCell {
         self.imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: 0).isActive = true
     }
     
-    
 }
 

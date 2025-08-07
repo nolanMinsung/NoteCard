@@ -9,7 +9,6 @@ import UIKit
 
 class QuickMemoEmptyViewController: UIViewController {
     
-    
     lazy var quickMemoEnptyView = self.view as! QuickMemoEmptyView
     
     override func loadView() {
@@ -20,12 +19,5 @@ class QuickMemoEmptyViewController: UIViewController {
         super.viewDidLoad()
         
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        let memoMakingNaviCon = UINavigationController(rootViewController: MemoMakingViewController())
-//        memoMakingNaviCon.modalPresentationStyle = .formSheet
-//        self.tabBarController?.present(memoMakingNaviCon, animated: true)
-//    }
     
 }

@@ -68,9 +68,6 @@ class MemoEditingViewController: UIViewController {
         return item
     }
     
-    
-    
-    
     init(memo memoEntity: MemoEntity) {
         self.selectedMemoEntity = memoEntity
         self.temporaryCategorySet = memoEntity.categories as! Set<CategoryEntity>
@@ -124,13 +121,11 @@ class MemoEditingViewController: UIViewController {
                 fatalError("Cell couldn't dequeued")
             }
             
-            //cell.selectedImageView.image = ImageEntityManager.shared.getThumbnailImage(imageEntity: imageEntity)
             cell.configureCell(with: imageEntity)
             return cell
         })
         
     }
-    
     
     /// 현재 수정 중인 화면에 기존 이미지와 임시로 추가된 이미지, 임시로 삭제된 이미지를 반영
     /// - Parameters:
@@ -224,7 +219,6 @@ class MemoEditingViewController: UIViewController {
         self.dismiss(animated: true)
         
     }
-    
     
     /// blurAnimator을 끝냄
     /// 수정을 완료하며, 변경 사항을 저장함.
@@ -461,13 +455,6 @@ extension MemoEditingViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if collectionView == self.selectedImageCollectionView {
-            
-            //            let imageEntityToShow = self.imageEntityManager.getImageEntities(from: self.selectedMemoEntity, inOrderOf: ImageOrderIndexKind.temporaryOrderIndex, isTemporaryDeleted: false)[indexPath.row]
-            //            let imageToShow = self.imageEntityManager.getImage(imageEntity: imageEntityToShow)
-            //            let selectedImageVC = DetailViewSelectedImageViewController(image: imageToShow)
-            //            selectedImageVC.modalPresentationStyle = .formSheet
-            //            self.present(selectedImageVC, animated: true)
-            
             let temporaryImageEntitiesArray = ImageEntityManager.shared.getImageEntities(
                 from: self.selectedMemoEntity,
                 inOrderOf: ImageOrderIndexKind.temporaryOrderIndex,
@@ -584,7 +571,6 @@ extension MemoEditingViewController: UICollectionViewDropDelegate {
     func collectionView(_ collectionView: UICollectionView, dropSessionDidEnd session: UIDropSession) {
         
     }
-    
     
 }
 
@@ -708,6 +694,5 @@ extension MemoEditingViewController: UIViewControllerTransitioningDelegate {
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return CardImageShowingAnimatedTransitioning(animationType: .dismiss)
     }
-    
     
 }

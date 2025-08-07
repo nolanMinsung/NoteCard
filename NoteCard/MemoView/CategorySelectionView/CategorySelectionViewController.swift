@@ -34,12 +34,10 @@ class CategorySelectionViewController: UIViewController {
         return collectionView
     }()
     
-    
     var categoryEntitiesArray: [CategoryEntity] {
         return CategoryEntityManager.shared.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false)
     }
     var selectedCategorySet: Set<CategoryEntity> = []
-    
     
     init(selectionType: SelectionType) {
         self.selectionType = selectionType
@@ -48,13 +46,6 @@ class CategorySelectionViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
-    
-    
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,7 +57,6 @@ class CategorySelectionViewController: UIViewController {
         setupSheetPresentationController()
         setupDelegates()
     }
-    
     
     private func setupUI() {
         self.view.backgroundColor = .secondarySystemBackground
@@ -91,7 +81,6 @@ class CategorySelectionViewController: UIViewController {
         case .toRemove:
             self.navigationItem.rightBarButtonItem = removeBarButtonItem
         }
-        
     }
     
     @objc private func cancelCategorySelection() {
@@ -123,7 +112,6 @@ class CategorySelectionViewController: UIViewController {
         presentingTabBarCon.setEditing(false, animated: true)
     }
     
-    
     @objc private func removeCategories() {
         guard let tabBarCon = self.presentingViewController as? UITabBarController else { fatalError() }
         guard let naviCon = tabBarCon.selectedViewController as? UINavigationController else { fatalError() }
@@ -132,8 +120,6 @@ class CategorySelectionViewController: UIViewController {
         
         selectedIndexPaths.forEach { [weak self] indexPath in
             guard let self else { return }
-//            guard let selectedCell = memoVC.smallCardCollectionView.cellForItem(at: indexPath) as? SmallCardCollectionViewCell else { return }
-//            guard let memoToBeRemoved = selectedCell.memoEntity else { return }
             let selectedMemoEntity = memoVC.memoEntitiesArray[indexPath.item]
             selectedMemoEntity.removeFromCategories(self.selectedCategorySet as NSSet)
         }
@@ -182,7 +168,6 @@ extension CategorySelectionViewController: UICollectionViewDataSource {
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        let categoryEntityArray = CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
         return self.categoryEntitiesArray.count
     }
     
@@ -211,7 +196,6 @@ extension CategorySelectionViewController: UICollectionViewDataSource {
 
 extension CategorySelectionViewController: UICollectionViewDelegate {
     
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard collectionView == self.categoryListCollectionView else { fatalError() }
         let selectedCategory = self.categoryEntitiesArray[indexPath.row]
@@ -227,11 +211,9 @@ extension CategorySelectionViewController: UICollectionViewDelegate {
             self.navigationItem.rightBarButtonItem?.isEnabled = true
         }
         
-//        self.title = "\(self.categoryListCollectionView.indexPathsForSelectedItems?.count ?? 0)개의 카테고리 선택됨"
         self.title = String(format: "%d개의 카테고리 선택됨".localized(), self.categoryListCollectionView.indexPathsForSelectedItems?.count ?? 0)
         
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard collectionView == self.categoryListCollectionView else { fatalError() }
@@ -246,6 +228,5 @@ extension CategorySelectionViewController: UICollectionViewDelegate {
         guard let numberOfSelectedCategories = self.categoryListCollectionView.indexPathsForSelectedItems?.count else { fatalError() }
         self.title = numberOfSelectedCategories == 0 ? "카테고리 선택하기".localized() : String(format: "%d개의 카테고리 선택됨".localized(), numberOfSelectedCategories)
     }
-    
     
 }

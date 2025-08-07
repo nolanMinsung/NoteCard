@@ -38,15 +38,10 @@ final class CreateCategoryView: UIView {
         self.endEditing(true)
     }
     
-    
-    
-    
-    
     private func setupUI() {
         self.backgroundColor = UIColor.systemGray6
         self.addSubview(categoryNameTextField)
     }
-    
     
     private func setupConstraints() {
         self.categoryNameTextField.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true

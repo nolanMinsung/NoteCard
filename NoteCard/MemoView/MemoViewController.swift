@@ -18,7 +18,6 @@ enum MemoVCType {
 }
 
 
-
 class MemoViewController: UIViewController {
     
     enum SectionForCompositional: CaseIterable {
@@ -267,15 +266,6 @@ class MemoViewController: UIViewController {
 //            self.selectedCategoryEntity = nil
         }
         
-        
-        
-//        
-//        if selectedCategoryEntity != nil {
-//            self.memoVCType = .category
-//        } else {
-//            self.memoVCType = .uncategorized
-//        }
-        
         super.init(nibName: nil, bundle: nil)
         self.setupCategoryNameTextField()
     }
@@ -410,7 +400,6 @@ class MemoViewController: UIViewController {
             }
             self.disappearingToolbarAnimator.stopAnimation(true)
             
-//            self.reloadAll()
             self.smallCardCollectionView.reconfigureItems(at: self.smallCardCollectionView.indexPathsForVisibleItems)
             self.smallCardCollectionView.visibleCells.forEach { cell in
                 cell.layoutSubviews()
@@ -424,10 +413,8 @@ class MemoViewController: UIViewController {
                 self.ellipsisBarButtonItem
             ], animated: true)
             
-//            naviCon.toolbar.frame.origin.y = naviCon.toolbar.bounds.height + self.view.safeAreaInsets.bottom
             appearingToolbarAnimator.addAnimations { [weak self] in
                 guard let self else { fatalError() }
-//                naviCon.toolbar.frame.origin.y = 0
                 naviCon.isToolbarHidden = false
                 self.memoView.layoutIfNeeded()
             }
@@ -448,13 +435,7 @@ class MemoViewController: UIViewController {
             }
             self.appearingToolbarAnimator.stopAnimation(true)
             
-//            self.reloadAll()
             self.smallCardCollectionView.reconfigureItems(at: self.smallCardCollectionView.indexPathsForVisibleItems)
-//            self.smallCardCollectionView.indexPathsForVisibleItems.forEach({ [weak self] selectedIndexPath in
-//                guard let self else { fatalError() }
-//                self.smallCardCollectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: UICollectionView.ScrollPosition())
-//                self.smallCardCollectionView.deselectItem(at: selectedIndexPath, animated: true)
-//            })
             
             disappearingToolbarAnimator.addAnimations { [weak self] in
                 guard let self else { fatalError() }
@@ -467,7 +448,6 @@ class MemoViewController: UIViewController {
             self.feedbackGenerator = nil
         }
     }
-    
     
     /// title을 표시하는 label의 text에 해당 카테고리의 이름을 할당.
     /// 카테고리가 없을 경우, "카테고리 없음"이라고 표시
@@ -490,7 +470,6 @@ class MemoViewController: UIViewController {
         }
     }
     
-    
     private func hideBottomBarsWhenPushed() {
         switch self.memoVCType {
         case .uncategorized:
@@ -508,10 +487,8 @@ class MemoViewController: UIViewController {
             self.navigationItem.rightBarButtonItem = self.plusBarButtonItem
         }
         
-        
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
-//        appearance.configureWithOpaqueBackground()
         
         self.navigationController?.navigationBar.scrollEdgeAppearance = appearance
         self.navigationController?.navigationBar.standardAppearance = appearance
@@ -528,18 +505,13 @@ class MemoViewController: UIViewController {
         self.navigationController?.toolbar.standardAppearance = toolbarAppearance
         self.navigationController?.toolbar.scrollEdgeAppearance = toolbarAppearance
         self.navigationController?.isToolbarHidden = true
-        
     }
     
     func setupToolbar(animated: Bool = true) {
         self.setToolbarItems([self.flexibleBarButtonItems, self.labelBarButtonItem, self.flexibleBarButtonItems, self.deleteBarButtonItem, self.ellipsisBarButtonItem], animated: animated)
     }
     
-    
-    
     @objc private func presentMemoMakingVC() {
-//        guard let selectedCategoryEntity else { fatalError() }
-        
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
         self.view.endEditing(true)
         let memoMakingVC = MemoMakingViewController(category: selectedCategoryEntity)
@@ -568,12 +540,6 @@ class MemoViewController: UIViewController {
             selectedIndexPaths.forEach { [weak self] indexPath in
                 guard let self else { return }
                 
-//                self.smallCardCollectionView.scrollToItem(at: indexPath, at: UICollectionView.ScrollPosition(), animated: false)
-//                self.memoView.layoutIfNeeded()
-//                guard let selectedCell = self.smallCardCollectionView.cellForItem(at: indexPath) as? SmallCardCollectionViewCell else { return }
-//                print("반복중")
-//                guard let memoToDelete = selectedCell.memoEntity else { return }
-                
                 let selectedMemoEntity = self.memoEntitiesArray[indexPath.item]
                 if self.memoVCType == .trash {
                     MemoEntityManager.shared.deleteMemoEntity(memoEntity: selectedMemoEntity)
@@ -588,15 +554,9 @@ class MemoViewController: UIViewController {
             }
             
             self.updateDataSource()
-//            let selectedIndexes = selectedIndexPaths.map { $0.item }
-//            self.memoEntitiesArray = self.memoEntitiesArray
-//                .enumerated()
-//                .filter({ !selectedIndexes.contains($0.offset) })
-//                .map({ $0.element })
             
             self.largeCardCollectionView.deleteItems(at: selectedIndexPaths)
             self.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
-//            self.reloadAll()
             
             if self.memoEntitiesArray.count == 0 {
                 self.setEditing(false, animated: false)
@@ -610,12 +570,7 @@ class MemoViewController: UIViewController {
         alertCon.addAction(cancelAction)
         alertCon.addAction(deleteAction)
         self.present(alertCon, animated: true)
-        
-        
     }
-    
-    
-    
     
     func makeAlert(title: String, message: String, answer: String, preferredStyle: UIAlertController.Style? = .alert, handler: ((UIAlertAction) -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: preferredStyle!)
@@ -632,7 +587,6 @@ class MemoViewController: UIViewController {
         self.categoryNameTextField.delegate = self
     }
     
-    
     private func setupActions() {
         self.categoryNameTextField.addTarget(self, action: #selector(categoryNameTextFieldChanged), for: UIControl.Event.editingChanged)
     }
@@ -642,12 +596,10 @@ class MemoViewController: UIViewController {
         self.isCategoryNameChanged = true
     }
     
-    
     //이 메서드는 MemoViewController의 뷰컨트롤러 생애 주기 동안 단 한 번만 블리는 메서드이다.
     //그래서 MemoViewController를 탭해서 열 때 한 번만 불릴 줄 알았는데, 보니까 탭바의 두번째 탭으로 MemoViewController가 기본으로 들어가며(SceneDelegate에서 할당) 이때 MemoViewController 인스턴스가 생성되므로
     //당연히 이 때에도 setupObservers() 메서드가 불린다. 그래서 NotificationCenter에 post 하면 두 번 불리는 것임.
     private func setupObservers() {
-        
         NotificationCenter.default.addObserver(self, selector: #selector(occurImpact), name: NSNotification.Name("feedbackGeneratorNotification"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(memoCreated(_:)), name: NSNotification.Name("createdMemoNotification"), object: nil)
@@ -658,9 +610,7 @@ class MemoViewController: UIViewController {
             NotificationCenter.default.addObserver(self, selector: #selector(memoRecoveredToUncategorized(_:)), name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil)
             print("복구 notification 추가됨")
         }
-        
     }
-    
     
     @objc private func occurImpact() {
         if self.smallCardCollectionView.isEditing {
@@ -668,14 +618,12 @@ class MemoViewController: UIViewController {
         }
     }
     
-    
     //메모가 추가된 후 Notification을 받았을 때 실행할 함수
     @objc private func memoCreated(_ notification: Notification) {
         print(#function)
         print(self)
         if self.memoEntitiesArray.count != 0 {
             self.editButtonItem.isEnabled = true
-//            self.segmentControl.isEnabled = true
         }
         
         guard let createdMemoEntity = notification.userInfo?["memo"] as? MemoEntity else { fatalError() }
@@ -736,14 +684,7 @@ class MemoViewController: UIViewController {
             return
             
         }
-        
-        
-        
-        
     }
-    
-    
-    
     
     @objc private func memoEdited(_ notification: Notification) {
         print(#function)
@@ -755,15 +696,6 @@ class MemoViewController: UIViewController {
             case 0:
                 //largeCardCollectionViewCell을 reload하면 textView가 맨 위로 올라가게 됨. 그래서
                 self.largeCardCollectionView.reloadItems(at: [IndexPath(item: indexToReload, section: 0)])
-                
-//                guard let largeCardCollectionViewCell = self.largeCardCollectionView.cellForItem(at: IndexPath(item: indexToReload, section: 0)) as? LargeCardCollectionViewCell else { fatalError() }
-//
-//                
-//                largeCardCollectionViewCell.selectedCategoryCollectionView.reloadData()
-//                
-//                largeCardCollectionViewCell.loadImageEntities(of: editedMemoEntity)
-//                largeCardCollectionViewCell.selectedImageCollectionView.reloadData()
-                
                 return
             case 1:
                 self.smallCardCollectionView.reloadItems(at: [IndexPath(item: indexToReload, section: 0)])
@@ -779,17 +711,6 @@ class MemoViewController: UIViewController {
         self.setupToolbar()
     }
     
-    
-//    @objc private func themeColorChanged() {
-//        print(#function)
-//        
-//        self.reloadAll()
-//        
-//        self.navigationController?.toolbar.tintColor = .currentTheme
-//        self.setupToolbar(animated: false)
-//    }
-    
-    
     @objc private func memoRecoveredToUncategorized(_ notification: Notification) {
         print("uncategorized MemoVC에서 메모 복구 Notification 받았다!!")
         guard let recoveredMemo = notification.userInfo?["recoveredMemos"] as? [MemoEntity] else { fatalError() }
@@ -797,20 +718,16 @@ class MemoViewController: UIViewController {
         self.reloadAll()
     }
     
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-//        self.categoryNameTextField.resignFirstResponder()
         self.view.endEditing(true)
     }
-    
     
     private func reloadAll() {
         print(#function)
         self.updateDataSource()
         self.largeCardCollectionView.reloadData()
         self.smallCardCollectionView.reloadData()
-        
     }
     
 }
@@ -855,7 +772,6 @@ extension MemoViewController: UICollectionViewDataSource {
             }
             return cell
             
-            
         default:
             fatalError()
         }
@@ -863,7 +779,6 @@ extension MemoViewController: UICollectionViewDataSource {
     }
     
 }
-
 
 
 extension MemoViewController: UICollectionViewDelegate {
@@ -894,15 +809,7 @@ extension MemoViewController: UICollectionViewDelegate {
                 isInteractive: false
             )
             
-            
             wisp.present(popupCardVC, collectionView: memoView.smallCardCollectionView, at: indexPath)
-            
-            
-//            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
-//            popupCardVC.transitioningDelegate = self
-            
-//            self.navigationController?.present(popupCardVC, animated: true)
-//            print("poupCardVC에 들어갈 indexPath는", indexPath)
             return false
         }
     }
@@ -918,18 +825,7 @@ extension MemoViewController: UICollectionViewDelegate {
             
         case false:
             return
-//            guard let selectedCell = collectionView.cellForItem(at: indexPath) as? SmallCardCollectionViewCell else { return }
-//            guard let selectedMemoEntity = selectedCell.memoEntity else { return }
-//            
-//            let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
-//            let popupCardVC = PopupCardViewController(memo: selectedMemoEntity, selectedCell: selectedCell, indexPath: indexPath, selectedCellFrame: convertedRect, cornerRadius: 13, isInteractive: false)
-//            
-//            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
-//            popupCardVC.transitioningDelegate = self
-//            
-//            self.navigationController?.present(popupCardVC, animated: true)
         }
-        
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
@@ -944,9 +840,7 @@ extension MemoViewController: UICollectionViewDelegate {
         }
     }
     
-    
 }
-
 
 
 //셀 안의 셀을 선택했을 때 present하면서 원본 image정보를 건네줘야한다. + present 메서드는  view controller에서 호출해야 한다.
@@ -958,7 +852,6 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
         guard indexPath.section == 0 else { return }
         
         let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: imageEntitiesArray)
-//        cardImageShowingVC.transitioningDelegate = self
         cardImageShowingVC.modalPresentationStyle = .custom
         self.present(cardImageShowingVC, animated: true)
     }
@@ -967,15 +860,6 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
     func triggerPresentMethod(presented presentedVC: UIViewController, animated: Bool) {
         
         if let popupCardVC = presentedVC as? PopupCardViewController {
-//            guard self.smallCardCollectionView.isEditing else { return }
-            
-            
-//            if self.smallCardCollectionView.isEditing {
-//                self.feedbackGenerator.impactOccurred(intensity: 1.0)
-//            }
-            
-            
-            
             let selectedIndexPath = popupCardVC.selectedIndexPath
             let wispConfiguration = WispConfiguration(
                 presentedAreaInset: .init(top: 100, left: 10, bottom: 100, right: 10),
@@ -988,18 +872,6 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
                 at: selectedIndexPath,
                 configuration: wispConfiguration
             )
-            
-            
-//            let selectedCollectionViewCell = popupCardVC.selectedCollectionViewCell
-//            let convertedRect = selectedCollectionViewCell.convert(selectedCollectionViewCell.contentView.frame, to: self.view)
-//            popupCardVC.selectedCellFrame = convertedRect
-//            
-//            popupCardVC.modalPresentationStyle = UIModalPresentationStyle.custom
-//            popupCardVC.transitioningDelegate = self
-//            self.navigationController?.present(popupCardVC, animated: true)
-            
-//            smallCardCollectionView.selectItem(at: popupCardVC.selectedIndexPath, animated: false, scrollPosition: UICollectionView.ScrollPosition())
-//            smallCardCollectionView.deselectItem(at: popupCardVC.selectedIndexPath, animated: false)
             
         } else {
             self.present(presentedVC, animated: animated)
@@ -1039,62 +911,6 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
     
 }
 
-//extension MemoViewController: UIViewControllerTransitioningDelegate {
-//    
-//    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-//        
-//        if presented is CardImageShowingViewController {
-//            return CardImageShowingPresentationController(presentedViewController: presented, presenting: presenting)
-//            
-//        } else if presented is PopupCardViewController {
-//            return PopupCardPresentationController(presentedViewController: presented, presenting: presenting, blurBrightness: UIBlurEffect.Style.extraLight)
-//        } else {
-//            fatalError()
-//        }
-//    }
-//    
-//    
-//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        
-//        if presented is CardImageShowingViewController {
-//            return CardImageShowingAnimatedTransitioning(animationType: .present)
-//            
-//        } else if presented is PopupCardViewController {
-//            return MemoViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
-//            
-//        } else {
-//            fatalError()
-//            
-//        }
-//    }
-//    
-//    
-//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        
-//        if dismissed is CardImageShowingViewController {
-//            return CardImageShowingAnimatedTransitioning(animationType: .dismiss)
-//            
-//        } else if dismissed is PopupCardViewController {
-//            return MemoViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss)
-//            
-//        } else {
-//            fatalError()
-//            
-//        }
-//    }
-//    
-//    
-////    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-////        guard let animationController = animator as? CardImageShowingDismissalAnimatedTransitioning else { return nil }
-////        guard let interactionController = animationController.interactionController as? CardImageShowingInteractionController else { return nil }
-////        guard interactionController.interactionInProgress else { return nil }
-////        return interactionController
-////    }
-//    
-//}
-
-
-
 
 extension MemoViewController: UITextFieldDelegate {
     
@@ -1102,8 +918,6 @@ extension MemoViewController: UITextFieldDelegate {
         
         guard let newCategoryName = textField.text else { return }
         guard let selectedCategoryEntity else { fatalError("selectedCategoryEntity is nil") }
-        
-        //        self.categoryEntityManager.changeCategoryEntityName(ofEntity: selectedCategoryEntity, newName: newCategoryName)
         
         do {
             try CategoryEntityManager.shared.changeCategoryEntityName(ofEntity: selectedCategoryEntity, newName: newCategoryName)
@@ -1118,18 +932,12 @@ extension MemoViewController: UITextFieldDelegate {
             return
         }
         
-        
         if self.isCategoryNameChanged {
             
             self.reloadAll()
             
-            /*
-            self.applySnapshot(animatingDifferences: false, usingReloadData: true)
-             */
-            
             self.isCategoryNameChanged = false
         }
-        //textField.text = newCategoryName
     }
     
     

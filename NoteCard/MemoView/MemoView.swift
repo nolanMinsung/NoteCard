@@ -121,7 +121,6 @@ final class MemoView: UIView {
             largeCardCollectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 0),
             largeCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             largeCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-//            largeCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0),
             largeCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0),
         ])
         

@@ -22,8 +22,6 @@ class CardImageShowingViewController: UIViewController {
     let buttonShrinkAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
     let buttonEnlargeAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
     
-//    var interactionController: CardImageShowingInteractionController?
-    
     init(indexPath: IndexPath, imageEntitiesArray: [ImageEntity]) {
         self.initialIndexPath = indexPath
         self.imageEntitiesArray = imageEntitiesArray
@@ -44,7 +42,6 @@ class CardImageShowingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     override func loadView() {
         self.view = CardImageShowingView()
     }
@@ -55,7 +52,6 @@ class CardImageShowingViewController: UIViewController {
         setupDelegates()
         setupGestures()
         setupButtonsAction()
-//        self.interactionController = CardImageShowingInteractionController(cardImageShowingVC: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -75,11 +71,6 @@ class CardImageShowingViewController: UIViewController {
         }
     }
     
-    
-    override func viewDidAppear(_ animated: Bool) {
-//        self.cardImageShowingCollectionView.scrollToItem(at: self.initialIndexPath, at: UICollectionView.ScrollPosition(), animated: true)
-    }
-    
     private func setupDelegates() {
         self.cardImageShowingCollectionView.dataSource = self
         self.cardImageShowingCollectionView.delegate = self
@@ -91,12 +82,8 @@ class CardImageShowingViewController: UIViewController {
     }
     
     @objc private func handleLongPressGesture(gesture: UILongPressGestureRecognizer) {
-        print(#function)
-        
         switch gesture.state {
-            
         case .began:
-            
             self.buttonShrinkAnimator.addAnimations { [weak self] in
                 guard let self else { fatalError() }
                 self.dismissButton.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
@@ -104,7 +91,6 @@ class CardImageShowingViewController: UIViewController {
             self.buttonShrinkAnimator.startAnimation()
             
         case .changed:
-            
             self.buttonEnlargeAnimator.addAnimations { [weak self] in
                 guard let self else { fatalError() }
                 self.dismissButton.transform = CGAffineTransform.identity
@@ -117,9 +103,7 @@ class CardImageShowingViewController: UIViewController {
                 self.buttonEnlargeAnimator.startAnimation()
             }
             
-            
         case .ended:
-            
             self.buttonEnlargeAnimator.addAnimations { [weak self] in
                 guard let self else { fatalError() }
                 self.dismissButton.transform = CGAffineTransform.identity
@@ -130,17 +114,13 @@ class CardImageShowingViewController: UIViewController {
                 self.dismiss(animated: true)
             }
             
-            
         default:
-            
             self.buttonEnlargeAnimator.addAnimations { [weak self] in
                 guard let self else { fatalError() }
                 self.dismissButton.transform = CGAffineTransform.identity
             }
             self.buttonEnlargeAnimator.startAnimation()
-            
         }
-        
     }
     
     private func setupButtonsAction() {
@@ -148,7 +128,6 @@ class CardImageShowingViewController: UIViewController {
     }
     
 }
-
 
 
 extension CardImageShowingViewController: UICollectionViewDataSource {
@@ -173,12 +152,6 @@ extension CardImageShowingViewController: UICollectionViewDataSource {
     
 }
 
-extension CardImageShowingViewController: UICollectionViewDelegate {
-    
-}
-
-
-
 
 extension CardImageShowingViewController: UICollectionViewDelegateFlowLayout {
     
@@ -187,11 +160,7 @@ extension CardImageShowingViewController: UICollectionViewDelegateFlowLayout {
         guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
         
         let currentIndex = ((scrollView.contentOffset.x + scrollView.contentInset.left) / (screenSize.width * 0.9 + 10)).rounded()
-        print("currentIndex는 \(currentIndex)")
         let targetCardIndex = (((targetContentOffset.pointee.x + screenSize.width * 0.05 /*left inset*/ ) / (screenSize.width * 0.9 + 10) + 0.5) / 1).rounded(FloatingPointRoundingRule.down)
-        print("targetCardIndex :", targetCardIndex)
-        print("velocity.x :", velocity.x)
-//        targetContentOffset.pointee = CGPoint(x: index * cellWidth - scrollView.contentInset.left, y: scrollView.contentInset.top)
         
         if velocity.x < 0 {
             targetContentOffset.pointee.x = -(scrollView.contentInset.left) + ((screenSize.width * 0.9 + 10) * (currentIndex - 1))

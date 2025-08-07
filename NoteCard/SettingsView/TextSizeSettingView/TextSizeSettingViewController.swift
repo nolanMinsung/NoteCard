@@ -9,14 +9,11 @@ import UIKit
 
 final class TextSizeSettingViewController: UIViewController {
     
-    
     lazy var textSizeSettingView = self.view as! TextSizeSettingView
-    
     
     override func loadView() {
         self.view = TextSizeSettingView()
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,13 +21,11 @@ final class TextSizeSettingViewController: UIViewController {
         setupNaviBar()
     }
     
-    
     private func setupNaviBar() {
         self.title = "메모 글자 크기"
         self.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.navigationBar.tintColor = .currentTheme
     }
-    
     
 }
 

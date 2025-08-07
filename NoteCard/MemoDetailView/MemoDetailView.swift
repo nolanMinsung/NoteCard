@@ -145,8 +145,6 @@ final class MemoDetailView: UIView {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.25, execute: self.blurAnimator.pauseAnimation)
     }
     
-    
-    
     private func gatherCategories() {
         self.isCatgorySpreaded = false
         self.categoryButton.isSelected = false
@@ -251,7 +249,6 @@ final class MemoDetailView: UIView {
         self.memoTextView.delegate = self
     }
     
-    
     private func setupObserver() {
         NotificationCenter.default.addObserver(
             self, selector: #selector(keyboardWillShow),
@@ -263,9 +260,7 @@ final class MemoDetailView: UIView {
         )
     }
     
-    
     @objc func keyboardWillShow() {
-        
         if self.isCatgorySpreaded {
             self.gatherCategories()
         }
@@ -284,23 +279,7 @@ final class MemoDetailView: UIView {
                 self?.layoutIfNeeded()
             }
         }
-//        
-//        
-//        
-//        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
-//        animator.addAnimations { [weak self] in
-//            guard let self else { fatalError() }
-//            
-//            if self.imageCollectionView.numberOfSections != 0, aspectRatio < 2 {
-//                self.imageCollectionViewTopConstraint.constant = 0
-//                self.imageCollectionViewHeightConstraint.constant = 0
-//                self.layoutIfNeeded()
-//            }
-//        }
-//        
-//        animator.startAnimation()
     }
-    
     
     @objc func keyboardWillHide() {
         guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
@@ -316,7 +295,6 @@ final class MemoDetailView: UIView {
                 self.layoutIfNeeded()
             }
         }
-        
         animator.startAnimation()
     }
     
@@ -371,17 +349,6 @@ extension MemoDetailView {
 
 extension MemoDetailView: UITextFieldDelegate {
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        self.gatherCategories()
-        
-//        if self.categoryListCollectionViewHeightConstraint.constant > 40 {
-//            self.gatherCategories()
-//        } else {
-//            //self.spreadCategories()
-//            return
-//        }
-    }
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -392,17 +359,6 @@ extension MemoDetailView: UITextFieldDelegate {
 
 
 extension MemoDetailView: UITextViewDelegate {
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-//        self.gatherCategories()
-        
-//        if self.categoryListCollectionViewHeightConstraint.constant > 40 {
-//            self.gatherCategories()
-//        } else {
-//            //self.spreadCategories()
-//            return
-//        }
-    }
     
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         if textView.textColor == UIColor.systemGray4 {

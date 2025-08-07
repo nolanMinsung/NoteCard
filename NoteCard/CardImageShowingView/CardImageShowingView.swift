@@ -9,7 +9,6 @@ import UIKit
 
 final class CardImageShowingView: UIView {
     
-    
     let blurView: UIVisualEffectView = {
         let view = UIVisualEffectView()
         view.isUserInteractionEnabled = false
@@ -24,7 +23,7 @@ final class CardImageShowingView: UIView {
         button.tintColor = .currentTheme
         button.backgroundColor = .systemBackground
         button.clipsToBounds = true
-        button.alpha = 0.1
+        button.alpha = 1
         button.layer.cornerRadius = 30
         button.layer.masksToBounds = false
         button.layer.shadowColor = UIColor.currentTheme.cgColor
@@ -36,7 +35,6 @@ final class CardImageShowingView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
     
     lazy var cardImageShowingCollectionView: UICollectionView = {
         guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
@@ -62,7 +60,6 @@ final class CardImageShowingView: UIView {
         return collectionView
     }()
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -79,7 +76,6 @@ final class CardImageShowingView: UIView {
         self.dismissButton.layer.shadowColor = UIColor.currentTheme.cgColor
     }
     
-    
     private func configureHierarchy() {
         self.addSubview(self.dismissButton)
         self.addSubview(self.cardImageShowingCollectionView)
@@ -89,7 +85,6 @@ final class CardImageShowingView: UIView {
     private func setupUI() {
         self.backgroundColor = .clear
     }
-    
     
     private func setupConstraints() {
         guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
@@ -103,16 +98,12 @@ final class CardImageShowingView: UIView {
         self.cardImageShowingCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: screenSize.height * 0.088).isActive = true
         self.cardImageShowingCollectionView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
         self.cardImageShowingCollectionView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
-//        self.cardImageShowingCollectionView.bottomAnchor.constraint(equalTo: self.dismissButton.topAnchor, constant: -40).isActive = true
         self.cardImageShowingCollectionView.heightAnchor.constraint(equalToConstant: screenSize.height * 0.73).isActive = true
-        
         
         self.blurView.topAnchor.constraint(equalTo: self.topAnchor, constant: screenSize.height * 0.088).isActive = true
         self.blurView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
         self.blurView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
         self.blurView.heightAnchor.constraint(equalToConstant: screenSize.height * 0.73).isActive = true
-        
-        
     }
     
 }

@@ -33,8 +33,6 @@ final class DetailViewSelectedImageViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -79,23 +77,7 @@ final class DetailViewSelectedImageViewController: UIViewController {
             return
             
         }
-        
-        
-        
-        
-        //let requestOptions: PHImageRequestOptions = {
-        //    let options = PHImageRequestOptions()
-        //    options.deliveryMode = PHImageRequestOptionsDeliveryMode.highQualityFormat
-        //    options.isNetworkAccessAllowed = true
-        //    options.isSynchronous = false
-        //    return options
-        //}()
-        //
-        //self.imageManager.requestImage(for: phAsset, targetSize: PHImageManagerMaximumSize, contentMode: PHImageContentMode.aspectFit, options: requestOptions) { image, dict in
-        //    DispatchQueue.main.async { self.imageView.image = image }
-        //}
     }
-    
     
     private func setupDelegates() {
         self.scrollView.delegate = self

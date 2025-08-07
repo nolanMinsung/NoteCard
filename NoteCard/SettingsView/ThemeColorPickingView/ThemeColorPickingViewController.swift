@@ -21,15 +21,12 @@ final class ThemeColorPickingViewController: UIViewController {
         .themeColorPurple
     ]
     
-//    let barTintColorChangeAnimation = UIViewPropertyAnimator(duration: 1, dampingRatio: 1)
-    
     lazy var themeColorPickingView = self.view as! ThemeColorPickingView
     lazy var themeColorPickingTableView = self.themeColorPickingView.themeColorPickingTableView
     
     override func loadView() {
         self.view = ThemeColorPickingView()
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,7 +68,6 @@ final class ThemeColorPickingViewController: UIViewController {
 }
 
 
-
 extension ThemeColorPickingViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -100,7 +96,6 @@ extension ThemeColorPickingViewController: UITableViewDelegate {
         UIWindow.current?.tintColor = .currentTheme
         self.navigationController?.navigationBar.tintColor = .currentTheme
     }
-    
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? ThemeColorPickingTableViewCell else { fatalError() }

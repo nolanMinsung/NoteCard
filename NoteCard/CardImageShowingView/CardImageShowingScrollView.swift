@@ -9,7 +9,6 @@ import UIKit
 
 class CardImageShowingScrollView: UIScrollView {
     
-    
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if !self.clipsToBounds && !self.isHidden && self.alpha > 0.0 {
             let subviews = self.subviews.reversed()

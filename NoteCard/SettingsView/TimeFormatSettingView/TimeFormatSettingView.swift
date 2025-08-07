@@ -9,7 +9,6 @@ import UIKit
 
 final class TimeFormatSettingView: UIView {
     
-    
     let timeFormatSettingTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: UITableView.Style.insetGrouped)
         tableView.register(TimeFormatSettingTableViewCell.self, forCellReuseIdentifier: TimeFormatSettingTableViewCell.cellID)
@@ -18,26 +17,21 @@ final class TimeFormatSettingView: UIView {
         return tableView
     }()
     
-    
-    
-    
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setupUI()
         setupConstraints()
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     private func setupUI() {
         self.backgroundColor = .systemGray6
         self.addSubview(self.timeFormatSettingTableView)
     }
-    
     
     private func setupConstraints() {
         self.timeFormatSettingTableView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
@@ -45,7 +39,6 @@ final class TimeFormatSettingView: UIView {
         self.timeFormatSettingTableView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
         self.timeFormatSettingTableView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
     }
-    
     
 }
 

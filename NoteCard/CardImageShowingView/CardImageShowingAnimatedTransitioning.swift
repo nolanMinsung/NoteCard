@@ -14,53 +14,23 @@ enum AnimationType {
 
 class CardImageShowingAnimatedTransitioning: NSObject {
     
-    
     let interactionController: UIPercentDrivenInteractiveTransition?
-    
+
     var animationType: AnimationType
-    
     
     init(animationType: AnimationType, interactionController: UIPercentDrivenInteractiveTransition? = nil) {
         self.animationType = animationType
         self.interactionController = interactionController
     }
     
-    
-    
-    
-    
-    
 }
 
 
 extension CardImageShowingAnimatedTransitioning: UIViewControllerAnimatedTransitioning {
     
-    
-    
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 2
     }
-    
-    
-    
-//    func interruptibleAnimator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
-//        
-//        guard let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from) as? CardImageShowingViewController else { return UIViewPropertyAnimator() }
-//        
-//        guard let screenHeight = fromVC.view.window?.windowScene?.screen.bounds.height else { return UIViewPropertyAnimator() }
-//        
-//        let animator = UIViewPropertyAnimator(duration: 0.5, curve: UIView.AnimationCurve.easeInOut)
-//        animator.addAnimations {
-//            fromVC.view.frame.origin.y = screenHeight - 200
-//        }
-//        animator.addCompletion { _ in
-//            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-//        }
-//        
-//        return animator
-//    }
-    
-    
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         switch self.animationType {
@@ -70,8 +40,6 @@ extension CardImageShowingAnimatedTransitioning: UIViewControllerAnimatedTransit
             self.animationForDismissal(using: transitionContext)
         }
     }
-    
-    
     
     private func animationForPresentation(using transitionContext: UIViewControllerContextTransitioning) {
         print(#function)
@@ -87,7 +55,6 @@ extension CardImageShowingAnimatedTransitioning: UIViewControllerAnimatedTransit
         cardImageShowingView.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: screenSize)
         
         cardImageShowingCollectionView.frame.origin.y = screenSize.height * 0.6
-//        cardImageShowingCollectionView.alpha = 0
         
         dismissButton.alpha = 0.0
         dismissButton.transform = CGAffineTransform(scaleX: 0.05, y: 0.05)
@@ -100,10 +67,6 @@ extension CardImageShowingAnimatedTransitioning: UIViewControllerAnimatedTransit
         }
         
         animator.addAnimations({
-//            cardImageShowingCollectionView.alpha = 1
-        }, delayFactor: 0.2)
-        
-        animator.addAnimations({
             dismissButton.alpha = 0.7
         }, delayFactor: 0.3)
         
@@ -112,25 +75,13 @@ extension CardImageShowingAnimatedTransitioning: UIViewControllerAnimatedTransit
         }
         
         animator.startAnimation()
-        
-        
     }
-    
-    
-    
-    
     
     
 //---------------------------------------------------------------------------------------------------------------
     
     
-    
-    
-    
-    
     private func animationForDismissal(using transitionContext: UIViewControllerContextTransitioning) {
-        print(#function)
-        
         guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
         guard let cardImageShowingVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from) as? CardImageShowingViewController else { return }
         guard let cardImageShowingView = cardImageShowingVC.view as? CardImageShowingView else { fatalError() }
@@ -144,14 +95,11 @@ extension CardImageShowingAnimatedTransitioning: UIViewControllerAnimatedTransit
         let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
         let buttonAnimator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
         
-//        blurView.effect = UIBlurEffect(style: .systemMaterial)
-        
         animator.addAnimations {
             blurView.frame.origin.y = screenSize.height * 1.0
             
             cardImageShowingCollectionView.frame.origin.y = screenSize.height * 1.0
-//            cardImageShowingCollectionView.alpha = 0
-            
+
             cardImageShowingView.layoutSubviews()
         }
         
@@ -164,17 +112,13 @@ extension CardImageShowingAnimatedTransitioning: UIViewControllerAnimatedTransit
             dismissButton.alpha = 0
         }
         
-        
         animator.addCompletion { _ in
-//            blurView.removeFromSuperview()
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
         
         animator.startAnimation()
         buttonAnimator.startAnimation()
     }
-    
-    
     
 }
 

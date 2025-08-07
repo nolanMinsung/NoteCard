@@ -14,17 +14,12 @@ class PopupCardViewController: UIViewController {
     lazy var memoTextView = popupCardView.memoTextView
     
     let selectedCollectionViewCell: UICollectionViewCell
-//    let selectedTableViewCell: UITableViewCell?
     var selectedIndexPath: IndexPath
     var selectedCellFrame: CGRect
     let cornerRadius: CGFloat
     let isInteractive: Bool
     let memoEntity: MemoEntity
-//    var isMemoEdited: Bool = false
     var isMemoDeleted: Bool = false
-    
-    //강한 순환 참조가 돼버려서 weak var로 선언하려고 했는데, 그러면 또 값을 할당할 때 문제가 생긴다. (변수를 하나 더 만들어야 한다. 그렇게 큰 문제는 아닐 수 있지만 혹시 모를 부작용 조심)
-//    var percentDrivenInteractiveTransition: PercentDrivenInteractiveTransition?
     
     lazy var restoreMemoAction = UIAction(
         title: "카테고리 없는 메모로 복구".localized(),
@@ -58,7 +53,6 @@ class PopupCardViewController: UIViewController {
         }
     )
     
-    
     lazy var presentEditingModeAction = UIAction(
         title: "편집 모드".localized(),
         image: UIImage(systemName: "pencil"),
@@ -73,7 +67,6 @@ class PopupCardViewController: UIViewController {
             self.present(memoEditingNaviCon, animated: true)
         }
     )
-    
     
     lazy var deleteMemoAction = UIAction(
         title: "이 메모 삭제하기".localized(),
@@ -129,12 +122,9 @@ class PopupCardViewController: UIViewController {
         }
     )
     
-    
-    
     init(memo memoEntity: MemoEntity, selectedCollectionViewCell: UICollectionViewCell, indexPath: IndexPath, selectedCellFrame: CGRect, cornerRadius: CGFloat, isInteractive: Bool) {
         self.memoEntity = memoEntity
         self.selectedCollectionViewCell = selectedCollectionViewCell
-//        self.selectedTableViewCell = selectedTableViewCell
         self.selectedIndexPath = indexPath
         self.selectedCellFrame = selectedCellFrame
         self.cornerRadius = cornerRadius
@@ -157,10 +147,6 @@ class PopupCardViewController: UIViewController {
         
         setupObserver()
         setupDelegates()
-//        if self.isInteractive {
-//            self.percentDrivenInteractiveTransition = PercentDrivenInteractiveTransition(viewController: self)
-//        }
-        
         self.popupCardView.configureView(with: self.memoEntity)
         
         if self.memoEntity.isInTrash {
@@ -185,22 +171,9 @@ class PopupCardViewController: UIViewController {
         }
     }
     
-    
-    
     private func setupObserver() {
-//        NotificationCenter.default.addObserver(self, selector: #selector(memoTrashed), name: NSNotification.Name("memoTrashedNotification"), object: nil)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(memoRecoveredToUncategorized), name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil)
     }
-    
-//    @objc private func memoEdited() {
-//        self.isMemoEdited = true
-//    }
-    
-//    @objc private func memoTrashed() {
-//        self.dismiss(animated: true)
-////        self.isMemoDeleted = true
-//    }
     
     @objc private func memoRecoveredToUncategorized() {
         self.dismiss(animated: true)
@@ -214,22 +187,15 @@ class PopupCardViewController: UIViewController {
 }
 
 
-
 extension PopupCardViewController: LargeCardCollectionViewCellDelegate {
     
     func triggerPresentMethod(selectedItemAt indexPath: IndexPath, imageEntitiesArray: [ImageEntity]) {
-//        guard indexPath.section == 0 else { return }
-//        
-//        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageArray: imageArray)
-//        cardImageShowingVC.transitioningDelegate = self
-//        cardImageShowingVC.modalPresentationStyle = .custom
-//        self.present(cardImageShowingVC, animated: true)
+        
     }
     
     func triggerPresentMethod(presented presentedVC: UIViewController, animated: Bool) {
         self.present(presentedVC, animated: true)
     }
-    
     
     func triggerApplyingSnapshot(animatingDifferences: Bool, usingReloadData: Bool, completionForCompositional: (() -> Void)?, completionForFlow: (() -> Void)?) {
         return
@@ -242,7 +208,6 @@ extension PopupCardViewController: LargeCardCollectionViewCellDelegate {
 }
 
 
-
 extension PopupCardViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -253,58 +218,14 @@ extension PopupCardViewController: UICollectionViewDelegate {
         
         self.present(cardImageShowingVC, animated: true)
     }
+    
 }
-
-
 
 
 extension PopupCardViewController: UIViewControllerTransitioningDelegate {
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        print(#function)
-//        if presented is CardImageShowingViewController {
-            return CardImageShowingPresentationController(presentedViewController: presented, presenting: presenting)
-//        } else if presented is PopupCardViewController {
-//            return PopupCardPresentationController(presentedViewController: presented, presenting: presenting, blurBrightness: UIBlurEffect.Style.extraLight)
-//        } else {
-//            return nil
-//        }
+        return CardImageShowingPresentationController(presentedViewController: presented, presenting: presenting)
     }
-    
-//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        print(#function)
-////        return CardImageShowingAnimatedTransitioning(animationType: AnimationType.present)
-//        
-////        if presented is PopupCardViewController {
-////            return HomeViewPopupCardAnimatedTransitioning(animationType: AnimationType.present)
-////        } else {
-////            return nil
-////        }
-//    }
-    
-    
-//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        print(#function)
-////        return CardImageShowingAnimatedTransitioning(animationType: .dismiss)
-//        
-////        if dismissed is CardImageShowingViewController {
-////            guard let cardImageShowingVC = dismissed as? CardImageShowingViewController else { return nil }
-////            let animatedTransition = CardImageShowingDismissalAnimatedTransitioning(interactionController: cardImageShowingVC.interactionController)
-////            return animatedTransition
-////            
-////        } else if dismissed is PopupCardViewController {
-////            return HomeViewPopupCardAnimatedTransitioning(animationType: AnimationType.dismiss)
-////        } else {
-////            return nil
-////        }
-//    }
-    
-    
-//    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-//        guard let animationController = animator as? CardImageShowingDismissalAnimatedTransitioning else { return nil }
-//        guard let interactionController = animationController.interactionController as? CardImageShowingInteractionController else { return nil }
-//        guard interactionController.interactionInProgress else { return nil }
-//        return interactionController
-//    }
     
 }

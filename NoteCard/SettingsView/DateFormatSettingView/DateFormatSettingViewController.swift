@@ -18,7 +18,6 @@ final class DateFormatSettingViewController: UIViewController {
         "d/M/yyyy (EEE)"
     ]
     
-    
     lazy var dateFormatSettingView = self.view as! DateFormatSettingView
     lazy var dateFormatSettingTableView = self.dateFormatSettingView.dateFormatSettingTableView
     
@@ -26,20 +25,11 @@ final class DateFormatSettingViewController: UIViewController {
         self.view = DateFormatSettingView()
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupDelegates()
         setupNaviBar()
-    }
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-//        guard let dateFormat = UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue) else { fatalError() }
-//        guard let indexRowToSelect = self.dateFormatsArray.firstIndex(where: { $0 == dateFormat }) else { fatalError() }
-//        self.dateFormatSettingTableView.selectRow(at: IndexPath(row: indexRowToSelect, section: 0), animated: false, scrollPosition: .none)
     }
     
     private func setupDelegates() {
@@ -53,9 +43,7 @@ final class DateFormatSettingViewController: UIViewController {
         self.navigationController?.navigationBar.tintColor = .currentTheme
     }
     
-    
 }
-
 
 
 extension DateFormatSettingViewController: UITableViewDataSource {

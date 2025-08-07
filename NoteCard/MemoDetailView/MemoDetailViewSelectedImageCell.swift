@@ -9,7 +9,6 @@ import UIKit
 
 class MemoDetailViewSelectedImageCell: UICollectionViewCell {
     
-    
     static var cellID: String {
         return String(describing: self)
     }
@@ -21,8 +20,6 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
     let selectedImageView: UIImageView = {
         let view = UIImageView()
         view.contentMode = UIImageView.ContentMode.scaleAspectFill
-        //view.clipsToBounds = true
-        //view.layer.cornerRadius = 10
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -32,7 +29,6 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         
         button.setImage(UIImage(systemName: "xmark")?.withTintColor(.systemRed, renderingMode: UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)
         button.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
-//        button.tintColor = .darkGray
         button.contentMode = .scaleAspectFit
         button.backgroundColor  = .detailViewDeleteImageButton
         button.clipsToBounds = true
@@ -67,9 +63,6 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         return super.hitTest(point, with: event)
     }
     
-    
-    
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -80,15 +73,11 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         
     }
     
-    
-    
-    
     func configureCell(with imageEntity: ImageEntity) {
         self.imageEntity = imageEntity
         let thumbnailImageToShow = self.imageEntityManager.getThumbnailImage(imageEntity: imageEntity)
         self.selectedImageView.image = thumbnailImageToShow
     }
-    
     
     private func setupButtonsAction() {
         self.deleteImageButton.addTarget(self, action: #selector(deleteImageButtonTapped), for: UIControl.Event.touchUpInside)
@@ -123,7 +112,6 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         self.deleteImageButton.widthAnchor.constraint(equalToConstant: CGSizeConstant.detailViewThumbnailSize.width * self.deleteButtonProportion).isActive = true
         self.deleteImageButton.heightAnchor.constraint(equalToConstant: CGSizeConstant.detailViewThumbnailSize.width * self.deleteButtonProportion).isActive = true
     }
-    
     
     override func dragStateDidChange(_ dragState: UICollectionViewCell.DragState) {
         switch dragState {

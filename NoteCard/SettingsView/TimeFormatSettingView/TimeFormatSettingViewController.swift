@@ -18,19 +18,16 @@ final class TimeFormatSettingViewController: UIViewController {
         self.view = TimeFormatSettingView()
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDelegates()
         setupNaviBar()
     }
     
-    
     private func setupDelegates() {
         self.timeFormatSettingTableView.dataSource = self
         self.timeFormatSettingTableView.delegate = self
     }
-    
     
     private func setupNaviBar() {
         self.title = "시간 표시 형식".localized()
@@ -38,9 +35,7 @@ final class TimeFormatSettingViewController: UIViewController {
         self.navigationController?.navigationBar.tintColor = .currentTheme
     }
     
-    
 }
-
 
 
 extension TimeFormatSettingViewController: UITableViewDataSource {
@@ -52,7 +47,6 @@ extension TimeFormatSettingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TimeFormatSettingTableViewCell.cellID, for: indexPath) as? TimeFormatSettingTableViewCell else { fatalError("cell dequeuing failed!") }
-//        cell.label.text = self.dataSource[indexPath.row]
         cell.configureCell(image: UIImage(systemName: "clock"), text: self.dataSource[indexPath.row])
         return cell
     }

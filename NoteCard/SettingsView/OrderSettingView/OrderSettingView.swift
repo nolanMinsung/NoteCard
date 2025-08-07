@@ -9,7 +9,6 @@ import UIKit
 
 final class OrderSettingView: UIView {
     
-    
     let orderSettingTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: UITableView.Style.insetGrouped)
         tableView.register(OrderSettingTableViewCell.self, forCellReuseIdentifier: OrderSettingTableViewCell.cellID)
@@ -17,7 +16,6 @@ final class OrderSettingView: UIView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,12 +27,10 @@ final class OrderSettingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     private func setupUI() {
         self.backgroundColor = .systemGray6
         self.addSubview(self.orderSettingTableView)
     }
-    
     
     private func setupConstraints() {
         self.orderSettingTableView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
@@ -42,7 +38,6 @@ final class OrderSettingView: UIView {
         self.orderSettingTableView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
         self.orderSettingTableView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
     }
-    
     
 }
 

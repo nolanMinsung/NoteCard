@@ -102,12 +102,10 @@ class CreateCategoryViewController: UIViewController {
         
     }
     
-    
     //category생성을 취소했을 때
     @objc private func dismissVC() {
         self.dismiss(animated: true)
     }
-    
     
 }
 
@@ -118,7 +116,6 @@ extension CreateCategoryViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
         return false
     }
-    
     
 }
 

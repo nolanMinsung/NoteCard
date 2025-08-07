@@ -618,32 +618,6 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    
-//    private func shiftUpCell() {
-//        print(self.frame)
-//        guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
-//        guard let largeCardCollectionView = self.superview as? LargeCardCollectionView else { fatalError() }
-//        
-//        let cellUpperPadding = (self.collectionViewHeight - screenSize.height * 0.6) / 2
-//        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
-//        animator.addAnimations { [weak self] in
-//            guard let self else { fatalError() }
-//            
-//            //self.frame.origin.y의 기본값은 cellUpperPadding. 위로 shift하고 싶은 만큼 cellUpperPadding에서 빼 준다.
-//            //self.frame.origin.y = cellUpperPadding - self.keyboardFrame.height + self.cellLowerPadding
-////            self.bounds.origin.y = self.keyboardFrame.height - cellUpperPadding
-//            self.frame.origin.y = -largeCardCollectionView.frame.origin.y + UIWindow.current!.safeAreaInsets.top
-//            self.frame.size.height = CGSizeConstant.screenSize.height - UIWindow.current!.safeAreaInsets.top - self.keyboardFrame.height
-//            
-//            self.titleTextField.textColor = .systemGray4
-//            self.heartImageView.tintColor = .systemGray4
-//            self.ellipsisButton.imageView?.tintColor = .systemGray4
-//        }
-//        
-//        animator.startAnimation()
-//    }
-    
-    
     private func shiftDownCell(completion: ((UIViewAnimatingPosition) -> Void)? = nil) {
         
         let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
@@ -653,7 +627,6 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
             guard let self else { fatalError() }
             self.frame.origin.y = cellUpperPadding
             self.frame.size.height = CGSizeConstant.screenSize.height * 0.6
-//            self.bounds.origin.y = 0
             self.titleTextField.textColor = .label
             self.heartImageView.tintColor = .systemRed
             self.ellipsisButton.imageView?.tintColor = .currentTheme
@@ -686,7 +659,6 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         
         self.contentViewHeightConstraint.priority = UILayoutPriority(rawValue: 999)
         self.contentViewHeightConstraint.isActive = true
-//        self.contentView.heightAnchor.constraint(equalToConstant: CGSizeConstant.screenSize.height * 0.6).isActive = true
         
         self.memoDateLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -30).isActive = true
         self.memoDateLabel.bottomAnchor.constraint(equalTo: self.contentView.topAnchor, constant: -8).isActive = true
@@ -720,10 +692,6 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         self.memoTextView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10).isActive = true
         self.memoTextView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10).isActive = true
         self.memoTextView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10).isActive = true
-        
-        //self.labelMemo.topAnchor.constraint(equalTo: self.cardImageAndMemoCollectionView.bottomAnchor, constant: 0).isActive = true
-        //self.labelMemo.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 0).isActive = true
-        //self.labelMemo.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: 0).isActive = true
     }
     
     
@@ -737,9 +705,6 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
     @objc private func keyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { fatalError() }
         self.keyboardFrame = keyboardFrame
-//        if self.memoTextView.isFirstResponder {
-//            self.shiftUpCell()
-//        }
     }
     
     
@@ -882,7 +847,6 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         self.selectedImageCollectionView.reloadData()
     }
     
-    
     func loadImageEntities(of memoEntity: MemoEntity) {
         self.sortedImageEntityArray = ImageEntityManager.shared.getImageEntities(from: memoEntity, inOrderOf: ImageOrderIndexKind.orderIndex)
         
@@ -901,8 +865,6 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         self.memoEntity = nil
@@ -920,12 +882,10 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         self.isEdited = false
     }
     
-    
     @objc private func keyboardHideButtonTapped() {
         self.endEditing(true)
         self.shiftDownCell()
     }
-    
     
     private func findViewController() -> UIViewController? {
         var responder: UIResponder? = self
@@ -938,36 +898,23 @@ class LargeCardCollectionViewCell: UICollectionViewCell {
         return nil
     }
     
-    
 }
 
 
 extension LargeCardCollectionViewCell: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        
         return 1
-        
-//        if collectionView == self.selectedCategoryCollectionView {
-//            return 1
-//        } else {
-//            return 1
-//        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         if collectionView == self.selectedCategoryCollectionView {
             let categoriesArray = self.categoryEntityManager.getCategoryEntities(memo: self.memoEntity, inOrderOf: CategoryProperties.modificationDate, isAscending: false)
             return categoriesArray.count
             
         } else {
-//            if section == 0 {
-                let thumbnailCount = self.thumbnailArray.count
-                return thumbnailCount
-//            } else {
-//                return 1
-//            }
+            let thumbnailCount = self.thumbnailArray.count
+            return thumbnailCount
         }
     }
     
@@ -980,33 +927,13 @@ extension LargeCardCollectionViewCell: UICollectionViewDataSource {
             cell.categoryLabel.text = categoriesArray[indexPath.row].name
             return cell
             
-            //if collectionView == self.cardImageAndMemoCollectionView {
         } else {
-            //            if indexPath.section == 0 {
-            
             let cell = self.selectedImageCollectionView.dequeueReusableCell(withReuseIdentifier: MemoImageCollectionViewCell.cellID, for: indexPath) as! MemoImageCollectionViewCell
             cell.imageView.image = self.thumbnailArray[indexPath.row]
             
             return cell
-            
-            //            // else if indexPath.section == 1 {
-            //            } else {
-            //                let cell = self.cardImageAndMemoCollectionView.dequeueReusableCell(withReuseIdentifier: MemoCompositionalTextCell.cellID, for: indexPath) as! MemoCompositionalTextCell
-            //                //cell.textView.text = self.memoEntity?.memoText
-            //                if let memoText = self.memoEntity?.memoText {
-            //                    cell.textView.setLineSpace(with: memoText, lineSpace: 4.5, font: UIFont.systemFont(ofSize: 13.5))
-            //                }
-            ////                if memoEntity?.images?.count == 0 {
-            ////                    cell.textView.isScrollEnabled = true
-            ////                }
-            //
-            //                return cell
-            //            }
-            
         }
     }
-    
-    
     
 }
 
@@ -1030,8 +957,6 @@ extension LargeCardCollectionViewCell: UITextFieldDelegate {
 }
 
 
-
-
 extension LargeCardCollectionViewCell: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
@@ -1039,14 +964,12 @@ extension LargeCardCollectionViewCell: UITextViewDelegate {
         self.isEdited = true
     }
     
-    
     //왠지 모르겠는데 textView의 editing이 끝나도 이 메서드 호출되지 않는다...
     func textViewDidEndEditing(_ textView: UITextView) {
         print(#function)
     }
     
 }
-
 
 
 extension LargeCardCollectionViewCell: UICollectionViewDelegate {

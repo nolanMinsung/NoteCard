@@ -39,18 +39,6 @@ class SettingsViewController: UITableViewController {
         return tableView
     }()
     
-    
-    
-    
-//    lazy var settingsView = self.view as! SettingsView
-//    lazy var settingsTableView = self.settingsView.settingsTableView
-    
-    
-//    override func loadView() {
-//        self.view = SettingsView()
-//    }
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -59,32 +47,22 @@ class SettingsViewController: UITableViewController {
         setupDelegates()
     }
     
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
     }
     
-    
     override func willMove(toParent parent: UIViewController?) {
         print(#function)
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        self.settingsTableView.scrollToRow(at: IndexPath(row: 2, section: 2), at: UITableView.ScrollPosition.top, animated: true)
-//    }
-    
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         self.tableView.reloadRows(at: [IndexPath(row: 3, section: 0)], with: UITableView.RowAnimation.none)
     }
     
-    
     private func setupUI() {
         self.tableView = self.settingsTableView
     }
-    
-    
     
     private func setupNaviBar() {
         
@@ -93,14 +71,12 @@ class SettingsViewController: UITableViewController {
         let standardAppearance: UINavigationBarAppearance = {
             let appearance = UINavigationBarAppearance()
             appearance.configureWithDefaultBackground()
-//            appearance.backgroundColor = .systemGray6
             return appearance
         }()
         
         let scrollEdgeAppearance: UINavigationBarAppearance = {
             let appearance = UINavigationBarAppearance()
             appearance.configureWithTransparentBackground()
-//            appearance.backgroundColor = .systemGray6
             return appearance
         }()
         
@@ -114,7 +90,6 @@ class SettingsViewController: UITableViewController {
         self.settingsTableView.dataSource = self
         self.settingsTableView.delegate = self
     }
-    
     
 }
 
@@ -130,7 +105,6 @@ extension SettingsViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.cellID, for: indexPath) as? SettingsTableViewCell else { fatalError() }
-        
         
         switch indexPath {
         case IndexPath(row: 0, section: 0):
@@ -162,8 +136,6 @@ extension SettingsViewController {
                 
             }
             
-            
-            
             cell.configureCell(image: UIImage(systemName: "paintpalette")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal),
                                text: self.settingTitles[indexPath.section][indexPath.row],
                                secondaryText: secondaryText,
@@ -172,10 +144,6 @@ extension SettingsViewController {
             
         case IndexPath(row: 1, section: 0):
             let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
-//            cell.configureCell(
-//                withName: self.settingTitles[indexPath.section][indexPath.row],
-//                type: .pushing,
-//                currentState: isTimeFormat24 ? "24시간제".localized() : "12시간제".localized())
             cell.configureCell(image: UIImage(systemName: "clock"), 
                                text: self.settingTitles[indexPath.section][indexPath.row],
                                secondaryText: isTimeFormat24 ? "24시간제".localized() : "12시간제".localized(),
@@ -204,46 +172,24 @@ extension SettingsViewController {
                 currentState2 = "SettingsVC/내림차순".localized()
             }
             
-//            cell.configureCell(
-//                withName: self.settingTitles[indexPath.section][indexPath.row],
-//                type: .pushing,
-//                currentState: "\(currentState1) / \(currentState2)")
-            
             cell.configureCell(image: UIImage(systemName: "arrow.up.arrow.down.square"),
                                text: self.settingTitles[indexPath.section][indexPath.row],
                                secondaryText: "\(currentState1) / \(currentState2)",
                                accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
             )
             
-//        case IndexPath(row: 4, section: 0):
-//            cell.configureCell(withName: self.settingTitles[indexPath.section][indexPath.row], type: .pushing)
-            
-            
         case IndexPath(row: 3, section: 0):
             guard let darkModeTheme =
                     UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) else { fatalError()}
             switch darkModeTheme {
             case DarkModeTheme.light.rawValue:
-//                cell.configureCell(
-//                    withName: self.settingTitles[indexPath.section][indexPath.row],
-//                    type: SettingsTableViewCell.SettingsTableViewCellType.pushing,
-//                    currentState: "라이트 모드".localized()
-//                )
-                
                 cell.configureCell(image: UIImage(named: "darkModeSymbol"),
                                    text: self.settingTitles[indexPath.section][indexPath.row],
                                    secondaryText: "라이트 모드".localized(),
                                    accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
                 )
                 
-                
             case DarkModeTheme.dark.rawValue:
-//                cell.configureCell(
-//                    withName: self.settingTitles[indexPath.section][indexPath.row],
-//                    type: SettingsTableViewCell.SettingsTableViewCellType.pushing,
-//                    currentState: "다크 모드".localized()
-//                )
-                
                 cell.configureCell(image: UIImage(named: "darkModeSymbol"),
                                    text: self.settingTitles[indexPath.section][indexPath.row],
                                    secondaryText: "다크 모드".localized(),
@@ -251,11 +197,6 @@ extension SettingsViewController {
                 )
                 
             case DarkModeTheme.systemTheme.rawValue:
-//                cell.configureCell(
-//                    withName: self.settingTitles[indexPath.section][indexPath.row],
-//                    type: SettingsTableViewCell.SettingsTableViewCellType.pushing,
-//                    currentState: "시스템 모드".localized()
-//                )
                 let configuration = UIImage.SymbolConfiguration(weight: UIImage.SymbolWeight.regular)
                 
                 cell.configureCell(image: UIImage(named: "darkModeSymbol", in: nil, with: configuration),
@@ -271,10 +212,6 @@ extension SettingsViewController {
             
         case IndexPath(row: 0, section: 1):
             let totalNumberOfMemo = MemoEntityManager.shared.getMemoEntitiesFromCoreData().count
-//            cell.configureCell(
-//                withName: self.settingTitles[indexPath.section][indexPath.row],
-//                type: .none,
-//                currentState: "\(totalNumberOfMemo)")
             
             cell.configureCell(image: UIImage(systemName: "rectangle.portrait.on.rectangle.portrait"),
                                text: self.settingTitles[indexPath.section][indexPath.row],
@@ -285,11 +222,6 @@ extension SettingsViewController {
             
         case IndexPath(row: 1, section: 1):
             let totalNumberOfCategory = CategoryEntityManager.shared.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false).count
-//            cell.configureCell(
-//                withName: self.settingTitles[indexPath.section][indexPath.row],
-//                type: .none,
-//                currentState: "\(totalNumberOfCategory)")
-            
             cell.configureCell(image: UIImage(systemName: "circlebadge.2"),
                                text: self.settingTitles[indexPath.section][indexPath.row],
                                secondaryText: "\(totalNumberOfCategory)",
@@ -299,11 +231,6 @@ extension SettingsViewController {
             
         case IndexPath(row: 2, section: 1):
             let numberOfMemoesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash().count
-//            cell.configureCell(
-//                withName: self.settingTitles[indexPath.section][indexPath.row],
-//                type: .pushing,
-//                currentState: "\(numberOfMemoesInTrash)")
-            
             cell.configureCell(image: UIImage(systemName: "trash")?.withTintColor(.systemGray).withRenderingMode(UIImage.RenderingMode.alwaysOriginal),
                                text: self.settingTitles[indexPath.section][indexPath.row],
                                secondaryText: "\(numberOfMemoesInTrash)",
@@ -312,14 +239,6 @@ extension SettingsViewController {
             
         case IndexPath(row: 3, section: 1):
             let numberOfMemoesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash().count
-//            cell.configureCell(
-//                withName: self.settingTitles[indexPath.section][indexPath.row],
-//                type: .button)
-//            if numberOfMemoesInTrash == 0 {
-//                cell.nameLabel.textColor = .lightGray
-//            } else {
-//                cell.nameLabel.textColor = .currentTheme
-//            }
             
             cell.configureCell(text: self.settingTitles[indexPath.section][indexPath.row],
                                textColor: numberOfMemoesInTrash == 0 ? .lightGray : .currentTheme,
@@ -332,9 +251,6 @@ extension SettingsViewController {
             guard let currentAppVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else { fatalError() }
             guard let currentBuildVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String else { fatalError() }
             guard let currentBundleIdentifier = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String else { fatalError() }
-            
-            
-//            cell.configureCell(withName: self.settingTitles[indexPath.section][indexPath.row], type: .none, currentState: currentAppVersion)
             
             cell.configureCell(text: self.settingTitles[indexPath.section][indexPath.row],
                                secondaryText: currentAppVersion,
@@ -351,11 +267,8 @@ extension SettingsViewController {
             fatalError()
         }
         
-        
-        
         return cell
     }
-    
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == 1 {
@@ -365,11 +278,7 @@ extension SettingsViewController {
         }
     }
     
-    
 }
-
-
-
 
 
 extension SettingsViewController {
@@ -384,7 +293,6 @@ extension SettingsViewController {
             return indexPath
         }
     }
-    
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(self.settingTitles[indexPath.section][indexPath.row])
@@ -429,23 +337,6 @@ extension SettingsViewController {
             alertCon.addAction(deleteAction)
             alertCon.addAction(cancelAction)
             self.present(alertCon, animated: true)
-            
-//        case IndexPath(row: 0, section: 2):
-//            let copiedMemoDetailVC = UIViewController()
-//            copiedMemoDetailVC.view = MemoDetailViewCopied()
-//            copiedMemoDetailVC.title = "테스트"
-//            
-//            let standardAppearance: UINavigationBarAppearance = {
-//                let appearance = UINavigationBarAppearance()
-//                appearance.configureWithDefaultBackground()
-//                return appearance
-//            }()
-//            
-//            copiedMemoDetailVC.navigationItem.largeTitleDisplayMode = .never
-//            copiedMemoDetailVC.navigationController?.navigationBar.standardAppearance = standardAppearance
-//            
-//            let copiedMemoDetailNaviCon = UINavigationController(rootViewController: copiedMemoDetailVC)
-//            self.tabBarController?.present(copiedMemoDetailNaviCon, animated: true)
             
         default:
             return

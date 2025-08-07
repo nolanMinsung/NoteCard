@@ -9,7 +9,6 @@ import UIKit
 
 final class TextSizeSettingView: UIView {
     
-    
     let label: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
@@ -28,7 +27,6 @@ final class TextSizeSettingView: UIView {
         return slider
     }()
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -37,23 +35,20 @@ final class TextSizeSettingView: UIView {
         setupConstraints()
         setupTargetActions()
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
     private func setupUI() {
         self.backgroundColor = .systemGray6
         self.label.text = "\(self.textSizeSlider.value.rounded())"
     }
     
-    
     private func configureHierarchy() {
         self.addSubview(self.label)
         self.addSubview(self.textSizeSlider)
     }
-    
     
     private func setupConstraints() {
         
@@ -65,7 +60,6 @@ final class TextSizeSettingView: UIView {
         self.textSizeSlider.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -30).isActive = true
         self.textSizeSlider.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -50).isActive = true
     }
-    
     
     private func setupTargetActions() {
         self.textSizeSlider.addTarget(self, action: #selector(sliderThumbMoved), for: UIControl.Event.touchDragInside)

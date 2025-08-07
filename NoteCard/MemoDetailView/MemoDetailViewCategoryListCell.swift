@@ -51,7 +51,6 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         }
     }
     
-    
     let label: UILabel = {
         
         let detailViewCategoryCellLabelColor = UIColor { traitCollection in
@@ -73,7 +72,6 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         return label
     }()
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -82,31 +80,23 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         setupConstraints()
     }
     
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         self.sizeToFit()
         self.contentView.layer.borderColor = UIColor.currentTheme.cgColor
     }
     
-    
     override func prepareForReuse() {
         super.prepareForReuse()
-//        if self.isSelected {
-//            self.contentView.backgroundColor = .systemGray5
-//            self.label.alpha = 1
-//        }
         
         self.label.textColor = self.deselectedTextColor
         self.label.alpha = 0.5
         self.contentView.layer.borderWidth = 0
     }
     
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     private func setupUI() {
         self.contentView.clipsToBounds = true
@@ -117,16 +107,11 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         self.contentView.layer.borderColor = UIColor.currentTheme.cgColor
     }
     
-    
     private func configureHierarchy() {
         self.contentView.addSubview(self.label)
     }
     
-    
     private func setupConstraints() {
-//        self.label.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: 0).isActive = true
-//        self.label.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 0).isActive = true
-        
         self.label.widthAnchor.constraint(lessThanOrEqualToConstant: 220).isActive = true
         
         self.label.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 5).isActive = true

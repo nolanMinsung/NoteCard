@@ -16,20 +16,6 @@ final class InsetTextField: UITextField {
         }
     }
     
-    
-    //let categoryNameTextField: UITextField = {
-    //    let textField = UITextField()
-    //    textField.placeholder = "카테고리 이름 입력"
-    //    textField.borderStyle = UITextField.BorderStyle.none
-    //    textField.clipsToBounds = true
-    //    textField.layer.cornerRadius = 10
-    //    textField.backgroundColor = UIColor.white
-    //    텍스트필드 글자의 왼쪽에 Inset 주기!!!
-    //    textField.translatesAutoresizingMaskIntoConstraints = false
-    //    return textField
-    //}()
-    
-    
     init(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) {
         self.textInsets = UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
         super.init(frame: CGRect.zero)
@@ -38,8 +24,6 @@ final class InsetTextField: UITextField {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.inset(by: self.textInsets)
@@ -52,7 +36,6 @@ final class InsetTextField: UITextField {
     override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.inset(by: self.textInsets)
     }
-    
     
 }
 

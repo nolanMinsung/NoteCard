@@ -36,11 +36,6 @@ final class DarkModeSettingTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-    
-    
     private func setupCellStyle() {
         self.selectionStyle = .none
     }
@@ -52,8 +47,6 @@ final class DarkModeSettingTableViewCell: UITableViewCell {
         defaultContentConfig.text = text
         defaultContentConfig.secondaryText = secondaryText
         defaultContentConfig.textProperties.color = textColor
-//        defaultContentConfig.imageProperties.tintColor = .label
-//        defaultContentConfig.imageProperties.tintColor = .currentTheme.withAlphaComponent(0.7)
         
         switch userInterfaceStyle {
         case .light:

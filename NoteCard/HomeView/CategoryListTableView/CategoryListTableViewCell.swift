@@ -54,11 +54,9 @@ class CategoryListTableViewCell: UITableViewCell {
         heightConstraint.priority = UILayoutPriority(751)
         heightConstraint.isActive = true
         
-//        self.categoryNameLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10).isActive = true
         self.categoryNameLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20).isActive = true
         self.categoryNameLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 0).isActive = true
         self.categoryNameLabel.trailingAnchor.constraint(equalTo: self.memoCountLabel.leadingAnchor, constant: -10).isActive = true
-//        self.categoryNameLabel.setContentHuggingPriority(UILayoutPriority(750), for: NSLayoutConstraint.Axis.horizontal)
         
         self.memoCountLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 0).isActive = true
         self.memoCountLabel.leadingAnchor.constraint(equalTo: self.categoryNameLabel.trailingAnchor, constant: 10).isActive = true
@@ -73,6 +71,5 @@ class CategoryListTableViewCell: UITableViewCell {
         self.memoCountLabel.text = String(self.categoryEntityManager.memoCounted(of: category))
     }
     
-
 }
 

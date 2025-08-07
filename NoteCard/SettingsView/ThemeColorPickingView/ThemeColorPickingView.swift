@@ -25,11 +25,10 @@ final class ThemeColorPickingView: UIView {
         setupUI()
         setupConstraints()
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
     private func setupUI() {
         self.backgroundColor = .systemBackground

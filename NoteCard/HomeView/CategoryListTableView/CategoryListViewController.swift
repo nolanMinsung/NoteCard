@@ -18,7 +18,6 @@ enum CategoryListTableViewSection: CaseIterable {
     case main
 }
 
-//class CategoryListViewController: UIViewController {
 class CategoryListViewController: UITableViewController {
     
     let categoryEntityManager = CategoryEntityManager.shared
@@ -42,15 +41,6 @@ class CategoryListViewController: UITableViewController {
     var categoryNameChangingTextField: UITextField!
     var saveAction: UIAlertAction!
     
-//    lazy var categoryListView = self.view as! CategoryListView
-//    lazy var categoryListTableView = self.categoryListView.categoryListTableView
-    
-//    override func loadView() {
-//        self.view = CategoryListView()
-//    }
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -61,9 +51,7 @@ class CategoryListViewController: UITableViewController {
         setupDelegates()
         setupObserver()
         applySnapshot(animatingDifferences: false, usingReloadData: true)
-//        setupTextField()
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         print(#function)
@@ -75,7 +63,6 @@ class CategoryListViewController: UITableViewController {
             return appearance
         }()
     }
-    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -89,18 +76,13 @@ class CategoryListViewController: UITableViewController {
         
     }
     
-    
-    
     private func setupTableView() {
         self.tableView = {
             let tableView = UITableView(frame: .zero, style: UITableView.Style.insetGrouped)
-//            tableView.contentInset.top = -30
             tableView.register(CategoryListTableViewCell.self, forCellReuseIdentifier: CategoryListTableViewCell.cellID)
             return tableView
         }()
     }
-    
-    
     
     private func setupDiffableDataSource() {
         self.categoryDiffableDataSource = CategoryListTableViewDiffableDataSource(tableView: self.tableView, cellProvider: { tableView, indexPath, categoryEntity in
@@ -111,9 +93,7 @@ class CategoryListViewController: UITableViewController {
         })
     }
     
-    
     func applySnapshot(animatingDifferences: Bool, usingReloadData: Bool, completion: (() -> Void)? = nil) {
-        
         let categoryList = self.categoryManager.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
         
         var snapshot = NSDiffableDataSourceSnapshot<CategoryListTableViewSection, CategoryEntity>()
@@ -126,9 +106,7 @@ class CategoryListViewController: UITableViewController {
         case false:
             self.categoryDiffableDataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: completion)
         }
-        
     }
-    
     
     private func applySnapshot(searchWith searchText: String, animatingDifferences: Bool, usingReloadData: Bool, completion: (() -> Void)? = nil) {
         let searchedCategoriesArray = self.categoryManager.searchCategoryEntity(with: searchText, order: CategoryProperties.modificationDate, ascending: false)
@@ -143,9 +121,7 @@ class CategoryListViewController: UITableViewController {
         case false:
             self.categoryDiffableDataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: completion)
         }
-        
     }
-    
     
     private func setupNaviBar() {
         print(#function)
@@ -153,7 +129,6 @@ class CategoryListViewController: UITableViewController {
         
         self.navigationItem.searchController = self.searchController
         self.navigationItem.hidesSearchBarWhenScrolling = true
-//        self.navigationItem.rightBarButtonItems = [addCategoryBarButtonItem, searchCategoryBarButtonItem]
         self.navigationItem.setRightBarButtonItems([addCategoryBarButtonItem, searchCategoryBarButtonItem], animated: false)
         self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
         self.navigationController?.navigationBar.standardAppearance = {
@@ -163,14 +138,7 @@ class CategoryListViewController: UITableViewController {
         }()
         
         self.navigationItem.largeTitleDisplayMode = .never
-//        self.navigationController?.navigationBar.scrollEdgeAppearance = {
-//            let appearance = UINavigationBarAppearance()
-//            appearance.configureWithTransparentBackground()
-//            return appearance
-//        }()
-        
     }
-    
     
     private func setupButtonsAction() {
         self.addCategoryBarButtonItem.target = self
@@ -187,7 +155,6 @@ class CategoryListViewController: UITableViewController {
     }
     
     @objc private func showSearchBar() {
-//        self.navigationItem.searchController = self.searchController
         DispatchQueue.main.async {
             self.searchController.searchBar.becomeFirstResponder()
         }
@@ -198,23 +165,13 @@ class CategoryListViewController: UITableViewController {
         self.searchController.searchBar.delegate = self
     }
     
-    
     private func setupObserver() {
-//        NotificationCenter.default.addObserver(forName: NSNotification.Name("didCreateNewCategoryNotification"), object: nil, queue: nil) { [weak self] notification in
-//            guard let self else { fatalError() }
-//            self.applySnapshot(animatingDifferences: true, usingReloadData: false)
-//        }
-        
         NotificationCenter.default.addObserver(self, selector: #selector(categoryCreated), name: NSNotification.Name("didCreateNewCategoryNotification"), object: nil)
-        
-        
     }
-    
     
     @objc private func categoryCreated() {
         self.applySnapshot(animatingDifferences: true, usingReloadData: false)
     }
-    
     
     private func makeAlert(title: String, message: String, answer: String, preferredStyle: UIAlertController.Style? = .alert, handler: ((UIAlertAction) -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: preferredStyle!)
@@ -222,11 +179,6 @@ class CategoryListViewController: UITableViewController {
         alert.addAction(okAction)
         self.present(alert, animated: true)
     }
-    
-    
-//    private func setupTextField() {
-//        categoryNameChangingTextField.addTarget(self, action: #selector(toggleSaveAction), for: UIControl.Event.editingChanged)
-//    }
     
     @objc private func toggleSaveAction() {
         if self.categoryNameChangingTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
@@ -356,7 +308,6 @@ extension CategoryListViewController {
         return swipeActionsConfiguration
     }
     
-    
 //    UITableViewController 되면서 override 함
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -370,11 +321,7 @@ extension CategoryListViewController {
         
     }
     
-    
-    
 }
-
-
 
 extension CategoryListViewController: UISearchBarDelegate {
     
@@ -395,17 +342,4 @@ extension CategoryListViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.applySnapshot(animatingDifferences: true, usingReloadData: false)
     }
-}
-
-
-extension CategoryListViewController: UISearchControllerDelegate {
-    
-    func didDismissSearchController(_ searchController: UISearchController) {
-        print(#function)
-    }
-    
-    func presentSearchController(_ searchController: UISearchController) {
-        print(#function)
-    }
-    
 }
