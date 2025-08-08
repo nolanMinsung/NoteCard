@@ -166,7 +166,7 @@ class PopupCardViewController: UIViewController {
     
     private func setupDelegates() {
         self.popupCardView.delegate = self
-        self.selectedImageCollectionView.delegate = self
+        self.selectedImageCollectionView?.delegate = self
     }
     
 }

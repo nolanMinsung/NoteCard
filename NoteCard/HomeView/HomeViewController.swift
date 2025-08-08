@@ -282,10 +282,8 @@ extension HomeViewController: UICollectionViewDelegate {
                     finalCornerRadius: 37
                 )
                 
-                // 레거시 코드 대응
                 let memoEntity = favoriteMemoArray[indexPath.row]
                 guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
-                let convertedFrame = selectedCell.convert(selectedCell.contentView.frame, to: view)
                 let popupCardViewCotroller = PopupCardViewController(
                     memo: memoEntity,
                     indexPath: indexPath,
@@ -304,15 +302,12 @@ extension HomeViewController: UICollectionViewDelegate {
                 finalCornerRadius: 37
             )
             
-            // 레거시 코드 대응
             let memoEntity = recentMemoArray[indexPath.row]
-            guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
-            let convertedFrame = selectedCell.convert(selectedCell.contentView.frame, to: view)
             let popupCardViewCotroller = PopupCardViewController(
                 memo: memoEntity,
                 indexPath: indexPath,
             )
-            
+//            present(popupCardViewCotroller, animated: true)
             wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
         default:
             fatalError("HomeCollectionView's number of sections is 3")

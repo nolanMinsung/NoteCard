@@ -44,10 +44,7 @@ final class PopupCardView: UIView {
         flowLayout.estimatedItemSize = CGSize(width: 50, height: 25)
         return flowLayout
     }
-    lazy var categoryCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: makeCategoryFlowLayout()
-    )
+    var categoryCollectionView: UICollectionView!
     
     private let makeImageFlowLayout = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -57,10 +54,7 @@ final class PopupCardView: UIView {
         flowLayout.scrollDirection = .horizontal
         return flowLayout
     }
-    lazy var imageCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: makeImageFlowLayout()
-    )
+    var imageCollectionView: UICollectionView!
     
     var memoTextView: UITextView!
     let memoDateLabel = UILabel()
@@ -97,6 +91,9 @@ final class PopupCardView: UIView {
     }
     
     private func setupUI() {
+        categoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCategoryFlowLayout())
+        imageCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeImageFlowLayout())
+        
         backgroundColor = UIColor.memoBackground
         layer.cornerCurve = .continuous
         
@@ -273,10 +270,7 @@ final class PopupCardView: UIView {
         
         selectedImageCollectionViewHeightConstraint.priority = UILayoutPriority(751)
         NSLayoutConstraint.activate([
-            imageCollectionView.topAnchor.constraint(
-                equalTo: categoryCollectionView.bottomAnchor,
-                constant: 0
-            ),
+            imageCollectionView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor, constant: 10),
             imageCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             imageCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             selectedImageCollectionViewHeightConstraint,
@@ -286,7 +280,7 @@ final class PopupCardView: UIView {
             memoTextView.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 10),
             memoTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             memoTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            memoTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -10),
         ])
         
         NSLayoutConstraint.activate([
@@ -294,7 +288,6 @@ final class PopupCardView: UIView {
             memoDateLabel.topAnchor.constraint(equalTo: bottomAnchor, constant: 10),
         ])
     }
-    
     
     private func updateTitleTextField() {
         if self.isTextFieldChanged {
