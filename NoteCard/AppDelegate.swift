@@ -57,6 +57,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             )
         }
         
+        // 테마 색 초기화
+        if UserDefaults.standard.string(forKey: UserDefaultsKeys.themeColor.rawValue) == nil {
+            UserDefaults.standard.set(ThemeColor.black.rawValue, forKey: UserDefaultsKeys.themeColor.rawValue)
+        }
+        
         return true
     }
     
