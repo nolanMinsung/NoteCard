@@ -58,7 +58,7 @@ final class SmallCardCollectionView: WispableCollectionView {
         
         // setting section
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 150, leading: 10, bottom: 10, trailing: 10) // 섹션 여백
+        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10) // 섹션 여백
         
         return section
     }
@@ -74,6 +74,7 @@ final class SmallCardCollectionView: WispableCollectionView {
         backgroundColor = .clear
         register(SmallCardCollectionViewCell.self,forCellWithReuseIdentifier: SmallCardCollectionViewCell.cellID)
         isScrollEnabled = true
+        delaysContentTouches = false
         translatesAutoresizingMaskIntoConstraints = false
     }
     

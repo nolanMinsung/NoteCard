@@ -42,8 +42,6 @@ class MemoViewController: UIViewController {
     var userDefaultCriterion: String? { return UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     lazy var memoView = self.view as! MemoView
-    lazy var largeCardCollectionView = memoView.largeCardCollectionView
-    lazy var segmentControl = memoView.segmentedControl
     lazy var smallCardCollectionView = memoView.smallCardCollectionView
     lazy var categoryNameTextField = memoView.categoryNameTextField
     
@@ -254,16 +252,12 @@ class MemoViewController: UIViewController {
             self.selectedCategoryEntity = selectedCategoryEntity
         case .uncategorized:
             self.memoVCType = .uncategorized
-//            self.selectedCategoryEntity = nil
         case .favorite:
             self.memoVCType = .favorite
-//            self.selectedCategoryEntity = nil
         case .all:
             self.memoVCType = .all
-//            self.selectedCategoryEntity = nil
         case .trash:
             self.memoVCType = .trash
-//            self.selectedCategoryEntity = nil
         }
         
         super.init(nibName: nil, bundle: nil)
@@ -285,7 +279,6 @@ class MemoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupSegmentControl()
         hideBottomBarsWhenPushed()
         setupDelegates()
         setupActions()
@@ -336,50 +329,6 @@ class MemoViewController: UIViewController {
         keyWindow.backgroundColor = .clear
     }
     
-    private func setupSegmentControl() {
-        self.segmentControl.addTarget(self, action: #selector(segmentedControlValueChangedInVC), for: UIControl.Event.valueChanged)
-    }
-    
-    
-    @objc private func segmentedControlValueChangedInVC() {
-        self.updateDataSource()
-        
-        let selectedIndex = self.segmentControl.selectedSegmentIndex
-        
-        if selectedIndex == 0 {
-            self.setEditing(false, animated: true)
-            self.largeCardCollectionView.isHidden = false
-            self.largeCardCollectionView.reloadData()
-            
-            self.smallCardCollectionView.isHidden = true
-            self.smallCardCollectionView.reloadData()
-            
-            if self.memoVCType == .favorite || self.memoVCType == .trash {
-                self.navigationItem.setRightBarButton(nil, animated: true)
-            } else {
-                self.navigationItem.setRightBarButtonItems([self.plusBarButtonItem], animated: true)
-            }
-            
-            self.navigationController?.isToolbarHidden = true
-            
-        } else if selectedIndex == 1 {
-            self.largeCardCollectionView.isHidden = true
-            self.largeCardCollectionView.reloadData()
-            
-            self.smallCardCollectionView.isHidden = false
-            self.smallCardCollectionView.reloadData()
-            
-            
-            if self.memoVCType == .favorite || self.memoVCType == .trash {
-                self.navigationItem.setRightBarButton(self.editButtonItem, animated: true)
-            } else {
-                self.navigationItem.setRightBarButtonItems([self.plusBarButtonItem, self.editButtonItem], animated: true)
-            }
-            
-            self.editButtonItem.title = "선택".localized()
-            self.navigationController?.isToolbarHidden = true
-        }
-    }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
         print(#function, editing)
@@ -555,7 +504,6 @@ class MemoViewController: UIViewController {
             
             self.updateDataSource()
             
-            self.largeCardCollectionView.deleteItems(at: selectedIndexPaths)
             self.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
             
             if self.memoEntitiesArray.count == 0 {
@@ -580,8 +528,6 @@ class MemoViewController: UIViewController {
     }
     
     private func setupDelegates() {
-        self.largeCardCollectionView.dataSource = self
-        self.largeCardCollectionView.delegate = self
         self.smallCardCollectionView.dataSource = self
         self.smallCardCollectionView.delegate = self
         self.categoryNameTextField.delegate = self
@@ -637,13 +583,11 @@ class MemoViewController: UIViewController {
             if isOrderAscending {
                 self.updateDataSource()
 //                self.memoEntitiesArray.append(createdMemoEntity)
-                self.largeCardCollectionView.insertItems(at: [IndexPath(item: self.largeCardCollectionView.numberOfItems(inSection: 0), section: 0)])
                 self.smallCardCollectionView.insertItems(at: [IndexPath(item: self.smallCardCollectionView.numberOfItems(inSection: 0), section: 0)])
             } else {
                 print(self.memoEntitiesArray.count)
                 self.updateDataSource()
 //                self.memoEntitiesArray.insert(createdMemoEntity, at: 0)
-                self.largeCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
                 self.smallCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
             }
             
@@ -652,13 +596,11 @@ class MemoViewController: UIViewController {
                 if isOrderAscending {
                     //                self.updateDataSource()
                     self.memoEntitiesArray.append(createdMemoEntity)
-                    self.largeCardCollectionView.insertItems(at: [IndexPath(item: self.largeCardCollectionView.numberOfItems(inSection: 0), section: 0)])
                     self.smallCardCollectionView.insertItems(at: [IndexPath(item: self.smallCardCollectionView.numberOfItems(inSection: 0), section: 0)])
                 } else {
                     print(self.memoEntitiesArray.count)
                     //                self.updateDataSource()
                     self.memoEntitiesArray.insert(createdMemoEntity, at: 0)
-                    self.largeCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
                     self.smallCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
                 }
             } else {
@@ -671,12 +613,10 @@ class MemoViewController: UIViewController {
         case .all:
             if isOrderAscending {
                 self.memoEntitiesArray.append(createdMemoEntity)
-                self.largeCardCollectionView.insertItems(at: [IndexPath(item: self.largeCardCollectionView.numberOfItems(inSection: 0), section: 0)])
                 self.smallCardCollectionView.insertItems(at: [IndexPath(item: self.smallCardCollectionView.numberOfItems(inSection: 0), section: 0)])
             } else {
                 print(self.memoEntitiesArray.count)
                 self.memoEntitiesArray.insert(createdMemoEntity, at: 0)
-                self.largeCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
                 self.smallCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
             }
             
@@ -692,17 +632,6 @@ class MemoViewController: UIViewController {
         
         if self.memoEntitiesArray.contains(editedMemoEntity) {
             guard let indexToReload = self.memoEntitiesArray.firstIndex(of: editedMemoEntity) else { fatalError() }
-            switch self.segmentControl.selectedSegmentIndex {
-            case 0:
-                //largeCardCollectionViewCell을 reload하면 textView가 맨 위로 올라가게 됨. 그래서
-                self.largeCardCollectionView.reloadItems(at: [IndexPath(item: indexToReload, section: 0)])
-                return
-            case 1:
-                self.smallCardCollectionView.reloadItems(at: [IndexPath(item: indexToReload, section: 0)])
-                
-            default:
-                fatalError()
-            }
             
         } else {
             return
@@ -726,7 +655,6 @@ class MemoViewController: UIViewController {
     private func reloadAll() {
         print(#function)
         self.updateDataSource()
-        self.largeCardCollectionView.reloadData()
         self.smallCardCollectionView.reloadData()
     }
     
@@ -742,18 +670,6 @@ extension MemoViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         switch collectionView {
-        case self.largeCardCollectionView:
-            
-            guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
-            guard let cell = self.largeCardCollectionView.dequeueReusableCell(withReuseIdentifier: LargeCardCollectionViewCell.cellID, for: indexPath) as? LargeCardCollectionViewCell else { fatalError() }
-            
-            let lowerSafeAreaInset = self.view.safeAreaInsets.bottom
-            let cellLowerPadding = lowerSafeAreaInset + (self.largeCardCollectionView.bounds.height - screenSize.height * 0.6) / 2
-            
-            cell.configureCell(memo: self.memoEntitiesArray[indexPath.item], collectionViewHeight: self.largeCardCollectionView.bounds.height, cellLowerPadding: cellLowerPadding)
-            cell.delegate = self
-            return cell
-            
         case self.smallCardCollectionView:
             
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SmallCardCollectionViewCell.cellID, for: indexPath) as? SmallCardCollectionViewCell else {
@@ -761,7 +677,6 @@ extension MemoViewController: UICollectionViewDataSource {
             }
             cell.configureCell(with: self.memoEntitiesArray[indexPath.item])
             cell.cellFrame = cell.frame
-            cell.delegate = self
             
             if self.smallCardCollectionView.isEditing {
                 cell.longPressGestureToSelect.isEnabled = false
@@ -781,35 +696,10 @@ extension MemoViewController: UICollectionViewDataSource {
 }
 
 
+// MARK: - UICollectionViewDelegate
 extension MemoViewController: UICollectionViewDelegate {
     
-    //editing mode 가 아닐 시 셀 선택하면 popupCardView 가 튀어나오는데, 이떄 popupCardView 가 present 되기 직전 셀의 테두리가 생기는 모습이 아주 잠깐 보일 때가 있음.
-    //이러한 현상을 원천적으로 차단하기 위해 didSelectItemAt 이 아닌 shouldSelectItemAt 에서 구현
-    //(셀을 select 하게 되면 테두리가 생기도록 구현했으므로 editing mode 가 아닐 때에는 터치했을 때 popupCardView 를 present는 하되, 엄밀히 말해서 select 한 것은 아니기에
-    //테두리가 생기지는 않는다.
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        print(#function)
-        guard collectionView == self.smallCardCollectionView else { return false }
-        switch self.smallCardCollectionView.isEditing {
-        case true:
-            print("self.smallCardCollectionView.isEditing: ", self.smallCardCollectionView.isEditing)
-            return true
-            
-        case false:
-            print("self.smallCardCollectionView.isEditing: ", self.smallCardCollectionView.isEditing)
-            guard let selectedCell = collectionView.cellForItem(at: indexPath) as? SmallCardCollectionViewCell else { return false }
-            guard let selectedMemoEntity = selectedCell.memoEntity else { return false }
-            let convertedRect = selectedCell.convert(selectedCell.contentView.frame, to: self.view)
-            let popupCardVC = PopupCardViewController(memo: selectedMemoEntity, indexPath: indexPath)
-            
-            wisp.present(popupCardVC, collectionView: memoView.smallCardCollectionView, at: indexPath)
-            return false
-        }
-    }
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(#function)
-        guard collectionView == self.smallCardCollectionView else { return }
         switch self.smallCardCollectionView.isEditing {
         case true:
             self.deleteBarButtonItem.isEnabled = true
@@ -817,7 +707,23 @@ extension MemoViewController: UICollectionViewDelegate {
             self.setupToolbar(animated: false)
             
         case false:
-            return
+            let popupCardTopInset = navigationController?.view.safeAreaInsets.top ?? 0
+            
+            let wispConfiguration = WispConfiguration { config in
+                config.setLayout { layout in
+                    layout.presentedAreaInset = .init(top: popupCardTopInset, left: 0, bottom: 0, right: 0)
+                    layout.initialCornerRadius = 13
+                    layout.finalCornerRadius = 25
+                }
+                config.setGesture { gesture in
+                    gesture.allowedDirections = [.horizontalOnly, .down]
+                }
+            }
+            
+            let memoEntity = memoEntitiesArray[indexPath.item]
+            let popupCardVC = PopupCardViewController(memo: memoEntity, indexPath: .init(item: 0, section: 0))
+            wisp.present(popupCardVC, collectionView: smallCardCollectionView, at: indexPath, configuration: wispConfiguration)
+            
         }
     }
 
@@ -831,58 +737,6 @@ extension MemoViewController: UICollectionViewDelegate {
             self.deleteBarButtonItem.isEnabled = true
             self.ellipsisBarButtonItem.isEnabled = true
         }
-    }
-    
-}
-
-
-//셀 안의 셀을 선택했을 때 present하면서 원본 image정보를 건네줘야한다. + present 메서드는  view controller에서 호출해야 한다.
-//-> 델리게이트패턴 사용
-extension MemoViewController: LargeCardCollectionViewCellDelegate {
-    
-    func triggerPresentMethod(selectedItemAt indexPath: IndexPath, imageEntitiesArray: [ImageEntity]) {
-        
-        guard indexPath.section == 0 else { return }
-        
-        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: imageEntitiesArray)
-        cardImageShowingVC.modalPresentationStyle = .custom
-        self.present(cardImageShowingVC, animated: true)
-    }
-    
-    
-    func triggerPresentMethod(presented presentedVC: UIViewController, animated: Bool) {
-        
-        if let popupCardVC = presentedVC as? PopupCardViewController {
-            let selectedIndexPath = popupCardVC.selectedIndexPath
-            let popupCardTopInset = navigationController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
-            let wispConfiguration = WispConfiguration(
-//                presentedAreaInset: .init(top: 100, left: 10, bottom: 100, right: 10),
-                presentedAreaInset: .init(top: popupCardTopInset, left: 0, bottom: 0, right: 0),
-                initialCornerRadius: 13,
-                finalCornerRadius: 25,
-            )
-            wisp.present(
-                popupCardVC,
-                collectionView: memoView.smallCardCollectionView,
-                at: selectedIndexPath,
-                configuration: wispConfiguration
-            )
-            
-        } else {
-            self.present(presentedVC, animated: animated)
-            
-        }
-        
-    }
-    
-    
-    func triggerApplyingSnapshot(animatingDifferences: Bool, usingReloadData: Bool, completionForCompositional: (() -> Void)? = nil, completionForFlow: (() -> Void)? = nil) {
-        
-        self.reloadAll()
-        
-        /*
-        self.applySnapshot(animatingDifferences: animatingDifferences, usingReloadData: usingReloadData, completionForCompositional: completionForCompositional, completionForFlow: completionForFlow)
-         */
     }
     
     func updateDataSource() {
@@ -907,6 +761,7 @@ extension MemoViewController: LargeCardCollectionViewCellDelegate {
 }
 
 
+// MARK: - UITextFieldDelegate
 extension MemoViewController: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
@@ -945,32 +800,5 @@ extension MemoViewController: UITextFieldDelegate {
         } else {
             return true
         }
-    }
-}
-
-
-extension MemoViewController: UICollectionViewDelegateFlowLayout {
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        guard scrollView == self.largeCardCollectionView else { return }
-        guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
-        
-        let currentIndex = ((scrollView.contentOffset.x + scrollView.contentInset.left) / (screenSize.width * 0.9 + 10)).rounded()
-        print("currentIndex는 \(currentIndex)")
-        let targetCardIndex = (((targetContentOffset.pointee.x + screenSize.width * 0.05 /*left inset*/ ) / (screenSize.width * 0.9 + 10) + 0.5) / 1).rounded(FloatingPointRoundingRule.down)
-        print("targetCardIndex :", targetCardIndex)
-        print("velocity.x :", velocity.x)
-        
-        if velocity.x < 0 {
-            targetContentOffset.pointee.x = -(scrollView.contentInset.left) + ((screenSize.width * 0.9 + 10) * (currentIndex - 1))
-        } else if velocity.x > 0 {
-            targetContentOffset.pointee.x = -(scrollView.contentInset.left) + ((screenSize.width * 0.9 + 10) * (currentIndex + 1))
-        } else {
-            targetContentOffset.pointee.x = -(screenSize.width * 0.05) + ((screenSize.width * 0.9 + 10) * currentIndex)
-        }
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        print(#function)
-        
     }
 }

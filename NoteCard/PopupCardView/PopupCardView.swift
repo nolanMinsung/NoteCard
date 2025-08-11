@@ -15,7 +15,7 @@ final class PopupCardView: UIView {
     
     private var memoEntity: MemoEntity?
     
-    weak var delegate: LargeCardCollectionViewCellDelegate?
+//    weak var delegate: LargeCardCollectionViewCellDelegate?
     
     var sortedImageEntitiesArray: [ImageEntity] = []
     private var thumbnailArray: [UIImage] = []

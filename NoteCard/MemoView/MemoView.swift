@@ -10,18 +10,7 @@ import UIKit
 
 final class MemoView: UIView {
     
-    let categoryManager = CategoryEntityManager.shared
-    let memoManager = MemoEntityManager.shared
-    
     let categoryNameTextField = UITextField()
-    let segmentedControl = UISegmentedControl(
-        items: [UIImage(systemName: "rectangle.portrait.arrowtriangle.2.outward")!,
-                UIImage(systemName: "rectangle.grid.3x2")!]
-    )
-    
-    let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThickMaterial))
-    let viewUnderNaviBar = UIView()
-    let largeCardCollectionView = LargeCardCollectionView()
     let smallCardCollectionView = SmallCardCollectionView()
     
     override init(frame: CGRect) {
@@ -30,7 +19,6 @@ final class MemoView: UIView {
         setupUI()
         configureViewHierarchy()
         setupConstraints()
-        setupNotificationObserver()
     }
     
     required init?(coder: NSCoder) {
@@ -47,10 +35,6 @@ final class MemoView: UIView {
         self.backgroundColor = UIColor.memoViewBackground
         
         setupTextField()
-        segmentedControl.selectedSegmentIndex = 0
-        viewUnderNaviBar.backgroundColor = .memoViewBackground
-        
-        smallCardCollectionView.isHidden = true
     }
     
     private func setupTextField() {
@@ -77,12 +61,8 @@ final class MemoView: UIView {
     }
     
     private func configureViewHierarchy() {
-        self.addSubview(smallCardCollectionView)
-        self.addSubview(blurView)
-        self.addSubview(viewUnderNaviBar)
         self.addSubview(categoryNameTextField)
-        self.addSubview(segmentedControl)
-        self.addSubview(largeCardCollectionView)
+        self.addSubview(smallCardCollectionView)
     }
     
     func setupConstraints() {
@@ -91,69 +71,15 @@ final class MemoView: UIView {
             categoryNameTextField.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0),
             categoryNameTextField.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
             categoryNameTextField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            categoryNameTextField.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor, constant: 0),
-        ])
-        
-        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            segmentedControl.topAnchor.constraint(equalTo: categoryNameTextField.bottomAnchor, constant: 20),
-            segmentedControl.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor, constant: 0),
-        ])
-        
-        blurView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            blurView.topAnchor.constraint(equalTo: topAnchor, constant: 0),
-            blurView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
-            blurView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            blurView.heightAnchor.constraint(equalToConstant: 200),
-        ])
-        
-        viewUnderNaviBar.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            viewUnderNaviBar.topAnchor.constraint(equalTo: topAnchor, constant: 0),
-            viewUnderNaviBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
-            viewUnderNaviBar.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            viewUnderNaviBar.heightAnchor.constraint(equalToConstant: 200),
-        ])
-        
-        largeCardCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            largeCardCollectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 0),
-            largeCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
-            largeCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            largeCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0),
         ])
         
         smallCardCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            smallCardCollectionView.topAnchor.constraint(equalTo: topAnchor, constant: 0),
+            smallCardCollectionView.topAnchor.constraint(equalTo: categoryNameTextField.bottomAnchor, constant: 20),
             smallCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             smallCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
             smallCardCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
         ])
-    }
-    
-    private func setupNotificationObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(kayboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-    }
-    
-    @objc private func kayboardWillShow() {
-        self.largeCardCollectionView.isScrollEnabled = false
-    }
-    
-    @objc private func keyboardWillHide() {
-        self.largeCardCollectionView.isScrollEnabled = true
     }
     
     @objc private func keyboardHideButtonTapped() {

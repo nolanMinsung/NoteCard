@@ -13,7 +13,7 @@ class PopupCardViewController: UIViewController {
     lazy var selectedImageCollectionView = self.popupCardView.imageCollectionView
     lazy var memoTextView = popupCardView.memoTextView
     
-    var selectedIndexPath: IndexPath
+//    var selectedIndexPath: IndexPath
     let memoEntity: MemoEntity
     var isMemoDeleted: Bool = false
     
@@ -120,7 +120,7 @@ class PopupCardViewController: UIViewController {
     
     init(memo memoEntity: MemoEntity, indexPath: IndexPath) {
         self.memoEntity = memoEntity
-        self.selectedIndexPath = indexPath
+//        self.selectedIndexPath = indexPath
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -165,32 +165,32 @@ class PopupCardViewController: UIViewController {
     }
     
     private func setupDelegates() {
-        self.popupCardView.delegate = self
+//        self.popupCardView.delegate = self
         self.selectedImageCollectionView?.delegate = self
     }
     
 }
 
 
-extension PopupCardViewController: LargeCardCollectionViewCellDelegate {
-    
-    func triggerPresentMethod(selectedItemAt indexPath: IndexPath, imageEntitiesArray: [ImageEntity]) {
-        
-    }
-    
-    func triggerPresentMethod(presented presentedVC: UIViewController, animated: Bool) {
-        self.present(presentedVC, animated: true)
-    }
-    
-    func triggerApplyingSnapshot(animatingDifferences: Bool, usingReloadData: Bool, completionForCompositional: (() -> Void)?, completionForFlow: (() -> Void)?) {
-        return
-    }
-    
-    func updateDataSource() {
-        return
-    }
-    
-}
+//extension PopupCardViewController: LargeCardCollectionViewCellDelegate {
+//    
+//    func triggerPresentMethod(selectedItemAt indexPath: IndexPath, imageEntitiesArray: [ImageEntity]) {
+//        
+//    }
+//    
+//    func triggerPresentMethod(presented presentedVC: UIViewController, animated: Bool) {
+//        self.present(presentedVC, animated: true)
+//    }
+//    
+//    func triggerApplyingSnapshot(animatingDifferences: Bool, usingReloadData: Bool, completionForCompositional: (() -> Void)?, completionForFlow: (() -> Void)?) {
+//        return
+//    }
+//    
+//    func updateDataSource() {
+//        return
+//    }
+//    
+//}
 
 
 extension PopupCardViewController: UICollectionViewDelegate {

@@ -101,7 +101,7 @@ class CategorySelectionViewController: UIViewController {
         }
         
         if memoVC.memoVCType == .trash || memoVC.memoVCType == .uncategorized {
-            memoVC.updateDataSource()
+//            memoVC.updateDataSource()
             memoVC.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
         }
         
@@ -128,7 +128,7 @@ class CategorySelectionViewController: UIViewController {
            let selectedCategoryEntity = memoVC.selectedCategoryEntity,
            self.selectedCategorySet.contains(selectedCategoryEntity) {
             let selectedIndexes = selectedIndexPaths.map({ $0.item })
-            memoVC.updateDataSource()
+//            memoVC.updateDataSource()
             memoVC.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
         }
         

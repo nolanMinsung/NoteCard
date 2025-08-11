@@ -253,6 +253,22 @@ extension HomeViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+        let inset: UIEdgeInsets = ((indexPath.item % 2 == 0)
+                                            ? .init(top: 130, left: 10, bottom: 130, right: 10)
+                                            : .init(top: topInset, left: 0, bottom: 0, right: 0))
+        
+        let config = WispConfiguration { config in
+            config.setLayout { layout in
+                layout.presentedAreaInset = inset
+                layout.initialCornerRadius = 20
+                layout.finalCornerRadius = 37
+            }
+            config.setGesture { gesture in
+                gesture.allowedDirections = [.horizontalOnly, .down]
+            }
+        }
+        
         switch indexPath.section {
         case 0:
             switch CategoryEntityManager.shared.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false).count != 0 {
@@ -272,15 +288,6 @@ extension HomeViewController: UICollectionViewDelegate {
                 return
                 
             default:
-                let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
-                let inset: UIEdgeInsets = ((indexPath.item % 2 == 0)
-                                                    ? .init(top: 130, left: 10, bottom: 130, right: 10)
-                                                    : .init(top: topInset, left: 0, bottom: 0, right: 0))
-                let config = WispConfiguration(
-                    presentedAreaInset: inset,
-                    initialCornerRadius: 20,
-                    finalCornerRadius: 37
-                )
                 
                 let memoEntity = favoriteMemoArray[indexPath.row]
                 guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
@@ -292,22 +299,11 @@ extension HomeViewController: UICollectionViewDelegate {
                 wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
             }
         case 2:
-            let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
-            let inset: UIEdgeInsets = ((indexPath.item % 2 == 0)
-                                                ? .init(top: 130, left: 10, bottom: 130, right: 10)
-                                                : .init(top: topInset, left: 0, bottom: 0, right: 0))
-            let config = WispConfiguration(
-                presentedAreaInset: inset,
-                initialCornerRadius: 20,
-                finalCornerRadius: 37
-            )
-            
             let memoEntity = recentMemoArray[indexPath.row]
             let popupCardViewCotroller = PopupCardViewController(
                 memo: memoEntity,
                 indexPath: indexPath,
             )
-//            present(popupCardViewCotroller, animated: true)
             wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
         default:
             fatalError("HomeCollectionView's number of sections is 3")

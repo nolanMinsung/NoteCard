@@ -18,32 +18,46 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
     
     var gestureInitialLocation: CGPoint!
     
-    override var isSelected: Bool {
+    override var isHighlighted: Bool {
         didSet {
-            switch isSelected {
-            case true:
-
-                self.selectionAnimator.addAnimations {
-                    self.layer.borderColor = UIColor.currentTheme.cgColor
-                    self.layer.borderWidth = 2
-                    self.opaqueView.alpha = 0.0
+            if isHighlighted {
+                UIView.springAnimate(withDuration: 0.3) { [weak self] in
+                    self?.transform = .init(scaleX: 0.95, y: 0.95)
                 }
-                
-                self.deselectionAnimator.stopAnimation(true)
-                self.selectionAnimator.startAnimation()
-                
-            case false:
-                
-                self.deselectionAnimator.addAnimations {
-                    self.layer.borderWidth = 0
-                    self.opaqueView.alpha = 0.7
+            } else {
+                UIView.springAnimate(withDuration: 0.3) { [weak self] in
+                    self?.transform = .identity
                 }
-                
-                self.selectionAnimator.stopAnimation(true)
-                self.deselectionAnimator.startAnimation()
             }
         }
     }
+    
+//    override var isSelected: Bool {
+//        didSet {
+//            switch isSelected {
+//            case true:
+//
+//                self.selectionAnimator.addAnimations {
+//                    self.layer.borderColor = UIColor.currentTheme.cgColor
+//                    self.layer.borderWidth = 2
+//                    self.opaqueView.alpha = 0.0
+//                }
+//                
+//                self.deselectionAnimator.stopAnimation(true)
+//                self.selectionAnimator.startAnimation()
+//                
+//            case false:
+//                
+//                self.deselectionAnimator.addAnimations {
+//                    self.layer.borderWidth = 0
+//                    self.opaqueView.alpha = 0.7
+//                }
+//                
+//                self.selectionAnimator.stopAnimation(true)
+//                self.deselectionAnimator.startAnimation()
+//            }
+//        }
+//    }
     
     let memoManager = MemoEntityManager.shared
     let inflateAnimator = UIViewPropertyAnimator(duration: 0.4, controlPoint1: CGPoint(x: 0.2, y: 0.5), controlPoint2: CGPoint(x: 0.2, y: 0.6))
@@ -59,7 +73,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         return returnValue
     }
     
-    weak var delegate: LargeCardCollectionViewCellDelegate?
+//    weak var delegate: LargeCardCollectionViewCellDelegate?
     
     let opaqueView: UIView = {
         let view = UIView()
@@ -188,8 +202,8 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupGesture() {
-        self.contentView.addGestureRecognizer(self.longPressGestureToSelect)
-        self.contentView.addGestureRecognizer(self.longPressGestureToInflate)
+//        self.contentView.addGestureRecognizer(self.longPressGestureToSelect)
+//        self.contentView.addGestureRecognizer(self.longPressGestureToInflate)
         
         self.longPressGestureToSelect.delegate = self
         self.longPressGestureToSelect.minimumPressDuration = 0.0
@@ -233,13 +247,13 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
             
             guard let memoEntity else { return }
             
-            self.delegate?.triggerPresentMethod(
-                presented: PopupCardViewController(
-                    memo: memoEntity,
-                    indexPath: self.indexPath,
-                ),
-                animated: true
-            )
+//            self.delegate?.triggerPresentMethod(
+//                presented: PopupCardViewController(
+//                    memo: memoEntity,
+//                    indexPath: self.indexPath,
+//                ),
+//                animated: true
+//            )
             
         default:
             let animator = UIViewPropertyAnimator(duration: 0.2, curve: UIView.AnimationCurve.easeInOut)
@@ -269,10 +283,10 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
                     guard let self else { return }
                     guard let memoEntity else { return }
                     
-                    self.delegate?.triggerPresentMethod(
-                        presented: PopupCardViewController(memo: memoEntity,indexPath: self.indexPath,),
-                        animated: true
-                    )
+//                    self.delegate?.triggerPresentMethod(
+//                        presented: PopupCardViewController(memo: memoEntity,indexPath: self.indexPath,),
+//                        animated: true
+//                    )
                 }
                 
                 self.inflateAnimator.startAnimation()

@@ -90,11 +90,18 @@ extension MemoSearchingViewController: UICollectionViewDelegate {
             indexPath: indexPath,
         )
         
-        let wispConfiguration = WispConfiguration(
-            presentedAreaInset: .init(top: 100, left: 10, bottom: 100, right: 10),
-            initialCornerRadius: 25,
-            finalCornerRadius: 25,
-        )
+        let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+        let inset: UIEdgeInsets = ((indexPath.item % 2 == 0)
+                                            ? .init(top: 130, left: 10, bottom: 130, right: 10)
+                                            : .init(top: topInset, left: 0, bottom: 0, right: 0))
+        
+        let wispConfiguration = WispConfiguration { config in
+            config.setLayout { layout in
+                layout.presentedAreaInset = inset
+                layout.initialCornerRadius = 25
+                layout.finalCornerRadius = 25
+            }
+        }
         
         wisp.present(popupVC, collectionView: rootView.collectionView, at: indexPath, configuration: wispConfiguration)
     }
