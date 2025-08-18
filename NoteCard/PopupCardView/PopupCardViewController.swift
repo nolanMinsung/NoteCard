@@ -9,10 +9,13 @@ import UIKit
 
 class PopupCardViewController: UIViewController {
     
-    lazy var rootView = PopupCardView()
-    lazy var selectedImageCollectionView = self.rootView.imageCollectionView
+    let rootView = PopupCardView()
     lazy var memoTextView = rootView.memoTextView
     let memoTextViewTapGesture = UITapGestureRecognizer()
+    
+    private var sortedImageEntities: [ImageEntity] = []
+    private var thumbnails: [UIImage] = []
+    private var images: [UIImage] = []
     
     let memoEntity: MemoEntity
     var isMemoDeleted: Bool = false
@@ -130,6 +133,34 @@ class PopupCardViewController: UIViewController {
         setupDelegates()
         self.rootView.configureView(with: self.memoEntity)
         
+        self.sortedImageEntities = ImageEntityManager.shared.getImageEntities(from: memoEntity, inOrderOf: ImageOrderIndexKind.orderIndex)
+        
+        if sortedImageEntities.count == 0 {
+            self.rootView.selectedImageCollectionViewHeightConstraint.constant = 0
+        } else {
+            self.rootView.selectedImageCollectionViewHeightConstraint.constant = 70
+        }
+        self.sortedImageEntities.forEach { [weak self] imageEntity in
+            guard let self else { return }
+            guard let thumbnail = ImageEntityManager.shared.getThumbnailImage(imageEntity: imageEntity) else { return }
+            self.thumbnails.append(thumbnail)
+        }
+        self.images = []
+        
+        //고화질 이미지를 가져오는 일은 오래 걸릴 수 있으므로 비동기적으로 구현.
+        DispatchQueue.global().async {
+            self.sortedImageEntities.forEach { [weak self] imageEntity in
+                guard let self else { return }
+                guard let image = ImageEntityManager.shared.getImage(imageEntity: imageEntity) else { return }
+                self.images.append(image)
+            }
+        }
+        
+        self.rootView.categoryCollectionView.reloadData()
+        self.rootView.imageCollectionView.reloadData()
+        
+        
+        
         if self.memoEntity.isInTrash {
             self.rootView.ellipsisButton.menu = UIMenu(children: [self.restoreMemoAction, self.deleteMemoAction])
         } else {
@@ -162,7 +193,9 @@ class PopupCardViewController: UIViewController {
     }
     
     private func setupDelegates() {
-        self.selectedImageCollectionView?.delegate = self
+        self.rootView.categoryCollectionView.dataSource = self
+        self.rootView.imageCollectionView.dataSource = self
+        self.rootView.imageCollectionView.delegate = self
     }
     
 }
@@ -180,12 +213,59 @@ private extension PopupCardViewController {
 }
 
 
+// MARK: - UICollectionViewDataSource
+
+extension PopupCardViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if collectionView == self.rootView.categoryCollectionView {
+            let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(
+                memo: self.memoEntity,
+                inOrderOf: CategoryProperties.modificationDate,
+                isAscending: false
+            )
+            return categoriesArray.count
+            
+        } else {
+            let imageEntitiesArray = ImageEntityManager.shared.getImageEntities(
+                from: memoEntity,
+                inOrderOf: ImageOrderIndexKind.orderIndex
+            )
+            return imageEntitiesArray.count
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == self.rootView.categoryCollectionView {
+            let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(
+                memo: self.memoEntity,
+                inOrderOf: CategoryProperties.modificationDate,
+                isAscending: false
+            )
+            let cell = self.rootView.categoryCollectionView.dequeueReusableCell(
+                withReuseIdentifier: TotalListCellCategoryCell.cellID,
+                for: indexPath
+            ) as! TotalListCellCategoryCell
+            cell.categoryLabel.text = categoriesArray[indexPath.row].name
+            return cell
+        } else {
+            let cell = self.rootView.imageCollectionView.dequeueReusableCell(
+                withReuseIdentifier: MemoImageCollectionViewCell.cellID,
+                for: indexPath
+            ) as! MemoImageCollectionViewCell
+            cell.imageView.image = self.thumbnails[indexPath.row]
+            return cell
+        }
+    }
+    
+}
+
+
 // MARK: - UICollectionViewDelegate
 extension PopupCardViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.view.endEditing(true)
-        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: self.rootView.sortedImageEntitiesArray)
+        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: self.sortedImageEntities)
         cardImageShowingVC.transitioningDelegate = self
         cardImageShowingVC.modalPresentationStyle = .custom
         

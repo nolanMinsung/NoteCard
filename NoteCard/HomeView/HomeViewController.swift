@@ -253,14 +253,10 @@ extension HomeViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
-        let inset: UIEdgeInsets = ((indexPath.item % 2 == 0)
-                                            ? .init(top: 130, left: 10, bottom: 130, right: 10)
-                                            : .init(top: topInset, left: 0, bottom: 0, right: 0))
-        
         let config = WispConfiguration { config in
             config.setLayout { layout in
-                layout.presentedAreaInset = inset
+                let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+                layout.presentedAreaInset = .init(top: topInset, left: 0, bottom: 0, right: 0)
                 layout.initialCornerRadius = 20
                 layout.finalCornerRadius = 37
             }
@@ -290,7 +286,6 @@ extension HomeViewController: UICollectionViewDelegate {
             default:
                 
                 let memoEntity = favoriteMemoArray[indexPath.row]
-                guard let selectedCell = collectionView.cellForItem(at: indexPath) else { return }
                 let popupCardViewCotroller = PopupCardViewController(
                     memo: memoEntity,
                     indexPath: indexPath,

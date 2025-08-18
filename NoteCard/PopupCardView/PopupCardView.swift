@@ -10,11 +10,6 @@ import UIKit
 final class PopupCardView: UIView {
     
     private var memoEntity: MemoEntity?
-    
-    var sortedImageEntitiesArray: [ImageEntity] = []
-    private var thumbnailArray: [UIImage] = []
-    private var imageArray: [UIImage] = []
-    var numberOfImages: Int = 0
     private var isTextFieldChanged: Bool = false
     var isTextViewChanged: Bool = false
     var isEdited: Bool = false
@@ -39,7 +34,7 @@ final class PopupCardView: UIView {
         flowLayout.estimatedItemSize = CGSize(width: 50, height: 35)
         return flowLayout
     }
-    private var categoryCollectionView: UICollectionView!
+    private(set) var categoryCollectionView: UICollectionView!
     
     private let makeImageFlowLayout = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -121,8 +116,6 @@ final class PopupCardView: UIView {
     }
     
     private func setupDelegates() {
-        self.categoryCollectionView.dataSource = self
-        self.imageCollectionView.dataSource = self
         self.titleTextField.delegate = self
         self.memoTextView.delegate = self
     }
@@ -206,9 +199,6 @@ final class PopupCardView: UIView {
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         
         self.memoEntity = memo
-        self.thumbnailArray = []
-        //Localizing 필요함
-        
         if memo.isInTrash {
             self.memoDateLabel.textColor = .systemRed
             guard let deletedDate = memo.deletedDate else { fatalError() }
@@ -246,70 +236,10 @@ final class PopupCardView: UIView {
         } else {
             self.memoTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.currentTheme]
         }
-        
-        self.sortedImageEntitiesArray = ImageEntityManager.shared.getImageEntities(from: self.memoEntity!, inOrderOf: ImageOrderIndexKind.orderIndex)
-        
-        self.numberOfImages = self.sortedImageEntitiesArray.count
-        if numberOfImages == 0 {
-            self.selectedImageCollectionViewHeightConstraint.constant = 0
-        } else {
-            self.selectedImageCollectionViewHeightConstraint.constant = 70
-        }
-        self.sortedImageEntitiesArray.forEach { [weak self] imageEntity in
-            guard let self else { return }
-            guard let thumbnail = ImageEntityManager.shared.getThumbnailImage(imageEntity: imageEntity) else { return }
-            self.thumbnailArray.append(thumbnail)
-        }
-        self.imageArray = []
-        
-        //고화질 이미지를 가져오는 일은 오래 걸릴 수 있으므로 비동기적으로 구현.
-        DispatchQueue.global().async {
-            self.sortedImageEntitiesArray.forEach { [weak self] imageEntity in
-                guard let self else { return }
-                guard let image = ImageEntityManager.shared.getImage(imageEntity: imageEntity) else { return }
-                self.imageArray.append(image)
-            }
-        }
-        
-        self.categoryCollectionView.reloadData()
-        self.imageCollectionView.reloadData()
     }
     
     @objc private func keyboardHideButtonTapped() {
         self.endEditing(true)
-    }
-    
-}
-
-
-// MARK: - UICollectionViewDataSource
-
-extension PopupCardView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == self.categoryCollectionView {
-            let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(memo: self.memoEntity, inOrderOf: CategoryProperties.modificationDate, isAscending: false)
-            return categoriesArray.count
-            
-        } else {
-            guard let memoEntity else { return 0 }
-            let imageEntitiesArray = ImageEntityManager.shared.getImageEntities(from: memoEntity, inOrderOf: ImageOrderIndexKind.orderIndex)
-            return imageEntitiesArray.count
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == self.categoryCollectionView {
-            let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(memo: self.memoEntity, inOrderOf: CategoryProperties.modificationDate, isAscending: false)
-            let cell = self.categoryCollectionView.dequeueReusableCell(withReuseIdentifier: TotalListCellCategoryCell.cellID, for: indexPath) as! TotalListCellCategoryCell
-            cell.categoryLabel.text = categoriesArray[indexPath.row].name
-            return cell
-            
-        //if collectionView == self.selectedImageCollectionView
-        } else {
-            let cell = self.imageCollectionView.dequeueReusableCell(withReuseIdentifier: MemoImageCollectionViewCell.cellID, for: indexPath) as! MemoImageCollectionViewCell
-            cell.imageView.image = self.thumbnailArray[indexPath.row]
-            return cell
-        }
     }
     
 }
