@@ -16,7 +16,7 @@ class TotalListCellCategoryCell: UICollectionViewCell {
     
     let categoryLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 15)
         label.textAlignment = .center
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -38,13 +38,14 @@ class TotalListCellCategoryCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.sizeToFit()
+        print(self.contentView.frame.size)
     }
     
     private func setupUI() {
         
         self.contentView.backgroundColor = UIColor.memoCategoryCellBackground
         self.contentView.clipsToBounds = true
-        self.contentView.layer.cornerRadius = 12
+        self.contentView.layer.cornerRadius = 14
         //self.contentView.layer.borderWidth = 1
         //self.contentView.layer.borderColor
         self.contentView.addSubview(categoryLabel)

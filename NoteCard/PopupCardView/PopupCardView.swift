@@ -9,20 +9,12 @@ import UIKit
 
 final class PopupCardView: UIView {
     
-    private let heartImageViewTapGesture = UITapGestureRecognizer()
-    let memoTextViewTapGesture = UITapGestureRecognizer()
-    private let screenSize = UIScreen.current?.bounds.size
-    
     private var memoEntity: MemoEntity?
-    
-//    weak var delegate: LargeCardCollectionViewCellDelegate?
     
     var sortedImageEntitiesArray: [ImageEntity] = []
     private var thumbnailArray: [UIImage] = []
     private var imageArray: [UIImage] = []
     var numberOfImages: Int = 0
-    private var keyboardFrame: CGRect = .zero
-    private var isViewShiftedUp: Bool = false
     private var isTextFieldChanged: Bool = false
     var isTextViewChanged: Bool = false
     var isEdited: Bool = false
@@ -36,21 +28,18 @@ final class PopupCardView: UIView {
     private(set) lazy var memoTextViewBottomConstraintsToKeyboard
     = self.memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -10)
     
-    var cellSnapshot: UIView!
-    var popupCardSnapshot: UIView!
-    
     let titleTextField = UITextField()
-    let heartImageView = UIImageView(image: .init(systemName: "heart"))
+    let likeButton = UIButton(configuration: .plain())
     let ellipsisButton = UIButton()
     
     private let makeCategoryFlowLayout = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = 10
         flowLayout.scrollDirection = .horizontal
-        flowLayout.estimatedItemSize = CGSize(width: 50, height: 25)
+        flowLayout.estimatedItemSize = CGSize(width: 50, height: 35)
         return flowLayout
     }
-    var categoryCollectionView: UICollectionView!
+    private var categoryCollectionView: UICollectionView!
     
     private let makeImageFlowLayout = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -70,7 +59,6 @@ final class PopupCardView: UIView {
         setupUI()
         configureHierarchy()
         setupConstraints()
-        setupGestures()
         setupActions()
         setupDelegates()
     }
@@ -104,7 +92,7 @@ final class PopupCardView: UIView {
         layer.cornerCurve = .continuous
         
         setupTitleTextField()
-        setupHeartImageView()
+        setupLikeButton()
         setupEllipsisButton()
         setupCategoryCollectionView()
         setupImageCollectionView()
@@ -114,118 +102,12 @@ final class PopupCardView: UIView {
     
     private func configureHierarchy() {
         addSubview(titleTextField)
-        addSubview(heartImageView)
+        addSubview(likeButton)
         addSubview(ellipsisButton)
         addSubview(categoryCollectionView)
         addSubview(imageCollectionView)
         addSubview(memoTextView)
         addSubview(memoDateLabel)
-    }
-    
-    private func setupGestures() {
-        self.heartImageView.addGestureRecognizer(self.heartImageViewTapGesture)
-        self.heartImageViewTapGesture.addTarget(self, action: #selector(heartImageViewTapped))
-        
-        self.memoTextView.addGestureRecognizer(self.memoTextViewTapGesture)
-        self.memoTextViewTapGesture.addTarget(self, action: #selector(memoTextViewTapped(_:)))
-    }
-    
-    @objc private func heartImageViewTapped() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
-        guard let memoEntity else { fatalError() }
-        memoEntity.isFavorite.toggle()
-        switch memoEntity.isFavorite {
-        case true:
-            self.heartImageView.image = UIImage(systemName: "heart.fill")
-        case false:
-            self.heartImageView.image = UIImage(systemName: "heart")
-        }
-        
-        appDelegate.saveContext()
-    }
-    
-    @objc private func memoTextViewTapped(_ gesture: UITapGestureRecognizer) {
-        print(#function)
-        let tappedPoint = gesture.location(in: memoTextView)
-        let glyphIndex = memoTextView.layoutManager.glyphIndex(
-            for: tappedPoint,
-            in: memoTextView.textContainer
-        )
-        
-        //Ensure the glyphIndex actually matches the point and isn't just the closest glyph to the point
-        let glyphRect = memoTextView.layoutManager.boundingRect(forGlyphRange: NSRange(location: glyphIndex, length: 1), in: memoTextView.textContainer)
-        
-        if glyphIndex < memoTextView.textStorage.length,
-           glyphRect.contains(tappedPoint),
-           let linkURL = memoTextView.textStorage.attribute(
-            NSAttributedString.Key.link,
-            at: glyphIndex,
-            effectiveRange: nil
-           ) {
-            //해당 링크를 이용해서 인터넷 열리게끔 설정
-            print(type(of: linkURL))
-            print(linkURL)
-            guard let linkURL = linkURL as? URL else { return }
-            UIApplication.shared.open(linkURL)
-            
-        } else {
-            
-            let characterIndex = memoTextView.layoutManager.characterIndex(
-                for: tappedPoint,
-                in: memoTextView.textContainer,
-                fractionOfDistanceBetweenInsertionPoints: nil
-            )
-            
-            let glyphRect = memoTextView.layoutManager.boundingRect(
-                forGlyphRange: NSRange(location: glyphIndex, length: 1), in: self.memoTextView.textContainer
-            )
-            
-            //아래와 같이 쓰면 안됨. boundingRect는 GlyphRange를 기반으로 한 Rect를 반환하기 때문에, characterIndex를 쓰는 건 옳지 않다!
-            //(합자-ligature-를 쓸 경우 잘못된 결과가 나올 수 있음) -> 메모용 주석
-            // let characterRect = self.memoTextView.layoutManager.boundingRect(forGlyphRange: NSRange(location: characterIndex, length: 1), in: self.memoTextView.textContainer)
-//            print(characterRect, "<-characterRect")
-//            print(characterIndex, "<-characterIndex")
-            
-            print("???")
-            print(glyphRect, "<-glyphRect")
-            print(glyphIndex, "<-glyphIndex")
-            print(self.memoTextView.textStorage.length, "<-textStorage's length")
-            
-            switch self.memoTextView.isEditable {
-            case true: return
-            case false:
-                let tappedPosition: UITextPosition?
-                
-                print(characterIndex < self.memoTextView.textStorage.length)
-                print(glyphRect.contains(tappedPoint))
-                
-                if characterIndex < self.memoTextView.textStorage.length && glyphRect.contains(tappedPoint) {
-                    tappedPosition = self.memoTextView.position(
-                        from: self.memoTextView.beginningOfDocument,
-                        offset: characterIndex
-                    )
-                    
-                } else if characterIndex >= self.memoTextView.textStorage.length - 1 {
-                    tappedPosition = self.memoTextView.endOfDocument
-                    
-                } else {
-                    tappedPosition = self.memoTextView.position(
-                        from: self.memoTextView.beginningOfDocument,
-                        offset: glyphIndex
-                    )
-                    
-                }
-                
-                guard let tappedPosition else { return }
-                self.memoTextView.isEditable = true
-                self.memoTextViewTapGesture.isEnabled = false
-                self.memoTextView.selectedTextRange = self.memoTextView.textRange(
-                    from: tappedPosition,
-                    to: tappedPosition
-                )
-                self.memoTextView.becomeFirstResponder()
-            }
-        }
     }
     
     private func setupActions() {
@@ -246,20 +128,23 @@ final class PopupCardView: UIView {
     }
     
     private func setupConstraints() {
+        titleTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             titleTextField.topAnchor.constraint(equalTo: topAnchor, constant: 15),
             titleTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25),
             titleTextField.heightAnchor.constraint(equalToConstant: 30),
         ])
         
+        likeButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            heartImageView.topAnchor.constraint(equalTo: topAnchor, constant: 14),
-            heartImageView.leadingAnchor.constraint(equalTo: titleTextField.trailingAnchor, constant: 10),
-            heartImageView.trailingAnchor.constraint(equalTo: ellipsisButton.leadingAnchor, constant: 0),
-            heartImageView.widthAnchor.constraint(equalToConstant: 27),
-            heartImageView.heightAnchor.constraint(equalToConstant: 27),
+            likeButton.topAnchor.constraint(equalTo: topAnchor, constant: 14),
+            likeButton.leadingAnchor.constraint(equalTo: titleTextField.trailingAnchor, constant: 10),
+            likeButton.trailingAnchor.constraint(equalTo: ellipsisButton.leadingAnchor, constant: 0),
+            likeButton.widthAnchor.constraint(equalToConstant: 27),
+            likeButton.heightAnchor.constraint(equalToConstant: 27),
         ])
         
+        ellipsisButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             ellipsisButton.topAnchor.constraint(equalTo: topAnchor, constant: 14),
             ellipsisButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -14),
@@ -267,13 +152,15 @@ final class PopupCardView: UIView {
             ellipsisButton.heightAnchor.constraint(equalToConstant: 30),
         ])
         
+        categoryCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             categoryCollectionView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 10),
             categoryCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             categoryCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            categoryCollectionView.heightAnchor.constraint(equalToConstant: 25),
+            categoryCollectionView.heightAnchor.constraint(equalToConstant: 28),
         ])
         
+        imageCollectionView.translatesAutoresizingMaskIntoConstraints = false
         selectedImageCollectionViewHeightConstraint.priority = UILayoutPriority(751)
         NSLayoutConstraint.activate([
             imageCollectionView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor, constant: 10),
@@ -282,6 +169,7 @@ final class PopupCardView: UIView {
             selectedImageCollectionViewHeightConstraint,
         ])
         
+        memoTextView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             memoTextView.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 10),
             memoTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
@@ -289,6 +177,7 @@ final class PopupCardView: UIView {
             memoTextViewBottomConstraints,
         ])
         
+        memoDateLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             memoDateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
             memoDateLabel.topAnchor.constraint(equalTo: bottomAnchor, constant: 10),
@@ -303,7 +192,6 @@ final class PopupCardView: UIView {
             appDelegate.saveContext()
         }
     }
-    
     
     func updateMemoTextView() {
         if self.isTextViewChanged {
@@ -335,10 +223,9 @@ final class PopupCardView: UIView {
                 self.memoDateLabel.text = "1일 이내에 삭제됨".localized()
             }
             
-            self.heartImageViewTapGesture.isEnabled = false
-            self.heartImageView.tintColor = .lightGray
+            self.likeButton.isEnabled = false
+            self.likeButton.tintColor = .lightGray
             self.titleTextField.isEnabled = false
-            self.memoTextViewTapGesture.isEnabled = false
             self.memoTextView.isEditable = false
             self.memoTextView.isSelectable = false
             
@@ -349,10 +236,7 @@ final class PopupCardView: UIView {
         }
         
         self.titleTextField.text = memo.memoTitle
-        
-        if memo.isFavorite {
-            self.heartImageView.image = UIImage(systemName: "heart.fill")
-        }
+        self.likeButton.isSelected = memo.isFavorite
         
         self.memoTextView.setLineSpace(with: memo.memoText, lineSpace: 5, font: UIFont.systemFont(ofSize: 15), textColor: .label)
         if UserDefaults.standard.object(forKey: "themeColor") as! String == ThemeColor.black.rawValue {
@@ -437,7 +321,6 @@ extension PopupCardView: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         self.memoTextView.isEditable = false
-        self.memoTextViewTapGesture.isEnabled = true
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
@@ -497,15 +380,16 @@ extension PopupCardView {
         titleTextField.tintColor = .currentTheme
         titleTextField.minimumFontSize = 16 //같은 셀의 textView의 폰트는 13.5 <- 이보다는 커야 한다.
         titleTextField.adjustsFontSizeToFitWidth = true
-        titleTextField.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    private func setupHeartImageView() {
-        heartImageView.tintColor = .systemRed
-        heartImageView.contentMode = .scaleAspectFit
-        heartImageView.backgroundColor = .clear
-        heartImageView.isUserInteractionEnabled = true
-        heartImageView.translatesAutoresizingMaskIntoConstraints = false
+    private func setupLikeButton() {
+        likeButton.configuration?.image = .init(systemName: "heart")
+        likeButton.configuration?.baseBackgroundColor = .clear
+        likeButton.configuration?.baseForegroundColor = .systemRed
+        likeButton.configurationUpdateHandler = { button in
+            let imageName = button.isSelected ? "heart.fill" : "heart"
+            button.configuration?.image = UIImage(systemName: imageName)
+        }
     }
     
     private func setupEllipsisButton() {
@@ -527,8 +411,6 @@ extension PopupCardView {
                 return
             }
         }
-        
-        ellipsisButton.translatesAutoresizingMaskIntoConstraints = false
         ellipsisButton.showsMenuAsPrimaryAction = true
     }
     
@@ -541,7 +423,6 @@ extension PopupCardView {
         categoryCollectionView.clipsToBounds = true
         categoryCollectionView.showsHorizontalScrollIndicator = false
         categoryCollectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        categoryCollectionView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func setupImageCollectionView() {
@@ -556,7 +437,6 @@ extension PopupCardView {
         imageCollectionView.clipsToBounds = true
         imageCollectionView.layer.cornerRadius = 13
         imageCollectionView.layer.cornerCurve = .continuous
-        imageCollectionView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func setupMemoTextView() {
@@ -604,7 +484,6 @@ extension PopupCardView {
         memoTextView.layer.cornerRadius = 25
         memoTextView.layer.cornerCurve = .continuous
         memoTextView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        memoTextView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func setupMemoDateLabel() {
@@ -612,7 +491,6 @@ extension PopupCardView {
         memoDateLabel.textColor = .lightGray
         memoDateLabel.font = .systemFont(ofSize: 14)
         memoDateLabel.numberOfLines = 1
-        memoDateLabel.translatesAutoresizingMaskIntoConstraints = false
     }
     
 }

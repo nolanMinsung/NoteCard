@@ -290,8 +290,8 @@ class MemoEditingViewController: UIViewController {
         NotificationCenter.default.post(name: NSNotification.Name("editingCompleteNotification"), object: nil, userInfo: ["memo": self.selectedMemoEntity])
         
         if let popupCardVC = self.presentingViewController as? PopupCardViewController {
-            popupCardVC.popupCardView.isEdited = true
-            popupCardVC.popupCardView.configureView(with: self.selectedMemoEntity)
+            popupCardVC.rootView.isEdited = true
+            popupCardVC.rootView.configureView(with: self.selectedMemoEntity)
         }
         
         self.dismiss(animated: true)

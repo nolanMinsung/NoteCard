@@ -9,9 +9,10 @@ import UIKit
 
 class PopupCardViewController: UIViewController {
     
-    lazy var popupCardView = self.view as! PopupCardView
-    lazy var selectedImageCollectionView = self.popupCardView.imageCollectionView
-    lazy var memoTextView = popupCardView.memoTextView
+    lazy var rootView = PopupCardView()
+    lazy var selectedImageCollectionView = self.rootView.imageCollectionView
+    lazy var memoTextView = rootView.memoTextView
+    let memoTextViewTapGesture = UITapGestureRecognizer()
     
     let memoEntity: MemoEntity
     var isMemoDeleted: Bool = false
@@ -22,7 +23,7 @@ class PopupCardViewController: UIViewController {
         handler: { [weak self] action in
             guard let self else { fatalError() }
             
-            self.popupCardView.endEditing(true)
+            self.rootView.endEditing(true)
             
             let alertCon = UIAlertController(
                 title: "이 메모를 복구하시겠습니까?".localized(),
@@ -48,7 +49,7 @@ class PopupCardViewController: UIViewController {
             guard let self else { return }
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             
-            self.popupCardView.endEditing(true)
+            self.rootView.endEditing(true)
             let memoEditingVC = MemoEditingViewController(memo: self.memoEntity)
             appDelegate.memoEditingVC = memoEditingVC
             let memoEditingNaviCon = UINavigationController(rootViewController: memoEditingVC)
@@ -63,7 +64,7 @@ class PopupCardViewController: UIViewController {
         handler: { [weak self] action in
             guard let self else { return }
             
-            self.popupCardView.endEditing(true)
+            self.rootView.endEditing(true)
             let alertCon: UIAlertController
             if self.memoEntity.isInTrash {
                 alertCon = UIAlertController(
@@ -120,37 +121,43 @@ class PopupCardViewController: UIViewController {
     }
     
     override func loadView() {
-        self.view = PopupCardView()
+        self.view = rootView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupDelegates()
-        self.popupCardView.configureView(with: self.memoEntity)
+        self.rootView.configureView(with: self.memoEntity)
         
         if self.memoEntity.isInTrash {
-            self.popupCardView.ellipsisButton.menu = UIMenu(children: [self.restoreMemoAction, self.deleteMemoAction])
+            self.rootView.ellipsisButton.menu = UIMenu(children: [self.restoreMemoAction, self.deleteMemoAction])
         } else {
-            self.popupCardView.ellipsisButton.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
+            self.rootView.ellipsisButton.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
         }
-        popupCardView.memoTextView.isSelectable = false
-        popupCardView.memoTextViewTapGesture.isEnabled = false
+        
+        rootView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        
+        rootView.memoTextView.addGestureRecognizer(self.memoTextViewTapGesture)
+        memoTextViewTapGesture.addTarget(self, action: #selector(memoTextViewTapped(_:)))
+        
+        rootView.memoTextView.isSelectable = false
+        memoTextViewTapGesture.isEnabled = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        popupCardView.memoTextViewBottomConstraints.isActive = false
-        popupCardView.memoTextViewBottomConstraintsToKeyboard.isActive = true
-        popupCardView.memoTextView.isSelectable = true
-        popupCardView.memoTextViewTapGesture.isEnabled = true
+        rootView.memoTextViewBottomConstraints.isActive = false
+        rootView.memoTextViewBottomConstraintsToKeyboard.isActive = true
+//        rootView.memoTextView.isSelectable = true
+        memoTextViewTapGesture.isEnabled = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if self.popupCardView.isTextViewChanged {
-            self.popupCardView.updateMemoTextView()
+        if self.rootView.isTextViewChanged {
+            self.rootView.updateMemoTextView()
         }
     }
     
@@ -161,12 +168,24 @@ class PopupCardViewController: UIViewController {
 }
 
 
+private extension PopupCardViewController {
+    
+    @objc func likeButtonTapped() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
+        rootView.likeButton.isSelected.toggle()
+        appDelegate.saveContext()
+        memoEntity.isFavorite = rootView.likeButton.isSelected
+    }
+    
+}
+
+
 // MARK: - UICollectionViewDelegate
 extension PopupCardViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.view.endEditing(true)
-        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: self.popupCardView.sortedImageEntitiesArray)
+        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: self.rootView.sortedImageEntitiesArray)
         cardImageShowingVC.transitioningDelegate = self
         cardImageShowingVC.modalPresentationStyle = .custom
         
@@ -203,5 +222,23 @@ private extension PopupCardViewController {
         
         NotificationCenter.default.post(name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil, userInfo: ["recoveredMemos": [memoEntity]])
     }
+    
+}
+
+
+
+// MARK: - text view tap Gesture
+extension PopupCardViewController {
+    
+    @objc private func memoTextViewTapped(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: rootView.memoTextView)
+        
+        if let position = rootView.memoTextView.closestPosition(to: location) {
+            rootView.memoTextView.isEditable = true
+            rootView.memoTextView.selectedTextRange = rootView.memoTextView.textRange(from: position, to: position)
+            rootView.memoTextView.becomeFirstResponder()
+        }
+    }
+    
     
 }
