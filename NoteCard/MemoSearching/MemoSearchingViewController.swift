@@ -13,9 +13,11 @@ class MemoSearchingViewController: UIViewController {
     
     let rootView = MemoSearchingView()
     
-    private let favoriteMemoArray: [MemoEntity] = {
-        return MemoEntityManager.shared.getFavoriteMemoEntities()
-    }()
+//    private let favoriteMemoArray: [MemoEntity] = {
+//        return MemoEntityManager.shared.getFavoriteMemoEntities()
+//    }()
+    
+    private var favoriteMemoArray: [MemoEntity]!
     
     var diffableDataSource: UICollectionViewDiffableDataSource<Int, MemoEntity>? = nil
     
@@ -26,6 +28,7 @@ class MemoSearchingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        favoriteMemoArray = MemoEntityManager.shared.getFavoriteMemoEntities()
         setupNaviBar()
         setupDiffableDataSource()
         setupDelegates()

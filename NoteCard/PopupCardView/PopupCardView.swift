@@ -30,6 +30,12 @@ final class PopupCardView: UIView {
     lazy var selectedImageCollectionViewHeightConstraint
     = self.imageCollectionView.heightAnchor.constraint(equalToConstant: 0)
     
+    private(set) lazy var memoTextViewBottomConstraints
+    = self.memoTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
+    
+    private(set) lazy var memoTextViewBottomConstraintsToKeyboard
+    = self.memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -10)
+    
     var cellSnapshot: UIView!
     var popupCardSnapshot: UIView!
     
@@ -56,7 +62,7 @@ final class PopupCardView: UIView {
     }
     var imageCollectionView: UICollectionView!
     
-    var memoTextView: UITextView!
+    private(set) var memoTextView: UITextView!
     let memoDateLabel = UILabel()
     
     override init(frame: CGRect) {
@@ -280,7 +286,7 @@ final class PopupCardView: UIView {
             memoTextView.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 10),
             memoTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             memoTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -10),
+            memoTextViewBottomConstraints,
         ])
         
         NSLayoutConstraint.activate([

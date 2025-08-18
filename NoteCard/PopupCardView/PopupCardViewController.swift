@@ -13,34 +13,26 @@ class PopupCardViewController: UIViewController {
     lazy var selectedImageCollectionView = self.popupCardView.imageCollectionView
     lazy var memoTextView = popupCardView.memoTextView
     
-//    var selectedIndexPath: IndexPath
     let memoEntity: MemoEntity
     var isMemoDeleted: Bool = false
     
     lazy var restoreMemoAction = UIAction(
         title: "카테고리 없는 메모로 복구".localized(),
         image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme, renderingMode: UIImage.RenderingMode.alwaysOriginal),
-        handler: { [weak self, weak memoEntity] action in
+        handler: { [weak self] action in
             guard let self else { fatalError() }
-            guard let memoEntity else { fatalError() }
             
             self.popupCardView.endEditing(true)
             
-            let alertCon = UIAlertController(title: "이 메모를 복구하시겠습니까?".localized(), message: "복구된 메모는 '카테고리 없음' 항목에서 확인할 수 있습니다.".localized(), preferredStyle: UIAlertController.Style.alert)
-            let cancelAction = UIAlertAction(title: "취소".localized(), style: UIAlertAction.Style.cancel)
-            let restoreAction = UIAlertAction(title: "복구".localized(), style: UIAlertAction.Style.default) { action in
-                MemoEntityManager.shared.restoreMemo(memoEntity)
-                
-                guard let presentingTabBarCon = self.presentingViewController as? UITabBarController else { fatalError() }
-                guard let selectedNaviCon = presentingTabBarCon.selectedViewController as? UINavigationController else { fatalError() }
-                guard let memoVC = selectedNaviCon.topViewController as? MemoViewController else { fatalError() }
-                guard memoVC.memoVCType == .trash else { return }
-                guard let indexToRestore = memoVC.memoEntitiesArray.firstIndex(of: memoEntity) else { fatalError() }
-                let indexPathToRestore = IndexPath(item: indexToRestore, section: 0)
-                memoVC.updateDataSource()
-                memoVC.smallCardCollectionView.deleteItems(at: [indexPathToRestore])
-                
-                NotificationCenter.default.post(name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil, userInfo: ["recoveredMemos": [memoEntity]])
+            let alertCon = UIAlertController(
+                title: "이 메모를 복구하시겠습니까?".localized(),
+                message: "복구된 메모는 '카테고리 없음' 항목에서 확인할 수 있습니다.".localized(),
+                preferredStyle: UIAlertController.Style.alert
+            )
+            let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
+            let restoreAction = UIAlertAction(title: "복구".localized(), style: .default) { action in
+                self.restore(memoEntity: self.memoEntity)
+                self.dismiss(animated: true)
             }
             alertCon.addAction(cancelAction)
             alertCon.addAction(restoreAction)
@@ -118,17 +110,14 @@ class PopupCardViewController: UIViewController {
         }
     )
     
-    init(memo memoEntity: MemoEntity, indexPath: IndexPath) {
+    init(memo memoEntity: MemoEntity, indexPath: IndexPath, enableEditing: Bool = true) {
         self.memoEntity = memoEntity
-//        self.selectedIndexPath = indexPath
         super.init(nibName: nil, bundle: nil)
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     override func loadView() {
         self.view = PopupCardView()
@@ -137,7 +126,6 @@ class PopupCardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupObserver()
         setupDelegates()
         self.popupCardView.configureView(with: self.memoEntity)
         
@@ -146,7 +134,17 @@ class PopupCardViewController: UIViewController {
         } else {
             self.popupCardView.ellipsisButton.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
         }
+        popupCardView.memoTextView.isSelectable = false
+        popupCardView.memoTextViewTapGesture.isEnabled = false
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
+        popupCardView.memoTextViewBottomConstraints.isActive = false
+        popupCardView.memoTextViewBottomConstraintsToKeyboard.isActive = true
+        popupCardView.memoTextView.isSelectable = true
+        popupCardView.memoTextViewTapGesture.isEnabled = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -156,43 +154,14 @@ class PopupCardViewController: UIViewController {
         }
     }
     
-    private func setupObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(memoRecoveredToUncategorized), name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil)
-    }
-    
-    @objc private func memoRecoveredToUncategorized() {
-        self.dismiss(animated: true)
-    }
-    
     private func setupDelegates() {
-//        self.popupCardView.delegate = self
         self.selectedImageCollectionView?.delegate = self
     }
     
 }
 
 
-//extension PopupCardViewController: LargeCardCollectionViewCellDelegate {
-//    
-//    func triggerPresentMethod(selectedItemAt indexPath: IndexPath, imageEntitiesArray: [ImageEntity]) {
-//        
-//    }
-//    
-//    func triggerPresentMethod(presented presentedVC: UIViewController, animated: Bool) {
-//        self.present(presentedVC, animated: true)
-//    }
-//    
-//    func triggerApplyingSnapshot(animatingDifferences: Bool, usingReloadData: Bool, completionForCompositional: (() -> Void)?, completionForFlow: (() -> Void)?) {
-//        return
-//    }
-//    
-//    func updateDataSource() {
-//        return
-//    }
-//    
-//}
-
-
+// MARK: - UICollectionViewDelegate
 extension PopupCardViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -207,10 +176,32 @@ extension PopupCardViewController: UICollectionViewDelegate {
 }
 
 
+// MARK: - UIViewControllerTransitioningDelegate
 extension PopupCardViewController: UIViewControllerTransitioningDelegate {
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return CardImageShowingPresentationController(presentedViewController: presented, presenting: presenting)
+    }
+    
+}
+
+
+// MARK: - Managing MemoEntity
+private extension PopupCardViewController {
+    
+    func restore(memoEntity: MemoEntity) {
+        MemoEntityManager.shared.restoreMemo(memoEntity)
+        
+        guard let presentingTabBarCon = self.presentingViewController as? UITabBarController else { fatalError() }
+        guard let selectedNaviCon = presentingTabBarCon.selectedViewController as? UINavigationController else { fatalError() }
+        guard let memoVC = selectedNaviCon.topViewController as? MemoViewController else { fatalError() }
+        guard memoVC.memoVCType == .trash else { return }
+        guard let indexToRestore = memoVC.memoEntitiesArray.firstIndex(of: memoEntity) else { fatalError() }
+        let indexPathToRestore = IndexPath(item: indexToRestore, section: 0)
+        memoVC.updateDataSource()
+        memoVC.smallCardCollectionView.deleteItems(at: [indexPathToRestore])
+        
+        NotificationCenter.default.post(name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil, userInfo: ["recoveredMemos": [memoEntity]])
     }
     
 }

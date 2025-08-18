@@ -20,25 +20,15 @@ enum MemoVCType {
 
 class MemoViewController: UIViewController {
     
-    enum SectionForCompositional: CaseIterable {
-        case main
-    }
-    
-    enum SectionForFlow: CaseIterable {
-        case main
-    }
-    
     let memoVCType: MemoVCType
     let memoEntityManager = MemoEntityManager.shared
     let categoryEntityManager = CategoryEntityManager.shared
-    let appearingToolbarAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1)
-    let disappearingToolbarAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1)
+    private let appearingToolbarAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1)
+    private let disappearingToolbarAnimator = UIViewPropertyAnimator(duration: 0.4, dampingRatio: 1)
     
     //카테고리가 사라질 경우 카테고리가 없는 메모들도 볼 수 있어야 하므로 selectedCategoryEntity 속성은 옵셔널 타입으로 설정함.
     var selectedCategoryEntity: CategoryEntity?
-    var feedbackGenerator: UIImpactFeedbackGenerator!
     var isCategoryNameChanged: Bool = true
-    var cardIndex: Int = 0
     var userDefaultCriterion: String? { return UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     lazy var memoView = self.view as! MemoView
@@ -89,9 +79,6 @@ class MemoViewController: UIViewController {
         }
         return item
     }()
-    
-    
-     
     
     lazy var restoreMemoAction: UIAction = { [weak self] in
         guard let self else { fatalError() }
@@ -279,14 +266,14 @@ class MemoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideBottomBarsWhenPushed()
+        
         setupDelegates()
         setupActions()
         setupObservers()
+        self.reloadAll()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        print(#function)
         super.viewWillAppear(animated)
         
         guard let keyWindow = UIWindow.current else { fatalError() }
@@ -294,7 +281,7 @@ class MemoViewController: UIViewController {
         
         setupNaviBar()
         
-        self.reloadAll()
+//        self.reloadAll()
         
         if self.memoEntitiesArray.count == 0 {
             self.editButtonItem.isEnabled = false
@@ -333,11 +320,11 @@ class MemoViewController: UIViewController {
     override func setEditing(_ editing: Bool, animated: Bool) {
         print(#function, editing)
         super.setEditing(editing, animated: animated)
-        self.navigationController?.toolbar.alpha = 1
         
         guard let naviCon = self.navigationController else { return }
         
         self.smallCardCollectionView.isEditing = editing
+        self.smallCardCollectionView.delaysContentTouches = editing
         
         self.editButtonItem.title = editing ? "완료".localized() : "선택".localized()
         
@@ -374,8 +361,8 @@ class MemoViewController: UIViewController {
             self.deleteBarButtonItem.isEnabled = false
             self.ellipsisBarButtonItem.isEnabled = false
             
-            self.feedbackGenerator = UIImpactFeedbackGenerator(style: UIImpactFeedbackGenerator.FeedbackStyle.rigid)
-            self.feedbackGenerator.prepare()
+//            self.feedbackGenerator = UIImpactFeedbackGenerator(style: UIImpactFeedbackGenerator.FeedbackStyle.rigid)
+//            self.feedbackGenerator.prepare()
             
         case false:
             self.tabBarController?.tabBar.clipsToBounds = false
@@ -394,7 +381,7 @@ class MemoViewController: UIViewController {
             disappearingToolbarAnimator.startAnimation()
             
             self.plusBarButtonItem.isEnabled = true
-            self.feedbackGenerator = nil
+//            self.feedbackGenerator = nil
         }
     }
     
@@ -419,21 +406,11 @@ class MemoViewController: UIViewController {
         }
     }
     
-    private func hideBottomBarsWhenPushed() {
-        switch self.memoVCType {
-        case .uncategorized:
-            self.hidesBottomBarWhenPushed = false
-        default:
-            self.hidesBottomBarWhenPushed = true
-        }
-    }
-    
-    
     private func setupNaviBar() {
         self.navigationItem.largeTitleDisplayMode = UINavigationItem.LargeTitleDisplayMode.never
         
         if self.memoVCType != .favorite && self.memoVCType != .trash {
-            self.navigationItem.rightBarButtonItem = self.plusBarButtonItem
+            self.navigationItem.rightBarButtonItems = [self.plusBarButtonItem, self.editButtonItem]
         }
         
         let appearance = UINavigationBarAppearance()
@@ -546,8 +523,6 @@ class MemoViewController: UIViewController {
     //그래서 MemoViewController를 탭해서 열 때 한 번만 불릴 줄 알았는데, 보니까 탭바의 두번째 탭으로 MemoViewController가 기본으로 들어가며(SceneDelegate에서 할당) 이때 MemoViewController 인스턴스가 생성되므로
     //당연히 이 때에도 setupObservers() 메서드가 불린다. 그래서 NotificationCenter에 post 하면 두 번 불리는 것임.
     private func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(occurImpact), name: NSNotification.Name("feedbackGeneratorNotification"), object: nil)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(memoCreated(_:)), name: NSNotification.Name("createdMemoNotification"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(memoEdited(_:)), name: NSNotification.Name("editingCompleteNotification"), object: nil)
@@ -555,12 +530,6 @@ class MemoViewController: UIViewController {
         if self.memoVCType == MemoVCType.uncategorized {
             NotificationCenter.default.addObserver(self, selector: #selector(memoRecoveredToUncategorized(_:)), name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil)
             print("복구 notification 추가됨")
-        }
-    }
-    
-    @objc private func occurImpact() {
-        if self.smallCardCollectionView.isEditing {
-            self.feedbackGenerator.impactOccurred(intensity: 1.0)
         }
     }
     
@@ -658,6 +627,28 @@ class MemoViewController: UIViewController {
         self.smallCardCollectionView.reloadData()
     }
     
+    private func presentPopupCardVC(at indexPath: IndexPath, inset: UIEdgeInsets) {
+        let wispConfiguration = WispConfiguration { config in
+            config.setLayout { layout in
+                layout.presentedAreaInset = inset
+                layout.initialCornerRadius = 13
+                layout.finalCornerRadius = 25
+            }
+            config.setGesture { gesture in
+                gesture.allowedDirections = [.horizontalOnly, .down]
+            }
+        }
+        
+        let memoEntity = memoEntitiesArray[indexPath.item]
+        let popupCardVC = PopupCardViewController(memo: memoEntity, indexPath: .init(item: 0, section: 0))
+        wisp.present(
+            popupCardVC,
+            collectionView: smallCardCollectionView,
+            at: indexPath,
+            configuration: wispConfiguration
+        )
+    }
+    
 }
 
 
@@ -676,15 +667,13 @@ extension MemoViewController: UICollectionViewDataSource {
                 fatalError("Cell couldn't dequeued")
             }
             cell.configureCell(with: self.memoEntitiesArray[indexPath.item])
-            cell.cellFrame = cell.frame
-            
-            if self.smallCardCollectionView.isEditing {
-                cell.longPressGestureToSelect.isEnabled = false
-                cell.opaqueView.alpha = 0.7
-            } else {
-                cell.longPressGestureToSelect.isEnabled = true
-                cell.opaqueView.alpha = 0
+            cell.onLongPressSelected = { [weak self] in
+                self?.presentPopupCardVC(
+                    at: indexPath,
+                    inset: .init(top: 100, left: 10, bottom: 100, right: 10)
+                )
             }
+            cell.opaqueView.alpha = smallCardCollectionView.isEditing ? 0.7 : 0
             return cell
             
         default:
@@ -699,32 +688,24 @@ extension MemoViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension MemoViewController: UICollectionViewDelegate {
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        switch self.smallCardCollectionView.isEditing {
-        case true:
-            self.deleteBarButtonItem.isEnabled = true
-            self.ellipsisBarButtonItem.isEnabled = true
-            self.setupToolbar(animated: false)
-            
-        case false:
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        if collectionView.isEditing {
+            return true
+        } else {
             let popupCardTopInset = navigationController?.view.safeAreaInsets.top ?? 0
-            
-            let wispConfiguration = WispConfiguration { config in
-                config.setLayout { layout in
-                    layout.presentedAreaInset = .init(top: popupCardTopInset, left: 0, bottom: 0, right: 0)
-                    layout.initialCornerRadius = 13
-                    layout.finalCornerRadius = 25
-                }
-                config.setGesture { gesture in
-                    gesture.allowedDirections = [.horizontalOnly, .down]
-                }
-            }
-            
-            let memoEntity = memoEntitiesArray[indexPath.item]
-            let popupCardVC = PopupCardViewController(memo: memoEntity, indexPath: .init(item: 0, section: 0))
-            wisp.present(popupCardVC, collectionView: smallCardCollectionView, at: indexPath, configuration: wispConfiguration)
-            
+            presentPopupCardVC(
+                at: indexPath,
+                inset: .init(top: popupCardTopInset, left: 0, bottom: 0, right: 0)
+            )
+            return false
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard self.smallCardCollectionView.isEditing else { return }
+        self.deleteBarButtonItem.isEnabled = true
+        self.ellipsisBarButtonItem.isEnabled = true
+        self.setupToolbar(animated: false)
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {

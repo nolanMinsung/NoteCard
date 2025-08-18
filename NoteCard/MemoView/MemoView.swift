@@ -78,7 +78,7 @@ final class MemoView: UIView {
             smallCardCollectionView.topAnchor.constraint(equalTo: categoryNameTextField.bottomAnchor, constant: 20),
             smallCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             smallCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            smallCardCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
+            smallCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0)
         ])
     }
     

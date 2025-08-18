@@ -84,6 +84,7 @@
 		4EC9B6522E42EBE80031250B /* MemoSearchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6512E42EBE80031250B /* MemoSearchingView.swift */; };
 		4EC9B6A52E42F1ED0031250B /* MemoSearchingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6A42E42F1ED0031250B /* MemoSearchingCell.swift */; };
 		4EC9B6A72E430FD30031250B /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6A62E430FD30031250B /* SearchBar.swift */; };
+		4EC9E63B2E4A4FB1007ECD86 /* MainSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9E63A2E4A4FB1007ECD86 /* MainSplitViewController.swift */; };
 		4ECDA56F2E162753003D15F5 /* ThirdTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */; };
 		4ED063B92E49A532005AD817 /* MemoImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385142AF386D10063817B /* MemoImageCollectionViewCell.swift */; };
 		4ED333A62B332FCD00492B0F /* ThemeColorPickingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */; };
@@ -181,6 +182,7 @@
 		4EC9B6512E42EBE80031250B /* MemoSearchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingView.swift; sourceTree = "<group>"; };
 		4EC9B6A42E42F1ED0031250B /* MemoSearchingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingCell.swift; sourceTree = "<group>"; };
 		4EC9B6A62E430FD30031250B /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		4EC9E63A2E4A4FB1007ECD86 /* MainSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSplitViewController.swift; sourceTree = "<group>"; };
 		4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdTabViewController.swift; sourceTree = "<group>"; };
 		4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingViewController.swift; sourceTree = "<group>"; };
 		4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingView.swift; sourceTree = "<group>"; };
@@ -480,6 +482,7 @@
 			children = (
 				4E3E757B2B6889260073A951 /* MainTabBarController.swift */,
 				4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */,
+				4EC9E63A2E4A4FB1007ECD86 /* MainSplitViewController.swift */,
 			);
 			path = TabBar;
 			sourceTree = "<group>";
@@ -629,6 +632,7 @@
 				4E4FCCC32B3C5871000CBE17 /* TimeFormatSettingViewController.swift in Sources */,
 				4E1384EB2AF3843A0063817B /* HomeViewController.swift in Sources */,
 				4E1385072AF3860B0063817B /* CreateCategoryView.swift in Sources */,
+				4EC9E63B2E4A4FB1007ECD86 /* MainSplitViewController.swift in Sources */,
 				4E1384E52AF383D70063817B /* DataManager.swift in Sources */,
 				4E4FCCBE2B3C3644000CBE17 /* DateFormatSettingTableViewCell.swift in Sources */,
 				4E13850F2AF386750063817B /* MemoViewController.swift in Sources */,
