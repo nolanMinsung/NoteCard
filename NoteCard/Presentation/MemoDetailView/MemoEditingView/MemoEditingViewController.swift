@@ -240,7 +240,7 @@ class MemoEditingViewController: UIViewController {
         selectedMemoEntity.memoText = memoText
         //selectedMemoEntity.categories = EditingVCSelectCategoryCell.selectedCategorySet as NSSet
         selectedMemoEntity.modificationDate = Date()
-        appDelegate.saveContext()
+        CoreDataStack.shared.saveContext()
         
         //카테고리 변경사항 적용
         MemoEntityManager.shared.replaceCategories(of: self.selectedMemoEntity, with: self.temporaryCategorySet)
@@ -252,7 +252,7 @@ class MemoEditingViewController: UIViewController {
         categoryEntityList.forEach { category in
             category.modificationDate = Date()
         }
-        appDelegate.saveContext()
+        CoreDataStack.shared.saveContext()
         
         //임시로 삭제한 사진들의 imageEntity들 삭제해주기
         let imageEntitiesToDelete = self.imageEntityManager.getImageEntities(
@@ -277,7 +277,7 @@ class MemoEditingViewController: UIViewController {
             imageEntity.isTemporaryAppended = false
         }
         
-        appDelegate.saveContext()
+        CoreDataStack.shared.saveContext()
         appDelegate.memoEditingVC = nil
         //여기서부터 보낼 Notification 정보 분기처리
         //1) 수정한 메모가 현재 카테고리에서 사라졌을 때

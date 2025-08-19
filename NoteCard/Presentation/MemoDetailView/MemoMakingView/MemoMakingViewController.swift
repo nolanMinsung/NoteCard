@@ -206,7 +206,7 @@ class MemoMakingViewController: UIViewController {
             print("modificationDate of <\(category.name)> changed to \(Date())")
         }
         
-        appDelegate.saveContext()
+        CoreDataStack.shared.saveContext()
         print("메모의 코어데이터 생성")
         appDelegate.memoMakingVC = nil
         

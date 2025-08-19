@@ -15,12 +15,12 @@ enum CategoryNameError: Error {
 
 
 final class CategoryEntityManager {
-    //CoreData의 Entity들의 관계를 다시 정립하면서 아래 CRUD 함수에서 뭔가가 꼬인 것 같다.
-    //CRUD 함수들을 새로 바뀐 Entity들의 relationships를 고려해서 전면 재검토하기
+    
+    static let shared = CategoryEntityManager()
+    private init() { }
     
     let fileManager = FileManager.default
-    static let shared = CategoryEntityManager()
-    
+    let context = CoreDataStack.shared.persistentContainer.viewContext
 
     weak var appDelegate = UIApplication.shared.delegate as? AppDelegate
 //    lazy var context = appDelegate?.persistentContainer.viewContext
@@ -55,8 +55,6 @@ final class CategoryEntityManager {
         guard categoryNamesArray.contains(trimmedName) == false else {
             throw CategoryNameError.duplicatedNameError
         }
-        
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
         guard let entityDescription = NSEntityDescription.entity(forEntityName: self.entityName, in: context) else { return }
         guard let managedObject = NSManagedObject(entity: entityDescription, insertInto: context) as? CategoryEntity else { return }
         
@@ -78,7 +76,7 @@ final class CategoryEntityManager {
         managedObject.modificationDate = date
 //        managedObject.memoSet = NSSet()  //Instance will be immediately deallocated because property 'memoSet' is 'weak'
         
-        appDelegate?.saveContext()
+        CoreDataStack.shared.saveContext()
     }
     
     
@@ -87,18 +85,17 @@ final class CategoryEntityManager {
         
         var categoryEntityArray: [CategoryEntity] = []
 //        if let context = self.context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
-            let dataOrder = NSSortDescriptor(key: criterion.rawValue, ascending: isAscending)
-            request.sortDescriptors = [dataOrder]
-            
-            do {
-                if let fetchedCategoryArray = try context.fetch(request) as? [CategoryEntity] {
-                    categoryEntityArray = fetchedCategoryArray
-                }
-            } catch {
-                print("fetch request failed")
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
+        let dataOrder = NSSortDescriptor(key: criterion.rawValue, ascending: isAscending)
+        request.sortDescriptors = [dataOrder]
+        
+        do {
+            if let fetchedCategoryArray = try context.fetch(request) as? [CategoryEntity] {
+                categoryEntityArray = fetchedCategoryArray
             }
+        } catch {
+            print("fetch request failed")
+        }
 //        }
         
         
@@ -120,19 +117,18 @@ final class CategoryEntityManager {
         let searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         var searchResult: [CategoryEntity] = []
 //        if let context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            
-            let request = NSFetchRequest<CategoryEntity>(entityName: self.entityName)
-            let sortDescriptor = NSSortDescriptor(key: criterion.rawValue, ascending: ascending)
-            request.sortDescriptors = [sortDescriptor]
-            request.predicate = NSPredicate(format: "name CONTAINS[c] %@", searchText)
-            
-            do{
-                searchResult = try context.fetch(request)
-                return searchResult
-            } catch {
-                fatalError("categoryEntity searchResult fetching failed")
-            }
+        
+        let request = NSFetchRequest<CategoryEntity>(entityName: self.entityName)
+        let sortDescriptor = NSSortDescriptor(key: criterion.rawValue, ascending: ascending)
+        request.sortDescriptors = [sortDescriptor]
+        request.predicate = NSPredicate(format: "name CONTAINS[c] %@", searchText)
+        
+        do{
+            searchResult = try context.fetch(request)
+            return searchResult
+        } catch {
+            fatalError("categoryEntity searchResult fetching failed")
+        }
 //        }
 //        fatalError("viewContext is nil. Maybe because appDelegate is nil. check if appDelegate is nil.")
     }
@@ -189,25 +185,23 @@ final class CategoryEntityManager {
     
     //위 메서드랑 하나로 통일
     func changeCategoryEntityName(ofEntity entity: CategoryEntity, newName: String) throws {
-        
         let categoryNamesArray = self.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false).map({ $0.name })
         if entity.name != newName && categoryNamesArray.contains(newName.trimmingCharacters(in: .whitespacesAndNewlines)) {
             throw CategoryNameError.duplicatedNameError
         }
         
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<NSManagedObject>(entityName: self.entityName)
-            request.predicate = NSPredicate(format: "name = %@", entity.name as CVarArg)
+        let request = NSFetchRequest<NSManagedObject>(entityName: self.entityName)
+        request.predicate = NSPredicate(format: "name = %@", entity.name as CVarArg)
+        
+        do {
+            guard let fetchedCategoryEntityList = try context.fetch(request) as? [CategoryEntity] else { return }
+            guard let categoryEntityToChangeName = fetchedCategoryEntityList.first else { return }
+            categoryEntityToChangeName.name = newName
             
-            do {
-                guard let fetchedCategoryEntityList = try context.fetch(request) as? [CategoryEntity] else { return }
-                guard let categoryEntityToChangeName = fetchedCategoryEntityList.first else { return }
-                categoryEntityToChangeName.name = newName
-                
-                appDelegate?.saveContext()
-            } catch {
-                print("Category Name Update Failed")
-            }
+            CoreDataStack.shared.saveContext()
+        } catch {
+            print("Category Name Update Failed")
+        }
     }
     
     
@@ -219,51 +213,50 @@ final class CategoryEntityManager {
     /// this method can fetch category entity as a [CategoryEntity] type. If you want to delete a number of category entity at once, you can change this method or make similar method
     func deleteCategoryEntity(of entity: CategoryEntity) {
         
-//        if let context = context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
+        //        if let context = context {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
+        
+        request.predicate = NSPredicate(format: "name = %@", entity.name as CVarArg)
+        
+        do {
+            guard let fetchedCategoryList = try context.fetch(request) as? [CategoryEntity] else { return }
+            guard let entityToDelete = fetchedCategoryList.first else { return }
             
-            request.predicate = NSPredicate(format: "name = %@", entity.name as CVarArg)
-            
-            do {
-                guard let fetchedCategoryList = try context.fetch(request) as? [CategoryEntity] else { return }
-                guard let entityToDelete = fetchedCategoryList.first else { return }
-                
-                //해당 카테고리를 참조하는 메모들에서 각 메모의 categorySet에서 카테고리 하나씩 삭제하는 작업
-                //이 작업은 cotext.delete(entityToDelete) 코드 이전에 실행되어야 함.
-                //categoryEntity는 처음 만들 때 memoSet속성에 값을 부여하는 과정은 없음.
-                //따라서 아래 옵셔널 바인딩이 guard let ~ else { return } 의 형식이었으면
-                //카테고리를 만들고 나서 메모를 추가하지 않고 카테고리를 바로 삭제할 때에는 아래 옵셔널 바인딩에서 nil이 반환될 것임.
-                if let memoSet = entityToDelete.memoSet as? Set<MemoEntity> {
-                    memoSet.forEach { memoEntity in
-                        memoEntity.removeFromCategories(entityToDelete)
-                    }
+            //해당 카테고리를 참조하는 메모들에서 각 메모의 categorySet에서 카테고리 하나씩 삭제하는 작업
+            //이 작업은 cotext.delete(entityToDelete) 코드 이전에 실행되어야 함.
+            //categoryEntity는 처음 만들 때 memoSet속성에 값을 부여하는 과정은 없음.
+            //따라서 아래 옵셔널 바인딩이 guard let ~ else { return } 의 형식이었으면
+            //카테고리를 만들고 나서 메모를 추가하지 않고 카테고리를 바로 삭제할 때에는 아래 옵셔널 바인딩에서 nil이 반환될 것임.
+            if let memoSet = entityToDelete.memoSet as? Set<MemoEntity> {
+                memoSet.forEach { memoEntity in
+                    memoEntity.removeFromCategories(entityToDelete)
                 }
-                
-                let documentURL = fileManager.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask)[0]
-                
-                if #available(iOS 16, *) {
-                    let urlToDeleteEntity = documentURL.appending(path: entityToDelete.name, directoryHint: URL.DirectoryHint.inferFromPath)
-
-                    do { try fileManager.removeItem(at: urlToDeleteEntity) }
-                    catch { print(error.localizedDescription) }
-                    
-                } else {
-                    let urlToDeleteEntity = documentURL.appendingPathComponent(entityToDelete.name)
-
-                    do { try fileManager.removeItem(at: urlToDeleteEntity) }
-                    catch { print(error.localizedDescription) }
-                    
-                }
-                
-                
-                
-                context.delete(entityToDelete)
-                
-                appDelegate?.saveContext()
-            } catch {
-                print("delete failed")
             }
+            
+            let documentURL = fileManager.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask)[0]
+            
+            if #available(iOS 16, *) {
+                let urlToDeleteEntity = documentURL.appending(path: entityToDelete.name, directoryHint: URL.DirectoryHint.inferFromPath)
+                
+                do { try fileManager.removeItem(at: urlToDeleteEntity) }
+                catch { print(error.localizedDescription) }
+                
+            } else {
+                let urlToDeleteEntity = documentURL.appendingPathComponent(entityToDelete.name)
+                
+                do { try fileManager.removeItem(at: urlToDeleteEntity) }
+                catch { print(error.localizedDescription) }
+                
+            }
+            
+            
+            
+            context.delete(entityToDelete)
+            
+            CoreDataStack.shared.saveContext()
+        } catch {
+            print("delete failed")
+        }
 //        }
     }
     
@@ -272,16 +265,15 @@ final class CategoryEntityManager {
     func memoCounted(of category: CategoryEntity) -> Int {
         
 //        if let context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<MemoEntity>(entityName: "MemoEntity")
-            request.predicate = NSPredicate(format: "ANY categories == %@", category as CVarArg)
-            
-            do {
-                let memoEntityArray = try context.fetch(request)
-                return memoEntityArray.count
-            } catch {
-                fatalError(error.localizedDescription)
-            }
+        let request = NSFetchRequest<MemoEntity>(entityName: "MemoEntity")
+        request.predicate = NSPredicate(format: "ANY categories == %@", category as CVarArg)
+        
+        do {
+            let memoEntityArray = try context.fetch(request)
+            return memoEntityArray.count
+        } catch {
+            fatalError(error.localizedDescription)
+        }
 //        } else {
 //            fatalError("context is nil.")
 //        }

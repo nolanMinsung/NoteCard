@@ -206,7 +206,7 @@ private extension PopupCardViewController {
     @objc func likeButtonTapped() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
         rootView.likeButton.isSelected.toggle()
-        appDelegate.saveContext()
+        CoreDataStack.shared.saveContext()
         memoEntity.isFavorite = rootView.likeButton.isSelected
     }
     

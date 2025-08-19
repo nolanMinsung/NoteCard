@@ -182,7 +182,7 @@ final class PopupCardView: UIView {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             guard let text = self.titleTextField.text else { fatalError() }
             self.memoEntity?.memoTitle = text
-            appDelegate.saveContext()
+            CoreDataStack.shared.saveContext()
         }
     }
     
@@ -190,7 +190,7 @@ final class PopupCardView: UIView {
         if self.isTextViewChanged {
             guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             self.memoEntity?.memoText = self.memoTextView.text
-            appDelegate.saveContext()
+            CoreDataStack.shared.saveContext()
         }
     }
     

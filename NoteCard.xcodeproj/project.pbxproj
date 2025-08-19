@@ -66,6 +66,7 @@
 		4E4FCCC32B3C5871000CBE17 /* TimeFormatSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC02B3C571F000CBE17 /* TimeFormatSettingViewController.swift */; };
 		4E4FCCC42B3C5873000CBE17 /* TimeFormatSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC22B3C5810000CBE17 /* TimeFormatSettingView.swift */; };
 		4E4FCCC52B3C5875000CBE17 /* TimeFormatSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC12B3C5810000CBE17 /* TimeFormatSettingTableViewCell.swift */; };
+		4E57A6002E54380700418962 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57A5FF2E54380700418962 /* CoreDataStack.swift */; };
 		4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602C2B064BE20029BA3D /* SettingsViewController.swift */; };
 		4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602E2B064C290029BA3D /* SettingsView.swift */; };
 		4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */; };
@@ -161,6 +162,7 @@
 		4E4FCCC02B3C571F000CBE17 /* TimeFormatSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatSettingViewController.swift; sourceTree = "<group>"; };
 		4E4FCCC12B3C5810000CBE17 /* TimeFormatSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatSettingTableViewCell.swift; sourceTree = "<group>"; };
 		4E4FCCC22B3C5810000CBE17 /* TimeFormatSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatSettingView.swift; sourceTree = "<group>"; };
+		4E57A5FF2E54380700418962 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		4E59602C2B064BE20029BA3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4E59602E2B064C290029BA3D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 				4E1384DE2AF382F70063817B /* ImageEntityManager.swift */,
 				4E1384E02AF3833E0063817B /* MemoEntityManager.swift */,
 				4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */,
+				4E57A5FF2E54380700418962 /* CoreDataStack.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -669,6 +672,7 @@
 				4E1385192AF387100063817B /* SmallCardCollectionViewCell.swift in Sources */,
 				4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */,
 				4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */,
+				4E57A6002E54380700418962 /* CoreDataStack.swift in Sources */,
 				4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */,
 				4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */,
 				4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */,

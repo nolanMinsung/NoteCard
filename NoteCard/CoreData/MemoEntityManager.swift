@@ -12,6 +12,7 @@ import CoreData
 final class MemoEntityManager {
     
     let fileManager = FileManager.default
+    let context = CoreDataStack.shared.persistentContainer.viewContext
     let imageEntityManager = ImageEntityManager.shared
     static let shared = MemoEntityManager()
     private init() {}
@@ -34,7 +35,6 @@ final class MemoEntityManager {
         categorySet: Set<CategoryEntity> = Set<CategoryEntity>(),
         image: [ImageEntity]? = nil
     ) -> MemoEntity? {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
         guard let entityDescription = NSEntityDescription.entity(forEntityName: self.entityName, in: context) else { return nil }
         guard let newMemoEntity = NSManagedObject(entity: entityDescription, insertInto: context) as? MemoEntity else { return nil }
         newMemoEntity.memoID = UUID()
@@ -57,7 +57,7 @@ final class MemoEntityManager {
             newMemoEntity.addToCategories(category)
         }
         
-        appDelegate?.saveContext()
+        CoreDataStack.shared.saveContext()
         print("코어데이터에 memoEntity 저장됨")
         
         
@@ -98,7 +98,6 @@ final class MemoEntityManager {
         
         var memoEntityList: [MemoEntity] = []
         
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
         let dataOrder = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
         request.sortDescriptors = [dataOrder]
@@ -125,26 +124,25 @@ final class MemoEntityManager {
         //guard let categoryName = category.name else { return [] }
         
 //        if let context = self.context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<NSManagedObject>(entityName: self.entityName)
+        let request = NSFetchRequest<NSManagedObject>(entityName: self.entityName)
 //            let memoOrder = NSSortDescriptor(key: criterion.rawValue, ascending: ascending)
-            let memoOrder = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
-            request.sortDescriptors = [memoOrder]
-            
-            if let category {
-                request.predicate = NSPredicate(format: "ANY categories == %@ && isInTrash == false", category as CVarArg)
-            } else {
-                request.predicate = NSPredicate(format: "categories.@count == 0 && isInTrash == false") //메모엔티티가 참조하는 카테고리의 수가 0인 메모엔티티들을 반환
+        let memoOrder = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
+        request.sortDescriptors = [memoOrder]
+        
+        if let category {
+            request.predicate = NSPredicate(format: "ANY categories == %@ && isInTrash == false", category as CVarArg)
+        } else {
+            request.predicate = NSPredicate(format: "categories.@count == 0 && isInTrash == false") //메모엔티티가 참조하는 카테고리의 수가 0인 메모엔티티들을 반환
+        }
+        
+        
+        do {
+            if let fetchedMemoEntitiesList = try context.fetch(request) as? [MemoEntity] {
+                memoEntitiesArray = fetchedMemoEntitiesList
             }
-            
-            
-            do {
-                if let fetchedMemoEntitiesList = try context.fetch(request) as? [MemoEntity] {
-                    memoEntitiesArray = fetchedMemoEntitiesList
-                }
-            } catch {
-                print("fetch request failed")
-            }
+        } catch {
+            print("fetch request failed")
+        }
         
         return memoEntitiesArray
     }
@@ -158,20 +156,19 @@ final class MemoEntityManager {
         var memoEntitiesArray: [MemoEntity] = []
         
 //        if let context = self.context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<MemoEntity>(entityName: self.entityName)
+        let request = NSFetchRequest<MemoEntity>(entityName: self.entityName)
 //            let memoOrder = NSSortDescriptor(key: criterion.rawValue, ascending: ascending)
-            let memoOrder = NSSortDescriptor(key: "deletedDate", ascending: isAscending)
-            request.sortDescriptors = [memoOrder]
-            request.predicate = NSPredicate(format: "isInTrash == true")
+        let memoOrder = NSSortDescriptor(key: "deletedDate", ascending: isAscending)
+        request.sortDescriptors = [memoOrder]
+        request.predicate = NSPredicate(format: "isInTrash == true")
+        
+        do {
+            let fetchedMemoEntitiesList = try context.fetch(request)
+            memoEntitiesArray = fetchedMemoEntitiesList
             
-            do {
-                let fetchedMemoEntitiesList = try context.fetch(request)
-                memoEntitiesArray = fetchedMemoEntitiesList
-                
-            } catch {
-                print("fetch request failed")
-            }
+        } catch {
+            print("fetch request failed")
+        }
 //        }
         return memoEntitiesArray
     }
@@ -198,24 +195,23 @@ final class MemoEntityManager {
 //        let searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         var searchResult: [MemoEntity] = []
 //        if let context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<MemoEntity>(entityName: self.entityName)
+        let request = NSFetchRequest<MemoEntity>(entityName: self.entityName)
 //            let sortDescriptor = NSSortDescriptor(key: criterion.rawValue, ascending: ascending)
-            let sortDescriptor = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
-            request.sortDescriptors = [sortDescriptor]
-            if !searchText.isEmpty {
-                request.predicate = NSPredicate(format: "(memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && isInTrash == false", searchText, searchText)
-            } else {
-                request.predicate = NSPredicate(format: "isInTrash == false")
-            }
-            
-            do {
-                let memoEntitySearchResult = try context.fetch(request)
-                searchResult = memoEntitySearchResult
-                return searchResult
-            } catch {
-                fatalError("memoEntity searchResult fetching failed")
-            }
+        let sortDescriptor = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
+        request.sortDescriptors = [sortDescriptor]
+        if !searchText.isEmpty {
+            request.predicate = NSPredicate(format: "(memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && isInTrash == false", searchText, searchText)
+        } else {
+            request.predicate = NSPredicate(format: "isInTrash == false")
+        }
+        
+        do {
+            let memoEntitySearchResult = try context.fetch(request)
+            searchResult = memoEntitySearchResult
+            return searchResult
+        } catch {
+            fatalError("memoEntity searchResult fetching failed")
+        }
 //        }
 //        fatalError("viewContext is nil. Maybe because appDelegate is nil. check if appDelegate is nil.")
     }
@@ -232,20 +228,19 @@ final class MemoEntityManager {
         var memoEntityList: [MemoEntity] = []
         
 //        if let context = self.context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<NSManagedObject>(entityName: self.entityName)
+        let request = NSFetchRequest<NSManagedObject>(entityName: self.entityName)
 //            let dataOrder = NSSortDescriptor(key: criterion.rawValue, ascending: ascending)
-            let dataOrder = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
-            request.sortDescriptors = [dataOrder]
-            request.predicate = NSPredicate(format: "isFavorite == true && isInTrash == false")
-            
-            do {
-                if let fetchedMemoTextList = try context.fetch(request) as? [MemoEntity] {
-                    memoEntityList = fetchedMemoTextList
-                }
-            } catch {
-                print("fetch request failed")
+        let dataOrder = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
+        request.sortDescriptors = [dataOrder]
+        request.predicate = NSPredicate(format: "isFavorite == true && isInTrash == false")
+        
+        do {
+            if let fetchedMemoTextList = try context.fetch(request) as? [MemoEntity] {
+                memoEntityList = fetchedMemoTextList
             }
+        } catch {
+            print("fetch request failed")
+        }
 //        }
         return memoEntityList
     }
@@ -258,7 +253,7 @@ final class MemoEntityManager {
 //        memoEntity.categories = NSSet()
         memoEntity.isInTrash = true
         memoEntity.deletedDate = Date()
-        appDelegate?.saveContext()
+        CoreDataStack.shared.saveContext()
         
         memoEntity.categories?.forEach({ element in
             guard let category = element as? CategoryEntity else { fatalError() }
@@ -271,7 +266,7 @@ final class MemoEntityManager {
     func restoreMemo(_ memoEntity: MemoEntity) {
         memoEntity.isInTrash = false
         memoEntity.deletedDate = nil
-        appDelegate?.saveContext()
+        CoreDataStack.shared.saveContext()
     }
     
     
@@ -282,8 +277,6 @@ final class MemoEntityManager {
     ///
     /// 매개변수로 들어온 memoEntity와 그 메모에 속한 이미지들 및 imageEntity들까지 모두 삭제한다.
     func deleteMemoEntity(memoEntity: MemoEntity) {
-        
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
         guard let categories = memoEntity.categories else { return }
         guard let images = memoEntity.images as? Set<ImageEntity> else { return }
         memoEntity.removeFromCategories(categories)
@@ -319,7 +312,7 @@ final class MemoEntityManager {
         
         
         context.delete(memoEntity)
-        appDelegate?.saveContext()
+        CoreDataStack.shared.saveContext()
         
         print(" memoEntity \"\(memoEntity.memoTitle)\" 삭제함")
         
@@ -373,14 +366,14 @@ final class MemoEntityManager {
     
     func togglesFavorite(in memoEntity: MemoEntity) {
         memoEntity.isFavorite.toggle()
-        appDelegate?.saveContext()
+        CoreDataStack.shared.saveContext()
     }
     
     // MARK: - Set Favorite
     
     func setFavorite(of memoEntity: MemoEntity, to value: Bool) {
         memoEntity.isFavorite = value
-        appDelegate?.saveContext()
+        CoreDataStack.shared.saveContext()
     }
     
 }

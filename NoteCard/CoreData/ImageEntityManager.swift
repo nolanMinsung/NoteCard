@@ -11,6 +11,7 @@ import CoreData
 final class ImageEntityManager {
     
     let fileManager = FileManager.default
+    let context = CoreDataStack.shared.persistentContainer.viewContext
     static let shared = ImageEntityManager()
     private init() {}
     
@@ -99,7 +100,6 @@ final class ImageEntityManager {
         
         
 //        guard let context else { return nil }
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
         guard let entityDescription = NSEntityDescription.entity(forEntityName: self.entityName, in: context) else { return nil }
         guard let newImageEntiy = NSManagedObject(entity: entityDescription, insertInto: context) as? ImageEntity else { return nil }
         
@@ -113,7 +113,7 @@ final class ImageEntityManager {
         
         memoEntity.addToImages(newImageEntiy)
         
-        appDelegate?.saveContext()
+        CoreDataStack.shared.saveContext()
         print("코어데이터에 ImageEntity 저장")
         return newImageEntiy
     }
@@ -225,39 +225,38 @@ final class ImageEntityManager {
     ) -> [ImageEntity] {
         var arrayToReturn = [ImageEntity]()
         
-//        if let context = self.context {
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "ImageEntity")
-            let imageOrder: NSSortDescriptor
+        //        if let context = self.context {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "ImageEntity")
+        let imageOrder: NSSortDescriptor
+        
+        switch orderIndexKind {
+        case .orderIndex:
+            imageOrder = NSSortDescriptor(key: "orderIndex", ascending: true)
+        case .temporaryOrderIndex:
+            imageOrder = NSSortDescriptor(key: "temporaryOrderIndex", ascending: true)
+        }
+        
+        request.sortDescriptors = [imageOrder]
+        
+        switch (isTemporaryDeleted, isTemporaryAppended) {
             
-            switch orderIndexKind {
-            case .orderIndex:
-                imageOrder = NSSortDescriptor(key: "orderIndex", ascending: true)
-            case .temporaryOrderIndex:
-                imageOrder = NSSortDescriptor(key: "temporaryOrderIndex", ascending: true)
-            }
+        case (.some(let delete), .some(let append)):
+            request.predicate = NSPredicate(format: "memo == %@ && isTemporaryDeleted == %d && isTemporaryAppended == %d", memoEntity as CVarArg, delete, append)
             
-            request.sortDescriptors = [imageOrder]
+        case (.none, .some(let append)):
+            request.predicate = NSPredicate(format: "memo == %@ && isTemporaryAppended == %d", memoEntity as CVarArg, append)
             
-            switch (isTemporaryDeleted, isTemporaryAppended) {
-                
-            case (.some(let delete), .some(let append)):
-                request.predicate = NSPredicate(format: "memo == %@ && isTemporaryDeleted == %d && isTemporaryAppended == %d", memoEntity as CVarArg, delete, append)
-                
-            case (.none, .some(let append)):
-                request.predicate = NSPredicate(format: "memo == %@ && isTemporaryAppended == %d", memoEntity as CVarArg, append)
-                
-            case (.some(let delete), .none):
-                request.predicate = NSPredicate(format: "memo == %@ && isTemporaryDeleted == %d", memoEntity as CVarArg, delete)
-                
-            case (.none, .none):
-                request.predicate = NSPredicate(format: "memo == %@", memoEntity as CVarArg)
-                
-            }
+        case (.some(let delete), .none):
+            request.predicate = NSPredicate(format: "memo == %@ && isTemporaryDeleted == %d", memoEntity as CVarArg, delete)
             
+        case (.none, .none):
+            request.predicate = NSPredicate(format: "memo == %@", memoEntity as CVarArg)
             
-            
-            
+        }
+        
+        
+        
+        
 //            if let isTemporaryAppended {
 //                
 //                request.predicate = NSPredicate(format: "memo == %@ && isTemporaryDeleted == %@ && isTemporaryAppended == %@", memoEntity as CVarArg, isTemporaryDeleted, isTemporaryAppended)
@@ -271,15 +270,15 @@ final class ImageEntityManager {
 //            case false:
 //                request.predicate = NSPredicate(format: "memo == %@ && isTemporaryDeleted == false", memoEntity as CVarArg)
 //            }
-            
-            
-            do{
-                if let fetchedImageEntityArray = try context.fetch(request) as? [ImageEntity] {
-                    arrayToReturn = fetchedImageEntityArray
-                }
-            } catch {
-                print(error.localizedDescription)
+        
+        
+        do{
+            if let fetchedImageEntityArray = try context.fetch(request) as? [ImageEntity] {
+                arrayToReturn = fetchedImageEntityArray
             }
+        } catch {
+            print(error.localizedDescription)
+        }
 //        }
         
         return arrayToReturn
@@ -337,7 +336,6 @@ final class ImageEntityManager {
         
         //2) 엔티티 지우기
 //        guard let context else { return }
-        guard let context = self.appDelegate?.persistentContainer.viewContext else { fatalError() }
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
         let predicate = NSPredicate(format: "uuid == %@", imageEntity.uuid as CVarArg)
         request.predicate = predicate
@@ -346,11 +344,10 @@ final class ImageEntityManager {
             guard let fetchedResultArray = try context.fetch(request) as? [ImageEntity] else { return }
             guard let fetchedResult = fetchedResultArray.first else { return }
             context.delete(fetchedResult)
-            appDelegate?.saveContext()
+            CoreDataStack.shared.saveContext()
         } catch {
             print(error.localizedDescription)
         }
-        
     }
     
     
