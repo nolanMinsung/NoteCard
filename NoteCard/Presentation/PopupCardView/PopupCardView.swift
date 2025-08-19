@@ -99,10 +99,10 @@ final class PopupCardView: UIView {
         addSubview(titleTextField)
         addSubview(likeButton)
         addSubview(ellipsisButton)
+        addSubview(memoDateLabel)
         addSubview(categoryCollectionView)
         addSubview(imageCollectionView)
         addSubview(memoTextView)
-        addSubview(memoDateLabel)
     }
     
     private func setupActions() {
@@ -124,7 +124,7 @@ final class PopupCardView: UIView {
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             titleTextField.topAnchor.constraint(equalTo: topAnchor, constant: 15),
-            titleTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25),
+            titleTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 15),
             titleTextField.heightAnchor.constraint(equalToConstant: 30),
         ])
         
@@ -145,9 +145,16 @@ final class PopupCardView: UIView {
             ellipsisButton.heightAnchor.constraint(equalToConstant: 30),
         ])
         
+        memoDateLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            memoDateLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 10),
+            memoDateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 15),
+            memoDateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+        ])
+        
         categoryCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            categoryCollectionView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 10),
+            categoryCollectionView.topAnchor.constraint(equalTo: memoDateLabel.bottomAnchor, constant: 10),
             categoryCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             categoryCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             categoryCollectionView.heightAnchor.constraint(equalToConstant: 28),
@@ -169,17 +176,10 @@ final class PopupCardView: UIView {
             memoTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             memoTextViewBottomConstraints,
         ])
-        
-        memoDateLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            memoDateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-            memoDateLabel.topAnchor.constraint(equalTo: bottomAnchor, constant: 10),
-        ])
     }
     
     private func updateTitleTextField() {
         if self.isTextFieldChanged {
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             guard let text = self.titleTextField.text else { fatalError() }
             self.memoEntity?.memoTitle = text
             CoreDataStack.shared.saveContext()
@@ -188,7 +188,6 @@ final class PopupCardView: UIView {
     
     func updateMemoTextView() {
         if self.isTextViewChanged {
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             self.memoEntity?.memoText = self.memoTextView.text
             CoreDataStack.shared.saveContext()
         }
