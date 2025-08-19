@@ -24,7 +24,7 @@ final class ImageEntityManager {
     
     let entityName: String = "ImageEntity"
     
-    
+    // MARK: - Create
     
     /// create an ImagEntity with its UIImage, orderIndex and memoEntity where this ImageEntity will be embeded.
     /// - Parameters:
@@ -118,7 +118,7 @@ final class ImageEntityManager {
         return newImageEntiy
     }
     
-    
+    // MARK: - Read
     
     /// ImageEntity의 원본 이미지를 반환하는 메서드
     /// - Parameter imageEntity: 원본 이미지에 대한 ImageEntity
@@ -169,6 +169,7 @@ final class ImageEntityManager {
         
     }
     
+    // MARK: - Read Thumbnail
     
     func getThumbnailImage(imageEntity: ImageEntity) -> UIImage? {
         let thumbnailUUIDInString = imageEntity.thumbnailUUID.uuidString
@@ -209,7 +210,7 @@ final class ImageEntityManager {
         
     }
     
-    
+    // MARK: - Read Entities in Memo
     
     /// 특정 메모의 ImageEntity들을 요소로 갖는 배열을 반환하는 메서드
     /// - Parameters:
@@ -286,8 +287,7 @@ final class ImageEntityManager {
     }
     
     
-    
-    
+    // MARK: - Delete Entity
     
     //imageEntity를 삭제하는 함수. 먼저 filemanager를 통해 file 앱에 저장된 이미지를 지우고 그 다음 entity를 지우기로 한다. (만약 enttiy를 먼저 지우면, file에 저장된 이미지에 접근할 방법이 사라진다! UUID를 모르기 때문!!)
     

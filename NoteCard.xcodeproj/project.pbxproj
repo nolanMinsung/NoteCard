@@ -12,8 +12,6 @@
 		4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF492B3D38C000813DCA /* OrderSettingTableViewCell.swift */; };
 		4E0BDF4E2B3D38C800813DCA /* OrderSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF4A2B3D38C000813DCA /* OrderSettingView.swift */; };
 		4E10F8442B654162007B468A /* NoteCardCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4E10F8422B654162007B468A /* NoteCardCoreData.xcdatamodeld */; };
-		4E1384A52AF37B350063817B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384A42AF37B350063817B /* AppDelegate.swift */; };
-		4E1384A72AF37B350063817B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384A62AF37B350063817B /* SceneDelegate.swift */; };
 		4E1384A92AF37B350063817B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384A82AF37B350063817B /* ViewController.swift */; };
 		4E1384B12AF37B370063817B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E1384B02AF37B370063817B /* Assets.xcassets */; };
 		4E1384B42AF37B370063817B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E1384B22AF37B370063817B /* LaunchScreen.storyboard */; };
@@ -53,8 +51,6 @@
 		4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13853B2AF38B000063817B /* MemoEditingViewController.swift */; };
 		4E13854C2AF38BE40063817B /* DetailViewSelectedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */; };
 		4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */; };
-		4E2712042DA19C8C0007D53A /* ReuseIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */; };
-		4E2712062DA1A12A0007D53A /* ViewShrinkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712052DA1A12A0007D53A /* ViewShrinkable.swift */; };
 		4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */; };
 		4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */; };
 		4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */; };
@@ -109,8 +105,6 @@
 		4E0BDF4B2B3D38C000813DCA /* OrderSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSettingViewController.swift; sourceTree = "<group>"; };
 		4E10F8432B654162007B468A /* NoteCardCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NoteCardCoreData.xcdatamodel; sourceTree = "<group>"; };
 		4E1384A12AF37B350063817B /* NoteCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4E1384A42AF37B350063817B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4E1384A62AF37B350063817B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4E1384A82AF37B350063817B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4E1384B02AF37B370063817B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4E1384B32AF37B370063817B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -152,8 +146,6 @@
 		4E13853B2AF38B000063817B /* MemoEditingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditingViewController.swift; sourceTree = "<group>"; };
 		4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageViewController.swift; sourceTree = "<group>"; };
 		4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageView.swift; sourceTree = "<group>"; };
-		4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseIdentifiable.swift; sourceTree = "<group>"; };
-		4E2712052DA1A12A0007D53A /* ViewShrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewShrinkable.swift; sourceTree = "<group>"; };
 		4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderButton.swift; sourceTree = "<group>"; };
 		4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingViewController.swift; sourceTree = "<group>"; };
 		4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingView.swift; sourceTree = "<group>"; };
@@ -252,22 +244,10 @@
 				4EC9B5162E4248B80031250B /* Global */,
 				4EDD36FF2E33027A002AF29B /* CustomDesign */,
 				4E462BA92E29CF4A004C0215 /* Extensions */,
-				4E2712022DA19C730007D53A /* Protocols */,
+				4E57A5F72E5436F400418962 /* Presentation */,
 				4ED42A842B3D6EDA00D14571 /* Localizable.strings */,
-				4E1384A42AF37B350063817B /* AppDelegate.swift */,
-				4E1384A62AF37B350063817B /* SceneDelegate.swift */,
-				4ECDA56B2E16262C003D15F5 /* TabBar */,
 				4E1384BB2AF37DE10063817B /* CoreData */,
 				4E1384BC2AF37E070063817B /* Models */,
-				4E1384BD2AF37E0D0063817B /* HomeView */,
-				4E1384C42AF37E800063817B /* PopupCardView */,
-				4E1384C02AF37E430063817B /* MemoView */,
-				4E13851A2AF387220063817B /* CardImageShowingView */,
-				4E68B8662B24AD4B0035F162 /* QuickMemoEmptyView */,
-				4E1384C12AF37E5B0063817B /* TotalListView */,
-				4EC9B64E2E42EB9C0031250B /* MemoSearching */,
-				4EEEB2612B0870140027AF01 /* MemoDetailView */,
-				4E59602B2B064BA20029BA3D /* SettingsView */,
 				4E1384A82AF37B350063817B /* ViewController.swift */,
 				4E1384B02AF37B370063817B /* Assets.xcassets */,
 				4E1384B22AF37B370063817B /* LaunchScreen.storyboard */,
@@ -280,15 +260,10 @@
 		4E1384BB2AF37DE10063817B /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				4E57A5F32E541CFB00418962 /* Models */,
 				4E10F8422B654162007B468A /* NoteCardCoreData.xcdatamodeld */,
-				4E1384D42AF382A40063817B /* ImageEntity+CoreDataClass.swift */,
-				4E1384D52AF382A40063817B /* ImageEntity+CoreDataProperties.swift */,
 				4E1384DE2AF382F70063817B /* ImageEntityManager.swift */,
-				4E1384D62AF382A40063817B /* MemoEntity+CoreDataClass.swift */,
-				4E1384D72AF382A40063817B /* MemoEntity+CoreDataProperties.swift */,
 				4E1384E02AF3833E0063817B /* MemoEntityManager.swift */,
-				4E1384D22AF382A40063817B /* CategoryEntity+CoreDataClass.swift */,
-				4E1384D32AF382A40063817B /* CategoryEntity+CoreDataProperties.swift */,
 				4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */,
 			);
 			path = CoreData;
@@ -402,15 +377,6 @@
 			path = CardImageShowingView;
 			sourceTree = "<group>";
 		};
-		4E2712022DA19C730007D53A /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				4E2712032DA19C8C0007D53A /* ReuseIdentifiable.swift */,
-				4E2712052DA1A12A0007D53A /* ViewShrinkable.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
 		4E3E756B2B677EAF0073A951 /* DarkModeSettingView */ = {
 			isa = PBXGroup;
 			children = (
@@ -439,6 +405,36 @@
 				4E4FCCC12B3C5810000CBE17 /* TimeFormatSettingTableViewCell.swift */,
 			);
 			path = TimeFormatSettingView;
+			sourceTree = "<group>";
+		};
+		4E57A5F32E541CFB00418962 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4E1384D42AF382A40063817B /* ImageEntity+CoreDataClass.swift */,
+				4E1384D52AF382A40063817B /* ImageEntity+CoreDataProperties.swift */,
+				4E1384D62AF382A40063817B /* MemoEntity+CoreDataClass.swift */,
+				4E1384D72AF382A40063817B /* MemoEntity+CoreDataProperties.swift */,
+				4E1384D22AF382A40063817B /* CategoryEntity+CoreDataClass.swift */,
+				4E1384D32AF382A40063817B /* CategoryEntity+CoreDataProperties.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4E57A5F72E5436F400418962 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				4ECDA56B2E16262C003D15F5 /* TabBar */,
+				4E1384BD2AF37E0D0063817B /* HomeView */,
+				4E1384C42AF37E800063817B /* PopupCardView */,
+				4E1384C02AF37E430063817B /* MemoView */,
+				4E13851A2AF387220063817B /* CardImageShowingView */,
+				4E68B8662B24AD4B0035F162 /* QuickMemoEmptyView */,
+				4E1384C12AF37E5B0063817B /* TotalListView */,
+				4EC9B64E2E42EB9C0031250B /* MemoSearching */,
+				4EEEB2612B0870140027AF01 /* MemoDetailView */,
+				4E59602B2B064BA20029BA3D /* SettingsView */,
+			);
+			path = Presentation;
 			sourceTree = "<group>";
 		};
 		4E59602B2B064BA20029BA3D /* SettingsView */ = {
@@ -626,7 +622,6 @@
 				4E1384F32AF384C80063817B /* HomeCardCell.swift in Sources */,
 				4E1384DD2AF382A40063817B /* MemoEntity+CoreDataProperties.swift in Sources */,
 				4E1384D92AF382A40063817B /* CategoryEntity+CoreDataProperties.swift in Sources */,
-				4E2712062DA1A12A0007D53A /* ViewShrinkable.swift in Sources */,
 				4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */,
 				4ED333A62B332FCD00492B0F /* ThemeColorPickingViewController.swift in Sources */,
 				4E4FCCC32B3C5871000CBE17 /* TimeFormatSettingViewController.swift in Sources */,
@@ -665,7 +660,6 @@
 				4EC9B6A72E430FD30031250B /* SearchBar.swift in Sources */,
 				4EC9B6502E42EBD40031250B /* MemoSearchingViewController.swift in Sources */,
 				4E5960332B072E380029BA3D /* TotalListViewController.swift in Sources */,
-				4E2712042DA19C8C0007D53A /* ReuseIdentifiable.swift in Sources */,
 				4E1384DB2AF382A40063817B /* ImageEntity+CoreDataProperties.swift in Sources */,
 				4E1385012AF3859D0063817B /* CategoryListViewController.swift in Sources */,
 				4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */,
@@ -694,13 +688,11 @@
 				4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */,
 				4E1385092AF386260063817B /* InsetTextField.swift in Sources */,
 				4E1384DF2AF382F70063817B /* ImageEntityManager.swift in Sources */,
-				4E1384A52AF37B350063817B /* AppDelegate.swift in Sources */,
 				4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */,
 				4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */,
 				4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */,
 				4E462D692E2A1AF5004C0215 /* SmallCardCollectionView.swift in Sources */,
 				4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */,
-				4E1384A72AF37B350063817B /* SceneDelegate.swift in Sources */,
 				4EC9B6522E42EBE80031250B /* MemoSearchingView.swift in Sources */,
 				4E0BDF4C2B3D38C400813DCA /* OrderSettingViewController.swift in Sources */,
 				4E13854C2AF38BE40063817B /* DetailViewSelectedImageViewController.swift in Sources */,

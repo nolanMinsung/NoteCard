@@ -27,7 +27,7 @@ final class MemoEntityManager {
     
     let entityName: String = "MemoEntity"
     
-    
+    // MARK: - Create
     func createMemoEntity(
         memoTitleText: String,
         memoText: String,
@@ -82,7 +82,7 @@ final class MemoEntityManager {
     }
     
     
-    
+    // MARK: - Read
     func getMemoEntitiesFromCoreData() -> [MemoEntity] {
         
         guard let orderCriterion = UserDefaults.standard.string(
@@ -114,7 +114,7 @@ final class MemoEntityManager {
         return memoEntityList
     }
     
-    
+    // MARK: - Filter
     func getSpecificMemoEntitiesFromCoreData(inCategory category: CategoryEntity?) -> [MemoEntity] {
         
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
@@ -149,7 +149,7 @@ final class MemoEntityManager {
         return memoEntitiesArray
     }
     
-    
+    // MARK: - Read From Trash
     func getMemoEntitiesInTrash() -> [MemoEntity] {
         
 //        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
@@ -177,7 +177,7 @@ final class MemoEntityManager {
     }
     
     
-    
+    // MARK: - Memo Searching
     
     
     /// 검색어를 이용해서 특정 메모엔티티만 불러오는 메서드
@@ -221,7 +221,7 @@ final class MemoEntityManager {
     }
     
     
-    
+    // MARK: - Read Favorite
     
     func getFavoriteMemoEntities() -> [MemoEntity] {
         
@@ -250,7 +250,7 @@ final class MemoEntityManager {
         return memoEntityList
     }
     
-    
+    // MARK: - Delete(Soft)
     
     
     func trashMemo(_ memoEntity: MemoEntity) {
@@ -266,6 +266,7 @@ final class MemoEntityManager {
         })
     }
     
+    // MARK: - Restoring from Trash
     
     func restoreMemo(_ memoEntity: MemoEntity) {
         memoEntity.isInTrash = false
@@ -273,6 +274,8 @@ final class MemoEntityManager {
         appDelegate?.saveContext()
     }
     
+    
+    // MARK: - ⚠️ Delete(Hard)
     
     /// MemoEntity를 코어데이터에서 삭제하는 메서드
     /// - Parameter memoEntity: 삭제할 memoEntity
@@ -322,6 +325,7 @@ final class MemoEntityManager {
         
     }
     
+    // MARK: - Replace Categories
     
     func replaceCategories(of memoEntity: MemoEntity, with newCategorySet: Set<CategoryEntity>) {
         
@@ -365,10 +369,14 @@ final class MemoEntityManager {
 //        }
 //    }
     
+    // MARK: - Toggle Favorite
+    
     func togglesFavorite(in memoEntity: MemoEntity) {
         memoEntity.isFavorite.toggle()
         appDelegate?.saveContext()
     }
+    
+    // MARK: - Set Favorite
     
     func setFavorite(of memoEntity: MemoEntity, to value: Bool) {
         memoEntity.isFavorite = value
