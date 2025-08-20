@@ -8,22 +8,96 @@
 import CoreData
 import Foundation
 
-@globalActor
 actor MemoEntityRepository {
+    
     static let shared = MemoEntityRepository()
+    private init() { }
+    
+    private let context = CoreDataStack.shared.backgroundContext
+    
+    @UserDefault<String>(key: .orderCriterion, defaultValue: OrderCriterion.modificationDate.rawValue)
+    private var orderCriterion: String
+    
+    @UserDefault<Bool>(key: .isOrderAscending, defaultValue: false)
+    private var isOrderAscending: Bool
+    
 }
 
 
-@MemoEntityRepository
-final class MemoEntityActorManager {
+// MARK: - CREATE
+extension MemoEntityRepository {
     
-    static let shared = MemoEntityActorManager()
-    private init() { }
+    func createNewMemo() async throws -> MemoEntity {
+        try await context.perform {
+            let newMemoEntity = MemoEntity(context: self.context)
+            try self.context.save()
+            return newMemoEntity
+        }
+    }
     
-    private var entityName: String { return "MemoEntity" }
+}
+
+
+// MARK: - READ
+extension MemoEntityRepository {
     
-    private var context: NSManagedObjectContext {
-        CoreDataStack.shared.persistentContainer.viewContext
+    func getAllMemo() async throws -> [MemoEntity]  {
+        try await context.perform {
+            let request = MemoEntity.fetchRequest()
+            let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
+            request.sortDescriptors = [sortDescriptor]
+            return try self.context.fetch(request)
+        }
+    }
+    
+    func getFilteredMemo(inCategory category: CategoryEntity) async throws -> [MemoEntity] {
+        try await context.perform {
+            let request = MemoEntity.fetchRequest()
+            let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
+            request.sortDescriptors = [sortDescriptor]
+            request.predicate = NSPredicate(
+                format: "ANY categories == %@ && isInTrash == false",
+                category as CVarArg
+            )
+            return try self.context.fetch(request)
+        }
+    }
+    
+    func getMemoInTrash() async throws -> [MemoEntity] {
+        try await context.perform {
+            let request = MemoEntity.fetchRequest()
+            let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
+            request.sortDescriptors = [sortDescriptor]
+            request.predicate = NSPredicate(format: "isInTrash == true")
+            return try self.context.fetch(request)
+        }
+    }
+    
+    func searchMemo(searchText: String, inCategory: CategoryEntity? = nil) async throws -> [MemoEntity] {
+        try await context.perform {
+            let request = MemoEntity.fetchRequest()
+            let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
+            request.sortDescriptors = [sortDescriptor]
+            guard !searchText.isEmpty else {
+                return []
+            }
+            request.predicate = NSPredicate(
+                format: "(memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && isInTrash == false",
+                searchText,
+                searchText
+            )
+            return try self.context.fetch(request)
+        }
+    }
+    
+    func getFavoriteMemo() async throws -> [MemoEntity] {
+        try await context.perform {
+            let request = MemoEntity.fetchRequest()
+            let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
+            request.sortDescriptors = [sortDescriptor]
+            request.predicate = NSPredicate(format: "isFavorite == true && isInTrash == false")
+            return try self.context.fetch(request)
+        }
     }
     
 }
