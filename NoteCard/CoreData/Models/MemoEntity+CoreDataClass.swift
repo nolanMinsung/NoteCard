@@ -22,6 +22,20 @@ public class MemoEntity: NSManagedObject {
 
 extension MemoEntity {
     
+    var memoTextShortBuffer: String {
+        let paragraphsInString = self.memoText.components(separatedBy: CharacterSet.newlines)
+        if self.memoText.count > 5000 && paragraphsInString.count > 4 {
+            var buffer: String = ""
+            for i in 0...3 {
+                buffer.append(paragraphsInString[i])
+                buffer.append("\n")
+            }
+            return buffer
+        } else {
+            return self.memoText
+        }
+    }
+    
     var memoTextLongBuffer: String {
         let paragraphsInString = self.memoText.components(separatedBy: CharacterSet.newlines)
         if self.memoText.count > 5000 && paragraphsInString.count > 4 {

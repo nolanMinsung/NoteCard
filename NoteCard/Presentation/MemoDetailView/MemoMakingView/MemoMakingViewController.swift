@@ -197,7 +197,7 @@ class MemoMakingViewController: UIViewController {
             imageEntity.orderIndex = imageEntity.temporaryOrderIndex
         }
         
-        guard let categoryEntityList = self.temporaryMemoEntity.categories?.sortedArray(using: []) as? [CategoryEntity] else {
+        guard let categoryEntityList = self.temporaryMemoEntity.categories.sortedArray(using: []) as? [CategoryEntity] else {
             fatalError("temporaryMemoEnity's categories's sortedArray method return nil")
         }
         
