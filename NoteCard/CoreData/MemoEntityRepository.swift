@@ -1,5 +1,5 @@
 //
-//  MemoEntityManagerActor.swift
+//  MemoEntityRepository.swift
 //  NoteCard
 //
 //  Created by 김민성 on 8/20/25.
@@ -9,12 +9,12 @@ import CoreData
 import Foundation
 
 @globalActor
-actor MemoEntityActor {
-    static let shared = MemoEntityActor()
+actor MemoEntityRepository {
+    static let shared = MemoEntityRepository()
 }
 
 
-@MemoEntityActor
+@MemoEntityRepository
 final class MemoEntityActorManager {
     
     static let shared = MemoEntityActorManager()
