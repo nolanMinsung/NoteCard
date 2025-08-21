@@ -101,3 +101,38 @@ extension MemoEntityRepository {
     }
     
 }
+
+
+// MARK: - DELETE(Soft)
+extension MemoEntityRepository {
+    
+    func moveToTrash(_ memoEntity: MemoEntity) async throws {
+        try await context.perform {
+            memoEntity.isFavorite = false
+            memoEntity.isInTrash = true
+            memoEntity.deletedDate = .now
+            guard let categories = memoEntity.categories as? Set<CategoryEntity> else {
+                fatalError("memo's categories casting failed")
+            }
+            for category in categories {
+                memoEntity.removeFromCategories(category)
+            }
+            try self.context.save()
+        }
+    }
+    
+}
+
+
+// MARK: - RESTORING
+extension MemoEntityRepository {
+    
+    func restore(_ memoEntity: MemoEntity) async throws {
+        try await context.perform {
+            memoEntity.isInTrash = false
+            memoEntity.deletedDate = nil
+            try self.context.save()
+        }
+    }
+    
+}
