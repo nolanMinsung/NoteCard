@@ -43,8 +43,8 @@ actor MemoEntityRepository {
 // MARK: - CREATE
 extension MemoEntityRepository {
     
-    func createNewMemo() async throws -> MemoEntity {
-        try await context.perform {
+    func createNewMemo() throws -> MemoEntity {
+        try context.performAndWait {
             let newMemoEntity = MemoEntity(context: self.context)
             try self.context.save()
             return newMemoEntity
@@ -57,8 +57,8 @@ extension MemoEntityRepository {
 // MARK: - READ
 extension MemoEntityRepository {
     
-    func getMemo(id: UUID) async throws -> MemoEntity {
-        try await context.perform {
+    func getMemo(id: UUID) throws -> MemoEntity {
+        try context.performAndWait {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
@@ -78,8 +78,8 @@ extension MemoEntityRepository {
         }
     }
     
-    func getAllMemo() async throws -> [MemoEntity]  {
-        try await context.perform {
+    func getAllMemo() throws -> [MemoEntity]  {
+        try context.performAndWait {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
@@ -87,8 +87,8 @@ extension MemoEntityRepository {
         }
     }
     
-    func getFilteredMemo(inCategory category: CategoryEntity) async throws -> [MemoEntity] {
-        try await context.perform {
+    func getFilteredMemo(inCategory category: CategoryEntity) throws -> [MemoEntity] {
+        try context.performAndWait {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
@@ -100,8 +100,8 @@ extension MemoEntityRepository {
         }
     }
     
-    func getMemoInTrash() async throws -> [MemoEntity] {
-        try await context.perform {
+    func getMemoInTrash() throws -> [MemoEntity] {
+        try context.performAndWait {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
@@ -110,8 +110,8 @@ extension MemoEntityRepository {
         }
     }
     
-    func searchMemo(searchText: String, inCategory: CategoryEntity? = nil) async throws -> [MemoEntity] {
-        try await context.perform {
+    func searchMemo(searchText: String, inCategory: CategoryEntity? = nil) throws -> [MemoEntity] {
+        try context.performAndWait {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
@@ -127,8 +127,8 @@ extension MemoEntityRepository {
         }
     }
     
-    func getFavoriteMemo() async throws -> [MemoEntity] {
-        try await context.perform {
+    func getFavoriteMemo() throws -> [MemoEntity] {
+        try context.performAndWait {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
@@ -143,8 +143,8 @@ extension MemoEntityRepository {
 // MARK: - DELETE(Soft)
 extension MemoEntityRepository {
     
-    func moveToTrash(_ memoEntity: MemoEntity) async throws {
-        try await context.perform {
+    func moveToTrash(_ memoEntity: MemoEntity) throws {
+        try context.performAndWait {
             memoEntity.isFavorite = false
             memoEntity.isInTrash = true
             memoEntity.deletedDate = .now
@@ -164,8 +164,8 @@ extension MemoEntityRepository {
 // MARK: - ⚠️ DELETE(Hard)
 extension MemoEntityRepository {
     
-    func deleteMemo(_ memoEntity: MemoEntity) async throws {
-        try await context.perform {
+    func deleteMemo(_ memoEntity: MemoEntity) throws {
+        try context.performAndWait {
             // 카테고리들로부터 메모를 삭제
             let categories = memoEntity.categories
             guard let images = memoEntity.images as? Set<ImageEntity> else { return }
@@ -190,8 +190,8 @@ extension MemoEntityRepository {
 // MARK: - RESTORING
 extension MemoEntityRepository {
     
-    func restore(_ memoEntity: MemoEntity) async throws {
-        try await context.perform {
+    func restore(_ memoEntity: MemoEntity) throws {
+        try context.performAndWait {
             memoEntity.isInTrash = false
             memoEntity.deletedDate = nil
             try self.context.save()
@@ -204,8 +204,8 @@ extension MemoEntityRepository {
 // MARK: - UPDATE
 extension MemoEntityRepository {
     
-    func replaceCategories(_ memoEntity: MemoEntity, newCategories: Set<CategoryEntity>) async throws {
-        try await context.perform {
+    func replaceCategories(_ memoEntity: MemoEntity, newCategories: Set<CategoryEntity>) throws {
+        try context.performAndWait {
             let oldCategories = memoEntity.categories
             let newNSSet = newCategories as NSSet
             memoEntity.removeFromCategories(oldCategories)
@@ -214,8 +214,8 @@ extension MemoEntityRepository {
         }
     }
     
-    func setFavorite(_ memoEntity: MemoEntity, to value: Bool) async throws {
-        try await context.perform {
+    func setFavorite(_ memoEntity: MemoEntity, to value: Bool) throws {
+        try context.performAndWait {
             memoEntity.isFavorite = value
             try self.context.save()
         }
