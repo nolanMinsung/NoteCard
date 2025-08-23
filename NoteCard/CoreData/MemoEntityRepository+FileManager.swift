@@ -27,9 +27,9 @@ enum MemoEntityFileManagerError: LocalizedError {
     
 }
 
-extension MemoEntityManager {
+extension MemoEntityRepository {
     
-    func getMemoDirectory(of memo: MemoEntity) async throws -> URL {
+    func getMemoDirectoryURL(of memo: MemoEntity) throws -> URL {
         guard let documentURL = FileManager.default.urls(
             for: .documentDirectory,
             in: .userDomainMask

@@ -161,6 +161,32 @@ extension MemoEntityRepository {
 }
 
 
+// MARK: - ⚠️ DELETE(Hard)
+extension MemoEntityRepository {
+    
+    func deleteMemo(_ memoEntity: MemoEntity) async throws {
+        try await context.perform {
+            // 카테고리들로부터 메모를 삭제
+            let categories = memoEntity.categories
+            guard let images = memoEntity.images as? Set<ImageEntity> else { return }
+            memoEntity.removeFromCategories(categories)
+            
+            // FileManager에서 메모 디렉토리(밎 이미지들) 삭제
+            let memoDirectoryURL = try self.getMemoDirectoryURL(of: memoEntity)
+            try FileManager.default.removeItem(at: memoDirectoryURL)
+            
+            // 코어데이터에서 imageEntity들 삭제
+            images.forEach { self.context.delete($0) }
+            
+            // 코어데이터에서 memoEntity 삭제
+            self.context.delete(memoEntity)
+            try self.context.save()
+        }
+    }
+    
+}
+
+
 // MARK: - RESTORING
 extension MemoEntityRepository {
     
