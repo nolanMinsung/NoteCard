@@ -8,6 +8,22 @@
 import CoreData
 import Foundation
 
+enum MemoEntityError: LocalizedError {
+    
+    case memoNotFound(id: UUID)
+    case duplicateMemoDetected
+    
+    var errorDescription: String? {
+        switch self {
+        case .memoNotFound(let id):
+            "메모를 찾을 수 없습니다. UUID: \(id)"
+        case .duplicateMemoDetected:
+            "같은 ID의 메모가 2개 이상 발견되었습니다. 조치 필요."
+        }
+    }
+    
+}
+
 actor MemoEntityRepository {
     
     static let shared = MemoEntityRepository()
@@ -40,6 +56,27 @@ extension MemoEntityRepository {
 
 // MARK: - READ
 extension MemoEntityRepository {
+    
+    func getMemo(id: UUID) async throws -> MemoEntity {
+        try await context.perform {
+            let request = MemoEntity.fetchRequest()
+            let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
+            request.sortDescriptors = [sortDescriptor]
+            request.predicate = NSPredicate(
+                format: "memoID == %@ && isInTrash == false",
+                id as CVarArg,
+            )
+            let foundMemo =  try self.context.fetch(request)
+            switch foundMemo.count {
+            case 0:
+                throw MemoEntityError.memoNotFound(id: id)
+            case 1:
+                return foundMemo.first!
+            default:
+                throw MemoEntityError.duplicateMemoDetected
+            }
+        }
+    }
     
     func getAllMemo() async throws -> [MemoEntity]  {
         try await context.perform {
