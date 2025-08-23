@@ -68,6 +68,7 @@
 		4E57A7F92E555D5500418962 /* ImageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D42AF382A40063817B /* ImageEntity+CoreDataClass.swift */; };
 		4E57A7FA2E555D5500418962 /* MemoEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D62AF382A40063817B /* MemoEntity+CoreDataClass.swift */; };
 		4E57A7FB2E555D5500418962 /* CategoryEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D32AF382A40063817B /* CategoryEntity+CoreDataProperties.swift */; };
+		4E57ABD62E599F3C00418962 /* MemoEntityRepository+FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */; };
 		4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602C2B064BE20029BA3D /* SettingsViewController.swift */; };
 		4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602E2B064C290029BA3D /* SettingsView.swift */; };
 		4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */; };
@@ -165,6 +166,7 @@
 		4E4FCCC22B3C5810000CBE17 /* TimeFormatSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatSettingView.swift; sourceTree = "<group>"; };
 		4E57A5FF2E54380700418962 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		4E57A7B22E554A2A00418962 /* MemoEntityRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEntityRepository.swift; sourceTree = "<group>"; };
+		4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemoEntityRepository+FileManager.swift"; sourceTree = "<group>"; };
 		4E59602C2B064BE20029BA3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4E59602E2B064C290029BA3D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 				4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */,
 				4E57A5FF2E54380700418962 /* CoreDataStack.swift */,
 				4E57A7B22E554A2A00418962 /* MemoEntityRepository.swift */,
+				4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -655,6 +658,7 @@
 				4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */,
 				4E3E75782B67D3B60073A951 /* QuickMemoEmptyViewController.swift in Sources */,
 				4E1385052AF385F20063817B /* CreateCategoryViewController.swift in Sources */,
+				4E57ABD62E599F3C00418962 /* MemoEntityRepository+FileManager.swift in Sources */,
 				4E57A7F62E555D5500418962 /* CategoryEntity+CoreDataClass.swift in Sources */,
 				4E57A7F72E555D5500418962 /* ImageEntity+CoreDataProperties.swift in Sources */,
 				4E57A7F82E555D5500418962 /* MemoEntity+CoreDataProperties.swift in Sources */,
