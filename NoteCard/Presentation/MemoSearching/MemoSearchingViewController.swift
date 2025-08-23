@@ -17,9 +17,9 @@ class MemoSearchingViewController: UIViewController {
 //        return MemoEntityManager.shared.getFavoriteMemoEntities()
 //    }()
     
-    private var favoriteMemoArray: [MemoEntity]!
+    private var favoriteMemoArray: [MemoPreviewDTO]!
     
-    var diffableDataSource: UICollectionViewDiffableDataSource<Int, MemoEntity>? = nil
+    var diffableDataSource: UICollectionViewDiffableDataSource<Int, MemoPreviewDTO>? = nil
     
     override func loadView() {
         view = rootView
@@ -28,7 +28,9 @@ class MemoSearchingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        favoriteMemoArray = MemoEntityManager.shared.getFavoriteMemoEntities()
+        favoriteMemoArray = MemoEntityManager.shared.getFavoriteMemoEntities().map({
+            MemoPreviewDTO(from: $0)
+        })
         setupNaviBar()
         setupDiffableDataSource()
         setupDelegates()
@@ -53,13 +55,13 @@ private extension MemoSearchingViewController {
     
     func setupDiffableDataSource() {
         rootView.collectionView.register(MemoSearchingCell.self, forCellWithReuseIdentifier: "MemoSearchingCell")
-        diffableDataSource = UICollectionViewDiffableDataSource<Int, MemoEntity>(
+        diffableDataSource = UICollectionViewDiffableDataSource<Int, MemoPreviewDTO>(
             collectionView: rootView.collectionView)
         { collectionView, indexPath, itemIdentifier in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MemoSearchingCell", for: indexPath) as? MemoSearchingCell else {
                 fatalError()
             }
-            cell.configure(title: itemIdentifier.memoTitle, memoTextBuffer: itemIdentifier.memoTextShortBuffer)
+            cell.configure(title: itemIdentifier.memoTitlePreview, memoTextBuffer: itemIdentifier.memoTextPreview)
             return cell
         }
     }
@@ -75,7 +77,7 @@ private extension MemoSearchingViewController {
 private extension MemoSearchingViewController {
     
     func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, MemoEntity>()
+        var snapshot = NSDiffableDataSourceSnapshot<Int, MemoPreviewDTO>()
         snapshot.appendSections([0])
         snapshot.appendItems(favoriteMemoArray)
         diffableDataSource?.apply(snapshot)
@@ -88,8 +90,10 @@ private extension MemoSearchingViewController {
 extension MemoSearchingViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let memoIDToOpen = favoriteMemoArray[indexPath.item].memoID
+        let memoToOpen = MemoEntityManager.shared.getSpecificMemoEntity(memoID: memoIDToOpen)
         let popupVC = PopupCardViewController(
-            memo: favoriteMemoArray[indexPath.item],
+            memo: memoToOpen,
             indexPath: indexPath,
         )
         

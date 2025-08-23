@@ -147,6 +147,34 @@ final class MemoEntityManager {
         return memoEntitiesArray
     }
     
+    // MARK: - memoID로 특정 메모 검색(임시)
+    func getSpecificMemoEntity(memoID: UUID) -> MemoEntity {
+        
+        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
+        guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
+        
+        
+        var memoEntitiesArray: [MemoEntity] = []
+        //guard let categoryName = category.name else { return [] }
+        
+//        if let context = self.context {
+        let request = NSFetchRequest<NSManagedObject>(entityName: self.entityName)
+//            let memoOrder = NSSortDescriptor(key: criterion.rawValue, ascending: ascending)
+        let memoOrder = NSSortDescriptor(key: orderCriterion, ascending: isAscending)
+        request.sortDescriptors = [memoOrder]
+        request.predicate = NSPredicate(format: "memoID == %@ && isInTrash == false", memoID as CVarArg)
+        
+        do {
+            if let fetchedMemoEntitiesList = try context.fetch(request) as? [MemoEntity] {
+                memoEntitiesArray = fetchedMemoEntitiesList
+            }
+        } catch {
+            print("fetch request failed")
+        }
+        
+        return memoEntitiesArray[0]
+    }
+    
     // MARK: - Read From Trash
     func getMemoEntitiesInTrash() -> [MemoEntity] {
         
