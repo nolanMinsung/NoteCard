@@ -542,7 +542,7 @@ class MemoViewController: UIViewController {
         }
         
         guard let createdMemoEntity = notification.userInfo?["memo"] as? MemoEntity else { fatalError() }
-        guard let categories = createdMemoEntity.categories else { fatalError() }
+        let categories = createdMemoEntity.categories
         let isOrderAscending = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isOrderAscending.rawValue)
         
         switch self.memoVCType {

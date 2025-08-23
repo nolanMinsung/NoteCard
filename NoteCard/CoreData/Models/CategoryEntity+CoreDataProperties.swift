@@ -16,11 +16,10 @@ extension CategoryEntity {
         return NSFetchRequest<CategoryEntity>(entityName: "CategoryEntity")
     }
 
-    @NSManaged public var categoryDirectoryURL: URL
     @NSManaged public var creationDate: Date
     @NSManaged public var modificationDate: Date
     @NSManaged public var name: String
-    @NSManaged public weak var memoSet: NSSet?
+    @NSManaged public var memoSet: NSSet
 
 }
 
@@ -44,5 +43,3 @@ extension CategoryEntity {
 extension CategoryEntity : Identifiable {
 
 }
-
-
