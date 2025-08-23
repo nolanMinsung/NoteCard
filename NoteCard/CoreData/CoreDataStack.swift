@@ -42,6 +42,8 @@ final class CoreDataStack: ObservableObject {
         })
         return container
     }()
+    
+    private(set) lazy var backgroundContext = persistentContainer.newBackgroundContext()
 
     // MARK: - Core Data Saving support
 

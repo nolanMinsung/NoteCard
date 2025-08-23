@@ -245,7 +245,7 @@ class MemoEditingViewController: UIViewController {
         //카테고리 변경사항 적용
         MemoEntityManager.shared.replaceCategories(of: self.selectedMemoEntity, with: self.temporaryCategorySet)
         
-        guard let categoryEntityList = self.selectedMemoEntity.categories?.sortedArray(using: []) as? [CategoryEntity] else {
+        guard let categoryEntityList = self.selectedMemoEntity.categories.sortedArray(using: []) as? [CategoryEntity] else {
             fatalError("temporaryMemoEnity's categories's sortedArray method return nil")
         }
         

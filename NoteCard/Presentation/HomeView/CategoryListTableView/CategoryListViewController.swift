@@ -205,11 +205,11 @@ extension CategoryListViewController {
             // Delete the row from the data source
             let categoryEntityToDelete = categoryManager.getCategoryEntities(inOrderOf: CategoryProperties.creationDate, isAscending: true)[indexPath.row]
             
-            do {
-                try fileManager.removeItem(at: categoryEntityToDelete.categoryDirectoryURL)
-            } catch let error {
-                print(error.localizedDescription)
-            }
+//            do {
+//                try fileManager.removeItem(at: categoryEntityToDelete.categoryDirectoryURL)
+//            } catch let error {
+//                print(error.localizedDescription)
+//            }
             
             categoryManager.deleteCategoryEntity(of: categoryEntityToDelete)
             tableView.deleteRows(at: [indexPath], with: .fade)

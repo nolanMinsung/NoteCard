@@ -255,7 +255,7 @@ final class MemoEntityManager {
         memoEntity.deletedDate = Date()
         CoreDataStack.shared.saveContext()
         
-        memoEntity.categories?.forEach({ element in
+        memoEntity.categories.forEach({ element in
             guard let category = element as? CategoryEntity else { fatalError() }
             memoEntity.removeFromCategories(category)
         })
@@ -277,7 +277,7 @@ final class MemoEntityManager {
     ///
     /// 매개변수로 들어온 memoEntity와 그 메모에 속한 이미지들 및 imageEntity들까지 모두 삭제한다.
     func deleteMemoEntity(memoEntity: MemoEntity) {
-        guard let categories = memoEntity.categories else { return }
+        let categories = memoEntity.categories
         guard let images = memoEntity.images as? Set<ImageEntity> else { return }
         memoEntity.removeFromCategories(categories)
         
@@ -322,10 +322,7 @@ final class MemoEntityManager {
     
     func replaceCategories(of memoEntity: MemoEntity, with newCategorySet: Set<CategoryEntity>) {
         
-        guard let categories = memoEntity.categories else {
-            print("memo has no cateogories")
-            return
-        }
+        let categories = memoEntity.categories
         let newNSSet = newCategorySet as NSSet
         memoEntity.removeFromCategories(categories)
         memoEntity.addToCategories(newNSSet)

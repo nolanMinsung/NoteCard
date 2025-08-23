@@ -18,9 +18,49 @@ public class MemoEntity: NSManagedObject {
         return array.count
     }
     
+    @available(*, unavailable)
+    public init() {
+        fatalError()
+    }
+    
+    @objc
+    override private init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
+        super.init(entity: entity, insertInto: context)
+    }
+    
+    init(context: NSManagedObjectContext) {
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: "MemoEntity", in: context) else { fatalError() }
+        super.init(entity: entityDescription, insertInto: context)
+        
+        creationDate = .now
+        deletedDate = nil
+        isFavorite = false
+        isInTrash = false
+        memoID = UUID()
+        memoText = ""
+        memoTitle = ""
+        modificationDate = .now
+        categories = []
+        images = []
+    }
+    
 }
 
 extension MemoEntity {
+    
+    var memoTextShortBuffer: String {
+        let paragraphsInString = self.memoText.components(separatedBy: CharacterSet.newlines)
+        if self.memoText.count > 5000 && paragraphsInString.count > 4 {
+            var buffer: String = ""
+            for i in 0...3 {
+                buffer.append(paragraphsInString[i])
+                buffer.append("\n")
+            }
+            return buffer
+        } else {
+            return self.memoText
+        }
+    }
     
     var memoTextLongBuffer: String {
         let paragraphsInString = self.memoText.components(separatedBy: CharacterSet.newlines)

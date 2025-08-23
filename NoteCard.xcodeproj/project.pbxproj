@@ -15,12 +15,6 @@
 		4E1384A92AF37B350063817B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384A82AF37B350063817B /* ViewController.swift */; };
 		4E1384B12AF37B370063817B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E1384B02AF37B370063817B /* Assets.xcassets */; };
 		4E1384B42AF37B370063817B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E1384B22AF37B370063817B /* LaunchScreen.storyboard */; };
-		4E1384D82AF382A40063817B /* CategoryEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D22AF382A40063817B /* CategoryEntity+CoreDataClass.swift */; };
-		4E1384D92AF382A40063817B /* CategoryEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D32AF382A40063817B /* CategoryEntity+CoreDataProperties.swift */; };
-		4E1384DA2AF382A40063817B /* ImageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D42AF382A40063817B /* ImageEntity+CoreDataClass.swift */; };
-		4E1384DB2AF382A40063817B /* ImageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D52AF382A40063817B /* ImageEntity+CoreDataProperties.swift */; };
-		4E1384DC2AF382A40063817B /* MemoEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D62AF382A40063817B /* MemoEntity+CoreDataClass.swift */; };
-		4E1384DD2AF382A40063817B /* MemoEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D72AF382A40063817B /* MemoEntity+CoreDataProperties.swift */; };
 		4E1384DF2AF382F70063817B /* ImageEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384DE2AF382F70063817B /* ImageEntityManager.swift */; };
 		4E1384E12AF3833E0063817B /* MemoEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E02AF3833E0063817B /* MemoEntityManager.swift */; };
 		4E1384E32AF3839F0063817B /* CategoryEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */; };
@@ -67,6 +61,14 @@
 		4E4FCCC42B3C5873000CBE17 /* TimeFormatSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC22B3C5810000CBE17 /* TimeFormatSettingView.swift */; };
 		4E4FCCC52B3C5875000CBE17 /* TimeFormatSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC12B3C5810000CBE17 /* TimeFormatSettingTableViewCell.swift */; };
 		4E57A6002E54380700418962 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57A5FF2E54380700418962 /* CoreDataStack.swift */; };
+		4E57A7B32E554A2A00418962 /* MemoEntityRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57A7B22E554A2A00418962 /* MemoEntityRepository.swift */; };
+		4E57A7F62E555D5500418962 /* CategoryEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D22AF382A40063817B /* CategoryEntity+CoreDataClass.swift */; };
+		4E57A7F72E555D5500418962 /* ImageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D52AF382A40063817B /* ImageEntity+CoreDataProperties.swift */; };
+		4E57A7F82E555D5500418962 /* MemoEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D72AF382A40063817B /* MemoEntity+CoreDataProperties.swift */; };
+		4E57A7F92E555D5500418962 /* ImageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D42AF382A40063817B /* ImageEntity+CoreDataClass.swift */; };
+		4E57A7FA2E555D5500418962 /* MemoEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D62AF382A40063817B /* MemoEntity+CoreDataClass.swift */; };
+		4E57A7FB2E555D5500418962 /* CategoryEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D32AF382A40063817B /* CategoryEntity+CoreDataProperties.swift */; };
+		4E57ABD62E599F3C00418962 /* MemoEntityRepository+FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */; };
 		4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602C2B064BE20029BA3D /* SettingsViewController.swift */; };
 		4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602E2B064C290029BA3D /* SettingsView.swift */; };
 		4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */; };
@@ -163,6 +165,8 @@
 		4E4FCCC12B3C5810000CBE17 /* TimeFormatSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatSettingTableViewCell.swift; sourceTree = "<group>"; };
 		4E4FCCC22B3C5810000CBE17 /* TimeFormatSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatSettingView.swift; sourceTree = "<group>"; };
 		4E57A5FF2E54380700418962 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		4E57A7B22E554A2A00418962 /* MemoEntityRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEntityRepository.swift; sourceTree = "<group>"; };
+		4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemoEntityRepository+FileManager.swift"; sourceTree = "<group>"; };
 		4E59602C2B064BE20029BA3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4E59602E2B064C290029BA3D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
@@ -268,6 +272,8 @@
 				4E1384E02AF3833E0063817B /* MemoEntityManager.swift */,
 				4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */,
 				4E57A5FF2E54380700418962 /* CoreDataStack.swift */,
+				4E57A7B22E554A2A00418962 /* MemoEntityRepository.swift */,
+				4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -623,8 +629,6 @@
 				4ED063B92E49A532005AD817 /* MemoImageCollectionViewCell.swift in Sources */,
 				4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */,
 				4E1384F32AF384C80063817B /* HomeCardCell.swift in Sources */,
-				4E1384DD2AF382A40063817B /* MemoEntity+CoreDataProperties.swift in Sources */,
-				4E1384D92AF382A40063817B /* CategoryEntity+CoreDataProperties.swift in Sources */,
 				4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */,
 				4ED333A62B332FCD00492B0F /* ThemeColorPickingViewController.swift in Sources */,
 				4E4FCCC32B3C5871000CBE17 /* TimeFormatSettingViewController.swift in Sources */,
@@ -652,9 +656,16 @@
 				4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */,
 				4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */,
 				4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */,
-				4E1384DA2AF382A40063817B /* ImageEntity+CoreDataClass.swift in Sources */,
 				4E3E75782B67D3B60073A951 /* QuickMemoEmptyViewController.swift in Sources */,
 				4E1385052AF385F20063817B /* CreateCategoryViewController.swift in Sources */,
+				4E57ABD62E599F3C00418962 /* MemoEntityRepository+FileManager.swift in Sources */,
+				4E57A7F62E555D5500418962 /* CategoryEntity+CoreDataClass.swift in Sources */,
+				4E57A7F72E555D5500418962 /* ImageEntity+CoreDataProperties.swift in Sources */,
+				4E57A7F82E555D5500418962 /* MemoEntity+CoreDataProperties.swift in Sources */,
+				4E57A7F92E555D5500418962 /* ImageEntity+CoreDataClass.swift in Sources */,
+				4E57A7FA2E555D5500418962 /* MemoEntity+CoreDataClass.swift in Sources */,
+				4E57A7FB2E555D5500418962 /* CategoryEntity+CoreDataProperties.swift in Sources */,
+				4E57A7B32E554A2A00418962 /* MemoEntityRepository.swift in Sources */,
 				4ED333A82B332FF000492B0F /* ThemeColorPickingView.swift in Sources */,
 				4ECDA56F2E162753003D15F5 /* ThirdTabViewController.swift in Sources */,
 				4E5960372B072E6F0029BA3D /* TotalListView.swift in Sources */,
@@ -663,7 +674,6 @@
 				4EC9B6A72E430FD30031250B /* SearchBar.swift in Sources */,
 				4EC9B6502E42EBD40031250B /* MemoSearchingViewController.swift in Sources */,
 				4E5960332B072E380029BA3D /* TotalListViewController.swift in Sources */,
-				4E1384DB2AF382A40063817B /* ImageEntity+CoreDataProperties.swift in Sources */,
 				4E1385012AF3859D0063817B /* CategoryListViewController.swift in Sources */,
 				4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */,
 				4E5960352B072E640029BA3D /* TotalListCollectionViewCell.swift in Sources */,
@@ -676,7 +686,6 @@
 				4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */,
 				4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */,
 				4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */,
-				4E1384DC2AF382A40063817B /* MemoEntity+CoreDataClass.swift in Sources */,
 				4E1384A92AF37B350063817B /* ViewController.swift in Sources */,
 				4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */,
 				4E1385222AF387AA0063817B /* CardImageShowingPresentationController.swift in Sources */,
@@ -685,7 +694,6 @@
 				4E3F63562B0B7BFF004DD676 /* CategoryListView.swift in Sources */,
 				4E1384F72AF385090063817B /* PopupCardViewController.swift in Sources */,
 				4EC9B6A52E42F1ED0031250B /* MemoSearchingCell.swift in Sources */,
-				4E1384D82AF382A40063817B /* CategoryEntity+CoreDataClass.swift in Sources */,
 				4E13851C2AF387480063817B /* CardImageShowingViewController.swift in Sources */,
 				4EC220262B077F6B007C9326 /* TotalListCellCategoryCell.swift in Sources */,
 				4E13851E2AF3875D0063817B /* CardImageShowingView.swift in Sources */,
