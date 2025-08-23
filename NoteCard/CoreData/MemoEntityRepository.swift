@@ -199,3 +199,26 @@ extension MemoEntityRepository {
     }
     
 }
+
+
+// MARK: - UPDATE
+extension MemoEntityRepository {
+    
+    func replaceCategories(_ memoEntity: MemoEntity, newCategories: Set<CategoryEntity>) async throws {
+        try await context.perform {
+            let oldCategories = memoEntity.categories
+            let newNSSet = newCategories as NSSet
+            memoEntity.removeFromCategories(oldCategories)
+            memoEntity.addToCategories(newNSSet)
+            try self.context.save()
+        }
+    }
+    
+    func setFavorite(_ memoEntity: MemoEntity, to value: Bool) async throws {
+        try await context.perform {
+            memoEntity.isFavorite = value
+            try self.context.save()
+        }
+    }
+    
+}
