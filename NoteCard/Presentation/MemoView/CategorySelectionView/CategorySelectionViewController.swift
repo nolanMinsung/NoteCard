@@ -124,7 +124,7 @@ class CategorySelectionViewController: UIViewController {
             selectedMemoEntity.removeFromCategories(self.selectedCategorySet as NSSet)
         }
         
-        if memoVC.memoVCType == .category,
+        if memoVC.memoVCType.isCategory,
            let selectedCategoryEntity = memoVC.selectedCategoryEntity,
            self.selectedCategorySet.contains(selectedCategoryEntity) {
             let selectedIndexes = selectedIndexPaths.map({ $0.item })

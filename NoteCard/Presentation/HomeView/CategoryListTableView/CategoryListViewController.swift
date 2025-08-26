@@ -315,7 +315,7 @@ extension CategoryListViewController {
         let selectedCategoryEntity = selectedCell.categoryEntity
         print(selectedCategoryEntity == nil ? "카테고리 nil" : selectedCategoryEntity!.name)
         
-        let memoVC = MemoViewController(memoVCType: .category, selectedCategoryEntity: selectedCategoryEntity)
+        let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategoryEntity))
         memoVC.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(memoVC, animated: true)
         

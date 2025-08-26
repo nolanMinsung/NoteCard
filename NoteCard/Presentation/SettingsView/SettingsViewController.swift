@@ -308,7 +308,7 @@ extension SettingsViewController {
             self.navigationController?.pushViewController(DarkModeSettingViewController(), animated: true)
             
         case IndexPath(row: 2, section: 1):
-            self.navigationController?.pushViewController(MemoViewController(memoVCType: .trash, selectedCategoryEntity: nil), animated: true)
+            self.navigationController?.pushViewController(MemoViewController(memoVCType: .trash), animated: true)
         case IndexPath(row: 3, section: 1):
             let alertCon = UIAlertController(
                 title: "휴지통 비우기".localized(),

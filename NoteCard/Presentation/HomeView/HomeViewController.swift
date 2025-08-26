@@ -274,7 +274,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 present(naviCon, animated: true)
             case true:
                 let selectedCategoryEntity = CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)[indexPath.row]
-                let memoVC = MemoViewController(memoVCType: .category, selectedCategoryEntity: selectedCategoryEntity)
+                let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategoryEntity))
                 self.navigationController?.pushViewController(memoVC, animated: true)
             }
             
