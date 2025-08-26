@@ -44,8 +44,8 @@ class MemoViewController: UIViewController {
     
     //카테고리가 사라질 경우 카테고리가 없는 메모들도 볼 수 있어야 하므로 selectedCategoryEntity 속성은 옵셔널 타입으로 설정함.
     var selectedCategoryEntity: CategoryEntity?
-    var isCategoryNameChanged: Bool = true
-    var userDefaultCriterion: String? { return UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
+    private var isCategoryNameChanged: Bool = true
+    private var userDefaultCriterion: String? { return UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     private lazy var rootView = self.view as! MemoView
     private lazy var categoryNameTextField = rootView.categoryNameTextField

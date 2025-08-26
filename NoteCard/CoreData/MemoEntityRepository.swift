@@ -5,6 +5,7 @@
 //  Created by 김민성 on 8/20/25.
 //
 
+import Combine
 import CoreData
 import Foundation
 
@@ -45,8 +46,8 @@ extension MemoEntityRepository {
     
     func createNewMemo() throws -> MemoEntity {
         try context.performAndWait {
-            let newMemoEntity = MemoEntity(context: self.context)
-            try self.context.save()
+        let newMemoEntity = MemoEntity(context: context)
+            try context.save()
             return newMemoEntity
         }
     }
@@ -66,7 +67,7 @@ extension MemoEntityRepository {
                 format: "memoID == %@ && isInTrash == false",
                 id as CVarArg,
             )
-            let foundMemo =  try self.context.fetch(request)
+            let foundMemo =  try context.fetch(request)
             switch foundMemo.count {
             case 0:
                 throw MemoEntityError.memoNotFound(id: id)
@@ -83,7 +84,7 @@ extension MemoEntityRepository {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
-            return try self.context.fetch(request)
+            return try context.fetch(request)
         }
     }
     
@@ -96,7 +97,7 @@ extension MemoEntityRepository {
                 format: "ANY categories == %@ && isInTrash == false",
                 category as CVarArg
             )
-            return try self.context.fetch(request)
+            return try context.fetch(request)
         }
     }
     
@@ -106,7 +107,7 @@ extension MemoEntityRepository {
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
             request.predicate = NSPredicate(format: "isInTrash == true")
-            return try self.context.fetch(request)
+            return try context.fetch(request)
         }
     }
     
@@ -123,7 +124,7 @@ extension MemoEntityRepository {
                 searchText,
                 searchText
             )
-            return try self.context.fetch(request)
+            return try context.fetch(request)
         }
     }
     
@@ -133,7 +134,7 @@ extension MemoEntityRepository {
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
             request.predicate = NSPredicate(format: "isFavorite == true && isInTrash == false")
-            return try self.context.fetch(request)
+            return try context.fetch(request)
         }
     }
     
@@ -154,7 +155,7 @@ extension MemoEntityRepository {
             for category in categories {
                 memoEntity.removeFromCategories(category)
             }
-            try self.context.save()
+            try context.save()
         }
     }
     
@@ -176,11 +177,11 @@ extension MemoEntityRepository {
             try FileManager.default.removeItem(at: memoDirectoryURL)
             
             // 코어데이터에서 imageEntity들 삭제
-            images.forEach { self.context.delete($0) }
+            images.forEach { context.delete($0) }
             
             // 코어데이터에서 memoEntity 삭제
-            self.context.delete(memoEntity)
-            try self.context.save()
+            context.delete(memoEntity)
+            try context.save()
         }
     }
     
@@ -194,7 +195,7 @@ extension MemoEntityRepository {
         try context.performAndWait {
             memoEntity.isInTrash = false
             memoEntity.deletedDate = nil
-            try self.context.save()
+            try context.save()
         }
     }
     
@@ -204,20 +205,21 @@ extension MemoEntityRepository {
 // MARK: - UPDATE
 extension MemoEntityRepository {
     
-    func replaceCategories(_ memoEntity: MemoEntity, newCategories: Set<CategoryEntity>) throws {
+    func replaceCategories(_ memoID: UUID, newCategories: Set<CategoryEntity>) throws {
         try context.performAndWait {
+            let memoEntity = try self.getMemo(id: memoID)
             let oldCategories = memoEntity.categories
             let newNSSet = newCategories as NSSet
             memoEntity.removeFromCategories(oldCategories)
             memoEntity.addToCategories(newNSSet)
-            try self.context.save()
+            try context.save()
         }
     }
     
     func setFavorite(_ memoEntity: MemoEntity, to value: Bool) throws {
         try context.performAndWait {
             memoEntity.isFavorite = value
-            try self.context.save()
+            try context.save()
         }
     }
     
