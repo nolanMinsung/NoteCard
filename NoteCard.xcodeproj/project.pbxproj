@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E00A0CF2E5F4711007ABF00 /* MemoEntity+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E00A0CE2E5F4711007ABF00 /* MemoEntity+Mapping.swift */; };
+		4E00A0D12E5F4758007ABF00 /* CategoryEntity+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E00A0D02E5F4758007ABF00 /* CategoryEntity+Mapping.swift */; };
+		4E00A0D32E5F6250007ABF00 /* ImageEntity+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E00A0D22E5F6250007ABF00 /* ImageEntity+Mapping.swift */; };
 		4E0126A82B4D5400007110CC /* MemoDetailViewSelectedImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0126A72B4D5400007110CC /* MemoDetailViewSelectedImageCollectionView.swift */; };
 		4E0BDF4C2B3D38C400813DCA /* OrderSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF4B2B3D38C000813DCA /* OrderSettingViewController.swift */; };
 		4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF492B3D38C000813DCA /* OrderSettingTableViewCell.swift */; };
@@ -101,6 +104,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4E00A0CE2E5F4711007ABF00 /* MemoEntity+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemoEntity+Mapping.swift"; sourceTree = "<group>"; };
+		4E00A0D02E5F4758007ABF00 /* CategoryEntity+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CategoryEntity+Mapping.swift"; sourceTree = "<group>"; };
+		4E00A0D22E5F6250007ABF00 /* ImageEntity+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageEntity+Mapping.swift"; sourceTree = "<group>"; };
 		4E0126A72B4D5400007110CC /* MemoDetailViewSelectedImageCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewSelectedImageCollectionView.swift; sourceTree = "<group>"; };
 		4E0BDF492B3D38C000813DCA /* OrderSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSettingTableViewCell.swift; sourceTree = "<group>"; };
 		4E0BDF4A2B3D38C000813DCA /* OrderSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSettingView.swift; sourceTree = "<group>"; };
@@ -422,10 +428,13 @@
 			children = (
 				4E1384D42AF382A40063817B /* ImageEntity+CoreDataClass.swift */,
 				4E1384D52AF382A40063817B /* ImageEntity+CoreDataProperties.swift */,
+				4E00A0D22E5F6250007ABF00 /* ImageEntity+Mapping.swift */,
 				4E1384D62AF382A40063817B /* MemoEntity+CoreDataClass.swift */,
 				4E1384D72AF382A40063817B /* MemoEntity+CoreDataProperties.swift */,
+				4E00A0CE2E5F4711007ABF00 /* MemoEntity+Mapping.swift */,
 				4E1384D22AF382A40063817B /* CategoryEntity+CoreDataClass.swift */,
 				4E1384D32AF382A40063817B /* CategoryEntity+CoreDataProperties.swift */,
+				4E00A0D02E5F4758007ABF00 /* CategoryEntity+Mapping.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -638,6 +647,7 @@
 				4E0126A82B4D5400007110CC /* MemoDetailViewSelectedImageCollectionView.swift in Sources */,
 				4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */,
 				4ED063B92E49A532005AD817 /* MemoImageCollectionViewCell.swift in Sources */,
+				4E00A0D12E5F4758007ABF00 /* CategoryEntity+Mapping.swift in Sources */,
 				4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */,
 				4E1384F32AF384C80063817B /* HomeCardCell.swift in Sources */,
 				4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */,
@@ -666,6 +676,7 @@
 				4E1384F92AF3851B0063817B /* PopupCardView.swift in Sources */,
 				4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */,
 				4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */,
+				4E00A0CF2E5F4711007ABF00 /* MemoEntity+Mapping.swift in Sources */,
 				4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */,
 				4E3E75782B67D3B60073A951 /* QuickMemoEmptyViewController.swift in Sources */,
 				4E1385052AF385F20063817B /* CreateCategoryViewController.swift in Sources */,
@@ -712,6 +723,7 @@
 				4E1384DF2AF382F70063817B /* ImageEntityManager.swift in Sources */,
 				4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */,
 				4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */,
+				4E00A0D32E5F6250007ABF00 /* ImageEntity+Mapping.swift in Sources */,
 				4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */,
 				4E462D692E2A1AF5004C0215 /* SmallCardCollectionView.swift in Sources */,
 				4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */,

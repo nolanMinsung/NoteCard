@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Memo {
+struct Memo: Hashable {
     let memoID: UUID
     let creationDate: Date
     var modificationDate: Date
@@ -16,6 +16,6 @@ struct Memo {
     var isInTrash: Bool
     var memoText: String
     var memoTitle: String
-    var categories: [Category]
-    var images: [MemoImageInfo]
+    var categories: Set<Category>
+    var images: Set<MemoImageInfo>
 }

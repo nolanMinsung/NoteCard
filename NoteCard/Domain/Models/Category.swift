@@ -7,9 +7,8 @@
 
 import Foundation
 
-struct Category {
+struct Category: Hashable {
     var name: String
     let creationDate: Date
     var modificationDate: Date
-    var memos: [Memo]
 }

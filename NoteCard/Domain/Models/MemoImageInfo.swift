@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct MemoImageInfo {
+struct MemoImageInfo: Hashable {
     let id: UUID
     let thumbnailID: UUID
     var temporaryOrderIndex: Int
     var orderIndex: Int
-    let memo: MemoEntity
+    let memo: Memo
     var isTemporaryDeleted: Bool
     var isTemporaryAppended: Bool
 }
