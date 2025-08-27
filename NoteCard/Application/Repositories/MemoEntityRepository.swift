@@ -144,16 +144,16 @@ extension MemoEntityRepository {
 // MARK: - DELETE(Soft)
 extension MemoEntityRepository {
     
-    func moveToTrash(_ memoEntity: MemoEntity) throws {
+    func moveToTrash(_ memo: MemoEntity) throws {
         try context.performAndWait {
-            memoEntity.isFavorite = false
-            memoEntity.isInTrash = true
-            memoEntity.deletedDate = .now
-            guard let categories = memoEntity.categories as? Set<CategoryEntity> else {
+            memo.isFavorite = false
+            memo.isInTrash = true
+            memo.deletedDate = .now
+            guard let categories = memo.categories as? Set<CategoryEntity> else {
                 fatalError("memo's categories casting failed")
             }
             for category in categories {
-                memoEntity.removeFromCategories(category)
+                memo.removeFromCategories(category)
             }
             try context.save()
         }
@@ -165,22 +165,22 @@ extension MemoEntityRepository {
 // MARK: - ⚠️ DELETE(Hard)
 extension MemoEntityRepository {
     
-    func deleteMemo(_ memoEntity: MemoEntity) throws {
+    func deleteMemo(_ memo: MemoEntity) throws {
         try context.performAndWait {
             // 카테고리들로부터 메모를 삭제
-            let categories = memoEntity.categories
-            guard let images = memoEntity.images as? Set<ImageEntity> else { return }
-            memoEntity.removeFromCategories(categories)
+            let categories = memo.categories
+            guard let images = memo.images as? Set<ImageEntity> else { return }
+            memo.removeFromCategories(categories)
             
             // FileManager에서 메모 디렉토리(밎 이미지들) 삭제
-            let memoDirectoryURL = try self.getMemoDirectoryURL(of: memoEntity)
+            let memoDirectoryURL = try self.getMemoDirectoryURL(of: memo)
             try FileManager.default.removeItem(at: memoDirectoryURL)
             
             // 코어데이터에서 imageEntity들 삭제
             images.forEach { context.delete($0) }
             
             // 코어데이터에서 memoEntity 삭제
-            context.delete(memoEntity)
+            context.delete(memo)
             try context.save()
         }
     }
@@ -191,10 +191,10 @@ extension MemoEntityRepository {
 // MARK: - RESTORING
 extension MemoEntityRepository {
     
-    func restore(_ memoEntity: MemoEntity) throws {
+    func restore(_ memo: MemoEntity) throws {
         try context.performAndWait {
-            memoEntity.isInTrash = false
-            memoEntity.deletedDate = nil
+            memo.isInTrash = false
+            memo.deletedDate = nil
             try context.save()
         }
     }
@@ -205,7 +205,7 @@ extension MemoEntityRepository {
 // MARK: - UPDATE
 extension MemoEntityRepository {
     
-    func replaceCategories(_ memoID: UUID, newCategories: Set<CategoryEntity>) throws {
+    func replaceCategories(memoID: UUID, newCategories: Set<CategoryEntity>) throws {
         try context.performAndWait {
             let memoEntity = try self.getMemo(id: memoID)
             let oldCategories = memoEntity.categories
@@ -216,9 +216,9 @@ extension MemoEntityRepository {
         }
     }
     
-    func setFavorite(_ memoEntity: MemoEntity, to value: Bool) throws {
+    func setFavorite(_ memo: MemoEntity, to value: Bool) throws {
         try context.performAndWait {
-            memoEntity.isFavorite = value
+            memo.isFavorite = value
             try context.save()
         }
     }

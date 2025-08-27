@@ -61,14 +61,12 @@
 		4E4FCCC42B3C5873000CBE17 /* TimeFormatSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC22B3C5810000CBE17 /* TimeFormatSettingView.swift */; };
 		4E4FCCC52B3C5875000CBE17 /* TimeFormatSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC12B3C5810000CBE17 /* TimeFormatSettingTableViewCell.swift */; };
 		4E57A6002E54380700418962 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57A5FF2E54380700418962 /* CoreDataStack.swift */; };
-		4E57A7B32E554A2A00418962 /* MemoEntityRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57A7B22E554A2A00418962 /* MemoEntityRepository.swift */; };
 		4E57A7F62E555D5500418962 /* CategoryEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D22AF382A40063817B /* CategoryEntity+CoreDataClass.swift */; };
 		4E57A7F72E555D5500418962 /* ImageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D52AF382A40063817B /* ImageEntity+CoreDataProperties.swift */; };
 		4E57A7F82E555D5500418962 /* MemoEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D72AF382A40063817B /* MemoEntity+CoreDataProperties.swift */; };
 		4E57A7F92E555D5500418962 /* ImageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D42AF382A40063817B /* ImageEntity+CoreDataClass.swift */; };
 		4E57A7FA2E555D5500418962 /* MemoEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D62AF382A40063817B /* MemoEntity+CoreDataClass.swift */; };
 		4E57A7FB2E555D5500418962 /* CategoryEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D32AF382A40063817B /* CategoryEntity+CoreDataProperties.swift */; };
-		4E57ABD62E599F3C00418962 /* MemoEntityRepository+FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */; };
 		4E57AC2F2E59B70B00418962 /* MemoPreviewDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57AC2E2E59B70B00418962 /* MemoPreviewDTO.swift */; };
 		4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602C2B064BE20029BA3D /* SettingsViewController.swift */; };
 		4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602E2B064C290029BA3D /* SettingsView.swift */; };
@@ -167,8 +165,6 @@
 		4E4FCCC22B3C5810000CBE17 /* TimeFormatSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatSettingView.swift; sourceTree = "<group>"; };
 		4E57A5FF2E54380700418962 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		4E57AC2E2E59B70B00418962 /* MemoPreviewDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoPreviewDTO.swift; sourceTree = "<group>"; };
-		4E57A7B22E554A2A00418962 /* MemoEntityRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEntityRepository.swift; sourceTree = "<group>"; };
-		4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemoEntityRepository+FileManager.swift"; sourceTree = "<group>"; };
 		4E59602C2B064BE20029BA3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4E59602E2B064C290029BA3D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
@@ -204,6 +200,8 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		4E00A0BB2E5E99AD007ABF00 /* Domain */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Domain; sourceTree = "<group>"; };
+		4E00A0C72E5EB497007ABF00 /* Application */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Application; sourceTree = "<group>"; };
 		4E462BA92E29CF4A004C0215 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
 		4EC9B5162E4248B80031250B /* Global */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Global; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -249,6 +247,8 @@
 		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
+				4E00A0C72E5EB497007ABF00 /* Application */,
+				4E00A0BB2E5E99AD007ABF00 /* Domain */,
 				4EC9B5162E4248B80031250B /* Global */,
 				4EDD36FF2E33027A002AF29B /* CustomDesign */,
 				4E462BA92E29CF4A004C0215 /* Extensions */,
@@ -275,8 +275,6 @@
 				4E1384E02AF3833E0063817B /* MemoEntityManager.swift */,
 				4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */,
 				4E57A5FF2E54380700418962 /* CoreDataStack.swift */,
-				4E57A7B22E554A2A00418962 /* MemoEntityRepository.swift */,
-				4E57ABD52E599F3C00418962 /* MemoEntityRepository+FileManager.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -570,6 +568,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				4E00A0BB2E5E99AD007ABF00 /* Domain */,
+				4E00A0C72E5EB497007ABF00 /* Application */,
 				4E462BA92E29CF4A004C0215 /* Extensions */,
 				4EC9B5162E4248B80031250B /* Global */,
 			);
@@ -669,14 +669,12 @@
 				4E3E757A2B67D3D40073A951 /* QuickMemoEmptyView.swift in Sources */,
 				4E3E75782B67D3B60073A951 /* QuickMemoEmptyViewController.swift in Sources */,
 				4E1385052AF385F20063817B /* CreateCategoryViewController.swift in Sources */,
-				4E57ABD62E599F3C00418962 /* MemoEntityRepository+FileManager.swift in Sources */,
 				4E57A7F62E555D5500418962 /* CategoryEntity+CoreDataClass.swift in Sources */,
 				4E57A7F72E555D5500418962 /* ImageEntity+CoreDataProperties.swift in Sources */,
 				4E57A7F82E555D5500418962 /* MemoEntity+CoreDataProperties.swift in Sources */,
 				4E57A7F92E555D5500418962 /* ImageEntity+CoreDataClass.swift in Sources */,
 				4E57A7FA2E555D5500418962 /* MemoEntity+CoreDataClass.swift in Sources */,
 				4E57A7FB2E555D5500418962 /* CategoryEntity+CoreDataProperties.swift in Sources */,
-				4E57A7B32E554A2A00418962 /* MemoEntityRepository.swift in Sources */,
 				4ED333A82B332FF000492B0F /* ThemeColorPickingView.swift in Sources */,
 				4ECDA56F2E162753003D15F5 /* ThirdTabViewController.swift in Sources */,
 				4E5960372B072E6F0029BA3D /* TotalListView.swift in Sources */,

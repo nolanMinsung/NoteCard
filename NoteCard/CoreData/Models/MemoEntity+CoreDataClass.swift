@@ -12,11 +12,11 @@ import CoreData
 @objc(MemoEntity)
 public class MemoEntity: NSManagedObject {
     
-    static let memoManager = MemoEntityManager.shared
-    static var numberOfMemos: Int {
-        let array = memoManager.getMemoEntitiesFromCoreData()
-        return array.count
-    }
+//    static let memoManager = MemoEntityManager.shared
+//    static var numberOfMemos: Int {
+//        let array = memoManager.getMemoEntitiesFromCoreData()
+//        return array.count
+//    }
     
     @available(*, unavailable)
     public init() {
