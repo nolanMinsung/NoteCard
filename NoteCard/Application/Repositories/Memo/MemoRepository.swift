@@ -26,5 +26,6 @@ protocol MemoRepository: Actor {
     
     func replaceCategories(memoID: UUID, newCategories: Set<Category>) async throws
     func setFavorite(_ memo: Memo, to value: Bool) async throws
+    func updateMemoContent(_ memo: Memo, newTitle: String?, newMemoText: String?) async throws
     
 }

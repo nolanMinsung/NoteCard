@@ -38,6 +38,23 @@ actor MemoEntityRepository: MemoRepository {
     @UserDefault<Bool>(key: .isOrderAscending, defaultValue: false)
     private var isOrderAscending: Bool
     
+    private let isFavorite = NSPredicate(format: "isFavorite == true")
+    private let notDeleted = NSPredicate(format: "isInTrash == true")
+    private let deleted = NSPredicate(format: "isInTrash == true")
+    
+    private func memoIDEquals(to id: UUID) -> NSPredicate {
+        return NSPredicate(format: "memoID == %@", id as CVarArg)
+    }
+    private func titleContains(searchText: String) -> NSPredicate {
+        return NSPredicate(format: "memoTitle CONTAINS[c] %@", searchText)
+    }
+    private func memoTextContains(searchText: String) -> NSPredicate {
+        return NSPredicate(format: "memoText CONTAINS[c] %@", searchText)
+    }
+    private func memoHasCategory(_ category: Category) -> NSPredicate {
+        return NSPredicate(format: "ANY categories.name == %@", category.name as CVarArg)
+    }
+    
 }
 
 
@@ -60,9 +77,11 @@ extension MemoEntityRepository {
     
     private func fetchMemoEntity(id: UUID) throws -> MemoEntity {
         let request = MemoEntity.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
-        request.sortDescriptors = [sortDescriptor]
-        request.predicate = NSPredicate(format: "memoID == %@ && isInTrash == false", id as CVarArg)
+        request.predicate = NSCompoundPredicate(
+            type: .and,
+            subpredicates: [memoIDEquals(to: id), notDeleted]
+        )
+//        request.predicate = NSPredicate(format: "memoID == %@ && isInTrash == false", id as CVarArg)
         let foundMemo = try self.context.fetch(request)
         switch foundMemo.count {
         case 0:
@@ -94,10 +113,16 @@ extension MemoEntityRepository {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
-            request.predicate = NSPredicate(
-                format: "ANY categories.name == %@ && isInTrash == false",
-                category.name as CVarArg
+            
+            request.predicate = NSCompoundPredicate(
+                type: .and,
+                subpredicates: [memoHasCategory(category), notDeleted]
             )
+            
+//            request.predicate = NSPredicate(
+//                format: "ANY categories.name == %@ && isInTrash == false",
+//                category.name as CVarArg
+//            )
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
@@ -107,7 +132,8 @@ extension MemoEntityRepository {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
-            request.predicate = NSPredicate(format: "isInTrash == true")
+            request.predicate = deleted
+//            request.predicate = NSPredicate(format: "isInTrash == true")
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
@@ -120,20 +146,36 @@ extension MemoEntityRepository {
             guard !searchText.isEmpty else {
                 return []
             }
+            
+            let searchQueryPredicate = NSCompoundPredicate(
+                type: .or,
+                subpredicates: [titleContains(query: searchText), memoTextContains(query: searchText)]
+            )
+            
             if let category {
-                request.predicate = NSPredicate(
-                    format: "((memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && ANY categories.name == %@) && isInTrash == false",
-                    searchText,
-                    searchText,
-                    category.name as CVarArg
+                request.predicate = NSCompoundPredicate(
+                    andPredicateWithSubpredicates: [searchQueryPredicate, memoHasCategory(category), notDeleted]
                 )
             } else {
-                request.predicate = NSPredicate(
-                    format: "(memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && isInTrash == false",
-                    searchText,
-                    searchText
+                request.predicate = NSCompoundPredicate(
+                    andPredicateWithSubpredicates: [searchQueryPredicate, notDeleted]
                 )
             }
+            
+//            if let category {
+//                request.predicate = NSPredicate(
+//                    format: "((memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && ANY categories.name == %@) && isInTrash == false",
+//                    searchText,
+//                    searchText,
+//                    category.name as CVarArg
+//                )
+//            } else {
+//                request.predicate = NSPredicate(
+//                    format: "(memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && isInTrash == false",
+//                    searchText,
+//                    searchText
+//                )
+//            }
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
@@ -143,7 +185,11 @@ extension MemoEntityRepository {
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
-            request.predicate = NSPredicate(format: "isFavorite == true && isInTrash == false")
+            request.predicate = NSCompoundPredicate(
+                type: .and,
+                subpredicates: [isFavorite, notDeleted]
+            )
+//            request.predicate = NSPredicate(format: "isFavorite == true && isInTrash == false")
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
@@ -222,6 +268,19 @@ extension MemoEntityRepository {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             memoEntity.isFavorite = value
+            try self.context.save()
+        }
+    }
+    
+    func updateMemoContent(_ memo: Memo, newTitle: String? = nil, newMemoText: String? = nil) async throws {
+        try await context.perform { [unowned self] in
+            let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
+            if let newTitle {
+                memoEntity.memoTitle = newTitle
+            }
+            if let newMemoText {
+                memoEntity.memoText = newMemoText
+            }
             try self.context.save()
         }
     }
