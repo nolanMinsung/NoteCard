@@ -9,39 +9,28 @@ import UIKit
 
 class PopupCardViewController: UIViewController {
     
-    let rootView = PopupCardView()
+    let rootView: PopupCardView
     lazy var memoTextView = rootView.memoTextView
     let memoTextViewTapGesture = UITapGestureRecognizer()
     
-    private var sortedImageEntities: [ImageEntity] = []
-    private var thumbnails: [UIImage] = []
-    private var images: [UIImage] = []
+    let memo: Memo
+    private var categories: [Category] = []
+    private var imageUIModels: [ImageUIModel] = [] {
+        didSet {
+            self.rootView.selectedImageCollectionViewHeightConstraint.constant
+            = imageUIModels.isEmpty ? 0 : 70
+            self.rootView.setNeedsLayout()
+        }
+    }
     
-    let memoEntity: MemoEntity
     var isMemoDeleted: Bool = false
     
     lazy var restoreMemoAction = UIAction(
         title: "카테고리 없는 메모로 복구".localized(),
-        image: UIImage(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme, renderingMode: UIImage.RenderingMode.alwaysOriginal),
+        image: .init(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme, renderingMode: .alwaysOriginal),
         handler: { [weak self] action in
             guard let self else { fatalError() }
-            
-            self.rootView.endEditing(true)
-            
-            let alertCon = UIAlertController(
-                title: "이 메모를 복구하시겠습니까?".localized(),
-                message: "복구된 메모는 '카테고리 없음' 항목에서 확인할 수 있습니다.".localized(),
-                preferredStyle: UIAlertController.Style.alert
-            )
-            let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
-            let restoreAction = UIAlertAction(title: "복구".localized(), style: .default) { action in
-                self.restore(memoEntity: self.memoEntity)
-                self.dismiss(animated: true)
-            }
-            alertCon.addAction(cancelAction)
-            alertCon.addAction(restoreAction)
-            
-            self.present(alertCon, animated: true)
+            self.askRestoring()
         }
     )
     
@@ -50,13 +39,11 @@ class PopupCardViewController: UIViewController {
         image: UIImage(systemName: "pencil"),
         handler: { [weak self] action in
             guard let self else { return }
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
             
-            self.rootView.endEditing(true)
-            let memoEditingVC = MemoEditingViewController(memo: self.memoEntity)
-            appDelegate.memoEditingVC = memoEditingVC
-            let memoEditingNaviCon = UINavigationController(rootViewController: memoEditingVC)
-            self.present(memoEditingNaviCon, animated: true)
+            let memoEditingVC = MemoDetailViewController(type: .editing, memo: memo)
+            let naviCon = UINavigationController(rootViewController: memoEditingVC)
+            naviCon.modalPresentationStyle = .formSheet
+            self.present(naviCon, animated: true)
         }
     )
     
@@ -66,56 +53,13 @@ class PopupCardViewController: UIViewController {
         attributes: UIMenuElement.Attributes.destructive,
         handler: { [weak self] action in
             guard let self else { return }
-            
-            self.rootView.endEditing(true)
-            let alertCon: UIAlertController
-            if self.memoEntity.isInTrash {
-                alertCon = UIAlertController(
-                    title: "선택한 메모를 영구적으로 삭제하시겠습니까?".localized(),
-                    message: "이 동작은 취소할 수 없습니다.".localized(),
-                    preferredStyle: UIAlertController.Style.actionSheet
-                )
-            } else {
-                alertCon = UIAlertController(title: "메모 삭제".localized(), message: "메모를 삭제하시겠습니까?".localized(), preferredStyle: UIAlertController.Style.alert)
-            }
-            alertCon.view.tintColor = .currentTheme
-            
-            let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
-            let deleteAction = UIAlertAction(title: "삭제".localized(), style: .destructive) { [weak memoEntity] action in
-                guard let memoEntity else { fatalError() }
-                
-                if memoEntity.isInTrash {
-                    MemoEntityManager.shared.deleteMemoEntity(memoEntity: memoEntity)
-                    
-                } else {
-                    MemoEntityManager.shared.trashMemo(memoEntity)
-                    
-                    NotificationCenter.default.post(name: NSNotification.Name("memoTrashedNotification"), object: nil, userInfo: ["trashedMemos": [memoEntity]])
-                }
-                
-                guard let presentingTabBarCon = self.presentingViewController as? UITabBarController else { fatalError() }
-                guard let selectedNaviCon = presentingTabBarCon.selectedViewController as? UINavigationController else { fatalError() }
-                if let memoVC = selectedNaviCon.topViewController as? MemoViewController {
-                    guard let indexToTrash = memoVC.memoEntitiesArray.firstIndex(of: memoEntity) else { fatalError() }
-                    let indexPathToTrash = IndexPath(item: indexToTrash, section: 0)
-                    
-                    memoVC.updateDataSource()
-                    memoVC.smallCardCollectionView.deleteItems(at: [indexPathToTrash])
-                }
-                
-                self.dismiss(animated: true)
-                
-                
-            }
-            alertCon.addAction(cancelAction)
-            alertCon.addAction(deleteAction)
-            
-            self.present(alertCon, animated: true)
+            self.askDeleting()
         }
     )
     
-    init(memo memoEntity: MemoEntity, indexPath: IndexPath, enableEditing: Bool = true) {
-        self.memoEntity = memoEntity
+    init(memo: Memo, indexPath: IndexPath, enableEditing: Bool = true) {
+        self.memo = memo
+        self.rootView = PopupCardView(memo: self.memo)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -131,40 +75,22 @@ class PopupCardViewController: UIViewController {
         super.viewDidLoad()
         
         setupDelegates()
-        self.rootView.configureView(with: self.memoEntity)
-        
-        self.sortedImageEntities = ImageEntityManager.shared.getImageEntities(from: memoEntity, inOrderOf: ImageOrderIndexKind.orderIndex)
-        
-        if sortedImageEntities.count == 0 {
-            self.rootView.selectedImageCollectionViewHeightConstraint.constant = 0
-        } else {
-            self.rootView.selectedImageCollectionViewHeightConstraint.constant = 70
-        }
-        self.sortedImageEntities.forEach { [weak self] imageEntity in
-            guard let self else { return }
-            guard let thumbnail = ImageEntityManager.shared.getThumbnailImage(imageEntity: imageEntity) else { return }
-            self.thumbnails.append(thumbnail)
-        }
-        self.images = []
-        
-        //고화질 이미지를 가져오는 일은 오래 걸릴 수 있으므로 비동기적으로 구현.
-        DispatchQueue.global().async {
-            self.sortedImageEntities.forEach { [weak self] imageEntity in
-                guard let self else { return }
-                guard let image = ImageEntityManager.shared.getImage(imageEntity: imageEntity) else { return }
-                self.images.append(image)
+        Task {
+            do {
+                self.categories = try await self.fetchCategories()
+                self.imageUIModels = try await self.makeImageUIModels()
+                
+                self.rootView.categoryCollectionView.reloadData()
+                self.rootView.imageCollectionView.reloadData()
+            } catch {
+                assertionFailure("메모의 카테고리 혹은 이미지를 가져오는 데 에러 발생!!!")
             }
         }
         
-        self.rootView.categoryCollectionView.reloadData()
-        self.rootView.imageCollectionView.reloadData()
-        
-        
-        
-        if self.memoEntity.isInTrash {
-            self.rootView.ellipsisButton.menu = UIMenu(children: [self.restoreMemoAction, self.deleteMemoAction])
+        if memo.isInTrash {
+            rootView.ellipsisButton.menu = UIMenu(children: [self.restoreMemoAction, self.deleteMemoAction])
         } else {
-            self.rootView.ellipsisButton.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
+            rootView.ellipsisButton.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
         }
         
         rootView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
@@ -181,7 +107,6 @@ class PopupCardViewController: UIViewController {
         
         rootView.memoTextViewBottomConstraints.isActive = false
         rootView.memoTextViewBottomConstraintsToKeyboard.isActive = true
-//        rootView.memoTextView.isSelectable = true
         memoTextViewTapGesture.isEnabled = true
     }
     
@@ -204,10 +129,12 @@ class PopupCardViewController: UIViewController {
 private extension PopupCardViewController {
     
     @objc func likeButtonTapped() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
-        rootView.likeButton.isSelected.toggle()
-        CoreDataStack.shared.saveContext()
-        memoEntity.isFavorite = rootView.likeButton.isSelected
+        Task {
+            do {
+                try await MemoEntityRepository.shared.setFavorite(memo, to: !memo.isFavorite)
+                rootView.likeButton.isSelected.toggle()
+            }
+        }
     }
     
 }
@@ -218,41 +145,30 @@ private extension PopupCardViewController {
 extension PopupCardViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == self.rootView.categoryCollectionView {
-            let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(
-                memo: self.memoEntity,
-                inOrderOf: CategoryProperties.modificationDate,
-                isAscending: false
-            )
-            return categoriesArray.count
-            
+            return categories.count
         } else {
-            let imageEntitiesArray = ImageEntityManager.shared.getImageEntities(
-                from: memoEntity,
-                inOrderOf: ImageOrderIndexKind.orderIndex
-            )
-            return imageEntitiesArray.count
+            return imageUIModels.count
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == self.rootView.categoryCollectionView {
-            let categoriesArray = CategoryEntityManager.shared.getCategoryEntities(
-                memo: self.memoEntity,
-                inOrderOf: CategoryProperties.modificationDate,
-                isAscending: false
-            )
-            let cell = self.rootView.categoryCollectionView.dequeueReusableCell(
+            guard let cell = self.rootView.categoryCollectionView.dequeueReusableCell(
                 withReuseIdentifier: TotalListCellCategoryCell.cellID,
                 for: indexPath
-            ) as! TotalListCellCategoryCell
-            cell.categoryLabel.text = categoriesArray[indexPath.row].name
+            ) as? TotalListCellCategoryCell
+            else {
+                fatalError()
+            }
+            let category = categories[indexPath.item]
+            cell.configure(with: category)
             return cell
         } else {
             let cell = self.rootView.imageCollectionView.dequeueReusableCell(
                 withReuseIdentifier: MemoImageCollectionViewCell.cellID,
                 for: indexPath
             ) as! MemoImageCollectionViewCell
-            cell.imageView.image = self.thumbnails[indexPath.row]
+            cell.configure(with: imageUIModels[indexPath.item])
             return cell
         }
     }
@@ -265,46 +181,13 @@ extension PopupCardViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.view.endEditing(true)
-        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: self.sortedImageEntities)
-        cardImageShowingVC.transitioningDelegate = self
-        cardImageShowingVC.modalPresentationStyle = .custom
-        
+        let images = imageUIModels.map(\.originalImage)
+        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, images: images)
+        cardImageShowingVC.modalPresentationStyle = .overFullScreen
         self.present(cardImageShowingVC, animated: true)
     }
     
 }
-
-
-// MARK: - UIViewControllerTransitioningDelegate
-extension PopupCardViewController: UIViewControllerTransitioningDelegate {
-    
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return CardImageShowingPresentationController(presentedViewController: presented, presenting: presenting)
-    }
-    
-}
-
-
-// MARK: - Managing MemoEntity
-private extension PopupCardViewController {
-    
-    func restore(memoEntity: MemoEntity) {
-        MemoEntityManager.shared.restoreMemo(memoEntity)
-        
-        guard let presentingTabBarCon = self.presentingViewController as? UITabBarController else { fatalError() }
-        guard let selectedNaviCon = presentingTabBarCon.selectedViewController as? UINavigationController else { fatalError() }
-        guard let memoVC = selectedNaviCon.topViewController as? MemoViewController else { fatalError() }
-        guard memoVC.memoVCType == .trash else { return }
-        guard let indexToRestore = memoVC.memoEntitiesArray.firstIndex(of: memoEntity) else { fatalError() }
-        let indexPathToRestore = IndexPath(item: indexToRestore, section: 0)
-        memoVC.updateDataSource()
-        memoVC.smallCardCollectionView.deleteItems(at: [indexPathToRestore])
-        
-        NotificationCenter.default.post(name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil, userInfo: ["recoveredMemos": [memoEntity]])
-    }
-    
-}
-
 
 
 // MARK: - text view tap Gesture
@@ -320,5 +203,81 @@ extension PopupCardViewController {
         }
     }
     
+    
+}
+
+
+// MARK: - Category Fetching
+private extension PopupCardViewController {
+    
+    private func fetchCategories() async throws -> [Category] {
+        return try await CategoryEntityRepository.shared.getAllCategories(
+            ofMemo: memo,
+            inOrderOf: .modificationDate,
+            isAscending: false
+        )
+    }
+    
+}
+
+
+// MARK: - Fetching Image Model And Make UIModels
+private extension PopupCardViewController {
+    
+    private func makeImageUIModels() async throws -> [ImageUIModel] {
+        var imageUIModels: [ImageUIModel] = []
+        
+        let fetchedImageInfoList = try await ImageEntityRepository.shared.getAllImageInfo(for: memo)
+        let fetchedThumbnails = try await fetchThumbnailsConcurrently(for: fetchedImageInfoList)
+        let fetchedImages = try await fetchImagesConcurrently(for: fetchedImageInfoList)
+        
+        guard fetchedImageInfoList.count == fetchedImages.count,
+              fetchedImageInfoList.count == fetchedThumbnails.count
+        else {
+            throw ImageFileError.fileNotFound
+        }
+        
+        for imageInfo in fetchedImageInfoList.enumerated() {
+            let imageUIModel = ImageUIModel(
+                from: imageInfo.element,
+                image: fetchedImages[imageInfo.offset],
+                thumbnail: fetchedThumbnails[imageInfo.offset]
+            )
+            imageUIModels.append(imageUIModel)
+        }
+        return imageUIModels
+    }
+    
+    private func fetchThumbnailsConcurrently(for imageInfos: [MemoImageInfo]) async throws -> [UIImage] {
+        var thumbnailResults: [Int: UIImage] = [:]
+        try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
+            for (index, info) in imageInfos.enumerated() {
+                group.addTask {
+                    let thumbnail = try await ImageEntityRepository.shared.getThumbnailImage(from: info)
+                    return (index, thumbnail)
+                }
+            }
+            for try await (index, thumbnail) in group {
+                thumbnailResults[index] = thumbnail
+            }
+        }
+        return thumbnailResults.sorted { $0.key < $1.key }.map { $0.value }
+    }
+    
+    private func fetchImagesConcurrently(for imageInfos: [MemoImageInfo]) async throws -> [UIImage] {
+        var imageResults: [Int: UIImage] = [:]
+        try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
+            for (index, info) in imageInfos.enumerated() {
+                group.addTask {
+                    let image = try await ImageEntityRepository.shared.getImage(from: info)
+                    return (index, image)
+                }
+            }
+            for try await (index, image) in group {
+                imageResults[index] = image
+            }
+        }
+        return imageResults.sorted { $0.key < $1.key }.map { $0.value }
+    }
     
 }

@@ -287,7 +287,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 
                 let memoEntity = favoriteMemoArray[indexPath.row]
                 let popupCardViewCotroller = PopupCardViewController(
-                    memo: memoEntity,
+                    memo: memoEntity.toDomain(),
                     indexPath: indexPath,
                 )
                 
@@ -296,7 +296,7 @@ extension HomeViewController: UICollectionViewDelegate {
         case 2:
             let memoEntity = recentMemoArray[indexPath.row]
             let popupCardViewCotroller = PopupCardViewController(
-                memo: memoEntity,
+                memo: memoEntity.toDomain(),
                 indexPath: indexPath,
             )
             wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)

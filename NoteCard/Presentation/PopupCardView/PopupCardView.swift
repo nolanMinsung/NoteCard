@@ -10,6 +10,7 @@ import UIKit
 final class PopupCardView: UIView {
     
     private var memoEntity: MemoEntity?
+    private var memo: Memo
     private var isTextFieldChanged: Bool = false
     var isTextViewChanged: Bool = false
     var isEdited: Bool = false
@@ -31,7 +32,8 @@ final class PopupCardView: UIView {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = 10
         flowLayout.scrollDirection = .horizontal
-        flowLayout.estimatedItemSize = CGSize(width: 50, height: 35)
+//        flowLayout.estimatedItemSize = CGSize(width: 50, height: 35)
+        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         return flowLayout
     }
     private(set) var categoryCollectionView: UICollectionView!
@@ -49,13 +51,15 @@ final class PopupCardView: UIView {
     private(set) var memoTextView: UITextView!
     let memoDateLabel = UILabel()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(memo: Memo) {
+        self.memo = memo
+        super.init(frame: .zero)
         setupUI()
         configureHierarchy()
         setupConstraints()
         setupActions()
         setupDelegates()
+        configureView(with: memo)
     }
     
     required init?(coder: NSCoder) {
@@ -188,16 +192,19 @@ final class PopupCardView: UIView {
     
     func updateMemoTextView() {
         if self.isTextViewChanged {
-            self.memoEntity?.memoText = self.memoTextView.text
-            CoreDataStack.shared.saveContext()
+            Task {
+                try await MemoEntityRepository.shared.updateMemoContent(memo, newMemoText: memoTextView.text)
+            }
+//            self.memoEntity?.memoText = self.memoTextView.text
+//            CoreDataStack.shared.saveContext()
         }
     }
     
     
-    func configureView(with memo: MemoEntity) {
+    func configureView(with memo: Memo) {
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         
-        self.memoEntity = memo
+//        self.memoEntity = memo
         if memo.isInTrash {
             self.memoDateLabel.textColor = .systemRed
             guard let deletedDate = memo.deletedDate else { fatalError() }
@@ -219,9 +226,15 @@ final class PopupCardView: UIView {
             self.memoTextView.isSelectable = false
             
         } else if orderCriterion == OrderCriterion.creationDate.rawValue {
-            self.memoDateLabel.text = String(format: "%@에 생성됨".localized(), memo.getCreationDateInString())
+            self.memoDateLabel.text = String(
+                format: "%@에 생성됨".localized(),
+                memo.creationDate.getCreationDateInString()
+            )
         } else {
-            self.memoDateLabel.text = String(format: "%@에 수정됨".localized(), memo.getModificationDateString())
+            self.memoDateLabel.text = String(
+                format: "%@에 수정됨".localized(),
+                memo.modificationDate.getModificationDateString()
+            )
         }
         
         self.titleTextField.text = memo.memoTitle
