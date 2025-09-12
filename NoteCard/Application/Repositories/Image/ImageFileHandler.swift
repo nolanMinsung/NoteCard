@@ -15,7 +15,7 @@ enum ImageFileHandler {
 
     // MARK: - Data Preparation
     
-    /// `PHPickerResult`의 provider에서 원본 이미지 데이터를 비동기적으로 로드.
+    /// `PHPickerResult`의 `provider`에서 원본 이미지 데이터를 비동기적으로 로드.
     static func prepareImageData(from provider: NSItemProvider) async throws(ImageFileError) -> (data: Data, type: UTType) {
         if let heicData = try? await provider.loadDataRepresentation(for: .heic) {
             return (heicData, .heic)
@@ -26,7 +26,7 @@ enum ImageFileHandler {
         }
     }
     
-    /// 원본 이미지 데이터로부터 썸네일 데이터를 생성합니다.
+    /// 원본 이미지 데이터로부터 썸네일 데이터를 생성.
     static func createThumbnailData(from originalData: Data, maxPixelSize: CGFloat = 400) throws -> Data {
         guard let sourceImage = UIImage(data: originalData) else {
             throw ImageFileError.dataToImageConversionFailed
@@ -54,7 +54,7 @@ enum ImageFileHandler {
 
     // MARK: - File System Operations
     
-    /// 주어진 데이터를 특정 경로에 파일로 저장합니다.
+    /// 주어진 데이터를 특정 경로에 파일로 저장.
     static func save(data: Data, to directory: URL, with id: UUID, fileExtension: String) throws {
         let fileURL = directory
             .appendingPathComponent(id.uuidString)
@@ -66,7 +66,7 @@ enum ImageFileHandler {
         }
     }
 
-    /// 특정 경로의 파일을 로드하여 UIImage로 반환합니다.
+    /// 특정 경로의 파일을 로드하여 UIImage로 반환.
     static func loadUIImage(from fileURL: URL) throws -> UIImage {
         do {
             let data = try Data(contentsOf: fileURL)
@@ -79,7 +79,7 @@ enum ImageFileHandler {
         }
     }
     
-    /// 특정 경로의 파일을 삭제합니다.
+    /// 특정 경로의 파일을 삭제.
     static func delete(at fileURL: URL) throws {
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
@@ -111,21 +111,18 @@ enum ImageFileHandler {
         let directory = try getDirectory(for: imageInfo.memoID)
         let imageID = thumbnail ? imageInfo.thumbnailID : imageInfo.id
         
-        // 썸네일은 항상 "jpeg"로 저장되므로 분기 처리합니다.
         let primaryExtension = thumbnail ? "jpeg" : imageInfo.fileExtension
         
-        // 1. 기본 확장자(.jpeg)로 파일 URL을 생성합니다.
         let primaryURL = directory
             .appendingPathComponent(imageID.uuidString)
             .appendingPathExtension(primaryExtension)
         
-        // 2. 기본 URL에 파일이 존재하는지 확인합니다.
         if FileManager.default.fileExists(atPath: primaryURL.path) {
             return primaryURL
         }
         
-        // 3. 파일이 없고, 기본 확장자가 "jpeg"였다면, 레거시 확장자인 "jpg"로 다시 시도합니다.
-        // (썸네일의 경우도 .jpeg가 없으면 .jpg를 찾아봅니다)
+        // 파일이 없고, 기본 확장자가 "jpeg"였다면, 레거시 확장자인 "jpg"로 다시 시도.
+        // (썸네일의 경우도 .jpeg가 없으면 .jpg로 검색)
         if primaryExtension == "jpeg" {
             let legacyURL = directory
                 .appendingPathComponent(imageID.uuidString)
@@ -136,7 +133,6 @@ enum ImageFileHandler {
             }
         }
         
-        // 4. 두 경로 모두 파일이 없다면, 에러를 던집니다.
         throw ImageFileError.fileNotFound
     }
 }
@@ -147,7 +143,7 @@ private extension NSItemProvider {
     func loadDataRepresentation(for contentType: UTType) async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
             if #available(iOS 16, *) {
-                let _ = loadDataRepresentation(for: contentType) { data, error in
+                let progress = loadDataRepresentation(for: contentType) { data, error in
                     switch (data, error) {
                     case (_, .some(let error)):
                         // 에러 발생
@@ -159,7 +155,7 @@ private extension NSItemProvider {
                     case (.none, .none):
                         // 에러는 없는데 데이터도 없는 이상한 상황
                         continuation
-                            .resume(throwing: ImageLoadingError.loadedButDataNotFound)
+                            .resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
                     }
                 }
             } else {
@@ -175,7 +171,7 @@ private extension NSItemProvider {
                     case (.none, .none):
                         // 에러는 없는데 데이터도 없는 이상한 상황
                         continuation
-                            .resume(throwing: ImageLoadingError.loadedButDataNotFound)
+                            .resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
                     }
                 }
             }

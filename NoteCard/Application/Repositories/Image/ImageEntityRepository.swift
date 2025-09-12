@@ -126,7 +126,7 @@ actor ImageEntityRepository: ImageRepository {
 }
 
 
-enum ImageLoadingError: LocalizedError {
+enum NSItemProviderError: LocalizedError {
     case loadedButDataNotFound
     
     var errorDescription: String? {
@@ -152,7 +152,7 @@ private extension NSItemProvider {
                         continuation.resume(returning: data)
                     case (.none, .none):
                         // 에러는 없는데 데이터도 없는 이상한 상황
-                        continuation.resume(throwing: ImageLoadingError.loadedButDataNotFound)
+                        continuation.resume(throwing: NSItemProviderError.loadedButDataNotFound)
                     }
                 }
                 
@@ -166,7 +166,7 @@ private extension NSItemProvider {
                         continuation.resume(returning: data)
                     case (.none, .none):
                         // 에러는 없는데 데이터도 없는 이상한 상황
-                        continuation.resume(throwing: ImageLoadingError.loadedButDataNotFound)
+                        continuation.resume(throwing: NSItemProviderError.loadedButDataNotFound)
                     }
                 }
                 
