@@ -10,57 +10,32 @@ import UIKit
 class PopupCardViewController: UIViewController {
     
     let rootView: PopupCardView
-    lazy var memoTextView = rootView.memoTextView
-    let memoTextViewTapGesture = UITapGestureRecognizer()
+    private lazy var memoTextView = rootView.memoTextView
+    private let memoTextViewTapGesture = UITapGestureRecognizer()
     
-    let memo: Memo
+    private let memo: Memo
     private var categories: [Category] = []
     private var imageUIModels: [ImageUIModel] = [] {
         didSet {
-            self.rootView.selectedImageCollectionViewHeightConstraint.constant
-            = imageUIModels.isEmpty ? 0 : 70
-            self.rootView.setNeedsLayout()
+            rootView.imageCollectionViewHeight.constant = imageUIModels.isEmpty ? 0 : 70
+            rootView.setNeedsLayout()
         }
     }
     
-    var isMemoDeleted: Bool = false
+    private var isMemoDeleted: Bool = false
     
-    lazy var restoreMemoAction = UIAction(
-        title: "카테고리 없는 메모로 복구".localized(),
-        image: .init(systemName: "arrow.counterclockwise")?.withTintColor(.currentTheme, renderingMode: .alwaysOriginal),
-        handler: { [weak self] action in
-            guard let self else { fatalError() }
-            self.askRestoring()
-        }
-    )
-    
-    lazy var presentEditingModeAction = UIAction(
-        title: "편집 모드".localized(),
-        image: UIImage(systemName: "pencil"),
-        handler: { [weak self] action in
-            guard let self else { return }
-            
-            let memoEditingVC = MemoDetailViewController(type: .editing, memo: memo)
-            let naviCon = UINavigationController(rootViewController: memoEditingVC)
-            naviCon.modalPresentationStyle = .formSheet
-            self.present(naviCon, animated: true)
-        }
-    )
-    
-    lazy var deleteMemoAction = UIAction(
-        title: "이 메모 삭제하기".localized(),
-        image: UIImage(systemName: "trash"),
-        attributes: UIMenuElement.Attributes.destructive,
-        handler: { [weak self] action in
-            guard let self else { return }
-            self.askDeleting()
-        }
-    )
+    private var restoreMemoAction: UIAction!
+    private var presentEditingModeAction: UIAction!
+    private var deleteMemoAction: UIAction!
     
     init(memo: Memo, indexPath: IndexPath, enableEditing: Bool = true) {
         self.memo = memo
         self.rootView = PopupCardView(memo: self.memo)
         super.init(nibName: nil, bundle: nil)
+        
+        setupActions()
+        setupButtonsAction()
+        setupDelegates()
     }
     
     required init?(coder: NSCoder) {
@@ -74,7 +49,6 @@ class PopupCardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupDelegates()
         Task {
             do {
                 self.categories = try await self.fetchCategories()
@@ -87,26 +61,25 @@ class PopupCardViewController: UIViewController {
             }
         }
         
-        if memo.isInTrash {
-            rootView.ellipsisButton.menu = UIMenu(children: [self.restoreMemoAction, self.deleteMemoAction])
-        } else {
-            rootView.ellipsisButton.menu = UIMenu(children: [self.presentEditingModeAction, self.deleteMemoAction])
-        }
-        
-        rootView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
-        
-        rootView.memoTextView.addGestureRecognizer(self.memoTextViewTapGesture)
+        rootView.memoTextView.addGestureRecognizer(memoTextViewTapGesture)
         memoTextViewTapGesture.addTarget(self, action: #selector(memoTextViewTapped(_:)))
-        
-        rootView.memoTextView.isSelectable = false
         memoTextViewTapGesture.isEnabled = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        rootView.memoTextViewBottomConstraints.isActive = false
-        rootView.memoTextViewBottomConstraintsToKeyboard.isActive = true
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 1
+        ) { [weak self] in
+            guard let self else { return }
+            self.rootView.memoTextViewBottom.isActive = false
+            self.rootView.memoTextViewBottomToKeyboardTop.isActive = true
+            self.rootView.layoutIfNeeded()
+        }
         memoTextViewTapGesture.isEnabled = true
     }
     
@@ -126,6 +99,57 @@ class PopupCardViewController: UIViewController {
 }
 
 
+// MARK: - Initial Settings
+private extension PopupCardViewController {
+    
+    func setupActions() {
+        restoreMemoAction = UIAction(
+            title: "카테고리 없는 메모로 복구".localized(),
+            image: .init(systemName: "arrow.counterclockwise"),
+            handler: { [weak self] action in
+                guard let self else { fatalError() }
+                self.askRestoring()
+            }
+        )
+        
+        presentEditingModeAction = UIAction(
+            title: "편집 모드".localized(),
+            image: UIImage(systemName: "pencil"),
+            handler: { [weak self] action in
+                guard let self else { return }
+                
+                let memoEditingVC = MemoDetailViewController(
+                    type: .editing(memo: self.memo, images: self.imageUIModels)
+                )
+                let naviCon = UINavigationController(rootViewController: memoEditingVC)
+                naviCon.modalPresentationStyle = .formSheet
+                self.present(naviCon, animated: true)
+            }
+        )
+        
+        deleteMemoAction = UIAction(
+            title: "이 메모 삭제하기".localized(),
+            image: UIImage(systemName: "trash"),
+            attributes: UIMenuElement.Attributes.destructive,
+            handler: { [weak self] action in
+                guard let self else { return }
+                self.askDeleting()
+            }
+        )
+    }
+    
+    func setupButtonsAction() {
+        if memo.isInTrash {
+            rootView.ellipsisButton.menu = UIMenu(children: [restoreMemoAction, deleteMemoAction])
+        } else {
+            rootView.ellipsisButton.menu = UIMenu(children: [presentEditingModeAction, deleteMemoAction])
+        }
+        rootView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+    }
+    
+}
+
+
 private extension PopupCardViewController {
     
     @objc func likeButtonTapped() {
@@ -133,6 +157,8 @@ private extension PopupCardViewController {
             do {
                 try await MemoEntityRepository.shared.setFavorite(memo, to: !memo.isFavorite)
                 rootView.likeButton.isSelected.toggle()
+            } catch {
+                print(error.localizedDescription)
             }
         }
     }
@@ -221,7 +247,7 @@ private extension PopupCardViewController {
 }
 
 
-// MARK: - Fetching Image Model And Make UIModels
+// MARK: - Fetching Image Model And Making UIModels
 private extension PopupCardViewController {
     
     private func makeImageUIModels() async throws -> [ImageUIModel] {
@@ -278,6 +304,65 @@ private extension PopupCardViewController {
             }
         }
         return imageResults.sorted { $0.key < $1.key }.map { $0.value }
+    }
+    
+}
+
+
+extension PopupCardViewController {
+    
+    func askRestoring() {
+        rootView.endEditing(true)
+        
+        let alertCon = UIAlertController(
+            title: "이 메모를 복구하시겠습니까?".localized(),
+            message: "복구된 메모는 '카테고리 없음' 항목에서 확인할 수 있습니다.".localized(),
+            preferredStyle: UIAlertController.Style.alert
+        )
+        let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
+        let restoreAction = UIAlertAction(title: "복구".localized(), style: .default) { action in
+            Task{
+                do {
+                    try await MemoEntityRepository.shared.restore(self.memo)
+                    self.dismiss(animated: true)
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+        alertCon.addAction(cancelAction)
+        alertCon.addAction(restoreAction)
+        
+        self.present(alertCon, animated: true)
+    }
+    
+    func askDeleting() {
+        self.rootView.endEditing(true)
+        let title = (memo.isInTrash ? "선택한 메모를 영구적으로 삭제하시겠습니까?".localized() : "메모 삭제".localized())
+        let message = (memo.isInTrash ? "이 동작은 취소할 수 없습니다.".localized() : "메모를 삭제하시겠습니까?".localized())
+        let alertstyle: UIAlertController.Style = memo.isInTrash ? .actionSheet : .alert
+        let alertCon = UIAlertController(title: title, message: message, preferredStyle: alertstyle)
+        alertCon.view.tintColor = .currentTheme
+        
+        let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
+        let deleteAction = UIAlertAction(title: "삭제".localized(), style: .destructive) { [weak self] action in
+            Task {
+                guard let self else { return }
+                do {
+                    if self.memo.isInTrash {
+                        try await MemoEntityRepository.shared.deleteMemo(self.memo)
+                    } else {
+                        try await MemoEntityRepository.shared.moveToTrash(self.memo)
+                    }
+                    self.dismiss(animated: true)
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+        alertCon.addAction(cancelAction)
+        alertCon.addAction(deleteAction)
+        self.present(alertCon, animated: true)
     }
     
 }

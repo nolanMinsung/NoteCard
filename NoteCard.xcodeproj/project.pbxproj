@@ -75,7 +75,6 @@
 		4E5960332B072E380029BA3D /* TotalListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960322B072E380029BA3D /* TotalListViewController.swift */; };
 		4E5960352B072E640029BA3D /* TotalListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960342B072E640029BA3D /* TotalListCollectionViewCell.swift */; };
 		4E5960372B072E6F0029BA3D /* TotalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960362B072E6F0029BA3D /* TotalListView.swift */; };
-		4E5F34052E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5F34042E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift */; };
 		4E87D09F2B7A55200081D3D4 /* MemoSearchingCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E87D09E2B7A55200081D3D4 /* MemoSearchingCollectionView.swift */; };
 		4EAF4F2C2E38580500A1AA36 /* Wisp in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF4F2B2E38580500A1AA36 /* Wisp */; };
 		4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */; };
@@ -175,7 +174,6 @@
 		4E5960322B072E380029BA3D /* TotalListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListViewController.swift; sourceTree = "<group>"; };
 		4E5960342B072E640029BA3D /* TotalListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListCollectionViewCell.swift; sourceTree = "<group>"; };
 		4E5960362B072E6F0029BA3D /* TotalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListView.swift; sourceTree = "<group>"; };
-		4E5F34042E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopupCardViewController+Trashed.swift"; sourceTree = "<group>"; };
 		4E87D09E2B7A55200081D3D4 /* MemoSearchingCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingCollectionView.swift; sourceTree = "<group>"; };
 		4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListTableViewDiffableDataSource.swift; sourceTree = "<group>"; };
 		4EC220252B077F6B007C9326 /* TotalListCellCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListCellCategoryCell.swift; sourceTree = "<group>"; };
@@ -378,7 +376,6 @@
 			children = (
 				4E1384F62AF385090063817B /* PopupCardViewController.swift */,
 				4E1384F82AF3851B0063817B /* PopupCardView.swift */,
-				4E5F34042E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift */,
 			);
 			path = PopupCardView;
 			sourceTree = "<group>";
@@ -674,7 +671,6 @@
 				4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */,
 				4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */,
 				4E4FCCBC2B3C33FD000CBE17 /* DateFormatSettingView.swift in Sources */,
-				4E5F34052E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift in Sources */,
 				4E4FCCC42B3C5873000CBE17 /* TimeFormatSettingView.swift in Sources */,
 				4E0BDF4E2B3D38C800813DCA /* OrderSettingView.swift in Sources */,
 				4E1384F92AF3851B0063817B /* PopupCardView.swift in Sources */,

@@ -15,13 +15,13 @@ final class PopupCardView: UIView {
     var isTextViewChanged: Bool = false
     var isEdited: Bool = false
     
-    lazy var selectedImageCollectionViewHeightConstraint
+    private(set) lazy var imageCollectionViewHeight
     = self.imageCollectionView.heightAnchor.constraint(equalToConstant: 0)
     
-    private(set) lazy var memoTextViewBottomConstraints
+    private(set) lazy var memoTextViewBottom
     = self.memoTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
     
-    private(set) lazy var memoTextViewBottomConstraintsToKeyboard
+    private(set) lazy var memoTextViewBottomToKeyboardTop
     = self.memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -10)
     
     let titleTextField = UITextField()
@@ -165,12 +165,12 @@ final class PopupCardView: UIView {
         ])
         
         imageCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        selectedImageCollectionViewHeightConstraint.priority = UILayoutPriority(751)
+        imageCollectionViewHeight.priority = UILayoutPriority(751)
         NSLayoutConstraint.activate([
             imageCollectionView.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor, constant: 10),
             imageCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             imageCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            selectedImageCollectionViewHeightConstraint,
+            imageCollectionViewHeight,
         ])
         
         memoTextView.translatesAutoresizingMaskIntoConstraints = false
@@ -178,7 +178,7 @@ final class PopupCardView: UIView {
             memoTextView.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 10),
             memoTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             memoTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            memoTextViewBottomConstraints,
+            memoTextViewBottom,
         ])
     }
     
@@ -202,9 +202,12 @@ final class PopupCardView: UIView {
     
     
     func configureView(with memo: Memo) {
-        guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
+        guard let orderCriterion = UserDefaults.standard.string(
+            forKey: UserDefaultsKeys.orderCriterion.rawValue
+        ) else {
+            fatalError()
+        }
         
-//        self.memoEntity = memo
         if memo.isInTrash {
             self.memoDateLabel.textColor = .systemRed
             guard let deletedDate = memo.deletedDate else { fatalError() }
@@ -223,7 +226,6 @@ final class PopupCardView: UIView {
             self.likeButton.tintColor = .lightGray
             self.titleTextField.isEnabled = false
             self.memoTextView.isEditable = false
-            self.memoTextView.isSelectable = false
             
         } else if orderCriterion == OrderCriterion.creationDate.rawValue {
             self.memoDateLabel.text = String(
@@ -348,7 +350,8 @@ extension PopupCardView {
                 button.configuration?.image = UIImage(systemName: "ellipsis.circle")
                 button.tintColor = UIColor.currentTheme
             case .highlighted:
-                button.tintColor = .lightGray
+
+                button.tintColor = UIColor.currentTheme
             default:
                 return
             }
