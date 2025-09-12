@@ -13,7 +13,7 @@ protocol MemoRepository: Actor {
     
     func getMemo(id: UUID) async throws -> Memo
     func getAllMemos() async throws -> [Memo]
-    func getAllMemos(inCategory category: Category) async throws -> [Memo]
+    func getAllMemos(inCategory category: Category?) async throws -> [Memo]
     func getAllMemosInTrash() async throws -> [Memo]
     
     func searchMemo(searchText: String, inCategory category: Category?) async throws -> [Memo]

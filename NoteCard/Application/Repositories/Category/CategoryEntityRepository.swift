@@ -18,6 +18,9 @@ actor CategoryEntityRepository: CategoryRepository {
     
     private let context = CoreDataStack.shared.backgroundContext
     
+    private func categoryNameEqual(to name: String) -> NSPredicate {
+        return NSPredicate(format: "name == %@", name as CVarArg)
+    }
     private func categoryHasMemo(memo: Memo) -> NSPredicate {
         return NSPredicate(format: "ANY memoSet.memoID == %@", memo.memoID as CVarArg)
     }
@@ -47,6 +50,20 @@ extension CategoryEntityRepository {
 
 
 extension CategoryEntityRepository {
+    
+    private func fetchCategoryEntity(name: String) throws -> CategoryEntity {
+        let request = CategoryEntity.fetchRequest()
+        request.predicate = categoryNameEqual(to: name)
+        let foundCategory = try self.context.fetch(request)
+        switch foundCategory.count {
+        case 0:
+            throw CoreDataError.categoryNotFound(name: name)
+        case 1:
+            return foundCategory.first!
+        default:
+            throw CoreDataError.duplicateCategoryDetected
+        }
+    }
     
     func create(name: String) async throws -> Category {
         try await context.perform { [unowned self] in
@@ -90,15 +107,26 @@ extension CategoryEntityRepository {
     }
     
     func changeCategoryName(_ category: Category, newName: String) async throws {
-        <#code#>
+        try await context.perform { [unowned self] in
+            let categoryEntity = try fetchCategoryEntity(name: category.name)
+            categoryEntity.name = newName
+            try context.save()
+        }
     }
     
     func deleteCategory(_ category: Category) async throws {
-        <#code#>
+        try await context.perform { [unowned self] in
+            let categoryEntity = try fetchCategoryEntity(name: category.name)
+            context.delete(categoryEntity)
+            try context.save()
+        }
     }
     
     func memoCount(of category: Category) async throws -> Int {
-        <#code#>
+        try await context.perform { [unowned self] in
+            let categoryEntity = try fetchCategoryEntity(name: category.name)
+            return categoryEntity.memoSet.count
+        }
     }
     
 }

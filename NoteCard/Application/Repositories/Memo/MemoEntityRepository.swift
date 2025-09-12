@@ -38,8 +38,10 @@ actor MemoEntityRepository: MemoRepository {
     @UserDefault<Bool>(key: .isOrderAscending, defaultValue: false)
     private var isOrderAscending: Bool
     
+    // MARK: - Predicates
+    
     private let isFavorite = NSPredicate(format: "isFavorite == true")
-    private let notDeleted = NSPredicate(format: "isInTrash == true")
+    private let notDeleted = NSPredicate(format: "isInTrash == false")
     private let deleted = NSPredicate(format: "isInTrash == true")
     
     private func memoIDEquals(to id: UUID) -> NSPredicate {
@@ -51,8 +53,13 @@ actor MemoEntityRepository: MemoRepository {
     private func memoTextContains(searchText: String) -> NSPredicate {
         return NSPredicate(format: "memoText CONTAINS[c] %@", searchText)
     }
-    private func memoHasCategory(_ category: Category) -> NSPredicate {
-        return NSPredicate(format: "ANY categories.name == %@", category.name as CVarArg)
+    /// `category` 인자가 `nil`인 경우, 카테고리가 없는 데이터를 가져옴.
+    private func memoHasCategory(_ category: Category?) -> NSPredicate {
+        if let category {
+            return NSPredicate(format: "ANY categories.name == %@", category.name as CVarArg)
+        } else {
+            return NSPredicate(format: "categories.@count == 0")
+        }
     }
     
 }
@@ -75,7 +82,7 @@ extension MemoEntityRepository {
 // MARK: - READ
 extension MemoEntityRepository {
     
-    private func fetchMemoEntity(id: UUID) throws -> MemoEntity {
+    func fetchMemoEntity(id: UUID) throws -> MemoEntity {
         let request = MemoEntity.fetchRequest()
         request.predicate = NSCompoundPredicate(
             type: .and,
@@ -108,21 +115,17 @@ extension MemoEntityRepository {
         }
     }
     
-    func getAllMemos(inCategory category: Category) async throws -> [Memo] {
+    /// `category`에 `nil`이 할당될 경우, 아무런 카테고리에도 속하지 않은 메모들을 반환
+    func getAllMemos(inCategory category: Category?) async throws -> [Memo] {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
+            
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
             
-            request.predicate = NSCompoundPredicate(
-                type: .and,
-                subpredicates: [memoHasCategory(category), notDeleted]
-            )
+            let subPredicates = [memoHasCategory(category), notDeleted]
+            request.predicate = NSCompoundPredicate(type: .and, subpredicates: subPredicates)
             
-//            request.predicate = NSPredicate(
-//                format: "ANY categories.name == %@ && isInTrash == false",
-//                category.name as CVarArg
-//            )
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
@@ -133,11 +136,13 @@ extension MemoEntityRepository {
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
             request.sortDescriptors = [sortDescriptor]
             request.predicate = deleted
-//            request.predicate = NSPredicate(format: "isInTrash == true")
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
     
+    /// `category`에 `nil`이 할당될 경우, 전체 메모 목록에서 검색한 결과를 반환
+    ///
+    /// - Note: `getAllMemos(inCategory:)`과 `category`가 `nil`인 경우의 로직이 다름.
     func searchMemo(searchText: String, inCategory category: Category? = nil) async throws -> [Memo] {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
@@ -149,7 +154,7 @@ extension MemoEntityRepository {
             
             let searchQueryPredicate = NSCompoundPredicate(
                 type: .or,
-                subpredicates: [titleContains(query: searchText), memoTextContains(query: searchText)]
+                subpredicates: [titleContains(searchText: searchText), memoTextContains(searchText: searchText)]
             )
             
             if let category {
@@ -162,20 +167,6 @@ extension MemoEntityRepository {
                 )
             }
             
-//            if let category {
-//                request.predicate = NSPredicate(
-//                    format: "((memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && ANY categories.name == %@) && isInTrash == false",
-//                    searchText,
-//                    searchText,
-//                    category.name as CVarArg
-//                )
-//            } else {
-//                request.predicate = NSPredicate(
-//                    format: "(memoTitle CONTAINS[c] %@ || memoText CONTAINS[c] %@) && isInTrash == false",
-//                    searchText,
-//                    searchText
-//                )
-//            }
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
@@ -189,7 +180,6 @@ extension MemoEntityRepository {
                 type: .and,
                 subpredicates: [isFavorite, notDeleted]
             )
-//            request.predicate = NSPredicate(format: "isFavorite == true && isInTrash == false")
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
@@ -211,6 +201,19 @@ extension MemoEntityRepository {
         }
     }
     
+    func moveToTrash(_ memos: [Memo]) async throws {
+        try await context.perform { [unowned self] in
+            for memo in memos {
+                let memoEntityToTrash = try self.fetchMemoEntity(id: memo.memoID)
+                memoEntityToTrash.isFavorite = false
+                memoEntityToTrash.isInTrash = true
+                memoEntityToTrash.deletedDate = .now
+                memoEntityToTrash.removeFromCategories(memoEntityToTrash.categories)
+            }
+            try self.context.save()
+        }
+    }
+    
 }
 
 
@@ -221,7 +224,7 @@ extension MemoEntityRepository {
         try await context.perform { [unowned self] in
             let memoEntityToDelete = try self.fetchMemoEntity(id: memo.memoID)
             // FileManager에서 메모 디렉토리(및 이미지들) 삭제
-            let memoDirectoryURL = try self.getMemoDirectoryURL(of: memoEntityToDelete)
+            let memoDirectoryURL = try ImageFileHandler.getDirectory(for: memo.memoID)
             try FileManager.default.removeItem(at: memoDirectoryURL)
             // 코어데이터에서 ImageEntity들 삭제 (FileManager에서 이미지 파일 삭제 후에 실행 필수)
             if let images = memoEntityToDelete.images as? Set<ImageEntity> {
@@ -229,6 +232,25 @@ extension MemoEntityRepository {
             }
             // 메모 삭제 (memoEntity들로부터 삭제되는 건 Delete Rule이 Nullify라서 자동으로 참조가 제거됨.)
             self.context.delete(memoEntityToDelete)
+            try self.context.save()
+        }
+    }
+    
+    func deleteMemos(_ memos: [Memo]) async throws {
+        try await context.perform { [unowned self] in
+            for memo in memos {
+                let memoEntityToDelete = try self.fetchMemoEntity(id: memo.memoID)
+                // FileManager에서 메모 디렉토리(및 이미지들) 삭제
+                let memoDirectoryURL = try ImageFileHandler.getDirectory(for: memo.memoID)
+                try FileManager.default.removeItem(at: memoDirectoryURL)
+                // 코어데이터에서 ImageEntity들 삭제 (FileManager에서 이미지 파일 삭제 후에 실행 필수)
+                if let images = memoEntityToDelete.images as? Set<ImageEntity> {
+                    images.forEach { self.context.delete($0) }
+                }
+                // 메모 삭제 (memoEntity들로부터 삭제되는 건 Delete Rule이 Nullify라서 자동으로 참조가 제거됨.)
+                self.context.delete(memoEntityToDelete)
+            }
+            try self.context.save()
         }
     }
     
@@ -243,6 +265,17 @@ extension MemoEntityRepository {
             let memoEntityToRestore = try self.fetchMemoEntity(id: memo.memoID)
             memoEntityToRestore.isInTrash = false
             memoEntityToRestore.deletedDate = nil
+            try self.context.save()
+        }
+    }
+    
+    func restore(_ memos: [Memo]) async throws {
+        try await context.perform { [unowned self] in
+            for memo in memos {
+                let memoEntityToRestore = try self.fetchMemoEntity(id: memo.memoID)
+                memoEntityToRestore.isInTrash = false
+                memoEntityToRestore.deletedDate = nil
+            }
             try self.context.save()
         }
     }
@@ -264,11 +297,34 @@ extension MemoEntityRepository {
         }
     }
     
+    func replaceCategories(memoIDs: [UUID], newCategories: Set<Category>) async throws {
+        try await context.perform { [unowned self] in
+            for memoID in memoIDs {
+                let memoEntity = try self.fetchMemoEntity(id: memoID)
+                let oldCategories = memoEntity.categories
+                let newNSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
+                memoEntity.removeFromCategories(oldCategories)
+                memoEntity.addToCategories(newNSSet)
+            }
+            try self.context.save()
+        }
+    }
+    
     func setFavorite(_ memo: Memo, to value: Bool) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             memoEntity.isFavorite = value
             try self.context.save()
+        }
+    }
+    
+    func setFavorite(_ memos: [Memo], to value: Bool) async throws {
+        try await context.perform { [unowned self] in
+            for memo in memos {
+                let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
+                memoEntity.isFavorite = value
+            }
+            try context.save()
         }
     }
     
