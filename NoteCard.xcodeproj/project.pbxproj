@@ -75,6 +75,7 @@
 		4E5960332B072E380029BA3D /* TotalListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960322B072E380029BA3D /* TotalListViewController.swift */; };
 		4E5960352B072E640029BA3D /* TotalListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960342B072E640029BA3D /* TotalListCollectionViewCell.swift */; };
 		4E5960372B072E6F0029BA3D /* TotalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960362B072E6F0029BA3D /* TotalListView.swift */; };
+		4E5F34052E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5F34042E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift */; };
 		4E87D09F2B7A55200081D3D4 /* MemoSearchingCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E87D09E2B7A55200081D3D4 /* MemoSearchingCollectionView.swift */; };
 		4EAF4F2C2E38580500A1AA36 /* Wisp in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF4F2B2E38580500A1AA36 /* Wisp */; };
 		4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */; };
@@ -84,6 +85,7 @@
 		4EC9B6A52E42F1ED0031250B /* MemoSearchingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6A42E42F1ED0031250B /* MemoSearchingCell.swift */; };
 		4EC9B6A72E430FD30031250B /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6A62E430FD30031250B /* SearchBar.swift */; };
 		4EC9E63B2E4A4FB1007ECD86 /* MainSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9E63A2E4A4FB1007ECD86 /* MainSplitViewController.swift */; };
+		4ECD7FBD2E72B444003A3931 /* MemoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECD7FBC2E72B444003A3931 /* MemoDetailViewController.swift */; };
 		4ECDA56F2E162753003D15F5 /* ThirdTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */; };
 		4ED063B92E49A532005AD817 /* MemoImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385142AF386D10063817B /* MemoImageCollectionViewCell.swift */; };
 		4ED333A62B332FCD00492B0F /* ThemeColorPickingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */; };
@@ -173,6 +175,7 @@
 		4E5960322B072E380029BA3D /* TotalListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListViewController.swift; sourceTree = "<group>"; };
 		4E5960342B072E640029BA3D /* TotalListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListCollectionViewCell.swift; sourceTree = "<group>"; };
 		4E5960362B072E6F0029BA3D /* TotalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListView.swift; sourceTree = "<group>"; };
+		4E5F34042E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopupCardViewController+Trashed.swift"; sourceTree = "<group>"; };
 		4E87D09E2B7A55200081D3D4 /* MemoSearchingCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingCollectionView.swift; sourceTree = "<group>"; };
 		4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListTableViewDiffableDataSource.swift; sourceTree = "<group>"; };
 		4EC220252B077F6B007C9326 /* TotalListCellCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalListCellCategoryCell.swift; sourceTree = "<group>"; };
@@ -181,6 +184,7 @@
 		4EC9B6A42E42F1ED0031250B /* MemoSearchingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingCell.swift; sourceTree = "<group>"; };
 		4EC9B6A62E430FD30031250B /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		4EC9E63A2E4A4FB1007ECD86 /* MainSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSplitViewController.swift; sourceTree = "<group>"; };
+		4ECD7FBC2E72B444003A3931 /* MemoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewController.swift; sourceTree = "<group>"; };
 		4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdTabViewController.swift; sourceTree = "<group>"; };
 		4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingViewController.swift; sourceTree = "<group>"; };
 		4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingView.swift; sourceTree = "<group>"; };
@@ -206,6 +210,7 @@
 		4E00A0C72E5EB497007ABF00 /* Application */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Application; sourceTree = "<group>"; };
 		4E5F341D2E717C2200C05FE4 /* Errors */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Errors; sourceTree = "<group>"; };
 		4EC9B5162E4248B80031250B /* Global */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Global; sourceTree = "<group>"; };
+		4ECD80EF2E73BA2E003A3931 /* UIModel */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UIModel; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,6 +377,7 @@
 			children = (
 				4E1384F62AF385090063817B /* PopupCardViewController.swift */,
 				4E1384F82AF3851B0063817B /* PopupCardView.swift */,
+				4E5F34042E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift */,
 			);
 			path = PopupCardView;
 			sourceTree = "<group>";
@@ -436,6 +442,7 @@
 		4E57A5F72E5436F400418962 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				4ECD80EF2E73BA2E003A3931 /* UIModel */,
 				4ECDA56B2E16262C003D15F5 /* TabBar */,
 				4E1384BD2AF37E0D0063817B /* HomeView */,
 				4E1384C42AF37E800063817B /* PopupCardView */,
@@ -533,6 +540,7 @@
 		4EEEB2612B0870140027AF01 /* MemoDetailView */ = {
 			isa = PBXGroup;
 			children = (
+				4ECD7FBC2E72B444003A3931 /* MemoDetailViewController.swift */,
 				4E1385292AF389930063817B /* MemoDetailView.swift */,
 				4E0126A72B4D5400007110CC /* MemoDetailViewSelectedImageCollectionView.swift */,
 				4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */,
@@ -573,8 +581,9 @@
 			fileSystemSynchronizedGroups = (
 				4E00A0BB2E5E99AD007ABF00 /* Domain */,
 				4E00A0C72E5EB497007ABF00 /* Application */,
-				4E462BA92E29CF4A004C0215 /* Extensions */,
+				4E5F341D2E717C2200C05FE4 /* Errors */,
 				4EC9B5162E4248B80031250B /* Global */,
+				4ECD80EF2E73BA2E003A3931 /* UIModel */,
 			);
 			name = NoteCard;
 			productName = CardMemo;
@@ -664,6 +673,7 @@
 				4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */,
 				4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */,
 				4E4FCCBC2B3C33FD000CBE17 /* DateFormatSettingView.swift in Sources */,
+				4E5F34052E706A4E00C05FE4 /* PopupCardViewController+Trashed.swift in Sources */,
 				4E4FCCC42B3C5873000CBE17 /* TimeFormatSettingView.swift in Sources */,
 				4E0BDF4E2B3D38C800813DCA /* OrderSettingView.swift in Sources */,
 				4E1384F92AF3851B0063817B /* PopupCardView.swift in Sources */,
@@ -685,6 +695,7 @@
 				4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */,
 				4E1384E92AF3840A0063817B /* DateManager.swift in Sources */,
 				4EC9B6A72E430FD30031250B /* SearchBar.swift in Sources */,
+				4ECD7FBD2E72B444003A3931 /* MemoDetailViewController.swift in Sources */,
 				4EC9B6502E42EBD40031250B /* MemoSearchingViewController.swift in Sources */,
 				4E5960332B072E380029BA3D /* TotalListViewController.swift in Sources */,
 				4E1385012AF3859D0063817B /* CategoryListViewController.swift in Sources */,
