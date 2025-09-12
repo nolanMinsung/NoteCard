@@ -185,6 +185,7 @@
 		4EC9B6A62E430FD30031250B /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		4EC9E63A2E4A4FB1007ECD86 /* MainSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSplitViewController.swift; sourceTree = "<group>"; };
 		4ECD7FBC2E72B444003A3931 /* MemoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewController.swift; sourceTree = "<group>"; };
+		4ECD82D12E741892003A3931 /* NoteCardCoreData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "NoteCardCoreData 2.xcdatamodel"; sourceTree = "<group>"; };
 		4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdTabViewController.swift; sourceTree = "<group>"; };
 		4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingViewController.swift; sourceTree = "<group>"; };
 		4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingView.swift; sourceTree = "<group>"; };
@@ -1016,9 +1017,10 @@
 		4E10F8422B654162007B468A /* NoteCardCoreData.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				4ECD82D12E741892003A3931 /* NoteCardCoreData 2.xcdatamodel */,
 				4E10F8432B654162007B468A /* NoteCardCoreData.xcdatamodel */,
 			);
-			currentVersion = 4E10F8432B654162007B468A /* NoteCardCoreData.xcdatamodel */;
+			currentVersion = 4ECD82D12E741892003A3931 /* NoteCardCoreData 2.xcdatamodel */;
 			path = NoteCardCoreData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
