@@ -60,6 +60,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         controlPoint2: CGPoint(x: 0.2, y: 0.6)
     )
     var memoEntity: MemoEntity?
+    private(set) var memo: Memo?
     
     let opaqueView = UIView()
     private let titleTextLabel = UITextField()
@@ -146,6 +147,12 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         self.titleTextLabel.text = memo.memoTitle
         self.memoTextLabel.text = memo.memoText
 //        self.memoTextView.setLineSpace(with: memo.memoText, lineSpace: 2, font: UIFont.systemFont(ofSize: 12))
+    }
+    
+    func configure(with memo: Memo) {
+        self.memo = memo
+        self.titleTextLabel.text = memo.memoTitle
+        self.memoTextLabel.text = String(memo.memoText.prefix(200))
     }
     
     func setConstraints() {

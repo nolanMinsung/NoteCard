@@ -92,12 +92,19 @@ class CategorySelectionViewController: UIViewController {
         guard let naviCon = tabBarCon.selectedViewController as? UINavigationController else { fatalError() }
         guard let memoVC = naviCon.topViewController as? MemoViewController else { fatalError() }
         guard let selectedIndexPaths = memoVC.smallCardCollectionView.indexPathsForSelectedItems else { fatalError() }
+        let selectedIndexes = selectedIndexPaths.map(\.item)
+        let selectedMemos = memoVC.memoArray
+            .enumerated()
+            .filter { selectedIndexes.contains($0.offset) }
+            .map(\.element)
         
-        selectedIndexPaths.forEach { [weak self] indexPath in
-            guard let self else { fatalError() }
-            let selectedMemoEntity = memoVC.memoEntitiesArray[indexPath.item]
-            selectedMemoEntity.addToCategories(self.selectedCategorySet as NSSet)
-            MemoEntityManager.shared.restoreMemo(selectedMemoEntity)
+        let selectedCategories: Set<Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
+        Task {
+            try await MemoEntityRepository.shared.addCategories(
+                to: selectedMemos,
+                newCategories: selectedCategories
+            )
+            try await MemoEntityRepository.shared.restore(selectedMemos)
         }
         
         if memoVC.memoVCType == .trash || memoVC.memoVCType == .uncategorized {
@@ -117,11 +124,19 @@ class CategorySelectionViewController: UIViewController {
         guard let naviCon = tabBarCon.selectedViewController as? UINavigationController else { fatalError() }
         guard let memoVC = naviCon.topViewController as? MemoViewController else { fatalError() }
         guard let selectedIndexPaths = memoVC.smallCardCollectionView.indexPathsForSelectedItems else { fatalError() }
+        let selectedIndexes = selectedIndexPaths.map(\.item)
+        let selectedMemos = memoVC.memoArray
+            .enumerated()
+            .filter { selectedIndexes.contains($0.offset) }
+            .map(\.element)
         
-        selectedIndexPaths.forEach { [weak self] indexPath in
-            guard let self else { return }
-            let selectedMemoEntity = memoVC.memoEntitiesArray[indexPath.item]
-            selectedMemoEntity.removeFromCategories(self.selectedCategorySet as NSSet)
+        let selectedCategories: Set<Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
+        Task {
+            try await MemoEntityRepository.shared.removeCategories(
+                to: selectedMemos,
+                newCategories: selectedCategories
+            )
+            try await MemoEntityRepository.shared.restore(selectedMemos)
         }
         
         if memoVC.memoVCType.isCategory,

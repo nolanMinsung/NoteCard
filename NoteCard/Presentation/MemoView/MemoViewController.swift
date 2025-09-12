@@ -39,8 +39,8 @@ class MemoViewController: UIViewController {
     }
     
     let memoVCType: MemoVCType
-    let memoEntityManager = MemoEntityManager.shared
-    let categoryEntityManager = CategoryEntityManager.shared
+    private let memoEntityManager = MemoEntityManager.shared
+    private let categoryEntityManager = CategoryEntityManager.shared
     
     //카테고리가 사라질 경우 카테고리가 없는 메모들도 볼 수 있어야 하므로 selectedCategoryEntity 속성은 옵셔널 타입으로 설정함.
     var selectedCategoryEntity: CategoryEntity?
@@ -51,7 +51,7 @@ class MemoViewController: UIViewController {
     private lazy var categoryNameTextField = rootView.categoryNameTextField
     lazy var smallCardCollectionView = rootView.smallCardCollectionView
     
-    var memoEntitiesArray: [MemoEntity] = []
+    private(set) var memoArray: [Memo] = []
     
     // navigationItems
     private let plusBarButtonItem = UIBarButtonItem()
@@ -104,7 +104,15 @@ class MemoViewController: UIViewController {
         setupDelegates()
         setupActions()
         setupObservers()
-        reloadAll()
+        Task {
+            do {
+                self.memoArray = try await fetchMemos()
+                smallCardCollectionView.reloadData()
+            } catch {
+                makeAlert(title: "메모 업데이트 실패", message: "메모를 불러오는 데 실패했습니다.", answer: "확인")
+            }
+            
+        }
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -285,9 +293,9 @@ private extension MemoViewController {
     }
     
     func setupDelegates() {
-        self.smallCardCollectionView.dataSource = self
-        self.smallCardCollectionView.delegate = self
-        self.categoryNameTextField.delegate = self
+        smallCardCollectionView.dataSource = self
+        smallCardCollectionView.delegate = self
+        categoryNameTextField.delegate = self
     }
     
     func setupActions() {
@@ -322,14 +330,16 @@ private extension MemoViewController {
             guard let self else { return }
             guard self.smallCardCollectionView.isEditing else { return }
             guard let selectedIndexPaths = self.smallCardCollectionView.indexPathsForSelectedItems else { fatalError() }
-            let memoEntitiesArray = self.memoEntitiesArray
-            selectedIndexPaths.forEach { indexPath in
-                let memoEntityToDelete = memoEntitiesArray[indexPath.row]
-                MemoEntityManager.shared.restoreMemo(memoEntityToDelete)
-                print(indexPath.row, "인덱스 메모 복구함")
+            var selectedMemos: [Memo] = []
+            selectedIndexPaths.forEach { [weak self] indexPath in
+                guard let self else { return }
+                selectedMemos.append(memoArray[indexPath.item])
             }
-            self.updateDataSource()
-            self.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
+            Task {
+                try await MemoEntityRepository.shared.restore(selectedMemos)
+                self.memoArray = try await self.fetchMemos()
+                self.smallCardCollectionView.reloadData()
+            }
         }
         let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
         alertCon.addAction(restoreAction)
@@ -356,11 +366,15 @@ private extension MemoViewController {
         guard let selectedIndexPaths = smallCardCollectionView.indexPathsForSelectedItems else {
             return
         }
-        selectedIndexPaths.forEach { indexPath in
-            let selectedMemoEntity = memoEntitiesArray[indexPath.item]
-            MemoEntityManager.shared.setFavorite(of: selectedMemoEntity, to: true)
+        let selectedIndexes = selectedIndexPaths.map(\.item)
+        let selectedMemos = memoArray.enumerated()
+            .filter { selectedIndexes.contains($0.offset) }
+            .map(\.element)
+        
+        Task {
+            try await MemoEntityRepository.shared.setFavorite(selectedMemos, to: true)
+            self.setEditing(false, animated: true)
         }
-        self.setEditing(false, animated: true)
     }
     
     func unlikeFavoriteSelectedMemos() {
@@ -368,17 +382,20 @@ private extension MemoViewController {
         guard let selectedIndexPaths = smallCardCollectionView.indexPathsForSelectedItems else {
             return
         }
-        selectedIndexPaths.forEach { indexPath in
-            let selectedMemoEntity = memoEntitiesArray[indexPath.item]
-            MemoEntityManager.shared.setFavorite(of: selectedMemoEntity, to: false)
+        let selectedIndexes = selectedIndexPaths.map(\.item)
+        let selectedMemos: [Memo] = memoArray.enumerated()
+            .filter { selectedIndexes.contains($0.offset) }
+            .map(\.element)
+        
+        Task {
+            try await MemoEntityRepository.shared.setFavorite(selectedMemos, to: false)
+            
+            guard self.memoVCType == .favorite else { return }
+            memoArray = try await fetchMemos()
+            self.smallCardCollectionView.reloadData()
+            self.setEditing(false, animated: true)
         }
         
-        if memoVCType == .favorite {
-            guard let selectedIndexPaths = self.smallCardCollectionView.indexPathsForSelectedItems else { fatalError() }
-            self.updateDataSource()
-            self.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
-        }
-        self.setEditing(false, animated: true)
     }
     
 }
@@ -399,8 +416,6 @@ private extension MemoViewController {
         guard self.smallCardCollectionView.isEditing else { return }
         guard let selectedIndexPaths = self.smallCardCollectionView.indexPathsForSelectedItems else { return }
         
-        var memoEntitiesToDelete: [MemoEntity] = []
-        
         let alertCon: UIAlertController
         if self.memoVCType == .trash {
             alertCon = UIAlertController(
@@ -419,33 +434,22 @@ private extension MemoViewController {
         let cancelAction = UIAlertAction(title: "취소".localized(), style: UIAlertAction.Style.cancel)
         let deleteAction = UIAlertAction(title: "삭제".localized(), style: UIAlertAction.Style.destructive) { [weak self] action in
             guard let self else { return }
-            selectedIndexPaths.forEach { [weak self] indexPath in
-                guard let self else { return }
-                
-                let selectedMemoEntity = self.memoEntitiesArray[indexPath.item]
+            let selectedIndexes = selectedIndexPaths.map(\.item)
+            let selectedMemos: [Memo] = self.memoArray.enumerated()
+                .filter { selectedIndexes.contains($0.offset) }
+                .map(\.element)
+            
+            Task {
                 if self.memoVCType == .trash {
-                    MemoEntityManager.shared.deleteMemoEntity(memoEntity: selectedMemoEntity)
+                    try await MemoEntityRepository.shared.deleteMemos(selectedMemos)
                 } else {
-                    MemoEntityManager.shared.trashMemo(selectedMemoEntity)
-                    memoEntitiesToDelete.append(selectedMemoEntity)
+                    try await MemoEntityRepository.shared.moveToTrash(selectedMemos)
                 }
+                self.memoArray = try await self.fetchMemos()
+                self.smallCardCollectionView.reloadData()
             }
-            
-            if self.memoVCType != .trash {
-                NotificationCenter.default.post(name: NSNotification.Name("memoTrashedNotification"), object: nil, userInfo: ["trashedMemos": memoEntitiesToDelete])
-            }
-            
-            self.updateDataSource()
-            
-            self.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
-            
-            if self.memoEntitiesArray.count == 0 {
-                self.setEditing(false, animated: false)
-                self.editButtonItem.isEnabled = false
-            } else {
-                self.setEditing(false, animated: true)
-                self.editButtonItem.isEnabled = true
-            }
+            self.setEditing(false, animated: true)
+            self.editButtonItem.isEnabled = !self.memoArray.isEmpty
         }
         
         alertCon.addAction(cancelAction)
@@ -466,74 +470,20 @@ private extension MemoViewController {
     
     //메모가 추가된 후 Notification을 받았을 때 실행할 함수
     @objc func memoCreated(_ notification: Notification) {
-        if self.memoEntitiesArray.count != 0 {
-            self.editButtonItem.isEnabled = true
-        }
-        
-        guard let createdMemoEntity = notification.userInfo?["memo"] as? MemoEntity else { fatalError() }
-        let categories = createdMemoEntity.categories
-        let isOrderAscending = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isOrderAscending.rawValue)
-        
-        switch self.memoVCType {
-            
-        case .category:
-            guard categories.contains(self.selectedCategoryEntity!) else { return }
-            if isOrderAscending {
-                self.updateDataSource()
-//                self.memoEntitiesArray.append(createdMemoEntity)
-                self.smallCardCollectionView.insertItems(at: [IndexPath(item: self.smallCardCollectionView.numberOfItems(inSection: 0), section: 0)])
-            } else {
-                print(self.memoEntitiesArray.count)
-                self.updateDataSource()
-//                self.memoEntitiesArray.insert(createdMemoEntity, at: 0)
-                self.smallCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
-            }
-            
-        case .uncategorized:
-            if categories.count == 0 { //uncategorized일 때 createdMemo.categories.count == 0 이면 return
-                if isOrderAscending {
-                    //                self.updateDataSource()
-                    self.memoEntitiesArray.append(createdMemoEntity)
-                    self.smallCardCollectionView.insertItems(at: [IndexPath(item: self.smallCardCollectionView.numberOfItems(inSection: 0), section: 0)])
-                } else {
-                    print(self.memoEntitiesArray.count)
-                    //                self.updateDataSource()
-                    self.memoEntitiesArray.insert(createdMemoEntity, at: 0)
-                    self.smallCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
-                }
-            } else {
-                return
-            }
-            
-        case .favorite:
-            return
-            
-        case .all:
-            if isOrderAscending {
-                self.memoEntitiesArray.append(createdMemoEntity)
-                self.smallCardCollectionView.insertItems(at: [IndexPath(item: self.smallCardCollectionView.numberOfItems(inSection: 0), section: 0)])
-            } else {
-                print(self.memoEntitiesArray.count)
-                self.memoEntitiesArray.insert(createdMemoEntity, at: 0)
-                self.smallCardCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
-            }
-            
-        case .trash:
-            return
-            
+        view.endEditing(true)
+        Task {
+            self.memoArray = try await self.fetchMemos()
+            self.smallCardCollectionView.reloadData()
         }
     }
     
     @objc func memoRecoveredToUncategorized(_ notification: Notification) {
         print("uncategorized MemoVC에서 메모 복구 Notification 받았다!!")
-        guard let recoveredMemo = notification.userInfo?["recoveredMemos"] as? [MemoEntity] else { fatalError() }
-        
-        self.reloadAll()
-    }
-    
-    func reloadAll() {
-        self.updateDataSource()
-        self.smallCardCollectionView.reloadData()
+//        guard let recoveredMemo = notification.userInfo?["recoveredMemos"] as? [MemoEntity] else { fatalError() }
+        Task {
+            self.memoArray = try await self.fetchMemos()
+            self.smallCardCollectionView.reloadData()
+        }
     }
     
     func presentPopupCardVC(at indexPath: IndexPath, inset: UIEdgeInsets) {
@@ -548,8 +498,8 @@ private extension MemoViewController {
             }
         }
         
-        let memoEntity = memoEntitiesArray[indexPath.item]
-        let popupCardVC = PopupCardViewController(memo: memoEntity, indexPath: .init(item: 0, section: 0))
+        let selectedMemo = memoArray[indexPath.item]
+        let popupCardVC = PopupCardViewController(memo: selectedMemo, indexPath: .init(item: 0, section: 0))
         wisp.present(
             popupCardVC,
             collectionView: smallCardCollectionView,
@@ -565,7 +515,7 @@ private extension MemoViewController {
 extension MemoViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.memoEntitiesArray.count
+        return self.memoArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -576,7 +526,7 @@ extension MemoViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SmallCardCollectionViewCell.cellID, for: indexPath) as? SmallCardCollectionViewCell else {
                 fatalError("Cell couldn't dequeued")
             }
-            cell.configureCell(with: self.memoEntitiesArray[indexPath.item])
+            cell.configure(with: self.memoArray[indexPath.item])
             cell.onLongPressSelected = { [weak self] in
                 self?.presentPopupCardVC(
                     at: indexPath,
@@ -636,22 +586,17 @@ extension MemoViewController: UICollectionViewDelegate {
         }
     }
     
-    func updateDataSource() {
-        switch self.memoVCType {
-        case .category:
-            self.memoEntitiesArray = MemoEntityManager.shared.getSpecificMemoEntitiesFromCoreData(inCategory: self.selectedCategoryEntity)
-            
-        case .uncategorized:
-            self.memoEntitiesArray = MemoEntityManager.shared.getSpecificMemoEntitiesFromCoreData(inCategory: self.selectedCategoryEntity)
-            
+    func fetchMemos() async throws -> [Memo] {
+        switch memoVCType {
+        case .category, .uncategorized:
+            let category: Category? = selectedCategoryEntity?.toDomain()
+            return try await MemoEntityRepository.shared.getAllMemos(inCategory: category)
         case .favorite:
-            self.memoEntitiesArray = MemoEntityManager.shared.getFavoriteMemoEntities()
-            
+            return try await MemoEntityRepository.shared.getFavoriteMemos()
         case .all:
-            self.memoEntitiesArray = MemoEntityManager.shared.getMemoEntitiesFromCoreData()
-            
+            return try await MemoEntityRepository.shared.getAllMemos()
         case .trash:
-            self.memoEntitiesArray = MemoEntityManager.shared.getMemoEntitiesInTrash()
+            return try await MemoEntityRepository.shared.getAllMemosInTrash()
         }
     }
     
@@ -680,10 +625,11 @@ extension MemoViewController: UITextFieldDelegate {
         }
         
         if self.isCategoryNameChanged {
-            
-            self.reloadAll()
-            
-            self.isCategoryNameChanged = false
+            Task {
+                self.memoArray = try await self.fetchMemos()
+                self.smallCardCollectionView.reloadData()
+                self.isCategoryNameChanged = false
+            }
         }
     }
     
