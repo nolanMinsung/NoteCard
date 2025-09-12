@@ -41,8 +41,6 @@
 		4E13851C2AF387480063817B /* CardImageShowingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851B2AF387480063817B /* CardImageShowingViewController.swift */; };
 		4E13851E2AF3875D0063817B /* CardImageShowingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851D2AF3875D0063817B /* CardImageShowingView.swift */; };
 		4E1385202AF387890063817B /* CardImageShowingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851F2AF387890063817B /* CardImageShowingCollectionViewCell.swift */; };
-		4E1385222AF387AA0063817B /* CardImageShowingPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385212AF387AA0063817B /* CardImageShowingPresentationController.swift */; };
-		4E1385242AF387DE0063817B /* CardImageShowingAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385232AF387DE0063817B /* CardImageShowingAnimatedTransitioning.swift */; };
 		4E1385282AF389850063817B /* MemoMakingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385272AF389850063817B /* MemoMakingViewController.swift */; };
 		4E13852A2AF389930063817B /* MemoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385292AF389930063817B /* MemoDetailView.swift */; };
 		4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13853B2AF38B000063817B /* MemoEditingViewController.swift */; };
@@ -147,8 +145,6 @@
 		4E13851B2AF387480063817B /* CardImageShowingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingViewController.swift; sourceTree = "<group>"; };
 		4E13851D2AF3875D0063817B /* CardImageShowingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingView.swift; sourceTree = "<group>"; };
 		4E13851F2AF387890063817B /* CardImageShowingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingCollectionViewCell.swift; sourceTree = "<group>"; };
-		4E1385212AF387AA0063817B /* CardImageShowingPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingPresentationController.swift; sourceTree = "<group>"; };
-		4E1385232AF387DE0063817B /* CardImageShowingAnimatedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingAnimatedTransitioning.swift; sourceTree = "<group>"; };
 		4E1385272AF389850063817B /* MemoMakingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoMakingViewController.swift; sourceTree = "<group>"; };
 		4E1385292AF389930063817B /* MemoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailView.swift; sourceTree = "<group>"; };
 		4E13853B2AF38B000063817B /* MemoEditingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditingViewController.swift; sourceTree = "<group>"; };
@@ -387,8 +383,6 @@
 				4E13851D2AF3875D0063817B /* CardImageShowingView.swift */,
 				4E13851F2AF387890063817B /* CardImageShowingCollectionViewCell.swift */,
 				4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */,
-				4E1385212AF387AA0063817B /* CardImageShowingPresentationController.swift */,
-				4E1385232AF387DE0063817B /* CardImageShowingAnimatedTransitioning.swift */,
 			);
 			path = CardImageShowingView;
 			sourceTree = "<group>";
@@ -668,7 +662,6 @@
 				4E3E757C2B6889260073A951 /* MainTabBarController.swift in Sources */,
 				4E10F8442B654162007B468A /* NoteCardCoreData.xcdatamodeld in Sources */,
 				4E0BDF4D2B3D38C800813DCA /* OrderSettingTableViewCell.swift in Sources */,
-				4E1385242AF387DE0063817B /* CardImageShowingAnimatedTransitioning.swift in Sources */,
 				4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */,
 				4E4FCCBC2B3C33FD000CBE17 /* DateFormatSettingView.swift in Sources */,
 				4E4FCCC42B3C5873000CBE17 /* TimeFormatSettingView.swift in Sources */,
@@ -709,7 +702,6 @@
 				4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */,
 				4E1384A92AF37B350063817B /* ViewController.swift in Sources */,
 				4E1384EF2AF384880063817B /* HomeHeaderView.swift in Sources */,
-				4E1385222AF387AA0063817B /* CardImageShowingPresentationController.swift in Sources */,
 				4E4FCCBA2B3C33E7000CBE17 /* DateFormatSettingViewController.swift in Sources */,
 				4E1385202AF387890063817B /* CardImageShowingCollectionViewCell.swift in Sources */,
 				4E3F63562B0B7BFF004DD676 /* CategoryListView.swift in Sources */,

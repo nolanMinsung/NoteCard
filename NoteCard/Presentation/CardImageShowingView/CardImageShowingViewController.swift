@@ -9,33 +9,15 @@ import UIKit
 
 class CardImageShowingViewController: UIViewController {
     
-    let initialIndexPath: IndexPath
-    let longPressGesture = UILongPressGestureRecognizer()
-    let imageEntitiesArray: [ImageEntity]
-    var thumbnailArray: [UIImage] = []
-    var imageArray: [UIImage] = []
+    private let initialIndexPath: IndexPath
+    private var imageArray: [UIImage] = []
     
-    lazy var cardImageShowingView = self.view as! CardImageShowingView
-    lazy var dismissButton = cardImageShowingView.dismissButton
-    lazy var cardImageShowingCollectionView = self.cardImageShowingView.cardImageShowingCollectionView
+    private let rootView = CardImageShowingView()
     
-    let buttonShrinkAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
-    let buttonEnlargeAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)
-    
-    init(indexPath: IndexPath, imageEntitiesArray: [ImageEntity]) {
+    init(indexPath: IndexPath, images: [UIImage]) {
         self.initialIndexPath = indexPath
-        self.imageEntitiesArray = imageEntitiesArray
-        
+        self.imageArray = images
         super.init(nibName: nil, bundle: nil)
-        
-        imageEntitiesArray.forEach { [weak self] imageEntity in
-            guard let self else { fatalError() }
-            guard let thumbnail = ImageEntityManager.shared.getThumbnailImage(imageEntity: imageEntity) else { fatalError() }
-            guard let image = ImageEntityManager.shared.getImage(imageEntity: imageEntity) else { fatalError() }
-            
-            self.thumbnailArray.append(thumbnail)
-            self.imageArray.append(image)
-        }
     }
     
     required init?(coder: NSCoder) {
@@ -43,132 +25,50 @@ class CardImageShowingViewController: UIViewController {
     }
     
     override func loadView() {
-        self.view = CardImageShowingView()
+        view = rootView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupDelegates()
-        setupGestures()
-        setupButtonsAction()
+        rootView.dismissButton.addTarget(self, action: #selector(dismissButtonTapped), for: .touchUpInside)
+        
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.cardImageShowingCollectionView.alpha = 0
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
-        let animator = UIViewPropertyAnimator(duration: 0.2, dampingRatio: 1)
-        animator.addAnimations { [weak self] in
-            guard let self else { fatalError() }
-            self.cardImageShowingCollectionView.alpha = 1
-        }
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { fatalError() }
-            self.cardImageShowingCollectionView.scrollToItem(at: self.initialIndexPath, at: .left, animated: false)
-            animator.startAnimation()
-        }
+        rootView.imageCollectionView.scrollToItem(at: initialIndexPath, at: .centeredHorizontally, animated: false)
+        rootView.imageCollectionView.alpha = 1.0
     }
     
     private func setupDelegates() {
-        self.cardImageShowingCollectionView.dataSource = self
-        self.cardImageShowingCollectionView.delegate = self
+        rootView.imageCollectionView.dataSource = self
     }
     
-    private func setupGestures() {
-        self.longPressGesture.minimumPressDuration = 0
-        self.longPressGesture.addTarget(self, action: #selector(handleLongPressGesture(gesture:)))
-    }
-    
-    @objc private func handleLongPressGesture(gesture: UILongPressGestureRecognizer) {
-        switch gesture.state {
-        case .began:
-            self.buttonShrinkAnimator.addAnimations { [weak self] in
-                guard let self else { fatalError() }
-                self.dismissButton.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
-            }
-            self.buttonShrinkAnimator.startAnimation()
-            
-        case .changed:
-            self.buttonEnlargeAnimator.addAnimations { [weak self] in
-                guard let self else { fatalError() }
-                self.dismissButton.transform = CGAffineTransform.identity
-            }
-            
-            if !self.dismissButton.bounds.contains(gesture.location(in: self.dismissButton)) {
-                self.buttonShrinkAnimator.stopAnimation(true)
-                gesture.isEnabled = false
-                gesture.isEnabled = true
-                self.buttonEnlargeAnimator.startAnimation()
-            }
-            
-        case .ended:
-            self.buttonEnlargeAnimator.addAnimations { [weak self] in
-                guard let self else { fatalError() }
-                self.dismissButton.transform = CGAffineTransform.identity
-            }
-            self.buttonEnlargeAnimator.startAnimation()
-            
-            if self.dismissButton.bounds.contains(gesture.location(in: self.dismissButton)) {
-                self.dismiss(animated: true)
-            }
-            
-        default:
-            self.buttonEnlargeAnimator.addAnimations { [weak self] in
-                guard let self else { fatalError() }
-                self.dismissButton.transform = CGAffineTransform.identity
-            }
-            self.buttonEnlargeAnimator.startAnimation()
-        }
-    }
-    
-    private func setupButtonsAction() {
-        self.dismissButton.addGestureRecognizer(self.longPressGesture)
+    @objc private func dismissButtonTapped() {
+        dismiss(animated: true)
     }
     
 }
 
 
+// MARK: - UICollectionViewDataSource
 extension CardImageShowingViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let imageCount = self.imageArray.count
-        return imageCount
+        return imageArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = self.cardImageShowingCollectionView.dequeueReusableCell(withReuseIdentifier: CardImageShowingCollectionViewCell.cellID, for: indexPath) as! CardImageShowingCollectionViewCell
-        cell.configureCell(with: self.thumbnailArray[indexPath.row])
-        DispatchQueue.main.async { [weak self, weak cell] in
-            guard let self else { fatalError() }
-            guard let cell else { return }
-            
-            cell.configureCell(with: self.imageArray[indexPath.row])
-        }
+        let cell = self.rootView.imageCollectionView.dequeueReusableCell(
+            withReuseIdentifier: CardImageShowingCollectionViewCell.cellID,
+            for: indexPath
+        ) as! CardImageShowingCollectionViewCell
+        cell.configureCell(with: imageArray[indexPath.item])
         
         return cell
-    }
-    
-}
-
-
-extension CardImageShowingViewController: UICollectionViewDelegateFlowLayout {
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        guard scrollView == self.cardImageShowingCollectionView else { return }
-        guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
-        
-        let currentIndex = ((scrollView.contentOffset.x + scrollView.contentInset.left) / (screenSize.width * 0.9 + 10)).rounded()
-        let targetCardIndex = (((targetContentOffset.pointee.x + screenSize.width * 0.05 /*left inset*/ ) / (screenSize.width * 0.9 + 10) + 0.5) / 1).rounded(FloatingPointRoundingRule.down)
-        
-        if velocity.x < 0 {
-            targetContentOffset.pointee.x = -(scrollView.contentInset.left) + ((screenSize.width * 0.9 + 10) * (currentIndex - 1))
-        } else if velocity.x > 0 {
-            targetContentOffset.pointee.x = -(scrollView.contentInset.left) + ((screenSize.width * 0.9 + 10) * (currentIndex + 1))
-        } else {
-            targetContentOffset.pointee.x = -(screenSize.width * 0.05) + ((screenSize.width * 0.9 + 10) * currentIndex)
-        }
     }
     
 }

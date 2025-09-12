@@ -466,10 +466,9 @@ extension MemoEditingViewController: UICollectionViewDelegate {
                 return image
             })
             
-            let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: temporaryImageEntitiesArray)
-            cardImageShowingVC.transitioningDelegate = self
-            cardImageShowingVC.modalPresentationStyle = .custom
-            self.present(cardImageShowingVC, animated: true)
+//            let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: temporaryImageEntitiesArray)
+//            cardImageShowingVC.modalPresentationStyle = .overFullScreen
+//            self.present(cardImageShowingVC, animated: true)
             
         } else if collectionView == self.categoryListCollectionView {
             

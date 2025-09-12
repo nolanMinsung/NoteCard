@@ -37,6 +37,7 @@ class MemoImageCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupUI() {
+        self.contentView.backgroundColor = .systemGray6
         self.contentView.addSubview(self.imageView)
         self.contentView.clipsToBounds = true
         self.contentView.layer.cornerRadius = 13
@@ -48,6 +49,15 @@ class MemoImageCollectionViewCell: UICollectionViewCell {
         self.imageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 0).isActive = true
         self.imageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: 0).isActive = true
         self.imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: 0).isActive = true
+    }
+    
+}
+
+
+extension MemoImageCollectionViewCell {
+    
+    func configure(with imageUIModel: ImageUIModel) {
+        self.imageView.image = imageUIModel.thumbnail
     }
     
 }

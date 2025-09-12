@@ -15,34 +15,8 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     
     let doubleTapGesture = UITapGestureRecognizer()
     
-    let imageView: UIImageView = {
-        let view = UIImageView()
-        view.contentMode = UIImageView.ContentMode.scaleAspectFit
-        view.sizeToFit()
-        view.image = UIImage(systemName: "photo")
-        view.backgroundColor = .clear
-        view.isUserInteractionEnabled = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    lazy var scrollView: CardImageShowingScrollView = {
-        let view = CardImageShowingScrollView(frame: .zero)
-        
-        view.addSubview(self.imageView)
-        view.contentMode = .center
-        view.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        view.backgroundColor = .clear
-        view.clipsToBounds = false
-        view.zoomScale = 1.0
-        view.minimumZoomScale = 1.0
-        view.maximumZoomScale = 5.0
-        view.decelerationRate = .fast
-        view.showsVerticalScrollIndicator = false
-        view.showsHorizontalScrollIndicator = false
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    private let imageView = UIImageView()
+    private let scrollView = CardImageShowingScrollView()
     
     lazy var scrollViewCenterXConstraint = self.scrollView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: 0)
     lazy var scrollViewCenterYConstraint = self.scrollView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 0)
@@ -57,8 +31,8 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        setupUIProperties()
         configureHierarchy()
-        setupUI()
         setupConstraints()
         setupDelegates()
         setupGestures()
@@ -68,30 +42,50 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-        self.scrollView.zoomScale = 1.0
+        scrollView.setZoomScale(1.0, animated: false)
     }
     
     private func configureHierarchy() {
-        self.contentView.addSubview(self.scrollView)
+        contentView.addSubview(scrollView)
+        scrollView.addSubview(imageView)
     }
     
-    private func setupUI() {
-        self.contentView.backgroundColor = .currentTheme.withAlphaComponent(0.1)
-        self.contentView.clipsToBounds = true
-        self.contentView.layer.cornerRadius = 5
-        self.contentView.layer.cornerCurve = .continuous
+    private func setupUIProperties() {
+        contentView.backgroundColor = .currentTheme.withAlphaComponent(0.1)
+        contentView.clipsToBounds = true
+        contentView.layer.cornerRadius = 5
+        contentView.layer.cornerCurve = .continuous
+        
+        imageView.contentMode = UIImageView.ContentMode.scaleAspectFit
+        imageView.sizeToFit()
+        imageView.image = UIImage(systemName: "photo")
+        imageView.backgroundColor = .clear
+        imageView.isUserInteractionEnabled = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        scrollView.contentMode = .center
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        scrollView.backgroundColor = .clear
+        scrollView.clipsToBounds = false
+        scrollView.zoomScale = 1.0
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 5.0
+        scrollView.decelerationRate = .fast
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func setupConstraints() {
-        self.scrollViewCenterXConstraint.isActive = true
-        self.scrollViewCenterYConstraint.isActive = true
-        self.scrollViewWidthConstraint.isActive = true
-        self.scrollViewHeightConstraint.isActive = true
+        scrollViewCenterXConstraint.isActive = true
+        scrollViewCenterYConstraint.isActive = true
+        scrollViewWidthConstraint.isActive = true
+        scrollViewHeightConstraint.isActive = true
         
-        self.imageViewCenterXConstraint.isActive = true
-        self.imageViewCenterYConstraint.isActive = true
-        self.imageViewWidthConstraint.isActive = true
-        self.imageViewHeightConstraint.isActive = true
+        imageViewCenterXConstraint.isActive = true
+        imageViewCenterYConstraint.isActive = true
+        imageViewWidthConstraint.isActive = true
+        imageViewHeightConstraint.isActive = true
     }
     
     private func setupDelegates() {

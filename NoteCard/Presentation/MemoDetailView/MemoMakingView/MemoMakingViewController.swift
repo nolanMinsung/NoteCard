@@ -390,10 +390,9 @@ extension MemoMakingViewController: UICollectionViewDelegate {
                 return image
             })
             
-            let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: temporaryImageEntitiesArray)
-            cardImageShowingVC.transitioningDelegate = self
-            cardImageShowingVC.modalPresentationStyle = .custom
-            self.present(cardImageShowingVC, animated: true)
+//            let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, imageEntitiesArray: temporaryImageEntitiesArray)
+//            cardImageShowingVC.modalPresentationStyle = .overFullScreen
+//            self.present(cardImageShowingVC, animated: true)
             
         //카테고리를 선택하는 컬렉션뷰일 경우
         } else if collectionView == self.categoryListCollectionView {
