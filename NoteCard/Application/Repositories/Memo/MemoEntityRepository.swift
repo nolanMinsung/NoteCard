@@ -286,25 +286,65 @@ extension MemoEntityRepository {
 // MARK: - UPDATE
 extension MemoEntityRepository {
     
-    func replaceCategories(memoID: UUID, newCategories: Set<Category>) async throws {
+    func replaceCategories(to memo: Memo, newCategories: Set<Category>) async throws {
         try await context.perform { [unowned self] in
-            let memoEntity = try self.fetchMemoEntity(id: memoID)
+            let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let oldCategories = memoEntity.categories
-            let newNSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
+            let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
             memoEntity.removeFromCategories(oldCategories)
-            memoEntity.addToCategories(newNSSet)
+            memoEntity.addToCategories(newCategorySet)
             try self.context.save()
         }
     }
     
-    func replaceCategories(memoIDs: [UUID], newCategories: Set<Category>) async throws {
+    func replaceCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
         try await context.perform { [unowned self] in
-            for memoID in memoIDs {
-                let memoEntity = try self.fetchMemoEntity(id: memoID)
+            for memo in memos {
+                let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
                 let oldCategories = memoEntity.categories
-                let newNSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
+                let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
                 memoEntity.removeFromCategories(oldCategories)
-                memoEntity.addToCategories(newNSSet)
+                memoEntity.addToCategories(newCategorySet)
+            }
+            try self.context.save()
+        }
+    }
+    
+    func addCategories(to memo: Memo, newCategories: Set<Category>) async throws {
+        try await context.perform { [unowned self] in
+            let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
+            let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
+            memoEntity.addToCategories(newCategorySet)
+            try self.context.save()
+        }
+    }
+    
+    func addCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
+        try await context.perform { [unowned self] in
+            for memo in memos {
+                let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
+                let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
+                memoEntity.addToCategories(newCategorySet)
+            }
+            try self.context.save()
+        }
+    }
+    
+    func removeCategories(to memo: Memo, newCategories: Set<Category>) async throws {
+        try await context.perform { [unowned self] in
+            let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
+            let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
+            memoEntity.removeFromCategories(newCategorySet)
+            try self.context.save()
+        }
+    }
+    
+    func removeCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
+        try await context.perform { [unowned self] in
+            for memo in memos {
+                let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
+                let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
+                memoEntity.removeFromCategories(newCategorySet)
             }
             try self.context.save()
         }

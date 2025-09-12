@@ -24,7 +24,12 @@ protocol MemoRepository: Actor {
     
     func restore(_ memo: Memo) async throws
     
-    func replaceCategories(memoID: UUID, newCategories: Set<Category>) async throws
+    func replaceCategories(to: Memo, newCategories: Set<Category>) async throws
+    func replaceCategories(to: [Memo], newCategories: Set<Category>) async throws
+    func addCategories(to: Memo, newCategories: Set<Category>) async throws
+    func addCategories(to: [Memo], newCategories: Set<Category>) async throws
+    func removeCategories(to: Memo, newCategories: Set<Category>) async throws
+    func removeCategories(to: [Memo], newCategories: Set<Category>) async throws
     func setFavorite(_ memo: Memo, to value: Bool) async throws
     func updateMemoContent(_ memo: Memo, newTitle: String?, newMemoText: String?) async throws
     
