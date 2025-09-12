@@ -26,7 +26,6 @@ enum CategoryProperties: String {
     case name
     case creationDate
     case modificationDate
-    case categoryDirectoryURL
 }
 
 enum ImageOrderIndexKind: String {

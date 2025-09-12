@@ -17,23 +17,19 @@ public class ImageEntity: NSManagedObject {
         fatalError()
     }
     
-    @available(*, unavailable)
-    public init(context: NSManagedObjectContext) {
-        fatalError()
-    }
-    
     @objc
     override private init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
         super.init(entity: entity, insertInto: context)
     }
     
     init(
-        temporaryOrderIndex: Int,
-        orderIndex: Int,
         uuid: UUID,
         thumbnailUUID: UUID,
-        memo: MemoEntity,
+        temporaryOrderIndex: Int64,
+        orderIndex: Int64,
         isTemporaryAppended: Bool,
+        fileExtension: String,
+        memo: MemoEntity,
         context: NSManagedObjectContext
     ) {
         guard let entityDescription = NSEntityDescription.entity(
@@ -43,8 +39,14 @@ public class ImageEntity: NSManagedObject {
             fatalError()
         }
         super.init(entity: entityDescription, insertInto: context)
-        
-        isTemporaryDeleted = false
+        self.uuid = uuid
+        self.thumbnailUUID = thumbnailUUID
+        self.temporaryOrderIndex = temporaryOrderIndex
+        self.orderIndex = orderIndex
+        self.isTemporaryDeleted = false
+        self.isTemporaryAppended = isTemporaryAppended
+        self.fileExtension = fileExtension
+        self.memo = memo   
     }
     
 }

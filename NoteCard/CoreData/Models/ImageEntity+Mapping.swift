@@ -13,9 +13,10 @@ extension ImageEntity {
             thumbnailID: self.thumbnailUUID,
             temporaryOrderIndex: Int(self.temporaryOrderIndex),
             orderIndex: Int(self.orderIndex),
-            memo: self.memo.toDomain(),
+            memoID: self.memo.memoID,
             isTemporaryDeleted: self.isTemporaryDeleted,
-            isTemporaryAppended: self.isTemporaryAppended
+            isTemporaryAppended: self.isTemporaryAppended,
+            fileExtension: self.fileExtension
         )
     }
     

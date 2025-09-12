@@ -23,6 +23,7 @@ extension ImageEntity {
     @NSManaged public var memo: MemoEntity
     @NSManaged public var isTemporaryDeleted: Bool
     @NSManaged public var isTemporaryAppended: Bool
+    @NSManaged public var fileExtension: String
 
 }
 

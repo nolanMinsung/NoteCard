@@ -12,7 +12,8 @@ struct MemoImageInfo: Hashable {
     let thumbnailID: UUID
     var temporaryOrderIndex: Int
     var orderIndex: Int
-    let memo: Memo
+    let memoID: UUID
     var isTemporaryDeleted: Bool
     var isTemporaryAppended: Bool
+    let fileExtension: String
 }
