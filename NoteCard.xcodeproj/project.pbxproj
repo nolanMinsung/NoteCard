@@ -208,7 +208,7 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4E00A0BB2E5E99AD007ABF00 /* Domain */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Domain; sourceTree = "<group>"; };
 		4E00A0C72E5EB497007ABF00 /* Application */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Application; sourceTree = "<group>"; };
-		4E462BA92E29CF4A004C0215 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
+		4E5F341D2E717C2200C05FE4 /* Errors */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Errors; sourceTree = "<group>"; };
 		4EC9B5162E4248B80031250B /* Global */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Global; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -253,11 +253,11 @@
 		4E1384A32AF37B350063817B /* NoteCard */ = {
 			isa = PBXGroup;
 			children = (
+				4E5F341D2E717C2200C05FE4 /* Errors */,
 				4E00A0C72E5EB497007ABF00 /* Application */,
 				4E00A0BB2E5E99AD007ABF00 /* Domain */,
 				4EC9B5162E4248B80031250B /* Global */,
 				4EDD36FF2E33027A002AF29B /* CustomDesign */,
-				4E462BA92E29CF4A004C0215 /* Extensions */,
 				4E57A5F72E5436F400418962 /* Presentation */,
 				4ED42A842B3D6EDA00D14571 /* Localizable.strings */,
 				4E1384BB2AF37DE10063817B /* CoreData */,
