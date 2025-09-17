@@ -57,7 +57,8 @@ final class MemoSearchingView: UIView {
         
         searchBar.backgroundColor = .systemBackground
         
-        collectionView = WispableCollectionView(frame: .zero, sectionProvider: sectionProvider)
+        let searchingLayout = UICollectionViewCompositionalLayout.wisp.make(sectionProvider: sectionProvider)
+        collectionView = WispableCollectionView(frame: .zero, collectionViewLayout: searchingLayout)
         collectionView.backgroundColor = .clear
         collectionView.keyboardDismissMode = .onDrag
         collectionView.delaysContentTouches = false

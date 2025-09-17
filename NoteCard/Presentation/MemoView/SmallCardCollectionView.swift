@@ -64,8 +64,8 @@ final class SmallCardCollectionView: WispableCollectionView {
     }
     
     init() {
-        super.init(frame: .zero, sectionProvider: smallCardSectionProvider)
-        
+        let smallCardLayout = UICollectionViewCompositionalLayout.wisp.make(sectionProvider: smallCardSectionProvider)
+        super.init(frame: .zero, collectionViewLayout: smallCardLayout)
         layer.masksToBounds = false
         clipsToBounds = true
         allowsMultipleSelectionDuringEditing = true

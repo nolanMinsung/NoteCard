@@ -192,54 +192,54 @@ final class MemoDetailView: UIView {
     private func setupLayoutConstraints() {
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            titleTextField.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 5),
-            titleTextField.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            titleTextField.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            titleTextField.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 5),
+            titleTextField.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            titleTextField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -10),
             titleTextField.heightAnchor.constraint(equalToConstant: 50)
         ])
         
         imageCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             imageCollectionViewTopConstraint,
-            imageCollectionView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 0),
-            imageCollectionView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: 0),
+            imageCollectionView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 0),
+            imageCollectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: 0),
             imageCollectionViewHeightConstraint,
         ])
         
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            activityIndicatorView.centerXAnchor.constraint(equalTo: self.imageCollectionView.centerXAnchor, constant: 0),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: self.imageCollectionView.centerYAnchor, constant: 0),
+            activityIndicatorView.centerXAnchor.constraint(equalTo: imageCollectionView.centerXAnchor, constant: 0),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: imageCollectionView.centerYAnchor, constant: 0),
         ])
         
         collectionViewBackgroundBlurView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            collectionViewBackgroundBlurView.topAnchor.constraint(equalTo: self.categoryListCollectionView.topAnchor, constant: 0),
-            collectionViewBackgroundBlurView.leadingAnchor.constraint(equalTo: self.categoryListCollectionView.leadingAnchor, constant: 0),
-            collectionViewBackgroundBlurView.trailingAnchor.constraint(equalTo: self.categoryListCollectionView.trailingAnchor, constant: 0),
-            collectionViewBackgroundBlurView.bottomAnchor.constraint(equalTo: self.categoryListCollectionView.bottomAnchor, constant: 0),
+            collectionViewBackgroundBlurView.topAnchor.constraint(equalTo: categoryListCollectionView.topAnchor, constant: 0),
+            collectionViewBackgroundBlurView.leadingAnchor.constraint(equalTo: categoryListCollectionView.leadingAnchor, constant: 0),
+            collectionViewBackgroundBlurView.trailingAnchor.constraint(equalTo: categoryListCollectionView.trailingAnchor, constant: 0),
+            collectionViewBackgroundBlurView.bottomAnchor.constraint(equalTo: categoryListCollectionView.bottomAnchor, constant: 0),
         ])
         
         categoryButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            categoryButton.topAnchor.constraint(equalTo: self.imageCollectionView.bottomAnchor, constant: 7),
-            categoryButton.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            categoryButton.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor, constant: 7),
+            categoryButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
             categoryButton.heightAnchor.constraint(equalToConstant: 40),
         ])
         
         categoryListCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             categoryListCollectionViewCenterYConstraint,
-            categoryListCollectionView.leadingAnchor.constraint(equalTo: self.categoryButton.trailingAnchor, constant: 0),
+            categoryListCollectionView.leadingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: 0),
             categoryListCollectionViewTrailingConstraint,
             categoryListCollectionViewHeightConstraint,
         ])
         
         memoTextView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            memoTextView.topAnchor.constraint(equalTo: self.categoryButton.bottomAnchor, constant: 7),
-            memoTextView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            memoTextView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            memoTextView.topAnchor.constraint(equalTo: categoryButton.bottomAnchor, constant: 7),
+            memoTextView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            memoTextView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -10),
             memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -5),
         ])
     }
@@ -451,7 +451,7 @@ extension MemoDetailView {
         memoTextView.textInputView.backgroundColor = .clear
         memoTextView.clipsToBounds = true
         memoTextView.scrollsToTop = true
-        memoTextView.tintColor = UIColor.currentTheme
+        memoTextView.tintColor = .currentTheme
         memoTextView.layer.cornerRadius = 16
         memoTextView.layer.cornerCurve = .continuous
         memoTextView.textContainerInset = UIEdgeInsets(top: 15, left: 6, bottom: 10, right: 6)

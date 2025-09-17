@@ -95,7 +95,8 @@ final class HomeView: UIView {
             default: return HomeView.cardLayoutSection
             }
         }
-        homeCollectionView = WispableCollectionView(frame: .zero, sectionProvider: sectionProvider)
+        let homeLayout = UICollectionViewCompositionalLayout.wisp.make(sectionProvider: sectionProvider)
+        homeCollectionView = WispableCollectionView(frame: .zero, collectionViewLayout: homeLayout)
         
         super.init(frame: .zero)
         

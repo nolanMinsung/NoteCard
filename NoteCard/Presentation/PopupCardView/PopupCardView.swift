@@ -419,7 +419,7 @@ extension PopupCardView {
         memoTextView.textInputView.backgroundColor = .clear
         memoTextView.bounces = true
         memoTextView.tintColor = .currentTheme
-        memoTextView.isEditable = false
+        memoTextView.isSelectable = false
         memoTextView.isScrollEnabled = true
         memoTextView.dataDetectorTypes = .link
         memoTextView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)

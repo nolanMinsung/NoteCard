@@ -73,7 +73,8 @@ class PopupCardViewController: UIViewController {
             withDuration: 0.2,
             delay: 0,
             usingSpringWithDamping: 1,
-            initialSpringVelocity: 1
+            initialSpringVelocity: 1,
+            options: [.allowUserInteraction]
         ) { [weak self] in
             guard let self else { return }
             self.rootView.memoTextViewBottom.isActive = false
