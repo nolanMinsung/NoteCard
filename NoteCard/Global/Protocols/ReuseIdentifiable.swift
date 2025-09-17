@@ -5,6 +5,8 @@
 //  Created by 김민성 on 4/6/25.
 //
 
+import UIKit
+
 protocol ReuseIdentifiable {
     static var reuseIdentifier: String { get }
 }
@@ -14,3 +16,5 @@ extension ReuseIdentifiable {
         String(describing: self)
     }
 }
+
+extension UICollectionReusableView: ReuseIdentifiable { }

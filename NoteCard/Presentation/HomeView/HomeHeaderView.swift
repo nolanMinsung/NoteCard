@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeHeaderView: UICollectionReusableView, ReuseIdentifiable {
+class HomeHeaderView: UICollectionReusableView {
     
     let button = HomeHeaderButton()
     

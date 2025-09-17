@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeCategoryCell: UICollectionViewCell, ReuseIdentifiable, ViewShrinkable {
+class HomeCategoryCell: UICollectionViewCell, ViewShrinkable {
     
     override var isHighlighted: Bool {
         didSet { isHighlighted ? shrink(scale: 0.95) : restore() }
