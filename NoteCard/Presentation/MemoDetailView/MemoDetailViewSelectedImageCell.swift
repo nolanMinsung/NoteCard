@@ -79,6 +79,10 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         self.selectedImageView.image = thumbnailImageToShow
     }
     
+    func configureCell(with image: any TemporaryImageInfo) {
+        selectedImageView.image = image.thumbnail
+    }
+    
     private func setupButtonsAction() {
         self.deleteImageButton.addTarget(self, action: #selector(deleteImageButtonTapped), for: UIControl.Event.touchUpInside)
     }
@@ -120,9 +124,13 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         case .lifting:
             self.deleteImageButton.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
             self.deleteImageButton.alpha = 0.0
+            self.clipsToBounds = true
+            self.layer.cornerRadius = 10
         case .none:
             self.deleteImageButton.transform = CGAffineTransform.identity
             self.deleteImageButton.alpha = 1.0
+            self.clipsToBounds = false
+            self.layer.cornerRadius = 0
         default:
             return
         }

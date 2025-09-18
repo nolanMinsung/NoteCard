@@ -458,8 +458,7 @@ extension MemoDetailView {
         memoTextView.setLineSpace(
             with: "메모를 입력하세요.".localized(),
             lineSpace: 5,
-            font: UIFont.systemFont(ofSize: 15),
-            textColor: UIColor.systemGray4
+            font: UIFont.systemFont(ofSize: 15)
         )
     }
     

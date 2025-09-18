@@ -17,8 +17,6 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         return $0.userInterfaceStyle == .dark ? .lightGray : .darkGray
     })
     
-    var categoryEntity: CategoryEntity!
-    
     let selectionAnimator = UIViewPropertyAnimator(duration: 0.2, curve: UIView.AnimationCurve.easeOut)
     let deselectionAnimator = UIViewPropertyAnimator(duration: 0.2, curve: UIView.AnimationCurve.easeOut)
     
@@ -52,7 +50,6 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
     }
     
     let label: UILabel = {
-        
         let detailViewCategoryCellLabelColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .dark {
                 return UIColor.lightGray
@@ -121,8 +118,11 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
     }
     
     func configureCell(with categoryEntity: CategoryEntity) {
-        self.categoryEntity = categoryEntity
         self.label.text = categoryEntity.name
+    }
+    
+    func configureCell(with category: Category) {
+        self.label.text = category.name
         self.layoutSubviews()
     }
 }
