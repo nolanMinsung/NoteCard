@@ -31,6 +31,18 @@ enum ImageFileHandler {
         guard let sourceImage = UIImage(data: originalData) else {
             throw ImageFileError.dataToImageConversionFailed
         }
+        return try createThumbnailData(from: sourceImage, maxPixelSize: maxPixelSize)
+    }
+    
+    static func createThumbnailData(from sourceImage: UIImage, maxPixelSize: CGFloat = 400) throws -> Data {
+        let resizedImage = try createThumbnailImage(from: sourceImage, maxPixelSize: maxPixelSize)
+        guard let thumbnailData = resizedImage.jpegData(compressionQuality: 0.7) else {
+            throw ImageFileError.thumbnailCreationError
+        }
+        return thumbnailData
+    }
+    
+    static func createThumbnailImage(from sourceImage: UIImage, maxPixelSize: CGFloat = 400) throws -> UIImage {
         let size = sourceImage.size
         let newSize: CGSize
         
@@ -46,10 +58,7 @@ enum ImageFileHandler {
             sourceImage.draw(in: CGRect(origin: .zero, size: newSize))
         }
         
-        guard let thumbnailData = resizedImage.jpegData(compressionQuality: 0.7) else {
-            throw ImageFileError.thumbnailCreationError
-        }
-        return thumbnailData
+        return resizedImage
     }
 
     // MARK: - File System Operations
@@ -143,19 +152,16 @@ private extension NSItemProvider {
     func loadDataRepresentation(for contentType: UTType) async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
             if #available(iOS 16, *) {
-                let progress = loadDataRepresentation(for: contentType) { data, error in
+                let _ = loadDataRepresentation(for: contentType) { data, error in
                     switch (data, error) {
                     case (_, .some(let error)):
                         // 에러 발생
-                        continuation
-                            .resume(throwing: error)
+                        continuation.resume(throwing: error)
                     case (.some(let data), .none):
-                        continuation
-                            .resume(returning: data)
+                        continuation.resume(returning: data)
                     case (.none, .none):
                         // 에러는 없는데 데이터도 없는 이상한 상황
-                        continuation
-                            .resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
+                        continuation.resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
                     }
                 }
             } else {
@@ -163,20 +169,46 @@ private extension NSItemProvider {
                     switch (data, error) {
                     case (_, .some(let error)):
                         // 에러 발생
-                        continuation
-                            .resume(throwing: error)
+                        continuation.resume(throwing: error)
                     case (.some(let data), .none):
-                        continuation
-                            .resume(returning: data)
+                        continuation.resume(returning: data)
                     case (.none, .none):
                         // 에러는 없는데 데이터도 없는 이상한 상황
-                        continuation
-                            .resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
+                        continuation.resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
                     }
                 }
             }
         }
     }
+    
+}
 
+
+extension NSItemProvider {
+    
+    func loadImageOnly() async throws -> UIImage {
+        guard self.canLoadObject(ofClass: UIImage.self) else {
+            throw ImageFileError.loadingDataFromNSProviderFaild
+        }
+        return try await withCheckedThrowingContinuation { continuation in
+            loadObject(ofClass: UIImage.self) { providerReading, error in
+                switch (providerReading, error) {
+                case (_, .some(let error)):
+                    // 에러 발생
+                    continuation.resume(throwing: error)
+                case (.some(let data), .none):
+                    guard let image = data as? UIImage else {
+                        continuation.resume(throwing: ImageFileError.loadingDataFromNSProviderFaild)
+                        return
+                    }
+                    continuation.resume(returning: image)
+                case (.none, .none):
+                    // 에러는 없는데 데이터도 없는 이상한 상황
+                    continuation.resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
+                }
+            }
+        }
+    }
+    
 
 }

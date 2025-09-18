@@ -13,6 +13,8 @@ protocol ImageRepository {
     func createImage(
         from pickerResult: PHPickerResult,
         for memo: Memo,
+        originalImageID: UUID?,
+        thumbnailID: UUID?,
         orderIndex: Int,
         isTemporary: Bool
     ) async throws -> MemoImageInfo

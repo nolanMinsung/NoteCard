@@ -20,6 +20,8 @@ actor ImageEntityRepository: ImageRepository {
     func createImage(
         from pickerResult: PHPickerResult,
         for memo: Memo,
+        originalImageID: UUID? = nil,
+        thumbnailID: UUID? = nil,
         orderIndex: Int,
         isTemporary: Bool
     ) async throws -> MemoImageInfo {
@@ -33,8 +35,8 @@ actor ImageEntityRepository: ImageRepository {
         return try await context.perform { [unowned self] in
             // 코어데이터에 저장할 데이터
             let orderIndex: Int64 = Int64(min(max(0, orderIndex), Int(Int64.max)))
-            let originalImageID = UUID()
-            let thumbnailID = UUID()
+            let originalImageID = originalImageID ?? UUID()
+            let thumbnailID = thumbnailID ?? UUID()
             let memoDirectoryURL = try ImageFileHandler.getDirectory(for: memo.memoID)
             guard let fileExtension = originalType.preferredFilenameExtension else {
                 throw ImageFileError.imageFileExtensionError
@@ -119,57 +121,6 @@ actor ImageEntityRepository: ImageRepository {
             if let entityToDelete = try self.context.fetch(request).first {
                 self.context.delete(entityToDelete)
                 try self.context.save()
-            }
-        }
-    }
-    
-}
-
-
-enum NSItemProviderError: LocalizedError {
-    case loadedButDataNotFound
-    
-    var errorDescription: String? {
-        switch self {
-        case .loadedButDataNotFound:
-            return "데이터 로딩에는 성공했으나, 받아온 data가 없음(nil)."
-        }
-    }
-}
-
-
-private extension NSItemProvider {
-    
-    func loadDataRepresentation(for contentType: UTType) async throws -> Data {
-        return try await withCheckedThrowingContinuation { continuation in
-            if #available(iOS 16, *) {
-                let _ = loadDataRepresentation(for: contentType) { data, error in
-                    switch (data, error) {
-                    case (_, .some(let error)):
-                        // 에러 발생
-                        continuation.resume(throwing: error)
-                    case (.some(let data), .none):
-                        continuation.resume(returning: data)
-                    case (.none, .none):
-                        // 에러는 없는데 데이터도 없는 이상한 상황
-                        continuation.resume(throwing: NSItemProviderError.loadedButDataNotFound)
-                    }
-                }
-                
-            } else {
-                let _ = loadDataRepresentation(forTypeIdentifier: contentType.identifier) { data, error in
-                    switch (data, error) {
-                    case (_, .some(let error)):
-                        // 에러 발생
-                        continuation.resume(throwing: error)
-                    case (.some(let data), .none):
-                        continuation.resume(returning: data)
-                    case (.none, .none):
-                        // 에러는 없는데 데이터도 없는 이상한 상황
-                        continuation.resume(throwing: NSItemProviderError.loadedButDataNotFound)
-                    }
-                }
-                
             }
         }
     }
