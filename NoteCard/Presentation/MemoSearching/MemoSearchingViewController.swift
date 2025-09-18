@@ -93,7 +93,7 @@ extension MemoSearchingViewController: UICollectionViewDelegate {
         let memoIDToOpen = favoriteMemoArray[indexPath.item].memoID
         let memoToOpen = MemoEntityManager.shared.getSpecificMemoEntity(memoID: memoIDToOpen)
         let popupVC = PopupCardViewController(
-            memo: memoToOpen,
+            memo: memoToOpen.toDomain(),
             indexPath: indexPath,
         )
         

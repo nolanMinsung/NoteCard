@@ -64,6 +64,7 @@ class PopupCardViewController: UIViewController {
         rootView.memoTextView.addGestureRecognizer(memoTextViewTapGesture)
         memoTextViewTapGesture.addTarget(self, action: #selector(memoTextViewTapped(_:)))
         memoTextViewTapGesture.isEnabled = false
+        rootView.memoTextView.isEditable = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
