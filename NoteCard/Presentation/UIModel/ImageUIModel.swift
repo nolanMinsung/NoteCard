@@ -7,8 +7,9 @@
 
 import UIKit
 
-struct ImageUIModel: Hashable {
-    let id: UUID
+struct ImageUIModel: Hashable, TemporaryImageInfo {
+    
+    let originalImageID: UUID
     let thumbnailID: UUID
     var temporaryOrderIndex: Int
     var orderIndex: Int
@@ -21,7 +22,7 @@ struct ImageUIModel: Hashable {
     let thumbnail: UIImage
     
     init(from imageInfo: MemoImageInfo, image: UIImage, thumbnail: UIImage) {
-        self.id = imageInfo.id
+        self.originalImageID = imageInfo.id
         self.thumbnailID = imageInfo.thumbnailID
         self.temporaryOrderIndex = imageInfo.temporaryOrderIndex
         self.orderIndex = imageInfo.orderIndex
