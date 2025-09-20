@@ -9,27 +9,29 @@ import UIKit
 
 struct ImageUIModel: Hashable, TemporaryImageInfo {
     
-    let originalImageID: UUID
-    let thumbnailID: UUID
-    var temporaryOrderIndex: Int
-    var orderIndex: Int
-    let memoID: UUID
-    var isTemporaryDeleted: Bool
-    var isTemporaryAppended: Bool
-    let fileExtension: String
+    var info: MemoImageInfo
+    
+    var originalImageID: UUID { info.id }
+    var thumbnailID: UUID { info.thumbnailID }
     
     let originalImage: UIImage
     let thumbnail: UIImage
     
+    var temporaryOrderIndex: Int {
+        get { info.temporaryOrderIndex }
+        set { info.temporaryOrderIndex = newValue }
+    }
+    var isTemporaryDeleted: Bool {
+        get { info.isTemporaryDeleted }
+        set { info.isTemporaryDeleted = newValue }
+    }
+    var isTemporaryAppended: Bool {
+        get { info.isTemporaryAppended }
+        set { info.isTemporaryAppended = newValue }
+    }
+    
     init(from imageInfo: MemoImageInfo, image: UIImage, thumbnail: UIImage) {
-        self.originalImageID = imageInfo.id
-        self.thumbnailID = imageInfo.thumbnailID
-        self.temporaryOrderIndex = imageInfo.temporaryOrderIndex
-        self.orderIndex = imageInfo.orderIndex
-        self.memoID = imageInfo.memoID
-        self.isTemporaryDeleted = imageInfo.isTemporaryDeleted
-        self.isTemporaryAppended = imageInfo.isTemporaryAppended
-        self.fileExtension = imageInfo.fileExtension
+        self.info = imageInfo
         self.originalImage = image
         self.thumbnail = thumbnail
     }
