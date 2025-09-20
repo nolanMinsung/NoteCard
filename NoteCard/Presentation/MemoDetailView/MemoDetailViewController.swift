@@ -9,9 +9,16 @@ import UIKit
 
 class MemoDetailViewController: UIViewController {
     
+    typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, EditableImageItem>
+    typealias ImageDataSnapshot = NSDiffableDataSourceSnapshot<Section, EditableImageItem>
+    
     enum MemoDetailType {
         case making
         case editing(memo: Memo, images: [ImageUIModel])
+    }
+    
+    enum Section {
+        case main
     }
     
     private let rootView = MemoDetailView()
@@ -19,7 +26,8 @@ class MemoDetailViewController: UIViewController {
     private let memo: Memo?
     private var categories: [Category] = []
     private var selectedCategories: [Category] = []
-    private var imageModels: [any TemporaryImageInfo] = []
+    private var editableImageModels: [EditableImageItem] = []
+    private var dataSource: DiffableDataSource!
     
     // MARK: - UI Properties
     
@@ -39,7 +47,9 @@ class MemoDetailViewController: UIViewController {
         self.detailType = type
         if case .editing(let memo, let imageModels) = type {
             self.memo = memo
-            self.imageModels = imageModels.sorted(by: { $0.temporaryOrderIndex < $1.temporaryOrderIndex })
+            self.editableImageModels = imageModels
+                .sorted { $0.temporaryOrderIndex < $1.temporaryOrderIndex }
+                .map { .existing(model: $0) }
         } else {
             self.memo = nil
         }
@@ -63,6 +73,8 @@ class MemoDetailViewController: UIViewController {
         navigationItem.leftBarButtonItem = cancelBarButtonItem
         navigationItem.rightBarButtonItem = completeBarButtonItem
         
+        setupDiffableDataSource()
+        applyImageDataSnapshot()
         setupDelegates()
         Task {
             guard let memo else { return }
@@ -110,9 +122,32 @@ private extension MemoDetailViewController {
         imageBarButtonItem.primaryAction = selectImageAction
     }
     
+    func setupDiffableDataSource() {
+        dataSource = DiffableDataSource(
+            collectionView: rootView.imageCollectionView,
+            cellProvider: { collectionView, indexPath, itemIdentifier in
+                let cellReuseID = MemoDetailViewSelectedImageCell.reuseIdentifier
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: cellReuseID,
+                    for: indexPath
+                ) as? MemoDetailViewSelectedImageCell else {
+                    fatalError()
+                }
+                cell.configureCell(with: itemIdentifier)
+                return cell
+            }
+        )
+    }
+    
+    func applyImageDataSnapshot() {
+        var snapshot = ImageDataSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(editableImageModels, toSection: .main)
+        dataSource.apply(snapshot)
+    }
+    
     func setupDelegates() {
         rootView.categoryListCollectionView.dataSource = self
-        rootView.imageCollectionView.dataSource = self
         rootView.imageCollectionView.delegate = self
         rootView.imageCollectionView.dragDelegate = self
         rootView.imageCollectionView.dropDelegate = self
@@ -153,33 +188,16 @@ private extension MemoDetailViewController {
 extension MemoDetailViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == rootView.categoryListCollectionView {
-            return categories.count
-        } else if collectionView == rootView.imageCollectionView {
-            return imageModels.count
-        } else {
-            return 0
-        }
+        return categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == rootView.categoryListCollectionView {
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: MemoDetailViewCategoryListCell.cellID,
-                for: indexPath
-            ) as! MemoDetailViewCategoryListCell
-            cell.configureCell(with: categories[indexPath.item])
-            return cell
-        } else if collectionView == rootView.imageCollectionView {
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: MemoDetailViewSelectedImageCell.cellID,
-                for: indexPath
-            ) as! MemoDetailViewSelectedImageCell
-            cell.configureCell(with: imageModels[indexPath.item])
-            return cell
-        } else {
-            fatalError()
-        }
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MemoDetailViewCategoryListCell.cellID,
+            for: indexPath
+        ) as! MemoDetailViewCategoryListCell
+        cell.configureCell(with: categories[indexPath.item])
+        return cell
     }
     
 }
@@ -198,7 +216,7 @@ extension MemoDetailViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == rootView.imageCollectionView {
-            let images = imageModels.map(\.originalImage)
+            let images = editableImageModels.map(\.model.originalImage)
             let imageShowingVC = CardImageShowingViewController(indexPath: indexPath, images: images)
             imageShowingVC.modalPresentationStyle = .overFullScreen
             present(imageShowingVC, animated: true)

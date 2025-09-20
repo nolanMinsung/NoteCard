@@ -8,7 +8,7 @@
 import PhotosUI
 import UIKit
 
-struct ImageUITemporaryModel: TemporaryImageInfo {
+struct ImageUITemporaryModel: Hashable, TemporaryImageInfo {
     
     let originalImageID: UUID
     let thumbnailID: UUID

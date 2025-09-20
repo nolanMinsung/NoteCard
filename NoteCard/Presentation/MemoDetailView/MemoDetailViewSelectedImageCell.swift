@@ -27,7 +27,9 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
     lazy var deleteImageButton: UIButton = {
         let button = UIButton()
         
-        button.setImage(UIImage(systemName: "xmark")?.withTintColor(.systemRed, renderingMode: UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)
+        let minusImage = UIImage(systemName: "minus")?
+            .withTintColor(.systemRed, renderingMode: .alwaysOriginal)
+        button.setImage(minusImage, for: UIControl.State.normal)
         button.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
         button.contentMode = .scaleAspectFit
         button.backgroundColor  = .detailViewDeleteImageButton
@@ -79,8 +81,8 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
         self.selectedImageView.image = thumbnailImageToShow
     }
     
-    func configureCell(with image: any TemporaryImageInfo) {
-        selectedImageView.image = image.thumbnail
+    func configureCell(with imageItem: EditableImageItem) {
+        selectedImageView.image = imageItem.model.thumbnail
     }
     
     private func setupButtonsAction() {
@@ -131,7 +133,7 @@ class MemoDetailViewSelectedImageCell: UICollectionViewCell {
             self.deleteImageButton.alpha = 1.0
             self.clipsToBounds = false
             self.layer.cornerRadius = 0
-        default:
+        @unknown default:
             return
         }
     }

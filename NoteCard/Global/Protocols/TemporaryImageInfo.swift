@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol TemporaryImageInfo {
+protocol TemporaryImageInfo: Hashable {
     
     var originalImageID: UUID { get }
     var thumbnailID: UUID { get }
