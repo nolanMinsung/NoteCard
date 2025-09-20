@@ -22,5 +22,6 @@ protocol ImageRepository {
     func getImage(from imageInfo: MemoImageInfo) async throws -> UIImage
     func getThumbnailImage(from imageInfo: MemoImageInfo) async throws -> UIImage
     func getAllImageInfo(for memo: Memo) async throws -> [MemoImageInfo]
+    func updateImageIndex(_ image: MemoImageInfo, newIndex: Int) async throws
     func deleteImage(_ imageInfo: MemoImageInfo) async throws
 }

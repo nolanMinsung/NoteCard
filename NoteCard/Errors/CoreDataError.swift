@@ -14,6 +14,7 @@ enum CoreDataError: NoteCardError {
     case objectNotFound
     case categoryNotFound(name: String)
     case duplicateCategoryDetected
+    case duplicateImageDetected
     
     var displayingMessage: String {
         switch self {
@@ -27,6 +28,8 @@ enum CoreDataError: NoteCardError {
             return "카테고리를 찾을 수 없습니다. UUID: \(name)"
         case .duplicateCategoryDetected:
             return "같은 이름의 카테고리가 2개 이상 발견되었습니다. 조치 필요."
+        case .duplicateImageDetected:
+            return "같은 이미지가 2개 이상 발견되었습니다. 조치 필요."
         }
     }
 }

@@ -102,6 +102,26 @@ actor ImageEntityRepository: ImageRepository {
         }
     }
     
+    func updateImageIndex(_ image: MemoImageInfo, newIndex: Int) async throws {
+        try await context.perform {
+            let request = ImageEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "uuid = %@", image.id as CVarArg)
+            let fetchResults = try self.context.fetch(request)
+            let imageEntity: ImageEntity
+            switch fetchResults.count {
+            case 0:
+                throw CoreDataError.objectNotFound
+            case 1:
+                imageEntity = fetchResults.first!
+            default:
+                throw CoreDataError.duplicateImageDetected
+            }
+            imageEntity.orderIndex = Int64(newIndex)
+            imageEntity.temporaryOrderIndex = Int64(newIndex)
+            try self.context.save()
+        }
+    }
+    
     // 이미지를 영구적으로 삭제.
     // 모든 이미지 데이터를 안전하게 삭제하기 위해서 FileManager 에 있는 이미지 및 썸네일 파일을 먼저 지우고,
     // 그 다음에 CoreData의 DB에서 ImageEntity 삭제
