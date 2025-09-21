@@ -207,6 +207,7 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4E00A0BB2E5E99AD007ABF00 /* Domain */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Domain; sourceTree = "<group>"; };
 		4E00A0C72E5EB497007ABF00 /* Application */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Application; sourceTree = "<group>"; };
+		4E31381D2E7FBD130033B7AB /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
 		4E5F341D2E717C2200C05FE4 /* Errors */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Errors; sourceTree = "<group>"; };
 		4EA7B44E2E74882C00A49433 /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
 		4EC9B5162E4248B80031250B /* Global */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Global; sourceTree = "<group>"; };
@@ -298,6 +299,7 @@
 		4E1384BD2AF37E0D0063817B /* HomeView */ = {
 			isa = PBXGroup;
 			children = (
+				4E31381D2E7FBD130033B7AB /* Model */,
 				4E1384EA2AF3843A0063817B /* HomeViewController.swift */,
 				4E1384EC2AF3846C0063817B /* HomeView.swift */,
 				4E1384EE2AF384880063817B /* HomeHeaderView.swift */,
@@ -581,6 +583,7 @@
 			fileSystemSynchronizedGroups = (
 				4E00A0BB2E5E99AD007ABF00 /* Domain */,
 				4E00A0C72E5EB497007ABF00 /* Application */,
+				4E31381D2E7FBD130033B7AB /* Model */,
 				4E5F341D2E717C2200C05FE4 /* Errors */,
 				4EA7B44E2E74882C00A49433 /* Model */,
 				4EC9B5162E4248B80031250B /* Global */,

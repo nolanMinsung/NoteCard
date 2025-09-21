@@ -12,6 +12,24 @@ import Wisp
 
 class HomeViewController: UIViewController {
     
+    enum Section: CaseIterable {
+        case category
+        case favorite
+        case all
+    }
+    
+    enum HomeItem: Hashable {
+        case category(Category)
+        case memo(MemoHomeUIModel)
+    }
+    
+    typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, HomeItem>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, HomeItem>
+    typealias CellProvider = DiffableDataSource.CellProvider
+    typealias HeaderRegistration = UICollectionView.SupplementaryRegistration<HomeHeaderView>
+    typealias CategoryCellRegistration = UICollectionView.CellRegistration<HomeCategoryCell, Category>
+    typealias MemoCellRegistration = UICollectionView.CellRegistration<HomeCardCell, MemoHomeUIModel>
+    
     let sectionHederTitleArray: [String] = [
         "카테고리".localized(),
         "즐겨찾기".localized(),
@@ -22,12 +40,10 @@ class HomeViewController: UIViewController {
     
     var homeCollectionView: WispableCollectionView { self.homeView.homeCollectionView }
     
-    private var favoriteMemoArray: [MemoEntity] {
-        return MemoEntityManager.shared.getFavoriteMemoEntities()
-    }
-    private var recentMemoArray: [MemoEntity] {
-        return MemoEntityManager.shared.getMemoEntitiesFromCoreData()
-    }
+    private var categories: [Category] = []
+    private var favoriteMemos: [Memo] = []
+    private var allMemos: [Memo] = []
+    private var diffableDataSource: DiffableDataSource!
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -39,6 +55,11 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         
         setupNaviBar()
+        setupDiffableDataSource()
+        Task {
+            try await fetchData()
+            applySnapshot()
+        }
         setupDelegates()
         setupObserver()
     }
@@ -74,8 +95,79 @@ class HomeViewController: UIViewController {
         self.navigationController?.toolbar.tintColor = .currentTheme
     }
     
+    private func fetchData() async throws {
+        categories = try await CategoryEntityRepository.shared.getAllCategories(
+            inOrderOf: .modificationDate,
+            isAscending: false
+        )
+        favoriteMemos = try await MemoEntityRepository.shared.getFavoriteMemos()
+        allMemos = try await MemoEntityRepository.shared.getAllMemos()
+    }
+    
+    private func setupDiffableDataSource() {
+        let categoryCellRegistration = CategoryCellRegistration { cell, indexPath, category in
+            cell.configure(with: category)
+        }
+        
+        let memoCellRegistration = MemoCellRegistration { cell, indexPath, memoUIModel in
+            cell.configure(with: memoUIModel)
+        }
+        
+        let headerViewRegistration = HeaderRegistration.init(
+            elementKind: UICollectionView.elementKindSectionHeader
+        ) { [weak self] headerView, elementKind, indexPath in
+            guard let self else { return }
+            headerView.button.configuration?.baseForegroundColor = UIColor.currentTheme
+            // 헤더 안의 버튼은 section 정보를 button의 tag로 저장함.
+            headerView.button.tag = indexPath.section
+            headerView.button.configuration?.title = self.sectionHederTitleArray[indexPath.section] + " "
+            headerView.button.addTarget(self, action: #selector(self.onHeaderButtonTapped), for: .touchUpInside)
+        }
+        
+        // Cell Provider
+        let cellProvider: CellProvider = { collectionView, indexPath, itemIdentifier in
+            switch itemIdentifier {
+            case .category(let category):
+                return collectionView.dequeueConfiguredReusableCell(
+                    using: categoryCellRegistration,
+                    for: indexPath,
+                    item: category)
+            case .memo(let memo):
+                return collectionView.dequeueConfiguredReusableCell(
+                    using: memoCellRegistration,
+                    for: indexPath,
+                    item: memo
+                )
+            }
+        }
+        
+        // Setting Diffable DataSource
+        diffableDataSource = .init(
+            collectionView: homeCollectionView,
+            cellProvider: cellProvider,
+        )
+        diffableDataSource.supplementaryViewProvider = {
+            collectionView,
+            elementKind,
+            indexPath in
+            guard elementKind == UICollectionView.elementKindSectionHeader else { return nil }
+            return collectionView.dequeueConfiguredReusableSupplementary(
+                using: headerViewRegistration,
+                for: indexPath
+            )
+        }
+    }
+    
+    private func applySnapshot() {
+        var snapshot: Snapshot = .init()
+        snapshot.appendSections(Section.allCases)
+        snapshot.appendItems(categories.map({ .category($0) }), toSection: .category)
+        snapshot.appendItems(favoriteMemos.map({ .memo(MemoHomeUIModel(memo: $0, section: .favorite)) }), toSection: .favorite)
+        snapshot.appendItems(allMemos.map({ .memo(MemoHomeUIModel(memo: $0, section: .all)) }), toSection: .all)
+        diffableDataSource.apply(snapshot)
+    }
+    
     private func setupDelegates() {
-        self.homeCollectionView.dataSource = self
         self.homeCollectionView.delegate = self
     }
     
@@ -143,110 +235,6 @@ class HomeViewController: UIViewController {
     
 }
 
-// MARK: - UICollectionViewDataSource
-
-extension HomeViewController: UICollectionViewDataSource {
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return self.sectionHederTitleArray.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            switch CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false).count != 0 {
-            case false:
-                return 1
-            case true:
-                return CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false).count
-            }
-            
-        case 1:
-            switch MemoEntityManager.shared.getFavoriteMemoEntities().count {
-            case 0:
-                return 1
-            default:
-                return MemoEntityManager.shared.getFavoriteMemoEntities().count
-            }
-            
-        default:
-            return MemoEntityManager.shared.getMemoEntitiesFromCoreData().count
-        }
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-        
-        guard let headerView = collectionView.dequeueReusableSupplementaryView(
-            ofKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: HomeHeaderView.reuseIdentifier,
-            for: indexPath
-        ) as? HomeHeaderView else {
-            fatalError()
-        }
-        
-        headerView.button.configuration?.baseForegroundColor = UIColor.currentTheme
-        // 헤더 안의 버튼은 section 정보를 button의 tag로 저장함.
-        headerView.button.tag = indexPath.section
-        headerView.button.configuration?.title = sectionHederTitleArray[indexPath.section] + " "
-        headerView.button.addTarget(self, action: #selector(onHeaderButtonTapped), for: .touchUpInside)
-        
-        return headerView
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch indexPath.section {
-        case 0:
-            let categoryCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCategoryCell.reuseIdentifier, for: indexPath) as! HomeCategoryCell
-            
-            let categoryEntityArray = CategoryEntityManager.shared.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
-            
-            switch categoryEntityArray.count != 0 {
-            case false:
-                categoryCell.labelCategoryName.textColor = UIColor.systemGray
-                categoryCell.labelCategoryName.text = "카테고리 만들기".localized()
-                return categoryCell
-                
-            case true:
-                categoryCell.labelCategoryName.textColor = .label
-                categoryCell.labelCategoryName.text = categoryEntityArray[indexPath.row].name
-                return categoryCell
-            }
-            
-        case 1:
-            let favoriteCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
-            
-            switch MemoEntityManager.shared.getFavoriteMemoEntities().count {
-            case 0:
-                favoriteCell.titleTextField.text = "즐겨찾기 없음".localized()
-                favoriteCell.pictureImageLabel.isHidden = true
-                favoriteCell.imageCountLabel.text = ""
-                favoriteCell.dateLabel.text = ""
-                favoriteCell.titleTextField.textColor = UIColor.lightGray
-                return favoriteCell
-                
-            default:
-                let memoEntity = favoriteMemoArray[indexPath.row]
-                favoriteCell.configureCell(with: memoEntity)
-                return favoriteCell
-            }
-            
-        case 2:
-            let recentCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCardCell.reuseIdentifier, for: indexPath) as! HomeCardCell
-            
-            let memoEntity = recentMemoArray[indexPath.row]
-            recentCell.configureCell(with: memoEntity)
-            return recentCell
-            
-        default:
-            fatalError("HomeCollectionView's number of sections is 3")
-        }
-    }
-}
-
 // MARK: - UICollectionViewDelegate
 
 extension HomeViewController: UICollectionViewDelegate {
@@ -284,19 +272,17 @@ extension HomeViewController: UICollectionViewDelegate {
                 return
                 
             default:
-                
-                let memoEntity = favoriteMemoArray[indexPath.row]
+                let selectedMemo = favoriteMemos[indexPath.item]
                 let popupCardViewCotroller = PopupCardViewController(
-                    memo: memoEntity.toDomain(),
+                    memo: selectedMemo,
                     indexPath: indexPath,
                 )
-                
                 wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
             }
         case 2:
-            let memoEntity = recentMemoArray[indexPath.row]
+            let selectedMemo = allMemos[indexPath.item]
             let popupCardViewCotroller = PopupCardViewController(
-                memo: memoEntity.toDomain(),
+                memo: selectedMemo,
                 indexPath: indexPath,
             )
             wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)

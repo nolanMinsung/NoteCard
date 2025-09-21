@@ -68,4 +68,8 @@ class HomeCategoryCell: UICollectionViewCell, ViewShrinkable {
         labelCategoryName.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5).isActive = true
     }
     
+    func configure(with category: Category) {
+        labelCategoryName.text = category.name
+    }
+    
 }

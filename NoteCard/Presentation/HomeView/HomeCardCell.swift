@@ -129,32 +129,42 @@ final class HomeCardCell: UICollectionViewCell, ViewShrinkable {
         self.contentView.addSubview(self.memoTextView)
     }
     
-    func configureCell(with memo: MemoEntity) {
-        guard let orderCriterion = UserDefaults.standard.string(
-            forKey: UserDefaultsKeys.orderCriterion.rawValue
-        ) else {
-            fatalError()
-        }
-        
-        self.memoEntity = memo
-        self.titleTextField.text = memo.memoTitle
-        self.titleTextField.textColor = .label
-        self.pictureImageLabel.isHidden = false
-        self.imageCountLabel.text = String(memo.images.count)
-        
-        if orderCriterion == OrderCriterion.creationDate.rawValue {
-            self.dateLabel.text = memo.getCreationDateInString()
-        } else {
-            self.dateLabel.text = memo.getModificationDateString()
-        }
-        self.memoTextView.setLineSpace(with: memo.memoTextShortBuffer, lineSpace: 2, font: UIFont.systemFont(ofSize: 12))
-        
-        if memo.images.count == 0 {
-            self.pictureImageLabel.alpha = 0.5
-            self.imageCountLabel.alpha = 0.5
-        }
-        self.layoutSubviews()
+    func configure(with uiModel: MemoHomeUIModel) {
+        titleTextField.text = uiModel.memo.memoTitle
+        memoTextView.setLineSpace(with: String(uiModel.memo.memoText.prefix(200)), lineSpace: 2, font: .systemFont(ofSize: 12))
+        pictureImageLabel.isHidden = false
+        imageCountLabel.text = "\(uiModel.memo.images.count)"
+        pictureImageLabel.alpha = uiModel.memo.images.isEmpty ? 0.5 : 1.0
+        imageCountLabel.alpha = uiModel.memo.images.isEmpty ? 0.5 : 1.0
+        contentView.layoutIfNeeded()
     }
+    
+//    func configureCell(with memo: MemoEntity) {
+//        guard let orderCriterion = UserDefaults.standard.string(
+//            forKey: UserDefaultsKeys.orderCriterion.rawValue
+//        ) else {
+//            fatalError()
+//        }
+//        
+//        self.memoEntity = memo
+//        self.titleTextField.text = memo.memoTitle
+//        self.titleTextField.textColor = .label
+//        self.pictureImageLabel.isHidden = false
+//        self.imageCountLabel.text = String(memo.images.count)
+//        
+//        if orderCriterion == OrderCriterion.creationDate.rawValue {
+//            self.dateLabel.text = memo.getCreationDateInString()
+//        } else {
+//            self.dateLabel.text = memo.getModificationDateString()
+//        }
+//        self.memoTextView.setLineSpace(with: memo.memoTextShortBuffer, lineSpace: 2, font: UIFont.systemFont(ofSize: 12))
+//        
+//        if memo.images.count == 0 {
+//            self.pictureImageLabel.alpha = 0.5
+//            self.imageCountLabel.alpha = 0.5
+//        }
+//        self.layoutSubviews()
+//    }
     
     func setupConstraints() {
         self.titleTextField.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 9).isActive = true
