@@ -51,6 +51,12 @@ final class MemoDetailView: UIView {
     private lazy var categoryListCollectionViewHeightConstraint =
     self.categoryListCollectionView.heightAnchor.constraint(equalToConstant: 32)
     
+    private lazy var memoTextViewBottomConstraintToKeyboard =
+    self.memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -5)
+    
+    private lazy var memoTextViewBottomConstraintToSafeArea =
+    self.memoTextView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -5)
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -240,8 +246,9 @@ final class MemoDetailView: UIView {
             memoTextView.topAnchor.constraint(equalTo: categoryButton.bottomAnchor, constant: 7),
             memoTextView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
             memoTextView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            memoTextView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -5),
+            memoTextViewBottomConstraintToKeyboard,
         ])
+        memoTextViewBottomConstraintToSafeArea.isActive = false
     }
     
     private func setupDelegates() {
@@ -543,6 +550,16 @@ extension MemoDetailView {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
+    }
+    
+}
+
+
+extension MemoDetailView {
+    
+    func prepareForDismissal() {
+        memoTextViewBottomConstraintToKeyboard.isActive = false
+        memoTextViewBottomConstraintToSafeArea.isActive = true
     }
     
 }
