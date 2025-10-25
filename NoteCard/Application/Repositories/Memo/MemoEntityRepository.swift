@@ -27,6 +27,20 @@ enum MemoEntityError: LocalizedError {
 
 actor MemoEntityRepository: MemoRepository {
     
+    enum MemoUpdateType: Equatable {
+        enum UpdateContent {
+            case favorite
+            case titleText
+            case category
+        }
+        
+        case create
+        case trash
+        case delete
+        case restore
+        case update(content: UpdateContent)
+    }
+    
     static let shared = MemoEntityRepository()
     private init() { }
     
@@ -62,6 +76,12 @@ actor MemoEntityRepository: MemoRepository {
         }
     }
     
+    // MARK: - Subjects
+    
+    nonisolated private let memoUpdatedSubject = PassthroughSubject<MemoUpdateType, Never>()
+    nonisolated var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
+        memoUpdatedSubject.eraseToAnyPublisher()
+    }
 }
 
 
@@ -69,11 +89,13 @@ actor MemoEntityRepository: MemoRepository {
 extension MemoEntityRepository {
     
     func createNewMemo() async throws -> Memo {
-        try await context.perform { [unowned self] in
+        let createdMemo = try await context.perform { [unowned self] in
             let newMemoEntity = MemoEntity(context: self.context)
             try self.context.save()
             return newMemoEntity.toDomain()
         }
+        memoUpdatedSubject.send(.create)
+        return createdMemo
     }
     
 }
@@ -88,7 +110,23 @@ extension MemoEntityRepository {
             type: .and,
             subpredicates: [memoIDEquals(to: id), notDeleted]
         )
-//        request.predicate = NSPredicate(format: "memoID == %@ && isInTrash == false", id as CVarArg)
+        let foundMemo = try self.context.fetch(request)
+        switch foundMemo.count {
+        case 0:
+            throw MemoEntityError.memoNotFound(id: id)
+        case 1:
+            return foundMemo.first!
+        default:
+            throw MemoEntityError.duplicateMemoDetected
+        }
+    }
+    
+    func fetchTrashMemoEntity(id: UUID) throws -> MemoEntity {
+        let request = MemoEntity.fetchRequest()
+        request.predicate = NSCompoundPredicate(
+            type: .and,
+            subpredicates: [memoIDEquals(to: id), deleted]
+        )
         let foundMemo = try self.context.fetch(request)
         switch foundMemo.count {
         case 0:
@@ -110,6 +148,7 @@ extension MemoEntityRepository {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
+            request.predicate = notDeleted
             request.sortDescriptors = [sortDescriptor]
             return try self.context.fetch(request).map { $0.toDomain() }
         }
@@ -199,6 +238,7 @@ extension MemoEntityRepository {
             memoEntityToTrash.removeFromCategories(memoEntityToTrash.categories)
             try self.context.save()
         }
+        memoUpdatedSubject.send((.trash))
     }
     
     func moveToTrash(_ memos: [Memo]) async throws {
@@ -212,6 +252,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
+        memoUpdatedSubject.send(.trash)
     }
     
 }
@@ -222,7 +263,7 @@ extension MemoEntityRepository {
     
     func deleteMemo(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
-            let memoEntityToDelete = try self.fetchMemoEntity(id: memo.memoID)
+            let memoEntityToDelete = try self.fetchTrashMemoEntity(id: memo.memoID)
             // FileManager에서 메모 디렉토리(및 이미지들) 삭제
             let memoDirectoryURL = try ImageFileHandler.getDirectory(for: memo.memoID)
             try FileManager.default.removeItem(at: memoDirectoryURL)
@@ -234,12 +275,13 @@ extension MemoEntityRepository {
             self.context.delete(memoEntityToDelete)
             try self.context.save()
         }
+        memoUpdatedSubject.send(.delete)
     }
     
     func deleteMemos(_ memos: [Memo]) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
-                let memoEntityToDelete = try self.fetchMemoEntity(id: memo.memoID)
+                let memoEntityToDelete = try self.fetchTrashMemoEntity(id: memo.memoID)
                 // FileManager에서 메모 디렉토리(및 이미지들) 삭제
                 let memoDirectoryURL = try ImageFileHandler.getDirectory(for: memo.memoID)
                 try FileManager.default.removeItem(at: memoDirectoryURL)
@@ -252,6 +294,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
+        memoUpdatedSubject.send(.delete)
     }
     
 }
@@ -262,22 +305,24 @@ extension MemoEntityRepository {
     
     func restore(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
-            let memoEntityToRestore = try self.fetchMemoEntity(id: memo.memoID)
+            let memoEntityToRestore = try self.fetchTrashMemoEntity(id: memo.memoID)
             memoEntityToRestore.isInTrash = false
             memoEntityToRestore.deletedDate = nil
             try self.context.save()
         }
+        memoUpdatedSubject.send(.restore)
     }
     
     func restore(_ memos: [Memo]) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
-                let memoEntityToRestore = try self.fetchMemoEntity(id: memo.memoID)
+                let memoEntityToRestore = try self.fetchTrashMemoEntity(id: memo.memoID)
                 memoEntityToRestore.isInTrash = false
                 memoEntityToRestore.deletedDate = nil
             }
             try self.context.save()
         }
+        memoUpdatedSubject.send(.restore)
     }
     
 }
@@ -295,6 +340,7 @@ extension MemoEntityRepository {
             memoEntity.addToCategories(newCategorySet)
             try self.context.save()
         }
+        memoUpdatedSubject.send(.update(content: .category))
     }
     
     func replaceCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
@@ -308,6 +354,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
+        memoUpdatedSubject.send(.update(content: .category))
     }
     
     func addCategories(to memo: Memo, newCategories: Set<Category>) async throws {
@@ -317,6 +364,7 @@ extension MemoEntityRepository {
             memoEntity.addToCategories(newCategorySet)
             try self.context.save()
         }
+        memoUpdatedSubject.send(.update(content: .category))
     }
     
     func addCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
@@ -328,6 +376,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
+        memoUpdatedSubject.send(.update(content: .category))
     }
     
     func removeCategories(to memo: Memo, newCategories: Set<Category>) async throws {
@@ -337,6 +386,7 @@ extension MemoEntityRepository {
             memoEntity.removeFromCategories(newCategorySet)
             try self.context.save()
         }
+        memoUpdatedSubject.send(.update(content: .category))
     }
     
     func removeCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
@@ -348,6 +398,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
+        memoUpdatedSubject.send(.update(content: .category))
     }
     
     func setFavorite(_ memo: Memo, to value: Bool) async throws {
@@ -356,6 +407,7 @@ extension MemoEntityRepository {
             memoEntity.isFavorite = value
             try self.context.save()
         }
+        memoUpdatedSubject.send(.update(content: .favorite))
     }
     
     func setFavorite(_ memos: [Memo], to value: Bool) async throws {
@@ -366,6 +418,7 @@ extension MemoEntityRepository {
             }
             try context.save()
         }
+        memoUpdatedSubject.send(.update(content: .favorite))
     }
     
     func updateMemoContent(_ memo: Memo, newTitle: String? = nil, newMemoText: String? = nil) async throws {
@@ -377,8 +430,10 @@ extension MemoEntityRepository {
             if let newMemoText {
                 memoEntity.memoText = newMemoText
             }
+            memoEntity.modificationDate = .now
             try self.context.save()
         }
+        memoUpdatedSubject.send(.update(content: .titleText))
     }
     
 }
