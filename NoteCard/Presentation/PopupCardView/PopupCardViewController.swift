@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/02.
 //
 
+import Combine
 import UIKit
 
 class PopupCardViewController: UIViewController {
@@ -27,6 +28,7 @@ class PopupCardViewController: UIViewController {
     private var restoreMemoAction: UIAction!
     private var presentEditingModeAction: UIAction!
     private var deleteMemoAction: UIAction!
+    private var cancellables = Set<AnyCancellable>()
     
     init(memo: Memo, indexPath: IndexPath, enableEditing: Bool = true) {
         self.memo = memo
@@ -65,6 +67,32 @@ class PopupCardViewController: UIViewController {
         memoTextViewTapGesture.addTarget(self, action: #selector(memoTextViewTapped(_:)))
         memoTextViewTapGesture.isEnabled = false
         rootView.memoTextView.isEditable = true
+        
+        MemoEntityRepository.shared.memoUpdatedPublisher
+            .filter({ updateType in
+                guard case .update(_) = updateType else { return false }
+                return true
+            })
+            .sink { [weak self] _ in
+            guard let self else { return }
+            
+            Task {
+                do {
+                    let updatedMemo = try await MemoEntityRepository.shared.getMemo(id: self.memo.memoID)
+                    self.imageUIModels = try await self.makeImageUIModels()
+                    self.categories = try await self.fetchCategories()
+                    
+                    self.rootView.categoryCollectionView.reloadData()
+                    self.rootView.imageCollectionView.reloadData()
+                    self.rootView.titleTextField.text = updatedMemo.memoTitle
+                    self.rootView.memoTextView.text = updatedMemo.memoText
+                    print("popupCard의 콘텐츠 업데이트")
+                } catch {
+                    assertionFailure("변경된 메모 데이터를 업데이트 하는데 에러 발생!!!")
+                }
+            }
+        }
+        .store(in: &cancellables)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -348,8 +376,8 @@ extension PopupCardViewController {
         
         let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
         let deleteAction = UIAlertAction(title: "삭제".localized(), style: .destructive) { [weak self] action in
+            guard let self else { return }
             Task {
-                guard let self else { return }
                 do {
                     if self.memo.isInTrash {
                         try await MemoEntityRepository.shared.deleteMemo(self.memo)

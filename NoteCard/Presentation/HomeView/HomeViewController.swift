@@ -46,6 +46,10 @@ class HomeViewController: UIViewController {
     private var diffableDataSource: DiffableDataSource!
     
     private var cancellables: Set<AnyCancellable> = []
+    private let coreDataChangePublisher = NotificationCenter.default.publisher(
+        for: .NSManagedObjectContextDidSave,
+        object: CoreDataStack.shared.backgroundContext
+    )
     
     override func loadView() {
         self.view = homeView
@@ -62,6 +66,15 @@ class HomeViewController: UIViewController {
         }
         setupDelegates()
         setupObserver()
+        
+        coreDataChangePublisher.sink { [weak self] _ in
+            guard let self else { return }
+            Task {
+                try await self.fetchData()
+                self.applySnapshot()
+            }
+        }
+        .store(in: &cancellables)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -249,7 +262,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 layout.finalCornerRadius = 37
             }
             config.setGesture { gesture in
-                gesture.allowedDirections = [.horizontalOnly, .down]
+                gesture.allowedDirections = [.horizontal, .down]
             }
         }
         

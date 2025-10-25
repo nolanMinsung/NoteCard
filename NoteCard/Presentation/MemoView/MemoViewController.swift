@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/02.
 //
 
+import Combine
 import UIKit
 
 import Wisp
@@ -68,11 +69,8 @@ class MemoViewController: UIViewController {
     private var setFavoriteMenuAction: UIAction!
     private var unsetFavoriteMenuAction: UIAction!
     
-    //    init(selectedCategoryEntity: CategoryEntity?) {
-    /// MemoViewController의 생성자
-    /// - Parameters:
-    ///   - memoVCType: MemoViewController가 어떤 타입일지 결정. 특정 카테고리의 타입, 카테고리가 없는 타입, 즐겨찾기 타입이 있음.
-    ///   - selectedCategoryEntity: memoVCType 매개변수에 .category 가 할당됐을 경우, 보여주고자 하는 카테고리.  memoVCType 매개변수에 .category 를 제외한 다른 값이 할당되면 이 매개변수에 어떤 값이 들어와도 해당 카테고리를 보여주지 않는다. 
+    private var cancellables = Set<AnyCancellable>()
+    
     init(memoVCType: MemoVCType) {
         
         self.memoVCType = memoVCType
@@ -106,12 +104,10 @@ class MemoViewController: UIViewController {
         setupObservers()
         Task {
             do {
-                self.memoArray = try await fetchMemos()
-                smallCardCollectionView.reloadData()
+                try await self.updateMemoContents()
             } catch {
                 makeAlert(title: "메모 업데이트 실패", message: "메모를 불러오는 데 실패했습니다.", answer: "확인")
             }
-            
         }
     }
     
@@ -307,6 +303,18 @@ private extension MemoViewController {
     }
     
     func setupObservers() {
+        MemoEntityRepository.shared.memoUpdatedPublisher
+            .filter({ updateType in
+                guard case .update(let content) = updateType else { return true }
+                return content != .favorite
+            })
+            .sink { _ in
+                Task {
+                    try await self.updateMemoContents()
+                }
+            }
+            .store(in: &cancellables)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(memoCreated(_:)), name: NSNotification.Name("createdMemoNotification"), object: nil)
         
         if self.memoVCType == MemoVCType.uncategorized {
@@ -337,8 +345,7 @@ private extension MemoViewController {
             }
             Task {
                 try await MemoEntityRepository.shared.restore(selectedMemos)
-                self.memoArray = try await self.fetchMemos()
-                self.smallCardCollectionView.reloadData()
+                try await self.updateMemoContents()
             }
         }
         let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
@@ -391,8 +398,7 @@ private extension MemoViewController {
             try await MemoEntityRepository.shared.setFavorite(selectedMemos, to: false)
             
             guard self.memoVCType == .favorite else { return }
-            memoArray = try await fetchMemos()
-            self.smallCardCollectionView.reloadData()
+            try await self.updateMemoContents()
             self.setEditing(false, animated: true)
         }
         
@@ -445,8 +451,7 @@ private extension MemoViewController {
                 } else {
                     try await MemoEntityRepository.shared.moveToTrash(selectedMemos)
                 }
-                self.memoArray = try await self.fetchMemos()
-                self.smallCardCollectionView.reloadData()
+                try await self.updateMemoContents()
             }
             self.setEditing(false, animated: true)
             self.editButtonItem.isEnabled = !self.memoArray.isEmpty
@@ -472,8 +477,7 @@ private extension MemoViewController {
     @objc func memoCreated(_ notification: Notification) {
         view.endEditing(true)
         Task {
-            self.memoArray = try await self.fetchMemos()
-            self.smallCardCollectionView.reloadData()
+            try await self.updateMemoContents()
         }
     }
     
@@ -481,20 +485,22 @@ private extension MemoViewController {
         print("uncategorized MemoVC에서 메모 복구 Notification 받았다!!")
 //        guard let recoveredMemo = notification.userInfo?["recoveredMemos"] as? [MemoEntity] else { fatalError() }
         Task {
-            self.memoArray = try await self.fetchMemos()
-            self.smallCardCollectionView.reloadData()
+            try await self.updateMemoContents()
         }
     }
     
     func presentPopupCardVC(at indexPath: IndexPath, inset: UIEdgeInsets) {
         let wispConfiguration = WispConfiguration { config in
+            config.setAnimation { animation in
+                animation.speed = .fast
+            }
             config.setLayout { layout in
                 layout.presentedAreaInset = inset
                 layout.initialCornerRadius = 13
                 layout.finalCornerRadius = 25
             }
             config.setGesture { gesture in
-                gesture.allowedDirections = [.horizontalOnly, .down]
+                gesture.allowedDirections = [.horizontal, .down]
             }
         }
         
@@ -586,6 +592,11 @@ extension MemoViewController: UICollectionViewDelegate {
         }
     }
     
+    func updateMemoContents() async throws {
+        memoArray = try await fetchMemos()
+        smallCardCollectionView.reloadData()
+    }
+    
     func fetchMemos() async throws -> [Memo] {
         switch memoVCType {
         case .category, .uncategorized:
@@ -626,8 +637,7 @@ extension MemoViewController: UITextFieldDelegate {
         
         if self.isCategoryNameChanged {
             Task {
-                self.memoArray = try await self.fetchMemos()
-                self.smallCardCollectionView.reloadData()
+                try await self.updateMemoContents()
                 self.isCategoryNameChanged = false
             }
         }
