@@ -29,12 +29,17 @@ final class PopupCardView: UIView {
     let ellipsisButton = UIButton()
     
     private let makeCategoryFlowLayout = {
-        let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.minimumLineSpacing = 10
-        flowLayout.scrollDirection = .horizontal
-//        flowLayout.estimatedItemSize = CGSize(width: 50, height: 35)
-        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-        return flowLayout
+        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(100), heightDimension: .absolute(30))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 10
+        
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.scrollDirection = .horizontal
+        let layout = UICollectionViewCompositionalLayout(section: section, configuration: config)
+        return layout
     }
     private(set) var categoryCollectionView: UICollectionView!
     
@@ -161,7 +166,7 @@ final class PopupCardView: UIView {
             categoryCollectionView.topAnchor.constraint(equalTo: memoDateLabel.bottomAnchor, constant: 10),
             categoryCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             categoryCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            categoryCollectionView.heightAnchor.constraint(equalToConstant: 28),
+            categoryCollectionView.heightAnchor.constraint(equalToConstant: 30),
         ])
         
         imageCollectionView.translatesAutoresizingMaskIntoConstraints = false
