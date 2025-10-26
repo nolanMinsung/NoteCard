@@ -93,6 +93,7 @@
 		4ED42A822B3D6EDA00D14571 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4ED42A842B3D6EDA00D14571 /* Localizable.strings */; };
 		4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */; };
 		4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */; };
+		4EE7396E2EADCA0400DD3912 /* PopupCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE7396D2EADCA0400DD3912 /* PopupCategoryCell.swift */; };
 		4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */; };
 		4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */; };
 		4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */; };
@@ -194,6 +195,7 @@
 		4ED42A972B3DA6E000D14571 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomIntensityBlurView.swift; sourceTree = "<group>"; };
 		4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectionViewController.swift; sourceTree = "<group>"; };
+		4EE7396D2EADCA0400DD3912 /* PopupCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupCategoryCell.swift; sourceTree = "<group>"; };
 		4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingScrollView.swift; sourceTree = "<group>"; };
 		4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewSelectedImageCell.swift; sourceTree = "<group>"; };
 		4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewCategoryListCell.swift; sourceTree = "<group>"; };
@@ -379,6 +381,7 @@
 			children = (
 				4E1384F62AF385090063817B /* PopupCardViewController.swift */,
 				4E1384F82AF3851B0063817B /* PopupCardView.swift */,
+				4EE7396D2EADCA0400DD3912 /* PopupCategoryCell.swift */,
 			);
 			path = PopupCardView;
 			sourceTree = "<group>";
@@ -710,6 +713,7 @@
 				4E57AC2F2E59B70B00418962 /* MemoPreviewDTO.swift in Sources */,
 				4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */,
 				4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */,
+				4EE7396E2EADCA0400DD3912 /* PopupCategoryCell.swift in Sources */,
 				4E57A6002E54380700418962 /* CoreDataStack.swift in Sources */,
 				4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */,
 				4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */,

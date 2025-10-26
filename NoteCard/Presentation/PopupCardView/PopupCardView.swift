@@ -362,8 +362,8 @@ extension PopupCardView {
     private func setupCategoryCollectionView() {
         categoryCollectionView.backgroundColor = .clear
         categoryCollectionView.register(
-            TotalListCellCategoryCell.self,
-            forCellWithReuseIdentifier: TotalListCellCategoryCell.cellID
+            PopupCategoryCell.self,
+            forCellWithReuseIdentifier: PopupCategoryCell.reuseIdentifier
         )
         categoryCollectionView.clipsToBounds = true
         categoryCollectionView.showsHorizontalScrollIndicator = false

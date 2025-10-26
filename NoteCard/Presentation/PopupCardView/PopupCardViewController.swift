@@ -210,9 +210,9 @@ extension PopupCardViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == self.rootView.categoryCollectionView {
             guard let cell = self.rootView.categoryCollectionView.dequeueReusableCell(
-                withReuseIdentifier: TotalListCellCategoryCell.cellID,
+                withReuseIdentifier: PopupCategoryCell.reuseIdentifier,
                 for: indexPath
-            ) as? TotalListCellCategoryCell
+            ) as? PopupCategoryCell
             else {
                 fatalError()
             }
