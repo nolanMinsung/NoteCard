@@ -137,27 +137,16 @@ class MainTabBarController: UITabBarController {
 extension MainTabBarController: UITabBarControllerDelegate {
     
     public func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        
         // 빠른 메모를 탭했을 때만 대응
-        if viewController is ThirdTabViewController {
-            // 빠른 메모를 탭했을 때 '카테고리 없음'에서 메모 수정중이면, 수정 멈추기(키보드 내리기)
-            if selectedIndex == 1 {
-                viewControllers?[1].view.endEditing(true)
-            }
-            
-            let memoMakingVC = MemoMakingViewController()
-            let memoMakingNaviCon = UINavigationController(rootViewController: memoMakingVC)
-            
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
-            appDelegate.memoMakingVC = memoMakingVC
-            memoMakingNaviCon.modalPresentationStyle = .formSheet
-            tabBarController.present(memoMakingNaviCon, animated: true)
-            
-            return false
-        } else {
+        guard viewController is ThirdTabViewController else {
             return true
         }
+        let memoMakingVC = MemoDetailViewController(type: .making(category: nil))
+        let memoMakingNaviCon = UINavigationController(rootViewController: memoMakingVC)
         
+        memoMakingNaviCon.modalPresentationStyle = .formSheet
+        tabBarController.present(memoMakingNaviCon, animated: true)
+        return false
     }
     
 }

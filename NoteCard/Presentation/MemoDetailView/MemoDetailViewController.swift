@@ -15,7 +15,7 @@ class MemoDetailViewController: UIViewController {
     typealias ImageDataSnapshot = NSDiffableDataSourceSnapshot<Section, EditableImageItem>
     
     enum MemoDetailType {
-        case making
+        case making(category: Category?)
         case editing(memo: Memo, images: [ImageUIModel])
     }
     
@@ -192,8 +192,14 @@ private extension MemoDetailViewController {
     }
     
     func selectInitialCategories() {
-        guard let memo else { return }
-        selectedCategories = memo.categories.sorted(by: { $0.modificationDate > $1.modificationDate })
+        switch detailType {
+        case .making(let category):
+            if let category {
+                selectedCategories = [category]
+            }
+        case .editing(let memo, _):
+            selectedCategories = memo.categories.sorted(by: { $0.modificationDate > $1.modificationDate })
+        }
         categories
             .enumerated()
             .filter { selectedCategories.contains($0.element) }
@@ -201,6 +207,7 @@ private extension MemoDetailViewController {
                 let indexPath = IndexPath(item: $0.offset, section: 0)
                 rootView.categoryListCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
             }
+        
     }
     
     func configureInitialTexts() {

@@ -41,9 +41,7 @@
 		4E13851C2AF387480063817B /* CardImageShowingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851B2AF387480063817B /* CardImageShowingViewController.swift */; };
 		4E13851E2AF3875D0063817B /* CardImageShowingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851D2AF3875D0063817B /* CardImageShowingView.swift */; };
 		4E1385202AF387890063817B /* CardImageShowingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851F2AF387890063817B /* CardImageShowingCollectionViewCell.swift */; };
-		4E1385282AF389850063817B /* MemoMakingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385272AF389850063817B /* MemoMakingViewController.swift */; };
 		4E13852A2AF389930063817B /* MemoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385292AF389930063817B /* MemoDetailView.swift */; };
-		4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13853B2AF38B000063817B /* MemoEditingViewController.swift */; };
 		4E13854C2AF38BE40063817B /* DetailViewSelectedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */; };
 		4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */; };
 		4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */; };
@@ -147,9 +145,7 @@
 		4E13851B2AF387480063817B /* CardImageShowingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingViewController.swift; sourceTree = "<group>"; };
 		4E13851D2AF3875D0063817B /* CardImageShowingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingView.swift; sourceTree = "<group>"; };
 		4E13851F2AF387890063817B /* CardImageShowingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingCollectionViewCell.swift; sourceTree = "<group>"; };
-		4E1385272AF389850063817B /* MemoMakingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoMakingViewController.swift; sourceTree = "<group>"; };
 		4E1385292AF389930063817B /* MemoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailView.swift; sourceTree = "<group>"; };
-		4E13853B2AF38B000063817B /* MemoEditingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditingViewController.swift; sourceTree = "<group>"; };
 		4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageViewController.swift; sourceTree = "<group>"; };
 		4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageView.swift; sourceTree = "<group>"; };
 		4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderButton.swift; sourceTree = "<group>"; };
@@ -311,22 +307,6 @@
 				4E1384C32AF37E750063817B /* CategoryListTableView */,
 			);
 			path = HomeView;
-			sourceTree = "<group>";
-		};
-		4E1384BE2AF37E130063817B /* MemoEditingView */ = {
-			isa = PBXGroup;
-			children = (
-				4E13853B2AF38B000063817B /* MemoEditingViewController.swift */,
-			);
-			path = MemoEditingView;
-			sourceTree = "<group>";
-		};
-		4E1384BF2AF37E3C0063817B /* MemoMakingView */ = {
-			isa = PBXGroup;
-			children = (
-				4E1385272AF389850063817B /* MemoMakingViewController.swift */,
-			);
-			path = MemoMakingView;
 			sourceTree = "<group>";
 		};
 		4E1384C02AF37E430063817B /* MemoView */ = {
@@ -553,8 +533,6 @@
 				4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */,
 				4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */,
 				4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */,
-				4E1384BF2AF37E3C0063817B /* MemoMakingView */,
-				4E1384BE2AF37E130063817B /* MemoEditingView */,
 			);
 			path = MemoDetailView;
 			sourceTree = "<group>";
@@ -669,7 +647,6 @@
 				4E1384E52AF383D70063817B /* DataManager.swift in Sources */,
 				4E4FCCBE2B3C3644000CBE17 /* DateFormatSettingTableViewCell.swift in Sources */,
 				4E13850F2AF386750063817B /* MemoViewController.swift in Sources */,
-				4E1385282AF389850063817B /* MemoMakingViewController.swift in Sources */,
 				4E1385112AF386920063817B /* MemoView.swift in Sources */,
 				4E4FCCC52B3C5875000CBE17 /* TimeFormatSettingTableViewCell.swift in Sources */,
 				4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */,
@@ -731,7 +708,6 @@
 				4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */,
 				4E1385092AF386260063817B /* InsetTextField.swift in Sources */,
 				4E1384DF2AF382F70063817B /* ImageEntityManager.swift in Sources */,
-				4E13853C2AF38B000063817B /* MemoEditingViewController.swift in Sources */,
 				4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */,
 				4E00A0D32E5F6250007ABF00 /* ImageEntity+Mapping.swift in Sources */,
 				4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */,

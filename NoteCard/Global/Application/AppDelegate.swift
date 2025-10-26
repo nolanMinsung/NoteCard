@@ -11,15 +11,9 @@ import CoreData
 @main
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
     
-    var memoMakingVC: MemoMakingViewController? = nil
-    var memoEditingVC: MemoEditingViewController? = nil
-    
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
         
         // 앱 내의 설정값들 초기화 (다크모드 제외) -> 다크모드는 window 를 바꿔야 해서, window 설정하는 SceneDelegate에서...
         
@@ -80,20 +74,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        print(#function)
-        
-        if let memoMakingVC {
-            memoMakingVC.completeMaking()
-            print("새로 만들던 메모 저장함")
-        }
-        
-        if let memoEditingVC {
-            memoEditingVC.completeEditing()
-            print("편집하던 메모 변경 내용 저장")
-        }
         
     }
-    
 
 }
 

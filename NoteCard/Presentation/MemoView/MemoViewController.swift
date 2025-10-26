@@ -100,7 +100,6 @@ class MemoViewController: UIViewController {
         setupBarButtonActions()
         setupBarButtonItems()
         setupDelegates()
-        setupActions()
         setupObservers()
         Task {
             do {
@@ -294,14 +293,6 @@ private extension MemoViewController {
         categoryNameTextField.delegate = self
     }
     
-    func setupActions() {
-        self.categoryNameTextField.addTarget(
-            self,
-            action: #selector(categoryNameTextFieldChanged),
-            for: UIControl.Event.editingChanged
-        )
-    }
-    
     func setupObservers() {
         MemoEntityRepository.shared.memoUpdatedPublisher
             .filter({ updateType in
@@ -410,10 +401,8 @@ private extension MemoViewController {
 private extension MemoViewController {
     
     @objc func presentMemoMakingVC() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
         self.view.endEditing(true)
-        let memoMakingVC = MemoMakingViewController(category: selectedCategoryEntity)
-        appDelegate.memoMakingVC = memoMakingVC
+        let memoMakingVC = MemoDetailViewController(type: .making(category: selectedCategory))
         let naviCon = UINavigationController(rootViewController: memoMakingVC)
         self.present(naviCon, animated: true)
     }
@@ -467,10 +456,6 @@ private extension MemoViewController {
         let okAction = UIAlertAction(title: answer, style: .cancel, handler: handler)
         alert.addAction(okAction)
         self.present(alert, animated: true)
-    }
-    
-    @objc func categoryNameTextFieldChanged() {
-        self.isCategoryNameChanged = true
     }
     
     //메모가 추가된 후 Notification을 받았을 때 실행할 함수
