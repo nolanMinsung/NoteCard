@@ -13,6 +13,7 @@ enum ImageFileError: NoteCardError {
     case loadedFromNSProviderButDataNotFound
     case imageFileExtensionError
     case dataToImageConversionFailed
+    case imageToDataConversionFailed
     case thumbnailCreationError
     case saveError(Error)
     case imageLoadingError(Error)
@@ -30,6 +31,8 @@ enum ImageFileError: NoteCardError {
             return "저장될 이미지 파일의 확장자를 찾을 수 없습니다."
         case .dataToImageConversionFailed:
             return "Data 인스턴스를 이미지로 변환하는 데 실패했습니다."
+        case .imageToDataConversionFailed:
+            return "이미지를 저장하는 과정에서 생성된 UIImage 인스턴스를 jpeg Data로 변환하는 데 실패했습니다."
         case .thumbnailCreationError:
             return "썸네일 이미지를 생성하는 데 실패했습니다."
         case .saveError(let error):
@@ -53,6 +56,8 @@ enum ImageFileError: NoteCardError {
             return "이미지 확장자 에러"
         case .dataToImageConversionFailed:
             return "이미지 파일을 표시할 수 없습니다. 파일이 손상되었을 수 있습니다."
+        case .imageToDataConversionFailed:
+            return "이미지를 저장하는 과정에서 오류가 발생했습니다. 지원하지 않는 이미지 확장자 파일일 수 있습니다."
         case .thumbnailCreationError:
             return "이미지 미리보기를 생성하는 데 실패했습니다."
         case .saveError:

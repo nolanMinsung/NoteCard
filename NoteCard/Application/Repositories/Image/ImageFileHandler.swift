@@ -20,7 +20,12 @@ enum ImageFileHandler {
         if let heicData = try? await provider.loadDataRepresentation(for: .heic) {
             return (heicData, .heic)
         } else if let jpegData = try? await provider.loadDataRepresentation(for: .jpeg) {
+            // loadDataRepresentation 을 통해 .jpeg Data로 변환이 된 경우
             return (jpegData, .jpeg)
+        } else if let convertedJPEGData = try? await provider.loadJPEGDataRepresentation() {
+            // .jpeg 이 아닌 임의의 이미지를 .jpeg으로 변환한 Data를 반환
+            // (현재 NoteCard는 로컬 DB에 이미지 파일 저장 시 .heic, .jpeg 두 가지 확장자만을 사용.)
+            return (convertedJPEGData, .jpeg)
         } else {
             throw ImageFileError.loadingDataFromNSProviderFaild
         }
@@ -176,6 +181,34 @@ private extension NSItemProvider {
                         // 에러는 없는데 데이터도 없는 이상한 상황
                         continuation.resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
                     }
+                }
+            }
+        }
+    }
+    
+    func loadJPEGDataRepresentation() async throws -> Data {
+        guard canLoadObject(ofClass: UIImage.self) else {
+            throw ImageFileError.loadingDataFromNSProviderFaild
+        }
+        return try await withCheckedThrowingContinuation { continuation in
+            loadObject(ofClass: UIImage.self) { providerReading, error in
+                switch (providerReading, error) {
+                case (_, .some(let error)):
+                    // 에러 발생
+                    continuation.resume(throwing: error)
+                case (.some(let data), .none):
+                    guard let image = data as? UIImage else {
+                        continuation.resume(throwing: ImageFileError.loadingDataFromNSProviderFaild)
+                        return
+                    }
+                    guard let dataToSave = image.jpegData(compressionQuality: 1.0) else {
+                        continuation.resume(throwing: ImageFileError.imageToDataConversionFailed)
+                        return
+                    }
+                    continuation.resume(returning: dataToSave)
+                case (.none, .none):
+                    // 에러는 없는데 데이터도 없는 이상한 상황
+                    continuation.resume(throwing: ImageFileError.loadedFromNSProviderButDataNotFound)
                 }
             }
         }

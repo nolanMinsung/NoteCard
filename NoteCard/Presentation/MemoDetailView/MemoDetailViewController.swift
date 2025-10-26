@@ -7,6 +7,7 @@
 
 import Combine
 import CoreData
+import PhotosUI
 import UIKit
 
 class MemoDetailViewController: UIViewController {
@@ -132,17 +133,27 @@ private extension MemoDetailViewController {
                     try await self.updateCategories()
                     self.dismiss(animated: true)
                 } catch {
-                    assertionFailure("에러 발생")
+                    assertionFailure("에러 발생: \(error.localizedDescription)")
                 }
             }
         }
         completeBarButtonItem.primaryAction = completeAction
         
-        
-        let selectImageAction = UIAction(image: UIImage(systemName: "photo")) { _ in
-            print("이미지 선택 bar button item이 눌렸다!")
+        let selectImageAction = UIAction(image: UIImage(systemName: "photo")) { [weak self] _ in
+            guard let self else { return }
+            let selectionLimit = 10 - self.editableImageModels.count
+            guard selectionLimit > 0 else { return }
+            var config = PHPickerConfiguration()
+            config.selectionLimit = selectionLimit
+            config.filter = .images
+            let picker = PHPickerViewController(configuration: config)
+            picker.isModalInPresentation = true
+            picker.delegate = self
+            self.present(picker, animated: true)
+            
         }
         imageBarButtonItem.primaryAction = selectImageAction
+        imageBarButtonItem.isEnabled = false
     }
     
     func setupActions() {
@@ -175,7 +186,11 @@ private extension MemoDetailViewController {
         var snapshot = ImageDataSnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(editableImageModels, toSection: .main)
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot) { [weak self] in
+            guard let self else { return }
+            let currentImageCount = self.dataSource.snapshot().itemIdentifiers(inSection: .main).count
+            imageBarButtonItem.isEnabled = 0 <= currentImageCount && currentImageCount < 10
+        }
         
         if editableImageModels.isEmpty {
             rootView.hideImageCollectionView()
@@ -296,6 +311,7 @@ private extension MemoDetailViewController {
                         try await ImageEntityRepository.shared.deleteImage(model.info)
                     }
                 }
+                try await group.waitForAll()
             }
         }
     }
@@ -386,6 +402,37 @@ extension MemoDetailViewController: UICollectionViewDropDelegate {
             editableImageModels.insert(movedItem, at: destinationIndexPath.item)
             self.applyImageDataSnapshot()
             coordinator.drop(dropItem.dragItem, toItemAt: destinationIndexPath)
+        }
+    }
+    
+}
+
+// MARK: - PHPickerViewControllerDelegate
+extension MemoDetailViewController: PHPickerViewControllerDelegate {
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        Task {
+            try await withThrowingTaskGroup(of: ImageUITemporaryModel.self) { group in
+                for (index, phPickerResult) in results.enumerated() {
+                    group.addTask {
+                        try await ImageUITemporaryModel(
+                            temporaryOrderIndex: self.editableImageModels.count + index,
+                            pickerResult: phPickerResult
+                        )
+                    }
+                    var sortedGroupResult: [ImageUITemporaryModel] = []
+                    for try await result in group {
+                        sortedGroupResult.append(result)
+                    }
+                    sortedGroupResult.sort { $0.temporaryOrderIndex < $1.temporaryOrderIndex }
+                    let editableImages: [EditableImageItem] = sortedGroupResult.map {
+                        EditableImageItem.pendingAddition(model: $0)
+                    }
+                    self.editableImageModels.append(contentsOf: editableImages)
+                    self.applyImageDataSnapshot()
+                }
+            }
         }
     }
     
