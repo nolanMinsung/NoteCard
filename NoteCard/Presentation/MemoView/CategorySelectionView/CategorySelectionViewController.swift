@@ -105,11 +105,7 @@ class CategorySelectionViewController: UIViewController {
                 newCategories: selectedCategories
             )
             try await MemoEntityRepository.shared.restore(selectedMemos)
-        }
-        
-        if memoVC.memoVCType == .trash || memoVC.memoVCType == .uncategorized {
-//            memoVC.updateDataSource()
-            memoVC.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
+            try await memoVC.updateMemoContents()
         }
         
         memoVC.isEditing = false
@@ -137,14 +133,6 @@ class CategorySelectionViewController: UIViewController {
                 newCategories: selectedCategories
             )
             try await MemoEntityRepository.shared.restore(selectedMemos)
-        }
-        
-        if memoVC.memoVCType.isCategory,
-           let selectedCategoryEntity = memoVC.selectedCategoryEntity,
-           self.selectedCategorySet.contains(selectedCategoryEntity) {
-            let selectedIndexes = selectedIndexPaths.map({ $0.item })
-//            memoVC.updateDataSource()
-            memoVC.smallCardCollectionView.deleteItems(at: selectedIndexPaths)
         }
         
         memoVC.isEditing = false
@@ -176,9 +164,7 @@ class CategorySelectionViewController: UIViewController {
 }
 
 
-
-
-
+// MARK: - UICollectionViewDataSource
 extension CategorySelectionViewController: UICollectionViewDataSource {
     
     
@@ -208,7 +194,7 @@ extension CategorySelectionViewController: UICollectionViewDataSource {
 }
 
 
-
+// MARK: - UICollectionViewDelegate
 extension CategorySelectionViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
