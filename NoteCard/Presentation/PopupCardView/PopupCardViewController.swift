@@ -14,7 +14,7 @@ class PopupCardViewController: UIViewController {
     private lazy var memoTextView = rootView.memoTextView
     private let memoTextViewTapGesture = UITapGestureRecognizer()
     
-    private let memo: Memo
+    private var memo: Memo
     private var categories: [Category] = []
     private var imageUIModels: [ImageUIModel] = [] {
         didSet {
@@ -79,6 +79,7 @@ class PopupCardViewController: UIViewController {
             Task {
                 do {
                     let updatedMemo = try await MemoEntityRepository.shared.getMemo(id: self.memo.memoID)
+                    self.memo = updatedMemo
                     self.imageUIModels = try await self.makeImageUIModels()
                     self.categories = try await self.fetchCategories()
                     

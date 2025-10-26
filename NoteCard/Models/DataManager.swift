@@ -60,7 +60,7 @@ enum DarkModeTheme: String, CaseIterable {
 struct CGSizeConstant {
     static let screenSize = UIScreen.current!.bounds.size
     static let popupCardThumbnailSize = CGSize(width: 70, height: 70)
-    static let detailViewThumbnailSize = CGSize(width: 70, height: 70)
+    static let detailViewThumbnailSize = CGSize(width: 90, height: 90)
     static let compositionalCardThumbnailSize = CGSize(width: 70, height: 70)
 }
 
