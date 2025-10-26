@@ -25,11 +25,12 @@ class MemoDetailViewController: UIViewController {
     
     private let rootView = MemoDetailView()
     private let detailType: MemoDetailType
-    private let memo: Memo?
+    private var memo: Memo?
     private var categories: [Category] = []
     private var selectedCategories: [Category] = []
     private var editableImageModels: [EditableImageItem] = []
     private var dataSource: DiffableDataSource!
+    private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - UI Properties
     
@@ -77,12 +78,17 @@ class MemoDetailViewController: UIViewController {
         
         setupActions()
         setupDiffableDataSource()
-        applyImageDataSnapshot()
         setupDelegates()
         Task {
-            guard let memo else { return }
             do {
-                try await configureView(with: memo)
+                categories = try await CategoryEntityRepository.shared.getAllCategories(
+                    inOrderOf: .modificationDate,
+                    isAscending: false
+                )
+                rootView.categoryListCollectionView.reloadData()
+                applyImageDataSnapshot()
+                configureInitialTexts()
+                selectInitialCategories()
             } catch {
                 print(error.localizedDescription)
             }
@@ -119,7 +125,16 @@ private extension MemoDetailViewController {
         cancelBarButtonItem.primaryAction = cancelAction
         
         let completeAction = UIAction(title: "완료".localized()) { _ in
-            print("완료 bar button item이 눌렸다!")
+            Task {
+                do {
+                    try await self.updateMemoContent()
+                    try await self.updateImages()
+                    try await self.updateCategories()
+                    self.dismiss(animated: true)
+                } catch {
+                    assertionFailure("에러 발생")
+                }
+            }
         }
         completeBarButtonItem.primaryAction = completeAction
         
@@ -161,6 +176,12 @@ private extension MemoDetailViewController {
         snapshot.appendSections([.main])
         snapshot.appendItems(editableImageModels, toSection: .main)
         dataSource.apply(snapshot)
+        
+        if editableImageModels.isEmpty {
+            rootView.hideImageCollectionView()
+        } else {
+            rootView.showImageCollectionView(targetHeight: CGSizeConstant.detailViewThumbnailSize.height)
+        }
     }
     
     func setupDelegates() {
@@ -170,17 +191,9 @@ private extension MemoDetailViewController {
         rootView.imageCollectionView.dropDelegate = self
     }
     
-    func configureView(with memo: Memo) async throws {
-        // configuring title
-        rootView.titleTextField.text = memo.memoTitle
-        
-        // configuring category
-        categories = try await CategoryEntityRepository.shared.getAllCategories(
-            inOrderOf: .modificationDate,
-            isAscending: false
-        )
+    func selectInitialCategories() {
+        guard let memo else { return }
         selectedCategories = memo.categories.sorted(by: { $0.modificationDate > $1.modificationDate })
-        rootView.categoryListCollectionView.reloadData()
         categories
             .enumerated()
             .filter { selectedCategories.contains($0.element) }
@@ -188,14 +201,96 @@ private extension MemoDetailViewController {
                 let indexPath = IndexPath(item: $0.offset, section: 0)
                 rootView.categoryListCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
             }
-        
-        rootView.imageCollectionView.reloadData()
-        if imageModels.isEmpty {
-            rootView.hideImageCollectionView()
-        } else {
-            rootView.showImageCollectionView(targetHeight: CGSizeConstant.detailViewThumbnailSize.height)
-        }
+    }
+    
+    func configureInitialTexts() {
+        guard let memo else { return }
+        rootView.titleTextField.text = memo.memoTitle
         rootView.memoTextView.text = memo.memoText
+        rootView.textPlaceholderLabel.isHidden = !memo.memoText.isEmpty
+    }
+    
+}
+
+
+// MARK: - 변경 내용 업데이트
+private extension MemoDetailViewController {
+    
+    func updateMemoContent() async throws {
+        let newTitle = rootView.titleTextField.text
+        let newMemoText = rootView.memoTextView.text
+        
+        switch detailType {
+        case .editing(let memo, _):
+            try await MemoEntityRepository.shared.updateMemoContent(
+                memo,
+                newTitle: newTitle,
+                newMemoText: newMemoText
+            )
+            if let newTitle { self.memo?.memoTitle = newTitle }
+            if let newMemoText { self.memo?.memoText = newMemoText }
+        case .making:
+            let newMemo = try await MemoEntityRepository.shared.createNewMemo()
+            try await MemoEntityRepository.shared.updateMemoContent(
+                newMemo,
+                newTitle: newTitle,
+                newMemoText: newMemoText
+            )
+            self.memo = newMemo
+        }
+    }
+    
+    func updateCategories() async throws {
+        guard let memo  else {
+            print("메모가 생성되기 전에 이미지 저장 시도!")
+            throw CoreDataError.objectNotFound
+        }
+        let selectedCategoryIndexes = (rootView.categoryListCollectionView.indexPathsForSelectedItems ?? []).map { $0.item }
+        let selectedCategories = categories.enumerated()
+            .filter { selectedCategoryIndexes.contains($0.offset) }
+            .map(\.element)
+        
+        try await MemoEntityRepository.shared.replaceCategories(to: memo, newCategories: Set(selectedCategories))
+    }
+    
+    func updateImages() async throws {
+        guard let memo else {
+            print("메모가 생성되기 전에 이미지 저장 시도!")
+            throw CoreDataError.objectNotFound
+        }
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            let currentImageItems = dataSource.snapshot().itemIdentifiers
+            for (index, item) in currentImageItems.enumerated() {
+                group.addTask {
+                    switch item {
+                    case .existing(model: let model):
+                        /**
+                         `model`은 `ImageUIModel` 타입
+                         `model`을 바탕으로 `ImageEntity`를 불러온 후 이 레코드의 `index`를 `item.offset`으로 업데이트
+                         */
+                        try await ImageEntityRepository.shared.updateImageIndex(model.info, newIndex: index)
+                    case .pendingAddition(model: let model):
+                        /**
+                         `model`은 `ImageUITemporaryModel` 타입
+                         `model`을 바탕으로 새 이미지 파일과 `ImageEntity`를 생성한 후에 각각 `FileManager`, `CoreData`에 저장.
+                         저장 시 index 정보는 `item.offset`
+                         */
+                        let _ = try await ImageEntityRepository.shared.createImage(
+                            from: model.pickerResult,
+                            for: memo,
+                            orderIndex: index,
+                            isTemporary: false
+                        )
+                    case .pendingDeletion(model: let model):
+                        /**
+                         `model`은 `ImageUIModel` 타입
+                         model을 바탕으로 `ImageEntity`를 불러온 후 이 이 레코드의 데이터 및 이미지 파일 삭제
+                         */
+                        try await ImageEntityRepository.shared.deleteImage(model.info)
+                    }
+                }
+            }
+        }
     }
     
 }
@@ -247,8 +342,8 @@ extension MemoDetailViewController: UICollectionViewDelegate {
 extension MemoDetailViewController: UICollectionViewDragDelegate {
     
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: any UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let item = imageModels[indexPath.item]
-        let dummyItemProvider = NSItemProvider(object: item.originalImageID.uuidString as NSItemProviderWriting)
+        let item = editableImageModels[indexPath.item]
+        let dummyItemProvider = NSItemProvider(object: item.model.originalImageID.uuidString as NSItemProviderWriting)
         let dragItem = UIDragItem(itemProvider: dummyItemProvider)
         dragItem.localObject = item
         return [dragItem]
@@ -274,21 +369,17 @@ extension MemoDetailViewController: UICollectionViewDropDelegate {
         }
         return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
     }
-//    
-//    func collectionView(_ collectionView: UICollectionView, dropSessionDidEnter session: any UIDropSession) {
-//        <#code#>
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, dropSessionDidExit session: any UIDropSession) {
-//        <#code#>
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, dropSessionDidEnd session: any UIDropSession) {
-//        <#code#>
-//    }
     
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: any UICollectionViewDropCoordinator) {
-        return
+        guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
+        coordinator.items.forEach { dropItem in
+            guard let sourceIndexPath = dropItem.sourceIndexPath else { return }
+            
+            let movedItem = editableImageModels.remove(at: sourceIndexPath.item)
+            editableImageModels.insert(movedItem, at: destinationIndexPath.item)
+            self.applyImageDataSnapshot()
+            coordinator.drop(dropItem.dragItem, toItemAt: destinationIndexPath)
+        }
     }
     
 }

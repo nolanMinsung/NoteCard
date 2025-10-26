@@ -10,11 +10,20 @@ import UIKit
 class MemoDetailViewSelectedImageCollectionView: UICollectionView {
     
     init() {
-        let leftAlignedFlowLayout = LeftAlignedFlowLayout()
-        leftAlignedFlowLayout.scrollDirection = UICollectionView.ScrollDirection.horizontal
-        leftAlignedFlowLayout.itemSize = CGSizeConstant.detailViewThumbnailSize
-        leftAlignedFlowLayout.minimumInteritemSpacing = 10
-        super.init(frame: .zero, collectionViewLayout: leftAlignedFlowLayout)
+        let itemWidth = CGSizeConstant.detailViewThumbnailSize.width
+        let itemHeight = CGSizeConstant.detailViewThumbnailSize.height
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth), heightDimension: .absolute(itemHeight))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 10
+        
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.scrollDirection = .horizontal
+        let compositionalLayout = UICollectionViewCompositionalLayout(section: section, configuration: config)
+        
+        super.init(frame: .zero, collectionViewLayout: compositionalLayout)
     }
     
     required init?(coder: NSCoder) {

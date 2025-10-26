@@ -14,6 +14,8 @@ final class MemoDetailView: UIView {
     
     private var isCatgorySpreaded: Bool = false
     
+    // MARK: - UI Properties
+    
     let titleTextField = UITextField()
     let imageCollectionView = MemoDetailViewSelectedImageCollectionView()
     
@@ -286,6 +288,7 @@ final class MemoDetailView: UIView {
         // 키보드가 올라올 때 이미지가 접히는 기준: 이미지가 존재하는데, 홈 버튼이 있는 아이폰 비율일 때
         if !isImageEmpty &&  aspectRatio < 2 {
             UIView.springAnimate(withDuration: 0.5) { [weak self] in
+                self?.imageCollectionView.alpha = 0
                 self?.imageCollectionViewTopConstraint.constant = 0
                 self?.imageCollectionViewHeightConstraint.constant = 0
                 self?.layoutIfNeeded()
@@ -296,12 +299,13 @@ final class MemoDetailView: UIView {
     @objc func keyboardWillHide() {
         guard let screenSize = UIScreen.current?.bounds.size else { fatalError() }
         let aspectRatio = screenSize.height / screenSize.width
-        guard self.imageCollectionView.numberOfSections != 0 else { return }
+        guard self.imageCollectionView.numberOfItems(inSection: 0) != 0 else { return }
         
         let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 1)
         animator.addAnimations { [weak self] in
             guard let self else { fatalError() }
-            if self.imageCollectionView.numberOfSections != 0, aspectRatio < 2 {
+            if self.imageCollectionView.numberOfItems(inSection: 0) != 0, aspectRatio < 2 {
+                self.imageCollectionView.alpha = 1
                 self.imageCollectionViewTopConstraint.constant = 17
                 self.imageCollectionViewHeightConstraint.constant = CGSizeConstant.detailViewThumbnailSize.height
                 self.layoutIfNeeded()
