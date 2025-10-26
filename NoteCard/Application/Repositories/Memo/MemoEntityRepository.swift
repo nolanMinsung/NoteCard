@@ -338,6 +338,12 @@ extension MemoEntityRepository {
             let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
             memoEntity.removeFromCategories(oldCategories)
             memoEntity.addToCategories(newCategorySet)
+            (oldCategories as? Set<CategoryEntity>)?.forEach { categoryEntity in
+                categoryEntity.modificationDate = .now
+            }
+            (newCategorySet as? Set<CategoryEntity>)?.forEach { categoryEntity in
+                categoryEntity.modificationDate = .now
+            }
             try self.context.save()
         }
         memoUpdatedSubject.send(.update(content: .category))
@@ -351,6 +357,12 @@ extension MemoEntityRepository {
                 let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
                 memoEntity.removeFromCategories(oldCategories)
                 memoEntity.addToCategories(newCategorySet)
+                (oldCategories as? Set<CategoryEntity>)?.forEach { categoryEntity in
+                    categoryEntity.modificationDate = .now
+                }
+                (newCategorySet as? Set<CategoryEntity>)?.forEach { categoryEntity in
+                    categoryEntity.modificationDate = .now
+                }
             }
             try self.context.save()
         }
@@ -362,6 +374,9 @@ extension MemoEntityRepository {
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
             memoEntity.addToCategories(newCategorySet)
+            (newCategorySet as? Set<CategoryEntity>)?.forEach { categoryEntity in
+                categoryEntity.modificationDate = .now
+            }
             try self.context.save()
         }
         memoUpdatedSubject.send(.update(content: .category))
@@ -373,6 +388,9 @@ extension MemoEntityRepository {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
                 let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
                 memoEntity.addToCategories(newCategorySet)
+                (newCategorySet as? Set<CategoryEntity>)?.forEach { categoryEntity in
+                    categoryEntity.modificationDate = .now
+                }
             }
             try self.context.save()
         }
@@ -384,6 +402,9 @@ extension MemoEntityRepository {
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
             memoEntity.removeFromCategories(newCategorySet)
+            (newCategorySet as? Set<CategoryEntity>)?.forEach { categoryEntity in
+                categoryEntity.modificationDate = .now
+            }
             try self.context.save()
         }
         memoUpdatedSubject.send(.update(content: .category))
@@ -395,6 +416,9 @@ extension MemoEntityRepository {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
                 let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
                 memoEntity.removeFromCategories(newCategorySet)
+                (newCategorySet as? Set<CategoryEntity>)?.forEach { categoryEntity in
+                    categoryEntity.modificationDate = .now
+                }
             }
             try self.context.save()
         }

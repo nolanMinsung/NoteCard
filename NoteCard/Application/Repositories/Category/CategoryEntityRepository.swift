@@ -129,4 +129,11 @@ extension CategoryEntityRepository {
         }
     }
     
+    func updateModificationDate(of category: Category) async throws {
+        try await context.perform { [unowned self] in 
+            let categoryEntity = try fetchCategoryEntity(name: category.name)
+            categoryEntity.modificationDate = .now
+        }
+    }
+    
 }

@@ -34,4 +34,6 @@ protocol CategoryRepository {
     
     func memoCount(of category: Category) async throws -> Int
     
+    func updateModificationDate(of category: Category) async throws
+    
 }
