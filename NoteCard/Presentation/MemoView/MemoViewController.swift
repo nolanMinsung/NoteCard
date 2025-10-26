@@ -13,7 +13,7 @@ import Wisp
 class MemoViewController: UIViewController {
     
     enum MemoVCType: Equatable {
-        case category(selectedCategory: CategoryEntity?)
+        case category(selectedCategory: Category)
         case uncategorized
         case favorite
         case all
@@ -21,7 +21,7 @@ class MemoViewController: UIViewController {
         
         var initialCategoryTitle: String? {
             switch self {
-            case .category(let category):    category?.name
+            case .category(let category):    category.name
             case .uncategorized:             "카테고리 없음".localized()
             case .favorite:                  "즐겨찾기한 메모".localized()
             case .all:                       "전체 메모 목록".localized()
@@ -31,10 +31,8 @@ class MemoViewController: UIViewController {
         
         var isCategory: Bool {
             switch self {
-            case .category:
-                true
-            default:
-                false
+            case .category: true
+            default: false
             }
         }
     }
@@ -43,9 +41,8 @@ class MemoViewController: UIViewController {
     private let memoEntityManager = MemoEntityManager.shared
     private let categoryEntityManager = CategoryEntityManager.shared
     
-    //카테고리가 사라질 경우 카테고리가 없는 메모들도 볼 수 있어야 하므로 selectedCategoryEntity 속성은 옵셔널 타입으로 설정함.
-    var selectedCategoryEntity: CategoryEntity?
-    private var isCategoryNameChanged: Bool = true
+    // memoVCType이 .category인 경우만 값이 존재
+    var selectedCategory: Category?
     private var userDefaultCriterion: String? { return UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     private lazy var rootView = self.view as! MemoView
@@ -75,8 +72,8 @@ class MemoViewController: UIViewController {
         
         self.memoVCType = memoVCType
         
-        if case let .category(selectedCategoryEntity) = memoVCType {
-            self.selectedCategoryEntity = selectedCategoryEntity
+        if case let .category(selectedCategory) = memoVCType {
+            self.selectedCategory = selectedCategory
         }
         super.init(nibName: nil, bundle: nil)
         
@@ -585,8 +582,7 @@ extension MemoViewController: UICollectionViewDelegate {
     func fetchMemos() async throws -> [Memo] {
         switch memoVCType {
         case .category, .uncategorized:
-            let category: Category? = selectedCategoryEntity?.toDomain()
-            return try await MemoEntityRepository.shared.getAllMemos(inCategory: category)
+            return try await MemoEntityRepository.shared.getAllMemos(inCategory: selectedCategory)
         case .favorite:
             return try await MemoEntityRepository.shared.getFavoriteMemos()
         case .all:
@@ -602,29 +598,44 @@ extension MemoViewController: UICollectionViewDelegate {
 // MARK: - UITextFieldDelegate
 extension MemoViewController: UITextFieldDelegate {
     
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        editButtonItem.isEnabled = false
+        plusBarButtonItem.isEnabled = false
+        navigationItem.setHidesBackButton(true, animated: true)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    }
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
-        
+        guard case .category(let selectedCategory) = memoVCType else { return }
+        let oldCategoryName = selectedCategory.name
         guard let newCategoryName = textField.text else { return }
-        guard let selectedCategoryEntity else { fatalError("selectedCategoryEntity is nil") }
-        
-        do {
-            try CategoryEntityManager.shared.changeCategoryEntityName(ofEntity: selectedCategoryEntity, newName: newCategoryName)
-        } catch {
-            print(error.localizedDescription)
-            let alertCon = UIAlertController(title: "이름 중복".localized(), message: "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요.".localized(), preferredStyle: UIAlertController.Style.actionSheet)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel) { action in
-                self.categoryNameTextField.becomeFirstResponder()
-            }
-            alertCon.addAction(okAction)
-            self.present(alertCon, animated: true)
+        let trimmedNewCategoryName = newCategoryName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard oldCategoryName != trimmedNewCategoryName else {
+            textField.text = oldCategoryName
+            editButtonItem.isEnabled = true
+            plusBarButtonItem.isEnabled = true
+            navigationItem.setHidesBackButton(false, animated: true)
+            navigationController?.interactivePopGestureRecognizer?.isEnabled = true
             return
         }
         
-        if self.isCategoryNameChanged {
-            Task {
-                try await self.updateMemoContents()
-                self.isCategoryNameChanged = false
+        Task {
+            do {
+                try await CategoryEntityRepository.shared.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
+            } catch {
+                print(error.localizedDescription)
+                let alertCon = UIAlertController(title: "이름 중복".localized(), message: "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요.".localized(), preferredStyle: UIAlertController.Style.actionSheet)
+                let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel) { action in
+                    self.categoryNameTextField.becomeFirstResponder()
+                }
+                alertCon.addAction(okAction)
+                self.present(alertCon, animated: true)
+                return
             }
+            editButtonItem.isEnabled = true
+            plusBarButtonItem.isEnabled = true
+            navigationItem.setHidesBackButton(false, animated: true)
+            navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         }
     }
     

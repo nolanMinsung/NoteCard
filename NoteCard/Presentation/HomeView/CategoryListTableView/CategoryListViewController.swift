@@ -205,12 +205,6 @@ extension CategoryListViewController {
             // Delete the row from the data source
             let categoryEntityToDelete = categoryManager.getCategoryEntities(inOrderOf: CategoryProperties.creationDate, isAscending: true)[indexPath.row]
             
-//            do {
-//                try fileManager.removeItem(at: categoryEntityToDelete.categoryDirectoryURL)
-//            } catch let error {
-//                print(error.localizedDescription)
-//            }
-            
             categoryManager.deleteCategoryEntity(of: categoryEntityToDelete)
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
@@ -310,12 +304,8 @@ extension CategoryListViewController {
     
 //    UITableViewController 되면서 override 함
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        guard let selectedCell = self.tableView.cellForRow(at: indexPath) as? CategoryListTableViewCell else { fatalError() }
-        let selectedCategoryEntity = selectedCell.categoryEntity
-        print(selectedCategoryEntity == nil ? "카테고리 nil" : selectedCategoryEntity!.name)
-        
-        let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategoryEntity))
+        guard let selectedCategoryEntity = categoryDiffableDataSource.itemIdentifier(for: indexPath) else { return }
+        let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategoryEntity.toDomain()))
         memoVC.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(memoVC, animated: true)
         

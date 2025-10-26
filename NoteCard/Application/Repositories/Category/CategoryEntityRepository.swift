@@ -107,6 +107,10 @@ extension CategoryEntityRepository {
     }
     
     func changeCategoryName(_ category: Category, newName: String) async throws {
+        let allCategoryNames = try await getAllCategories(inOrderOf: .modificationDate, isAscending: false).map(\.name)
+        guard !allCategoryNames.contains(newName) else {
+            throw CoreDataError.duplicateCategoryDetected
+        }
         try await context.perform { [unowned self] in
             let categoryEntity = try fetchCategoryEntity(name: category.name)
             categoryEntity.name = newName
@@ -130,7 +134,7 @@ extension CategoryEntityRepository {
     }
     
     func updateModificationDate(of category: Category) async throws {
-        try await context.perform { [unowned self] in 
+        try await context.perform { [unowned self] in
             let categoryEntity = try fetchCategoryEntity(name: category.name)
             categoryEntity.modificationDate = .now
         }
