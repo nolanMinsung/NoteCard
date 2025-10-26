@@ -292,10 +292,6 @@ private extension MemoViewController {
     
     func setupObservers() {
         MemoEntityRepository.shared.memoUpdatedPublisher
-            .filter({ updateType in
-                guard case .update(let content) = updateType else { return true }
-                return content != .favorite
-            })
             .sink { _ in
                 Task {
                     try await self.updateMemoContents()
