@@ -5,6 +5,8 @@
 //  Created by 김민성 on 9/11/25.
 //
 
+import Combine
+import CoreData
 import UIKit
 
 class MemoDetailViewController: UIViewController {
@@ -73,6 +75,7 @@ class MemoDetailViewController: UIViewController {
         navigationItem.leftBarButtonItem = cancelBarButtonItem
         navigationItem.rightBarButtonItem = completeBarButtonItem
         
+        setupActions()
         setupDiffableDataSource()
         applyImageDataSnapshot()
         setupDelegates()
@@ -125,6 +128,15 @@ private extension MemoDetailViewController {
             print("이미지 선택 bar button item이 눌렸다!")
         }
         imageBarButtonItem.primaryAction = selectImageAction
+    }
+    
+    func setupActions() {
+        rootView.memoTextView.textPublisher
+            .receive(on: RunLoop.main)
+            .map(\.isEmpty)
+            .map({ return !$0 })
+            .assign(to: \.isHidden, on: rootView.textPlaceholderLabel)
+            .store(in: &cancellables)
     }
     
     func setupDiffableDataSource() {

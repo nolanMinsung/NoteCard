@@ -31,6 +31,8 @@ final class MemoDetailView: UIView {
         }
     }()
     
+    let textPlaceholderLabel = UILabel()
+    
     // MARK: NSLayoutConstraint Instances
     
     private lazy var imageCollectionViewTopConstraint =
@@ -65,7 +67,6 @@ final class MemoDetailView: UIView {
         initialSettings()
         setupActions()
         setupLayoutConstraints()
-        setupDelegates()
         setupObserver()
     }
     
@@ -87,6 +88,7 @@ final class MemoDetailView: UIView {
         self.addSubview(activityIndicatorView)
         self.addSubview(categoryButton)
         self.addSubview(memoTextView)
+        memoTextView.addSubview(textPlaceholderLabel)
         self.addSubview(collectionViewBackgroundBlurView)
         self.addSubview(categoryListCollectionView)
     }
@@ -97,6 +99,7 @@ final class MemoDetailView: UIView {
         setupTitleTextFieldInputAccessoryView()
         setupSelectedImageCollectionView()
         setupTextView()
+        setupPlaceholderLabel()
         setupTextViewInputAccessories()
         setupCategoryButton()
         setupCollectionViewBackgroundBlurView()
@@ -249,11 +252,13 @@ final class MemoDetailView: UIView {
             memoTextViewBottomConstraintToKeyboard,
         ])
         memoTextViewBottomConstraintToSafeArea.isActive = false
-    }
-    
-    private func setupDelegates() {
-        self.titleTextField.delegate = self
-        self.memoTextView.delegate = self
+        
+        textPlaceholderLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            textPlaceholderLabel.topAnchor.constraint(equalTo: memoTextView.topAnchor, constant: 15),
+            textPlaceholderLabel.leadingAnchor.constraint(equalTo: memoTextView.leadingAnchor, constant: 10),
+            
+        ])
     }
     
     private func setupObserver() {
@@ -354,58 +359,6 @@ extension MemoDetailView {
 }
 
 
-extension MemoDetailView: UITextFieldDelegate {
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    
-}
-
-
-
-extension MemoDetailView: UITextViewDelegate {
-    
-    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        if textView.textColor == UIColor.systemGray4 {
-            textView.text = ""
-            
-            //NSAttributedString.Key 중에는 paragraphStyle이라는 게 있는데, 이는 text 전체(여러 줄)에 걸쳐서 적용되는 글의 속성을 뜻하는 듯.
-            //이 paragraphStyle을 잘 설정해서 글의 좌우정렬, 행간, 들여쓰기 등을 설정할 수 있다.
-            //여기서는 행간을 설정해야 하므로 paragraphStyle에 행간만 설정해 주었음.
-            let mutableParagraphStyle = NSMutableParagraphStyle()
-            mutableParagraphStyle.lineSpacing = 5
-            let attributes = [
-                NSAttributedString.Key.paragraphStyle: mutableParagraphStyle,
-                .font: UIFont.systemFont(ofSize: 15),
-                .foregroundColor: UIColor.label
-            ]
-            textView.typingAttributes = attributes
-            
-            return true
-        } else {
-            return true
-        }
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        let mutableParagraphStyle = NSMutableParagraphStyle()
-        mutableParagraphStyle.lineSpacing = 5
-        let attributes = [
-            NSAttributedString.Key.paragraphStyle: mutableParagraphStyle,
-            .font: UIFont.systemFont(ofSize: 15),
-            .foregroundColor: UIColor.label
-        ]
-        textView.typingAttributes = attributes
-        if textView.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) == "" {
-            
-            textView.setLineSpace(with: "메모 내용이 없습니다.".localized(), lineSpace: 5, font: UIFont.systemFont(ofSize: 15), textColor: .systemGray4)
-        }
-    }
-}
-
-
 // MARK: - Initial Settings
 extension MemoDetailView {
     
@@ -462,11 +415,19 @@ extension MemoDetailView {
         memoTextView.layer.cornerRadius = 16
         memoTextView.layer.cornerCurve = .continuous
         memoTextView.textContainerInset = UIEdgeInsets(top: 15, left: 6, bottom: 10, right: 6)
+        
         memoTextView.setLineSpace(
-            with: "메모를 입력하세요.".localized(),
+            with: "".localized(),
             lineSpace: 5,
             font: UIFont.systemFont(ofSize: 15)
         )
+    }
+    
+    private func setupPlaceholderLabel() {
+        textPlaceholderLabel.font = .systemFont(ofSize: 15)
+        textPlaceholderLabel.text = "메모를 입력하세요.".localized()
+        textPlaceholderLabel.textColor = .tertiaryLabel
+        textPlaceholderLabel.isUserInteractionEnabled = false
     }
     
     private func setupTextViewInputAccessories() {

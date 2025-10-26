@@ -30,7 +30,7 @@ extension UITextView {
             .font: font,
             .foregroundColor: textColor!
         ]
-        
+        self.typingAttributes = attributes
         self.attributedText = NSAttributedString(string: textString, attributes: attributes)
     }
 }
