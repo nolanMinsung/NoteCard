@@ -169,7 +169,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
             memoTextLabel.topAnchor.constraint(equalTo: titleTextLabel.bottomAnchor, constant: 7),
             memoTextLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 7),
             memoTextLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -7),
-            memoTextLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -7),
+            memoTextLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -7),
         ])
         
         opaqueView.translatesAutoresizingMaskIntoConstraints = false
