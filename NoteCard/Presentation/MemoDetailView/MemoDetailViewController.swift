@@ -43,14 +43,6 @@ class MemoDetailViewController: UIViewController {
     private let cancelBarButtonItem = UIBarButtonItem()
     private let completeBarButtonItem = UIBarButtonItem()
     private let imageBarButtonItem = UIBarButtonItem()
-    private var labelBarButtonItem: UIBarButtonItem {
-        let label = UILabel()
-        label.textColor = .label
-        label.numberOfLines = 1
-        label.text = String(format: "%d개의 카테고리 선택됨".localized(), 0 /*self.categoryListCollectionView.indexPathsForSelectedItems?.count ?? 999*/)
-        let item = UIBarButtonItem(customView: label)
-        return item
-    }
     
     init(type: MemoDetailType) {
         self.detailType = type
@@ -118,8 +110,8 @@ private extension MemoDetailViewController {
         toolbarItems = [
             imageBarButtonItem,
             UIBarButtonItem(systemItem: .flexibleSpace),
-            labelBarButtonItem,
-            UIBarButtonItem(systemItem: .flexibleSpace),
+//            labelBarButtonItem,
+//            UIBarButtonItem(systemItem: .flexibleSpace),
         ]
     }
     
@@ -268,7 +260,7 @@ private extension MemoDetailViewController {
 private extension MemoDetailViewController {
     
     func updateMemoContent() async throws {
-        let newTitle = rootView.titleTextField.text
+        let newTitle = rootView.titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
         let newMemoText = rootView.memoTextView.text
         
         switch detailType {

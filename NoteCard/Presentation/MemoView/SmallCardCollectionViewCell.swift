@@ -151,8 +151,12 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
     
     func configure(with memo: Memo) {
         self.memo = memo
-        self.titleTextLabel.text = memo.memoTitle
-        self.memoTextLabel.text = String(memo.memoText.prefix(200))
+        titleTextLabel.text = memo.memoTitle
+        memoTextLabel.text = String(memo.memoText.prefix(200))
+        
+        layer.borderColor = UIColor.currentTheme.cgColor
+        layer.borderWidth = isSelected ? 2.0 : 0.0
+        opaqueView.alpha = isSelected ? 0.0 : 0.7
     }
     
     func setConstraints() {

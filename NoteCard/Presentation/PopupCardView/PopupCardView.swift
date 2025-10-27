@@ -9,11 +9,9 @@ import UIKit
 
 final class PopupCardView: UIView {
     
-    private var memoEntity: MemoEntity?
     private var memo: Memo
     private var isTextFieldChanged: Bool = false
-    var isTextViewChanged: Bool = false
-    var isEdited: Bool = false
+    private var isTextViewChanged: Bool = false
     
     private(set) lazy var imageCollectionViewHeight
     = self.imageCollectionView.heightAnchor.constraint(equalToConstant: 0)
@@ -119,9 +117,7 @@ final class PopupCardView: UIView {
     }
     
     @objc private func textFieldDidChagne(_ textField: UITextField) {
-        print(#function)
         self.isTextFieldChanged = true
-        self.isEdited = true
     }
     
     private func setupDelegates() {
@@ -188,20 +184,21 @@ final class PopupCardView: UIView {
     }
     
     private func updateTitleTextField() {
-        if self.isTextFieldChanged {
-            guard let text = self.titleTextField.text else { fatalError() }
-            self.memoEntity?.memoTitle = text
-            CoreDataStack.shared.saveContext()
+        if isTextFieldChanged {
+            Task {
+                let trimmedTitleText = titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+                try await MemoEntityRepository.shared.updateMemoContent(memo, newTitle: trimmedTitleText)
+                self.isTextFieldChanged = false
+            }
         }
     }
     
     func updateMemoTextView() {
-        if self.isTextViewChanged {
+        if isTextViewChanged {
             Task {
                 try await MemoEntityRepository.shared.updateMemoContent(memo, newMemoText: memoTextView.text)
+                self.isTextViewChanged = false
             }
-//            self.memoEntity?.memoText = self.memoTextView.text
-//            CoreDataStack.shared.saveContext()
         }
     }
     
@@ -268,12 +265,7 @@ final class PopupCardView: UIView {
 
 extension PopupCardView: UITextFieldDelegate {
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.memoTextView.isEditable = false
-    }
-    
     func textFieldDidEndEditing(_ textField: UITextField) {
-        print(#function)
         self.updateTitleTextField()
     }
     
@@ -286,17 +278,10 @@ extension PopupCardView: UITextFieldDelegate {
 extension PopupCardView: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
-        print(#function)
         self.isTextViewChanged = true
-        self.isEdited = true
-    }
-    
-    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-        return true
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        print(#function)
         self.updateMemoTextView()
     }
     
@@ -338,6 +323,8 @@ extension PopupCardView {
         likeButton.configurationUpdateHandler = { button in
             let imageName = button.isSelected ? "heart.fill" : "heart"
             button.configuration?.image = UIImage(systemName: imageName)
+            button.configuration?.baseBackgroundColor = .clear
+            button.configuration?.background.backgroundColor = .clear
         }
     }
     

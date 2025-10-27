@@ -23,16 +23,17 @@ class PopupCardViewController: UIViewController {
         }
     }
     
-    private var isMemoDeleted: Bool = false
+    private var editingEnabled: Bool
     
     private var restoreMemoAction: UIAction!
     private var presentEditingModeAction: UIAction!
     private var deleteMemoAction: UIAction!
     private var cancellables = Set<AnyCancellable>()
     
-    init(memo: Memo, indexPath: IndexPath, enableEditing: Bool = true) {
+    init(memo: Memo, indexPath: IndexPath, editingEnabled: Bool = true) {
         self.memo = memo
         self.rootView = PopupCardView(memo: self.memo)
+        self.editingEnabled = editingEnabled
         super.init(nibName: nil, bundle: nil)
         
         setupActions()
@@ -68,6 +69,17 @@ class PopupCardViewController: UIViewController {
         memoTextViewTapGesture.isEnabled = false
         rootView.memoTextView.isEditable = true
         
+        if !editingEnabled {
+            rootView.likeButton.isEnabled = false
+            rootView.ellipsisButton.isEnabled = false
+            rootView.titleTextField.isUserInteractionEnabled = false
+            rootView.titleTextField.textColor = .secondaryLabel
+            rootView.memoTextView.isSelectable = false
+            rootView.memoTextView.textColor = .secondaryLabel
+            rootView.memoTextView.isEditable = false
+            memoTextViewTapGesture.isEnabled = false
+        }
+        
         ImageEntityRepository.shared.imageUpdatedPublisher
             .filter { [weak self] updateType in
                 guard let self else { return false }
@@ -96,6 +108,7 @@ class PopupCardViewController: UIViewController {
                 guard case .update(_) = updateType else { return false }
                 return true
             })
+            .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { _ in
             Task {
                 do {
@@ -129,14 +142,10 @@ class PopupCardViewController: UIViewController {
             self.rootView.memoTextViewBottom.isActive = false
             self.rootView.memoTextViewBottomToKeyboardTop.isActive = true
             self.rootView.layoutIfNeeded()
-        }
-        memoTextViewTapGesture.isEnabled = true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if self.rootView.isTextViewChanged {
-            self.rootView.updateMemoTextView()
+        } completion: { [weak self] _ in
+            guard let self else { return }
+            guard editingEnabled else { return }
+            self.memoTextViewTapGesture.isEnabled = true
         }
     }
     
@@ -191,6 +200,8 @@ private extension PopupCardViewController {
     func setupButtonsAction() {
         if memo.isInTrash {
             rootView.ellipsisButton.menu = UIMenu(children: [restoreMemoAction, deleteMemoAction])
+            rootView.titleTextField.isUserInteractionEnabled = false
+            rootView.memoTextView.isUserInteractionEnabled = false
         } else {
             rootView.ellipsisButton.menu = UIMenu(children: [presentEditingModeAction, deleteMemoAction])
         }

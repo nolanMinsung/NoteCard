@@ -467,7 +467,7 @@ private extension MemoViewController {
         }
     }
     
-    func presentPopupCardVC(at indexPath: IndexPath, inset: UIEdgeInsets) {
+    func presentPopupCardVC(at indexPath: IndexPath, inset: UIEdgeInsets, editingEnabled: Bool = true) {
         let wispConfiguration = WispConfiguration { config in
             config.setAnimation { animation in
                 animation.speed = .fast
@@ -483,7 +483,11 @@ private extension MemoViewController {
         }
         
         let selectedMemo = memoArray[indexPath.item]
-        let popupCardVC = PopupCardViewController(memo: selectedMemo, indexPath: .init(item: 0, section: 0))
+        let popupCardVC = PopupCardViewController(
+            memo: selectedMemo,
+            indexPath: .init(item: 0, section: 0),
+            editingEnabled: editingEnabled
+        )
         wisp.present(
             popupCardVC,
             collectionView: smallCardCollectionView,
@@ -514,10 +518,13 @@ extension MemoViewController: UICollectionViewDataSource {
             cell.onLongPressSelected = { [weak self] in
                 self?.presentPopupCardVC(
                     at: indexPath,
-                    inset: .init(top: 100, left: 10, bottom: 100, right: 10)
+                    inset: .init(top: 100, left: 10, bottom: 100, right: 10),
+                    editingEnabled: false
                 )
             }
-            cell.opaqueView.alpha = smallCardCollectionView.isEditing ? 0.7 : 0
+            if !smallCardCollectionView.isEditing {
+                cell.opaqueView.alpha = 0.0
+            }
             return cell
             
         default:
