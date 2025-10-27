@@ -91,7 +91,8 @@ class PopupCardViewController: UIViewController {
             // 부하를 막기 위해 debounce 사용.
             // (시뮬레이터에서는 debounce 없으면 에러 발생)
             .debounce(for: 0.5, scheduler: RunLoop.main)
-            .sink { _ in
+            .sink { [weak self] _ in
+                guard let self else { return }
                 Task {
                     do {
                         self.imageUIModels = try await self.makeImageUIModels()
@@ -109,23 +110,24 @@ class PopupCardViewController: UIViewController {
                 return true
             })
             .debounce(for: 0.5, scheduler: RunLoop.main)
-            .sink { _ in
-            Task {
-                do {
-                    let updatedMemo = try await MemoEntityRepository.shared.getMemo(id: self.memo.memoID)
-                    self.memo = updatedMemo
-                    self.categories = try await self.fetchCategories()
-                    
-                    self.rootView.categoryCollectionView.reloadData()
-                    self.rootView.titleTextField.text = updatedMemo.memoTitle
-                    self.rootView.memoTextView.text = updatedMemo.memoText
-                    print("popupCard의 콘텐츠 업데이트")
-                } catch {
-                    assertionFailure("변경된 메모 데이터를 업데이트 하는 도중 에러 발생")
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Task {
+                    do {
+                        let updatedMemo = try await MemoEntityRepository.shared.getMemo(id: self.memo.memoID)
+                        self.memo = updatedMemo
+                        self.categories = try await self.fetchCategories()
+                        
+                        self.rootView.categoryCollectionView.reloadData()
+                        self.rootView.titleTextField.text = updatedMemo.memoTitle
+                        self.rootView.memoTextView.text = updatedMemo.memoText
+                        print("popupCard의 콘텐츠 업데이트됨")
+                    } catch {
+                        assertionFailure("변경된 메모 데이터를 업데이트 하는 도중 에러 발생")
+                    }
                 }
             }
-        }
-        .store(in: &cancellables)
+            .store(in: &cancellables)
     }
     
     override func viewDidAppear(_ animated: Bool) {
