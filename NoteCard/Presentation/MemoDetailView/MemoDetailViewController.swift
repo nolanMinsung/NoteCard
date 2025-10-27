@@ -155,6 +155,8 @@ private extension MemoDetailViewController {
         }
         imageBarButtonItem.primaryAction = selectImageAction
         imageBarButtonItem.isEnabled = false
+        cancelBarButtonItem.isEnabled = false
+        completeBarButtonItem.isEnabled = false
     }
     
     func setupActions() {
@@ -211,9 +213,11 @@ private extension MemoDetailViewController {
             guard let self else { return }
             let currentImageCount = self.dataSource.snapshot().itemIdentifiers(inSection: .main).count
             imageBarButtonItem.isEnabled = 0 <= currentImageCount && currentImageCount < 10
+            cancelBarButtonItem.isEnabled = true
+            completeBarButtonItem.isEnabled = true
         }
         
-        if editableImageModels.isEmpty {
+        if editableImageModels.filter({ !$0.isPendingDeleted }).isEmpty {
             rootView.hideImageCollectionView()
         } else {
             rootView.showImageCollectionView(targetHeight: CGSizeConstant.detailViewThumbnailSize.height)
