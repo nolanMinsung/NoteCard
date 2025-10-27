@@ -31,6 +31,11 @@ class MemoDetailViewController: UIViewController {
     private var selectedCategories: [Category] = []
     private var editableImageModels: [EditableImageItem] = []
     private var dataSource: DiffableDataSource!
+    
+    private var isTitleTextChanged: Bool = false
+    private var isCategoryChanged: Bool = false
+    private var isImageChanged: Bool = false
+    
     private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - UI Properties
@@ -91,7 +96,7 @@ class MemoDetailViewController: UIViewController {
                 configureInitialTexts()
                 selectInitialCategories()
             } catch {
-                print(error.localizedDescription)
+                debugPrint(error.localizedDescription)
             }
         }
     }
@@ -129,12 +134,16 @@ private extension MemoDetailViewController {
             Task {
                 do {
                     try await self.updateMemoContent()
-                    try await self.updateImages()
+                    if self.isImageChanged {
+                        try await self.updateImages()
+                    } else {
+                        debugPrint("이미지 정보에 변화가 없으므로 이미지 정보 업데이트하지 않음.")
+                    }
                     try await self.updateCategories()
-                    self.dismiss(animated: true)
                 } catch {
                     assertionFailure("에러 발생: \(error.localizedDescription)")
                 }
+                self.dismiss(animated: true)
             }
         }
         completeBarButtonItem.primaryAction = completeAction
@@ -168,7 +177,7 @@ private extension MemoDetailViewController {
     func setupDiffableDataSource() {
         dataSource = DiffableDataSource(
             collectionView: rootView.imageCollectionView,
-            cellProvider: { collectionView, indexPath, itemIdentifier in
+            cellProvider: { [weak self] collectionView, indexPath, itemIdentifier in
                 let cellReuseID = MemoDetailViewSelectedImageCell.reuseIdentifier
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: cellReuseID,
@@ -177,6 +186,25 @@ private extension MemoDetailViewController {
                     fatalError()
                 }
                 cell.configureCell(with: itemIdentifier)
+                cell.onDelete = {
+                    guard let self else { return }
+                    guard let index = self.editableImageModels.firstIndex(of: itemIdentifier) else {
+                        debugPrint("delete하려는 항목을 찾을 수 없습니다.")
+                        return
+                    }
+                    
+                    let item = self.editableImageModels[index]
+                    switch item {
+                    case .existing(model: let model):
+                        self.editableImageModels[index] = .pendingDeletion(model: model)
+                    case .pendingAddition:
+                        self.editableImageModels.remove(at: index)
+                    case .pendingDeletion:
+                        return
+                    }
+                    self.isImageChanged = true
+                    self.applyImageDataSnapshot()
+                }
                 return cell
             }
         )
@@ -185,7 +213,8 @@ private extension MemoDetailViewController {
     func applyImageDataSnapshot() {
         var snapshot = ImageDataSnapshot()
         snapshot.appendSections([.main])
-        snapshot.appendItems(editableImageModels, toSection: .main)
+        let filteredEditableImageModels = editableImageModels.filter { !$0.isPendingDeleted }
+        snapshot.appendItems(filteredEditableImageModels, toSection: .main)
         dataSource.apply(snapshot) { [weak self] in
             guard let self else { return }
             let currentImageCount = self.dataSource.snapshot().itemIdentifiers(inSection: .main).count
@@ -264,25 +293,27 @@ private extension MemoDetailViewController {
     
     func updateCategories() async throws {
         guard let memo  else {
-            print("메모가 생성되기 전에 이미지 저장 시도!")
+            debugPrint("메모가 생성되기 전에 이미지 저장 시도!")
             throw CoreDataError.objectNotFound
         }
         let selectedCategoryIndexes = (rootView.categoryListCollectionView.indexPathsForSelectedItems ?? []).map { $0.item }
         let selectedCategories = categories.enumerated()
             .filter { selectedCategoryIndexes.contains($0.offset) }
             .map(\.element)
-        
+        guard memo.categories != Set(selectedCategories) else {
+            debugPrint("카테고리 목록에 변화가 없으므로 DB에 덮어쓰지 않음.")
+            return
+        }
         try await MemoEntityRepository.shared.replaceCategories(to: memo, newCategories: Set(selectedCategories))
     }
     
     func updateImages() async throws {
         guard let memo else {
-            print("메모가 생성되기 전에 이미지 저장 시도!")
+            debugPrint("메모가 생성되기 전에 이미지 저장 시도!")
             throw CoreDataError.objectNotFound
         }
         try await withThrowingTaskGroup(of: Void.self) { group in
-            let currentImageItems = dataSource.snapshot().itemIdentifiers
-            for (index, item) in currentImageItems.enumerated() {
+            for (index, item) in editableImageModels.enumerated() {
                 group.addTask {
                     switch item {
                     case .existing(model: let model):
@@ -393,16 +424,35 @@ extension MemoDetailViewController: UICollectionViewDropDelegate {
         return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
     }
     
-    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: any UICollectionViewDropCoordinator) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        performDropWith coordinator: any UICollectionViewDropCoordinator
+    ) {
         guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
-        coordinator.items.forEach { dropItem in
-            guard let sourceIndexPath = dropItem.sourceIndexPath else { return }
-            
-            let movedItem = editableImageModels.remove(at: sourceIndexPath.item)
-            editableImageModels.insert(movedItem, at: destinationIndexPath.item)
-            self.applyImageDataSnapshot()
-            coordinator.drop(dropItem.dragItem, toItemAt: destinationIndexPath)
+        guard let dropItem = coordinator.items.first,
+              let sourceIndexPath = dropItem.sourceIndexPath
+        else {
+            return
         }
+        guard destinationIndexPath != sourceIndexPath else {
+            coordinator.drop(dropItem.dragItem, toItemAt: destinationIndexPath)
+            return
+        }
+        
+        guard let draggedItem = dataSource.itemIdentifier(for: sourceIndexPath) else { return }
+        guard let sourceIndex = editableImageModels.firstIndex(of: draggedItem) else { return }
+        let itemToMove = editableImageModels.remove(at: sourceIndex)
+        let visibleItems = dataSource.snapshot().itemIdentifiers(inSection: .main)
+        let visibleItemInDestinationIndex = visibleItems[destinationIndexPath.item]
+        guard let visibleItemSourceIndex = editableImageModels.firstIndex(of: visibleItemInDestinationIndex) else { return }
+        var insertingIndex = visibleItemSourceIndex
+        if sourceIndexPath.item < destinationIndexPath.item {
+            insertingIndex += 1
+        }
+        editableImageModels.insert(itemToMove, at: insertingIndex)
+        isImageChanged = true
+        applyImageDataSnapshot()
+        coordinator.drop(dropItem.dragItem, toItemAt: destinationIndexPath)
     }
     
 }
@@ -430,6 +480,7 @@ extension MemoDetailViewController: PHPickerViewControllerDelegate {
                         EditableImageItem.pendingAddition(model: $0)
                     }
                     self.editableImageModels.append(contentsOf: editableImages)
+                    self.isImageChanged = true
                     self.applyImageDataSnapshot()
                 }
             }

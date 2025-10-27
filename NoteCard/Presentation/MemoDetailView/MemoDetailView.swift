@@ -399,7 +399,7 @@ extension MemoDetailView {
     private func setupSelectedImageCollectionView() {
         imageCollectionView.register(
             MemoDetailViewSelectedImageCell.self,
-            forCellWithReuseIdentifier: MemoDetailViewSelectedImageCell.cellID
+            forCellWithReuseIdentifier: MemoDetailViewSelectedImageCell.reuseIdentifier
         )
         imageCollectionView.isScrollEnabled = true
         imageCollectionView.backgroundColor = .clear

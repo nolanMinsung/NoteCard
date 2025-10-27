@@ -5,8 +5,6 @@
 //  Created by 김민성 on 9/18/25.
 //
 
-import UIKit
-
 enum EditableImageItem: Hashable {
     case existing(model: ImageUIModel)
     case pendingAddition(model: ImageUITemporaryModel)
@@ -20,4 +18,12 @@ enum EditableImageItem: Hashable {
         }
     }
     
+    var isPendingDeleted: Bool {
+        switch self {
+        case .pendingDeletion:
+            return true
+        default:
+            return false
+        }
+    }
 }

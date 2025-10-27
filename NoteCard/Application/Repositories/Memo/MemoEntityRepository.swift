@@ -76,7 +76,7 @@ actor MemoEntityRepository: MemoRepository {
         }
     }
     
-    // MARK: - Subjects
+    // MARK: - Subjects, Publisher
     
     nonisolated private let memoUpdatedSubject = PassthroughSubject<MemoUpdateType, Never>()
     nonisolated var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {

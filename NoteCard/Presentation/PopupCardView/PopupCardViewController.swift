@@ -68,28 +68,47 @@ class PopupCardViewController: UIViewController {
         memoTextViewTapGesture.isEnabled = false
         rootView.memoTextView.isEditable = true
         
+        ImageEntityRepository.shared.imageUpdatedPublisher
+            .filter { [weak self] updateType in
+                guard let self else { return false }
+                return updateType.memoID == self.memo.memoID
+            }
+            .receive(on: RunLoop.main)
+            // 한 메모 안의 여러 이미지를 순회하며 업데이트하므로, 짧은 시간에 여러 연속적인 이벤트가 발생함.
+            // 동시에 여러 이벤트를 연속적으로 받아오면서 받은 이벤트 횟수만큼 이미지를 불러오고 reloadData 하는 현상이 발생
+            // 부하를 막기 위해 debounce 사용.
+            // (시뮬레이터에서는 debounce 없으면 에러 발생)
+            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .sink { _ in
+                Task {
+                    do {
+                        self.imageUIModels = try await self.makeImageUIModels()
+                        self.rootView.imageCollectionView.reloadData()
+                    } catch {
+                        assertionFailure("변경된 메모의 이미지 데이터를 업데이트 하던 도중 오류 발생")
+                    }
+                }
+            }
+            .store(in: &cancellables)
+        
         MemoEntityRepository.shared.memoUpdatedPublisher
             .filter({ updateType in
                 guard case .update(_) = updateType else { return false }
                 return true
             })
-            .sink { [weak self] _ in
-            guard let self else { return }
-            
+            .sink { _ in
             Task {
                 do {
                     let updatedMemo = try await MemoEntityRepository.shared.getMemo(id: self.memo.memoID)
                     self.memo = updatedMemo
-                    self.imageUIModels = try await self.makeImageUIModels()
                     self.categories = try await self.fetchCategories()
                     
                     self.rootView.categoryCollectionView.reloadData()
-                    self.rootView.imageCollectionView.reloadData()
                     self.rootView.titleTextField.text = updatedMemo.memoTitle
                     self.rootView.memoTextView.text = updatedMemo.memoText
                     print("popupCard의 콘텐츠 업데이트")
                 } catch {
-                    assertionFailure("변경된 메모 데이터를 업데이트 하는데 에러 발생!!!")
+                    assertionFailure("변경된 메모 데이터를 업데이트 하는 도중 에러 발생")
                 }
             }
         }

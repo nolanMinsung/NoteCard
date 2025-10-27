@@ -5,6 +5,7 @@
 //  Created by 김민성 on 9/10/25.
 //
 
+import Combine
 import CoreData
 import PhotosUI
 import UIKit
@@ -12,10 +13,35 @@ import UniformTypeIdentifiers
 
 actor ImageEntityRepository: ImageRepository {
     
+    enum ImageUpdateType: Equatable {
+        case create(memoID: UUID)
+        case delete(memoID: UUID)
+        case update(memoID: UUID)
+        
+        var memoID: UUID {
+            switch self {
+            case .create(let memoID):
+                return memoID
+            case .delete(let memoID):
+                return memoID
+            case .update(let memoID):
+                return memoID
+            }
+        }
+    }
+    
     static let shared = ImageEntityRepository()
     private init() { }
     
     private let context = CoreDataStack.shared.backgroundContext
+    
+    // MARK: - Subjects, Publisher
+    
+    nonisolated private let imageUpdatedSubject = PassthroughSubject<ImageUpdateType, Never>()
+    nonisolated var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> {
+        imageUpdatedSubject.eraseToAnyPublisher()
+    }
+    private var cancellables = Set<AnyCancellable>()
     
     func createImage(
         from pickerResult: PHPickerResult,
@@ -32,7 +58,7 @@ actor ImageEntityRepository: ImageRepository {
         // MemoEntity 불러오기(후에 ImageEntity에서 생성자의 매개변수로 넣기 위함)
         let memoEntity = try await MemoEntityRepository.shared.fetchMemoEntity(id: memo.memoID)
         
-        return try await context.perform { [unowned self] in
+        let createdMemoInfo =  try await context.perform { [unowned self] in
             // 코어데이터에 저장할 데이터
             let orderIndex: Int64 = Int64(min(max(0, orderIndex), Int(Int64.max)))
             let originalImageID = originalImageID ?? UUID()
@@ -76,6 +102,8 @@ actor ImageEntityRepository: ImageRepository {
             
             return newImageEntity.toDomain()
         }
+        imageUpdatedSubject.send(.create(memoID: memo.memoID))
+        return createdMemoInfo
     }
     
     // MemoImageInfo의 정보를 바탕으로 원본 이미지의 UIImage를 가져오는 함수 (화면에 표시하기 위함)
@@ -120,6 +148,7 @@ actor ImageEntityRepository: ImageRepository {
             imageEntity.temporaryOrderIndex = Int64(newIndex)
             try self.context.save()
         }
+        imageUpdatedSubject.send(.update(memoID: image.memoID))
     }
     
     // 이미지를 영구적으로 삭제.
@@ -143,6 +172,7 @@ actor ImageEntityRepository: ImageRepository {
                 try self.context.save()
             }
         }
+        imageUpdatedSubject.send(.delete(memoID: imageInfo.memoID))
     }
     
 }
