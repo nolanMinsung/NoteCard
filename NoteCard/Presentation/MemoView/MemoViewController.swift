@@ -37,7 +37,7 @@ class MemoViewController: UIViewController {
         }
     }
     
-    let memoVCType: MemoVCType
+    private let memoVCType: MemoVCType
     private let memoEntityManager = MemoEntityManager.shared
     private let categoryEntityManager = CategoryEntityManager.shared
     
@@ -151,8 +151,11 @@ private extension MemoViewController {
     
     func setupNaviBar() {
         self.navigationItem.largeTitleDisplayMode = UINavigationItem.LargeTitleDisplayMode.never
-        self.navigationItem.rightBarButtonItems = [self.plusBarButtonItem, self.editButtonItem]
-        
+        if memoVCType == .trash {
+            self.navigationItem.rightBarButtonItems = [editButtonItem]
+        } else {
+            self.navigationItem.rightBarButtonItems = [plusBarButtonItem, editButtonItem]
+        }
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
         
