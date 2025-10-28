@@ -10,7 +10,10 @@ import UIKit
 
 final class ThemeManager {
     
-    let currentThemeSubject: CurrentValueSubject<UIColor, Never> = .init(UIColor.currentTheme)
+    nonisolated private let currentThemeSubject: CurrentValueSubject<UIColor, Never> = .init(UIColor.currentTheme)
+    nonisolated var currentThemePublisher: AnyPublisher<UIColor, Never> {
+        return currentThemeSubject.eraseToAnyPublisher()
+    }
     
     static let shared = ThemeManager()
     private init() {}

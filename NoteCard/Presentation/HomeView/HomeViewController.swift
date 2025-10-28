@@ -192,7 +192,7 @@ class HomeViewController: UIViewController {
             object: nil
         )
         
-        ThemeManager.shared.currentThemeSubject.sink { [weak self] color in
+        ThemeManager.shared.currentThemePublisher.sink { [weak self] color in
             self?.themeColorChanged()
         }.store(in: &cancellables)
         
@@ -235,7 +235,7 @@ class HomeViewController: UIViewController {
         self.homeCollectionView.reloadData()
     }
     
-    @objc private func themeColorChanged() {
+    private func themeColorChanged() {
         self.tabBarController?.tabBar.tintColor = UIColor.currentTheme
         self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
         self.navigationController?.toolbar.tintColor = UIColor.currentTheme
