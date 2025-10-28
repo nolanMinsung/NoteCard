@@ -303,8 +303,6 @@ private extension MemoViewController {
             }
             .store(in: &cancellables)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(memoCreated(_:)), name: NSNotification.Name("createdMemoNotification"), object: nil)
-        
         if self.memoVCType == MemoVCType.uncategorized {
             NotificationCenter.default.addObserver(self, selector: #selector(memoRecoveredToUncategorized(_:)), name: NSNotification.Name("memoRecoveredToUncategorizedNotification"), object: nil)
             print("복구 notification 추가됨")

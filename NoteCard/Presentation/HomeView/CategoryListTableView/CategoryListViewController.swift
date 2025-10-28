@@ -49,7 +49,6 @@ class CategoryListViewController: UITableViewController {
         setupNaviBar()
         setupButtonsAction()
         setupDelegates()
-        setupObserver()
         applySnapshot(animatingDifferences: false, usingReloadData: true)
     }
     
@@ -163,10 +162,6 @@ class CategoryListViewController: UITableViewController {
     private func setupDelegates() {
         self.tableView.delegate = self
         self.searchController.searchBar.delegate = self
-    }
-    
-    private func setupObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(categoryCreated), name: NSNotification.Name("didCreateNewCategoryNotification"), object: nil)
     }
     
     @objc private func categoryCreated() {

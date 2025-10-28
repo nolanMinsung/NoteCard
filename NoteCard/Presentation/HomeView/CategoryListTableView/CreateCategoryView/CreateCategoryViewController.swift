@@ -71,7 +71,6 @@ class CreateCategoryViewController: UIViewController {
     }
     
     @objc private func createCategoryDone() {
-        
         self.categoryNameTextField.resignFirstResponder()
         guard let text = self.categoryNameTextField.text else { return }
         print(text)
@@ -95,11 +94,6 @@ class CreateCategoryViewController: UIViewController {
             self.present(alertCon, animated: true)
             return
         }
-        
-        self.dismiss(animated: true) {
-            NotificationCenter.default.post(name: NSNotification.Name("didCreateNewCategoryNotification"), object: nil)
-        }
-        
     }
     
     //category생성을 취소했을 때

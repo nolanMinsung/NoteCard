@@ -7,9 +7,6 @@
 
 import UIKit
 
-
-
-
 final class OrderSettingViewController: UIViewController {
     
     let dataSource = ["수정 시간".localized(), "만든 시간".localized()]
@@ -103,19 +100,19 @@ extension OrderSettingViewController: UITableViewDataSource {
 extension OrderSettingViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(tableView.indexPathsForSelectedRows!)
         guard let cell = tableView.cellForRow(at: indexPath) as? OrderSettingTableViewCell else { fatalError() }
         cell.isSelected = true
-        if indexPath.section == 0 {
-            UserDefaults.standard.setValue(OrderCriterion.allCases[indexPath.row].rawValue, forKey: UserDefaultsKeys.orderCriterion.rawValue)
-        } else if indexPath.section == 1 {
-            UserDefaults.standard.setValue(indexPath.row == 0 ? true : false, forKey: UserDefaultsKeys.isOrderAscending.rawValue)
+        Task {
+            if indexPath.section == 0 {
+                await OrderSettingManager.shared.setOrderCriterion(OrderCriterion.allCases[indexPath.row])
+            } else if indexPath.section == 1 {
+                await OrderSettingManager.shared.setIsOrderAscending(indexPath.row == 0 ? true : false)
+            }
         }
     }
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else { fatalError() }
-        print(selectedIndexPaths)
         if indexPath.section == 0 {
             selectedIndexPaths.forEach { selectedIndexPath in
                 if selectedIndexPath.section == 0, selectedIndexPath.row != indexPath.row {
