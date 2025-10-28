@@ -76,8 +76,9 @@ extension CategoryEntityRepository {
     func getAllCategories(inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Category] {
         try await context.perform { [unowned self] in
             let request = CategoryEntity.fetchRequest()
-            let sortDescriptor = NSSortDescriptor(key: orderCriterion.rawValue, ascending: isAscending)
-            request.sortDescriptors = [sortDescriptor]
+            let modificationDate = NSSortDescriptor(key: "modificationDate", ascending: isAscending)
+            let creationDate = NSSortDescriptor(key: "creationDate", ascending: isAscending)
+            request.sortDescriptors = [modificationDate, creationDate]
             return try self.context.fetch(request).map { $0.toDomain() }
         }
     }
@@ -89,8 +90,9 @@ extension CategoryEntityRepository {
     ) async throws -> [Category] {
         try await context.perform { [unowned self] in
             let request = CategoryEntity.fetchRequest()
-            let sortDescriptor = NSSortDescriptor(key: orderCriterion.rawValue, ascending: isAscending)
-            request.sortDescriptors = [sortDescriptor]
+            let modificationDate = NSSortDescriptor(key: "modificationDate", ascending: isAscending)
+            let creationDate = NSSortDescriptor(key: "creationDate", ascending: isAscending)
+            request.sortDescriptors = [modificationDate, creationDate]
             request.predicate = categoryHasMemo(memo: memo)
             return try self.context.fetch(request).map { $0.toDomain() }
         }

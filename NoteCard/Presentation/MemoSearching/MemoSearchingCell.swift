@@ -84,7 +84,7 @@ private extension MemoSearchingCell {
         
         mainStackView.axis = .vertical
         mainStackView.spacing = 10
-        mainStackView.alignment = .fill
+        mainStackView.alignment = .center
         mainStackView.distribution = .fill
         
         titleLabel.font = .systemFont(ofSize: 17, weight: .medium)
@@ -135,7 +135,7 @@ extension MemoSearchingCell {
         titleLabel.text = memo.memoTitle
         titleLabel.isHidden = memo.memoTitle.isEmpty
         memoTextLabel.text = String(memo.memoText.prefix(250))
-        categories = memo.categories.map({ $0 })
+        categories = memo.categories.sorted(by: >)
         categoryCollectionView.reloadData()
         categoryCollectionView.isHidden = categories.isEmpty
     }
