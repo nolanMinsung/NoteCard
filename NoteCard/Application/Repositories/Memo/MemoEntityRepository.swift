@@ -62,10 +62,12 @@ actor MemoEntityRepository: MemoRepository {
         return NSPredicate(format: "memoID == %@", id as CVarArg)
     }
     private func titleContains(searchText: String) -> NSPredicate {
-        return NSPredicate(format: "memoTitle CONTAINS[c] %@", searchText)
+        // [c] = 대소문자 무시 (case-insensitive)
+        // [d] = 발음 기호 무시 (diacritic-insensitive)
+        return NSPredicate(format: "memoTitle CONTAINS[cd] %@", searchText)
     }
     private func memoTextContains(searchText: String) -> NSPredicate {
-        return NSPredicate(format: "memoText CONTAINS[c] %@", searchText)
+        return NSPredicate(format: "memoText CONTAINS[cd] %@", searchText)
     }
     /// `category` 인자가 `nil`인 경우, 카테고리가 없는 데이터를 가져옴.
     private func memoHasCategory(_ category: Category?) -> NSPredicate {

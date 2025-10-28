@@ -42,11 +42,11 @@ final class MemoSearchingView: UIView {
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: (columnCount == 1) ? .absolute(150) : .fractionalWidth(0.6 / CGFloat(columnCount))
+            heightDimension: (columnCount == 1) ? .absolute(160) : .fractionalWidth(0.6 / CGFloat(columnCount))
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
         let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 5, leading: 5, bottom: 5, trailing: 5)
         return section
     }
     

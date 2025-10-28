@@ -5,6 +5,7 @@
 //  Created by 김민성 on 8/6/25.
 //
 
+import Combine
 import UIKit
 
 import Wisp
@@ -13,13 +14,10 @@ class MemoSearchingViewController: UIViewController {
     
     let rootView = MemoSearchingView()
     
-//    private let favoriteMemoArray: [MemoEntity] = {
-//        return MemoEntityManager.shared.getFavoriteMemoEntities()
-//    }()
-    
-    private var favoriteMemoArray: [MemoPreviewDTO]!
-    
-    var diffableDataSource: UICollectionViewDiffableDataSource<Int, MemoPreviewDTO>? = nil
+    @Published
+    private var searchText: String = ""
+    private var diffableDataSource: UICollectionViewDiffableDataSource<Int, Memo>!
+    private var cancellables = Set<AnyCancellable>()
     
     override func loadView() {
         view = rootView
@@ -28,13 +26,16 @@ class MemoSearchingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        favoriteMemoArray = MemoEntityManager.shared.getFavoriteMemoEntities().map({
-            MemoPreviewDTO(from: $0)
-        })
         setupNaviBar()
         setupDiffableDataSource()
         setupDelegates()
-        applySnapshot()
+        rootView.searchBar.searchTextField.addTarget(self, action: #selector(textFieldEditing), for: .allEditingEvents)
+        bind()
+    }
+    
+    @objc private func textFieldEditing(_ sender: UITextField) {
+        print(#function)
+        searchText = sender.text ?? ""
     }
     
 }
@@ -55,20 +56,32 @@ private extension MemoSearchingViewController {
     
     func setupDiffableDataSource() {
         rootView.collectionView.register(MemoSearchingCell.self, forCellWithReuseIdentifier: "MemoSearchingCell")
-        diffableDataSource = UICollectionViewDiffableDataSource<Int, MemoPreviewDTO>(
-            collectionView: rootView.collectionView)
-        { collectionView, indexPath, itemIdentifier in
+        diffableDataSource = UICollectionViewDiffableDataSource<Int, Memo>(
+            collectionView: rootView.collectionView
+        ) { collectionView, indexPath, itemIdentifier in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MemoSearchingCell", for: indexPath) as? MemoSearchingCell else {
                 fatalError()
             }
-            cell.configure(title: itemIdentifier.memoTitlePreview, memoTextBuffer: itemIdentifier.memoTextPreview)
+            cell.configure(memo: itemIdentifier)
             return cell
         }
     }
     
     func setupDelegates() {
         rootView.collectionView.delegate = self
-        rootView.searchBar.searchTextField.delegate = self
+        wisp.delegate = self
+    }
+    
+    func bind() {
+        $searchText
+            .debounce(for: 0.2, scheduler: RunLoop.main)
+            .sink { searchText in
+                Task {
+                    let memoSearchResult = try await MemoEntityRepository.shared.searchMemo(searchText: searchText)
+                    self.applySnapshot(with: memoSearchResult)
+                }
+            }
+            .store(in: &cancellables)
     }
     
 }
@@ -76,10 +89,10 @@ private extension MemoSearchingViewController {
 
 private extension MemoSearchingViewController {
     
-    func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, MemoPreviewDTO>()
+    func applySnapshot(with memoList: [Memo]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Memo>()
         snapshot.appendSections([0])
-        snapshot.appendItems(favoriteMemoArray)
+        snapshot.appendItems(memoList)
         diffableDataSource?.apply(snapshot)
     }
     
@@ -90,21 +103,22 @@ private extension MemoSearchingViewController {
 extension MemoSearchingViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let memoIDToOpen = favoriteMemoArray[indexPath.item].memoID
-        let memoToOpen = MemoEntityManager.shared.getSpecificMemoEntity(memoID: memoIDToOpen)
+        guard let selectedMemo = diffableDataSource.itemIdentifier(for: indexPath) else {
+            return
+        }
         let popupVC = PopupCardViewController(
-            memo: memoToOpen.toDomain(),
+            memo: selectedMemo,
             indexPath: indexPath,
         )
         
         let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
-        let inset: UIEdgeInsets = ((indexPath.item % 2 == 0)
-                                            ? .init(top: 130, left: 10, bottom: 130, right: 10)
-                                            : .init(top: topInset, left: 0, bottom: 0, right: 0))
         
         let wispConfiguration = WispConfiguration { config in
+            config.setAnimation { animation in
+                animation.speed = .fast
+            }
             config.setLayout { layout in
-                layout.presentedAreaInset = inset
+                layout.presentedAreaInset = .init(top: topInset, left: 0, bottom: 0, right: 0)
                 layout.initialCornerRadius = 25
                 layout.finalCornerRadius = 25
             }
@@ -116,18 +130,24 @@ extension MemoSearchingViewController: UICollectionViewDelegate {
 }
 
 
-extension MemoSearchingViewController: UITextFieldDelegate {
-    
-    
-    
-}
-
-
 // MARK: - UISearchBarDelegate
 extension MemoSearchingViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print(#function, searchText)
+    }
+    
+}
+
+
+extension MemoSearchingViewController: WispPresenterDelegate {
+    
+    func wispWillRestore() {
+        return
+    }
+    
+    func wispDidRestore() {
+        searchText = searchText // just trigger
     }
     
 }
