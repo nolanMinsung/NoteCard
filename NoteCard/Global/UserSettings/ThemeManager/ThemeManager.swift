@@ -8,10 +8,11 @@
 import Combine
 import UIKit
 
+@UserSettingsActor
 final class ThemeManager {
     
-    nonisolated private let currentThemeSubject: CurrentValueSubject<UIColor, Never> = .init(UIColor.currentTheme)
-    nonisolated var currentThemePublisher: AnyPublisher<UIColor, Never> {
+    private let currentThemeSubject: CurrentValueSubject<UIColor, Never> = .init(UIColor.currentTheme)
+    var currentThemePublisher: AnyPublisher<UIColor, Never> {
         return currentThemeSubject.eraseToAnyPublisher()
     }
     

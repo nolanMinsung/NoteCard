@@ -192,9 +192,17 @@ class HomeViewController: UIViewController {
             object: nil
         )
         
-        ThemeManager.shared.currentThemePublisher.sink { [weak self] color in
-            self?.themeColorChanged()
-        }.store(in: &cancellables)
+        Task {
+            await ThemeManager.shared.currentThemePublisher.sink { [weak self] color in
+                guard let self else { return }
+                Task {
+                    self.tabBarController?.tabBar.tintColor = UIColor.currentTheme
+                    self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
+                    self.navigationController?.toolbar.tintColor = UIColor.currentTheme
+                    self.homeCollectionView.reloadData()
+                }
+            }.store(in: &cancellables)
+        }
         
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name("didCreateNewCategoryNotification"),
@@ -232,13 +240,6 @@ class HomeViewController: UIViewController {
     }
     
     @objc private func memoCreated() {
-        self.homeCollectionView.reloadData()
-    }
-    
-    private func themeColorChanged() {
-        self.tabBarController?.tabBar.tintColor = UIColor.currentTheme
-        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
-        self.navigationController?.toolbar.tintColor = UIColor.currentTheme
         self.homeCollectionView.reloadData()
     }
     

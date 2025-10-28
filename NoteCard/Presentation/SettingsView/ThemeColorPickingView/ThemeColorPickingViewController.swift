@@ -92,9 +92,11 @@ extension ThemeColorPickingViewController: UITableViewDelegate {
         guard let cell = tableView.cellForRow(at: indexPath) as? ThemeColorPickingTableViewCell else { fatalError() }
         cell.isSelected = true
         
-        ThemeManager.shared.setThemeColor(ThemeColor.allCases[indexPath.row])
-        UIWindow.current?.tintColor = .currentTheme
-        self.navigationController?.navigationBar.tintColor = .currentTheme
+        Task {
+            await ThemeManager.shared.setThemeColor(ThemeColor.allCases[indexPath.row])
+            UIWindow.current?.tintColor = .currentTheme
+            self.navigationController?.navigationBar.tintColor = .currentTheme
+        }
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
