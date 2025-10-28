@@ -157,6 +157,7 @@ class PopupCardViewController: UIViewController {
         self.rootView.imageCollectionView.dataSource = self
         self.rootView.imageCollectionView.delegate = self
         self.rootView.memoTextView.delegate = self
+        self.rootView.titleTextField.delegate = self
     }
     
 }
@@ -199,7 +200,24 @@ private extension PopupCardViewController {
                 self.askDeleting()
             }
         )
+        
+        rootView.titleTextField.addTarget(self, action: #selector(titleTextFieldEditingDidEndOnExit), for: .editingDidEndOnExit)
     }
+    
+    @objc private func titleTextFieldEditingDidEndOnExit(_ sender: UITextField) {
+        sender.endEditing(true)
+        guard sender.text != memo.memoTitle else {
+            return
+        }
+        Task {
+            do {
+                try await MemoEntityRepository.shared.updateMemoContent(memo, newTitle: sender.text)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     
     func setupButtonsAction() {
         if memo.isInTrash {
@@ -286,10 +304,39 @@ extension PopupCardViewController: UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         memoTextViewTapGesture.isEnabled = true
+        guard textView.text != memo.memoText else {
+            return
+        }
+        Task {
+            do {
+                try await MemoEntityRepository.shared.updateMemoContent(memo, newMemoText: textView.text)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
     
 }
 
+
+extension PopupCardViewController: UITextFieldDelegate {
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let trimmedInput = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        textField.text = trimmedInput
+        guard trimmedInput != memo.memoTitle else {
+            return
+        }
+        Task {
+            do {
+                try await MemoEntityRepository.shared.updateMemoContent(memo, newTitle: trimmedInput)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+}
 
 // MARK: - text view tap Gesture
 extension PopupCardViewController {
