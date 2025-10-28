@@ -89,7 +89,7 @@ class PopupCardViewController: UIViewController {
             // 한 메모 안의 여러 이미지를 순회하며 업데이트하므로, 짧은 시간에 여러 연속적인 이벤트가 발생함.
             // 동시에 여러 이벤트를 연속적으로 받아오면서 받은 이벤트 횟수만큼 이미지를 불러오고 reloadData 하는 현상이 발생
             // 부하를 막기 위해 debounce 사용.
-            // (시뮬레이터에서는 debounce 없으면 에러 발생)
+            // (debounce 없으면 에러 발생)
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self else { return }
@@ -105,9 +105,10 @@ class PopupCardViewController: UIViewController {
             .store(in: &cancellables)
         
         MemoEntityRepository.shared.memoUpdatedPublisher
-            .filter({ updateType in
-                guard case .update(_) = updateType else { return false }
-                return true
+            .filter({ [weak self] updateType in
+                guard let self else { return false }
+                guard case .update(let updatedAttribute) = updateType else { return false }
+                return updatedAttribute.memoIDs.contains(self.memo.memoID)
             })
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in

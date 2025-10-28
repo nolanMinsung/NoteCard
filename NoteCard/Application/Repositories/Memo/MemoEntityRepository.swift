@@ -28,17 +28,25 @@ enum MemoEntityError: LocalizedError {
 actor MemoEntityRepository: MemoRepository {
     
     enum MemoUpdateType: Equatable {
-        enum UpdateContent {
-            case favorite
-            case titleText
-            case category
+        enum UpdateAttribute: Equatable {
+            case favorite(memoIDs: [UUID])
+            case titleText(memoIDs: [UUID])
+            case category(memoIDs: [UUID])
+            
+            var memoIDs: [UUID] {
+                switch self {
+                case .favorite(let memoIDs): return memoIDs
+                case .titleText(let memoIDs): return memoIDs
+                case .category(let memoIDs): return memoIDs
+                }
+            }
         }
         
         case create
         case trash
         case delete
         case restore
-        case update(content: UpdateContent)
+        case update(content: UpdateAttribute)
     }
     
     static let shared = MemoEntityRepository()
@@ -348,7 +356,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.update(content: .category))
+        memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
     func replaceCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
@@ -368,7 +376,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.update(content: .category))
+        memoUpdatedSubject.send(.update(content: .category(memoIDs: memos.map(\.memoID))))
     }
     
     func addCategories(to memo: Memo, newCategories: Set<Category>) async throws {
@@ -381,7 +389,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.update(content: .category))
+        memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
     func addCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
@@ -396,7 +404,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.update(content: .category))
+        memoUpdatedSubject.send(.update(content: .category(memoIDs: memos.map(\.memoID))))
     }
     
     func removeCategories(to memo: Memo, newCategories: Set<Category>) async throws {
@@ -409,7 +417,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.update(content: .category))
+        memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
     func removeCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
@@ -424,7 +432,7 @@ extension MemoEntityRepository {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.update(content: .category))
+        memoUpdatedSubject.send(.update(content: .category(memoIDs: memos.map(\.memoID))))
     }
     
     func setFavorite(_ memo: Memo, to value: Bool) async throws {
@@ -433,7 +441,7 @@ extension MemoEntityRepository {
             memoEntity.isFavorite = value
             try self.context.save()
         }
-        memoUpdatedSubject.send(.update(content: .favorite))
+        memoUpdatedSubject.send(.update(content: .favorite(memoIDs: [memo.memoID])))
     }
     
     func setFavorite(_ memos: [Memo], to value: Bool) async throws {
@@ -444,7 +452,7 @@ extension MemoEntityRepository {
             }
             try context.save()
         }
-        memoUpdatedSubject.send(.update(content: .favorite))
+        memoUpdatedSubject.send(.update(content: .favorite(memoIDs: memos.map(\.memoID))))
     }
     
     func updateMemoContent(_ memo: Memo, newTitle: String? = nil, newMemoText: String? = nil) async throws {
@@ -459,7 +467,7 @@ extension MemoEntityRepository {
             memoEntity.modificationDate = .now
             try self.context.save()
         }
-        memoUpdatedSubject.send(.update(content: .titleText))
+        memoUpdatedSubject.send(.update(content: .titleText(memoIDs: [memo.memoID])))
     }
     
 }
