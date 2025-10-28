@@ -100,11 +100,11 @@ class CategorySelectionViewController: UIViewController {
         
         let selectedCategories: Set<Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
         Task {
+            try await MemoEntityRepository.shared.restore(selectedMemos)
             try await MemoEntityRepository.shared.addCategories(
                 to: selectedMemos,
                 newCategories: selectedCategories
             )
-            try await MemoEntityRepository.shared.restore(selectedMemos)
             try await memoVC.updateMemoContents()
         }
         
