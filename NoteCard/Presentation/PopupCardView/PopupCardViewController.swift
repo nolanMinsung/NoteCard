@@ -156,6 +156,7 @@ class PopupCardViewController: UIViewController {
         self.rootView.categoryCollectionView.dataSource = self
         self.rootView.imageCollectionView.dataSource = self
         self.rootView.imageCollectionView.delegate = self
+        self.rootView.memoTextView.delegate = self
     }
     
 }
@@ -280,6 +281,16 @@ extension PopupCardViewController: UICollectionViewDelegate {
 }
 
 
+// MARK: - UITextViewDelegate
+extension PopupCardViewController: UITextViewDelegate {
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        memoTextViewTapGesture.isEnabled = true
+    }
+    
+}
+
+
 // MARK: - text view tap Gesture
 extension PopupCardViewController {
     
@@ -290,6 +301,7 @@ extension PopupCardViewController {
             rootView.memoTextView.isEditable = true
             rootView.memoTextView.selectedTextRange = rootView.memoTextView.textRange(from: position, to: position)
             rootView.memoTextView.becomeFirstResponder()
+            memoTextViewTapGesture.isEnabled = false
         }
     }
     
