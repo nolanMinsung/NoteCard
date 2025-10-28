@@ -13,13 +13,6 @@ class MainTabBarController: UITabBarController {
     
     var isUncategorizedMemoVCHasShown: Bool = false
     
-//    var blurView: UIVisualEffectView = {
-//        let blurEffect = UIBlurEffect(style: .regular)
-//        let blurView = UIVisualEffectView(effect: blurEffect)
-//        blurView.translatesAutoresizingMaskIntoConstraints = false
-//        return blurView
-//    }()
-    
     // MARK: - Initialize
     
     init() {
@@ -81,12 +74,6 @@ class MainTabBarController: UITabBarController {
         )
         
         // tab 3: 메모 검색
-        let totalListNaviCon = UINavigationController(rootViewController: TotalListViewController())
-        totalListNaviCon.tabBarItem = UITabBarItem(
-            title: "메모 검색".localized(),
-            image: UIImage(systemName: "magnifyingglass"),
-            selectedImage: UIImage(systemName: "magnifyingglass")
-        )
         let memoSearchingVC = MemoSearchingViewController()
         let memoSearchingNaviCon = UINavigationController(rootViewController: memoSearchingVC)
         memoSearchingNaviCon.tabBarItem = UITabBarItem(
@@ -110,7 +97,6 @@ class MainTabBarController: UITabBarController {
                 homeNaviCon,
                 noCategoriesCardNaviCon,
                 thirdTabViewController,
-//                totalListNaviCon,
                 memoSearchingNaviCon,
                 settingNaviCon
             ],
