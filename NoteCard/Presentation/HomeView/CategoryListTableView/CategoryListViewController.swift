@@ -149,6 +149,10 @@ class CategoryListViewController: UITableViewController {
     
     @objc private func presentCreateCategoryVC() {
         let createCategoryVC = CreateCategoryViewController()
+        createCategoryVC.onCategoryCreated = { [weak self] in
+            guard let self else { return }
+            self.categoryCreated()
+        }
         let naviCon = UINavigationController(rootViewController: createCategoryVC)
         self.present(naviCon, animated: true)
     }
@@ -279,9 +283,11 @@ extension CategoryListViewController {
             
             let deleteAction = UIAlertAction(title: "삭제".localized(), style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { fatalError() }
-                self.categoryManager.deleteCategoryEntity(of: swipedCell.categoryEntity)
-                self.applySnapshot(animatingDifferences: true, usingReloadData: false)
-                completionHandler(true)
+                Task {
+                    try await CategoryEntityRepository.shared.deleteCategory(swipedCell.categoryEntity.toDomain())
+                    self.applySnapshot(animatingDifferences: true, usingReloadData: false)
+                    completionHandler(true)
+                }
             }
             
             alertCon.addAction(cancelAction)

@@ -9,7 +9,7 @@ import Foundation
 
 protocol CategoryRepository {
     
-    func create(name: String) async throws -> Category
+    func create(name: String) async throws
     
     func getAllCategories(
         inOrderOf orderCriterion: CategoryProperties,

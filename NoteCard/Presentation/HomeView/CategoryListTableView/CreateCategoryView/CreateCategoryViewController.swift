@@ -26,6 +26,7 @@ class CreateCategoryViewController: UIViewController {
         return item
     }()
     
+    var onCategoryCreated: (() -> Void)? = nil
     
     override func loadView() {
         self.view = self.createCategoryView
@@ -84,15 +85,21 @@ class CreateCategoryViewController: UIViewController {
             return
         }
         
-        do {
-            try categoryManager.createCategoryEntity(withName: text)
-        } catch {
-            print(error.localizedDescription)
-            let alertCon = UIAlertController(title: "이름 중복".localized(), message: "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요.".localized(), preferredStyle: UIAlertController.Style.actionSheet)
-            let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel)
-            alertCon.addAction(okAction)
-            self.present(alertCon, animated: true)
-            return
+        Task {
+            do {
+                // try categoryManager.createCategoryEntity(withName: text)
+                try await CategoryEntityRepository.shared.create(name: text.trimmingCharacters(in: .whitespacesAndNewlines))
+                onCategoryCreated?()
+                dismiss(animated: true)
+            } catch CoreDataError.duplicateCategoryDetected {
+                let alertCon = UIAlertController(title: "이름 중복".localized(), message: "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요.".localized(), preferredStyle: UIAlertController.Style.actionSheet)
+                let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel)
+                alertCon.addAction(okAction)
+                self.present(alertCon, animated: true)
+                return
+            } catch {
+                print(error.localizedDescription)
+            }
         }
     }
     

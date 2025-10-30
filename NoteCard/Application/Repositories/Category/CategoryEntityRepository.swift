@@ -65,11 +65,15 @@ extension CategoryEntityRepository {
         }
     }
     
-    func create(name: String) async throws -> Category {
+    func create(name: String) async throws {
+        let allCategoryNames = try await getAllCategories(inOrderOf: .modificationDate, isAscending: false).map(\.name)
+        guard !allCategoryNames.contains(name) else {
+            throw CoreDataError.duplicateCategoryDetected
+        }
         try await context.perform { [unowned self] in
             let newCategory = CategoryEntity(context: self.context)
+            newCategory.name = name
             try self.context.save()
-            return newCategory.toDomain()
         }
     }
     

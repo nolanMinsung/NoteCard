@@ -131,7 +131,7 @@ extension MemoEntityRepository {
         }
     }
     
-    func fetchTrashMemoEntity(id: UUID) throws -> MemoEntity {
+    func fetchTrashMemoEntity(id: UUID) throws -> MemoEntity? {
         let request = MemoEntity.fetchRequest()
         request.predicate = NSCompoundPredicate(
             type: .and,
@@ -140,7 +140,7 @@ extension MemoEntityRepository {
         let foundMemo = try self.context.fetch(request)
         switch foundMemo.count {
         case 0:
-            throw MemoEntityError.memoNotFound(id: id)
+            return nil
         case 1:
             return foundMemo.first!
         default:
@@ -273,7 +273,7 @@ extension MemoEntityRepository {
     
     func deleteMemo(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
-            let memoEntityToDelete = try self.fetchTrashMemoEntity(id: memo.memoID)
+            guard let memoEntityToDelete = try self.fetchTrashMemoEntity(id: memo.memoID) else { return }
             // FileManager에서 메모 디렉토리(및 이미지들) 삭제
             let memoDirectoryURL = try ImageFileHandler.getDirectory(for: memo.memoID)
             try FileManager.default.removeItem(at: memoDirectoryURL)
@@ -291,7 +291,7 @@ extension MemoEntityRepository {
     func deleteMemos(_ memos: [Memo]) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
-                let memoEntityToDelete = try self.fetchTrashMemoEntity(id: memo.memoID)
+                guard let memoEntityToDelete = try self.fetchTrashMemoEntity(id: memo.memoID) else { continue }
                 // FileManager에서 메모 디렉토리(및 이미지들) 삭제
                 let memoDirectoryURL = try ImageFileHandler.getDirectory(for: memo.memoID)
                 try FileManager.default.removeItem(at: memoDirectoryURL)
@@ -315,7 +315,7 @@ extension MemoEntityRepository {
     
     func restore(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
-            let memoEntityToRestore = try self.fetchTrashMemoEntity(id: memo.memoID)
+            guard let memoEntityToRestore = try self.fetchTrashMemoEntity(id: memo.memoID) else { return }
             memoEntityToRestore.isInTrash = false
             memoEntityToRestore.deletedDate = nil
             try self.context.save()
@@ -326,7 +326,7 @@ extension MemoEntityRepository {
     func restore(_ memos: [Memo]) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
-                let memoEntityToRestore = try self.fetchTrashMemoEntity(id: memo.memoID)
+                guard let memoEntityToRestore = try self.fetchTrashMemoEntity(id: memo.memoID) else { continue }
                 memoEntityToRestore.isInTrash = false
                 memoEntityToRestore.deletedDate = nil
             }
