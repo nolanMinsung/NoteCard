@@ -208,6 +208,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
             }
             self.inflateAnimator.addCompletion { [weak self] animatingPosition in
                 guard let self else { return }
+                gesture.state = .ended
                 self.feedbackGenerator.impactOccurred()
                 self.onLongPressSelected?()
             }
