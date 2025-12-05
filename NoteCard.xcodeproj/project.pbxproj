@@ -87,92 +87,6 @@
 		4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */; };
 		4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */; };
 		4EEEB2602B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */; };
-		4EEFF4082B5CC155008F0BBB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4EEFF40A2B5CC155008F0BBB /* InfoPlist.strings */; };
-		4EF85F272EB3A0C400D6C2CF /* MemoEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E02AF3833E0063817B /* MemoEntityManager.swift */; };
-		4EF85F292EB3A0C400D6C2CF /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */; };
-		4EF85F2A2EB3A0C400D6C2CF /* MemoImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385142AF386D10063817B /* MemoImageCollectionViewCell.swift */; };
-		4EF85F2B2EB3A0C400D6C2CF /* CategoryEntity+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E00A0D02E5F4758007ABF00 /* CategoryEntity+Mapping.swift */; };
-		4EF85F2C2EB3A0C400D6C2CF /* CategorySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */; };
-		4EF85F2D2EB3A0C400D6C2CF /* HomeCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F22AF384C80063817B /* HomeCardCell.swift */; };
-		4EF85F2F2EB3A0C400D6C2CF /* ThemeColorPickingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */; };
-		4EF85F302EB3A0C400D6C2CF /* TimeFormatSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC02B3C571F000CBE17 /* TimeFormatSettingViewController.swift */; };
-		4EF85F312EB3A0C400D6C2CF /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EA2AF3843A0063817B /* HomeViewController.swift */; };
-		4EF85F322EB3A0C400D6C2CF /* CreateCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385062AF3860B0063817B /* CreateCategoryView.swift */; };
-		4EF85F332EB3A0C400D6C2CF /* MainSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9E63A2E4A4FB1007ECD86 /* MainSplitViewController.swift */; };
-		4EF85F342EB3A0C400D6C2CF /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E42AF383D70063817B /* DataManager.swift */; };
-		4EF85F352EB3A0C400D6C2CF /* DateFormatSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCBD2B3C3644000CBE17 /* DateFormatSettingTableViewCell.swift */; };
-		4EF85F362EB3A0C400D6C2CF /* MemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13850E2AF386750063817B /* MemoViewController.swift */; };
-		4EF85F372EB3A0C400D6C2CF /* MemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385102AF386920063817B /* MemoView.swift */; };
-		4EF85F382EB3A0C400D6C2CF /* TimeFormatSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC12B3C5810000CBE17 /* TimeFormatSettingTableViewCell.swift */; };
-		4EF85F392EB3A0C400D6C2CF /* TextSizeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */; };
-		4EF85F3A2EB3A0C400D6C2CF /* CategoryListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385022AF385B00063817B /* CategoryListTableViewCell.swift */; };
-		4EF85F3B2EB3A0C400D6C2CF /* HomeCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F02AF384A70063817B /* HomeCategoryCell.swift */; };
-		4EF85F3C2EB3A0C400D6C2CF /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E757B2B6889260073A951 /* MainTabBarController.swift */; };
-		4EF85F3D2EB3A0C400D6C2CF /* NoteCardCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4E10F8422B654162007B468A /* NoteCardCoreData.xcdatamodeld */; };
-		4EF85F3E2EB3A0C400D6C2CF /* OrderSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF492B3D38C000813DCA /* OrderSettingTableViewCell.swift */; };
-		4EF85F3F2EB3A0C400D6C2CF /* CategoryListTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */; };
-		4EF85F402EB3A0C400D6C2CF /* DateFormatSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCBB2B3C33FD000CBE17 /* DateFormatSettingView.swift */; };
-		4EF85F412EB3A0C400D6C2CF /* TimeFormatSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCC22B3C5810000CBE17 /* TimeFormatSettingView.swift */; };
-		4EF85F422EB3A0C400D6C2CF /* OrderSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF4A2B3D38C000813DCA /* OrderSettingView.swift */; };
-		4EF85F432EB3A0C400D6C2CF /* PopupCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F82AF3851B0063817B /* PopupCardView.swift */; };
-		4EF85F442EB3A0C400D6C2CF /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602C2B064BE20029BA3D /* SettingsViewController.swift */; };
-		4EF85F452EB3A0C400D6C2CF /* TextSizeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */; };
-		4EF85F462EB3A0C400D6C2CF /* MemoEntity+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E00A0CE2E5F4711007ABF00 /* MemoEntity+Mapping.swift */; };
-		4EF85F472EB3A0C400D6C2CF /* CreateCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385042AF385F20063817B /* CreateCategoryViewController.swift */; };
-		4EF85F482EB3A0C400D6C2CF /* CategoryEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D22AF382A40063817B /* CategoryEntity+CoreDataClass.swift */; };
-		4EF85F492EB3A0C400D6C2CF /* ImageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D52AF382A40063817B /* ImageEntity+CoreDataProperties.swift */; };
-		4EF85F4A2EB3A0C400D6C2CF /* MemoEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D72AF382A40063817B /* MemoEntity+CoreDataProperties.swift */; };
-		4EF85F4B2EB3A0C400D6C2CF /* ImageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D42AF382A40063817B /* ImageEntity+CoreDataClass.swift */; };
-		4EF85F4C2EB3A0C400D6C2CF /* MemoEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D62AF382A40063817B /* MemoEntity+CoreDataClass.swift */; };
-		4EF85F4D2EB3A0C400D6C2CF /* CategoryEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384D32AF382A40063817B /* CategoryEntity+CoreDataProperties.swift */; };
-		4EF85F4E2EB3A0C400D6C2CF /* ThemeColorPickingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */; };
-		4EF85F4F2EB3A0C400D6C2CF /* ThirdTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDA56E2E162753003D15F5 /* ThirdTabViewController.swift */; };
-		4EF85F502EB3A0C400D6C2CF /* DarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */; };
-		4EF85F512EB3A0C400D6C2CF /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E82AF3840A0063817B /* DateManager.swift */; };
-		4EF85F522EB3A0C400D6C2CF /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6A62E430FD30031250B /* SearchBar.swift */; };
-		4EF85F542EB3A0C400D6C2CF /* MemoSearchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B64F2E42EBD40031250B /* MemoSearchingViewController.swift */; };
-		4EF85F552EB3A0C400D6C2CF /* CategoryListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385002AF3859D0063817B /* CategoryListViewController.swift */; };
-		4EF85F572EB3A0C400D6C2CF /* CategoryEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384E22AF3839F0063817B /* CategoryEntityManager.swift */; };
-		4EF85F582EB3A0C400D6C2CF /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EC2AF3846C0063817B /* HomeView.swift */; };
-		4EF85F592EB3A0C400D6C2CF /* SmallCardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385182AF387100063817B /* SmallCardCollectionViewCell.swift */; };
-		4EF85F5A2EB3A0C400D6C2CF /* CardImageShowingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */; };
-		4EF85F5C2EB3A0C400D6C2CF /* PopupCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE7396D2EADCA0400DD3912 /* PopupCategoryCell.swift */; };
-		4EF85F5D2EB3A0C400D6C2CF /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E57A5FF2E54380700418962 /* CoreDataStack.swift */; };
-		4EF85F5E2EB3A0C400D6C2CF /* DarkModeSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */; };
-		4EF85F5F2EB3A0C400D6C2CF /* CustomIntensityBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */; };
-		4EF85F602EB3A0C400D6C2CF /* HomeHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */; };
-		4EF85F612EB3A0C400D6C2CF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384A82AF37B350063817B /* ViewController.swift */; };
-		4EF85F622EB3A0C400D6C2CF /* HomeHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384EE2AF384880063817B /* HomeHeaderView.swift */; };
-		4EF85F632EB3A0C400D6C2CF /* DateFormatSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4FCCB92B3C33E7000CBE17 /* DateFormatSettingViewController.swift */; };
-		4EF85F642EB3A0C400D6C2CF /* CardImageShowingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851F2AF387890063817B /* CardImageShowingCollectionViewCell.swift */; };
-		4EF85F652EB3A0C400D6C2CF /* CategoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3F63552B0B7BFF004DD676 /* CategoryListView.swift */; };
-		4EF85F662EB3A0C400D6C2CF /* PopupCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384F62AF385090063817B /* PopupCardViewController.swift */; };
-		4EF85F672EB3A0C400D6C2CF /* MemoSearchingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6A42E42F1ED0031250B /* MemoSearchingCell.swift */; };
-		4EF85F682EB3A0C400D6C2CF /* CardImageShowingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851B2AF387480063817B /* CardImageShowingViewController.swift */; };
-		4EF85F692EB3A0C400D6C2CF /* CardImageShowingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851D2AF3875D0063817B /* CardImageShowingView.swift */; };
-		4EF85F6A2EB3A0C400D6C2CF /* DarkModeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */; };
-		4EF85F6B2EB3A0C400D6C2CF /* InsetTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385082AF386260063817B /* InsetTextField.swift */; };
-		4EF85F6C2EB3A0C400D6C2CF /* ImageEntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1384DE2AF382F70063817B /* ImageEntityManager.swift */; };
-		4EF85F6D2EB3A0C400D6C2CF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602E2B064C290029BA3D /* SettingsView.swift */; };
-		4EF85F6E2EB3A0C400D6C2CF /* ImageEntity+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E00A0D22E5F6250007ABF00 /* ImageEntity+Mapping.swift */; };
-		4EF85F6F2EB3A0C400D6C2CF /* ThemeColorPickingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A92B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift */; };
-		4EF85F702EB3A0C400D6C2CF /* SmallCardCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E462D682E2A1AF5004C0215 /* SmallCardCollectionView.swift */; };
-		4EF85F722EB3A0C400D6C2CF /* MemoSearchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6512E42EBE80031250B /* MemoSearchingView.swift */; };
-		4EF85F732EB3A0C400D6C2CF /* OrderSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0BDF4B2B3D38C000813DCA /* OrderSettingViewController.swift */; };
-		4EF85F772EB3A0C400D6C2CF /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		4EF85F792EB3A0C400D6C2CF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E1384B22AF37B370063817B /* LaunchScreen.storyboard */; };
-		4EF85F7A2EB3A0C400D6C2CF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4ED42A842B3D6EDA00D14571 /* Localizable.strings */; };
-		4EF85F7B2EB3A0C400D6C2CF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E1384B02AF37B370063817B /* Assets.xcassets */; };
-		4EF85F7C2EB3A0C400D6C2CF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4EEFF40A2B5CC155008F0BBB /* InfoPlist.strings */; };
-		4EF85F8F2EB3A1E600D6C2CF /* DetailViewSelectedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */; };
-		4EF85F902EB3A1E600D6C2CF /* MemoDetailViewSelectedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */; };
-		4EF85F912EB3A1E600D6C2CF /* MemoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385292AF389930063817B /* MemoDetailView.swift */; };
-		4EF85F922EB3A1E600D6C2CF /* MemoDetailViewCategoryListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */; };
-		4EF85F942EB3A1E600D6C2CF /* LeftAlignedFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */; };
-		4EF85F952EB3A1E600D6C2CF /* MemoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECD7FBC2E72B444003A3931 /* MemoDetailViewController.swift */; };
-		4EF85F962EB3A1E600D6C2CF /* MemoDetailViewSelectedImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0126A72B4D5400007110CC /* MemoDetailViewSelectedImageCollectionView.swift */; };
-		4EF85F972EB3A1E600D6C2CF /* DetailViewSelectedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */; };
-		4EF85FC12EB3A26000D6C2CF /* Wisp in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF85FC02EB3A26000D6C2CF /* Wisp */; };
 		4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */; };
 		4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */; };
 		4EFC02E02B42928F00C778DF /* TextSizeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFC02DF2B42928F00C778DF /* TextSizeSettingView.swift */; };
@@ -264,9 +178,6 @@
 		4EE926862B4AB14900DC4674 /* CardImageShowingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingScrollView.swift; sourceTree = "<group>"; };
 		4EEEB25D2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewSelectedImageCell.swift; sourceTree = "<group>"; };
 		4EEEB25F2B0865B60027AF01 /* MemoDetailViewCategoryListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoDetailViewCategoryListCell.swift; sourceTree = "<group>"; };
-		4EEFF4092B5CC155008F0BBB /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		4EEFF40C2B5CC167008F0BBB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		4EF85F802EB3A0C400D6C2CF /* NoteCard english.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NoteCard english.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EF85F882EB3A0C400D6C2CF /* NoteCard copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "NoteCard copy-Info.plist"; path = "/Users/kimminsung/development/NoteCard/NoteCard copy-Info.plist"; sourceTree = "<absolute>"; };
 		4EFA2F3C2B27413700FCDD1B /* LeftAlignedFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedFlowLayout.swift; sourceTree = "<group>"; };
 		4EFC02DD2B42927700C778DF /* TextSizeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeSettingViewController.swift; sourceTree = "<group>"; };
@@ -289,15 +200,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4EAF4F2C2E38580500A1AA36 /* Wisp in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EF85F762EB3A0C400D6C2CF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4EF85F772EB3A0C400D6C2CF /* (null) in Frameworks */,
-				4EF85FC12EB3A26000D6C2CF /* Wisp in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,7 +230,6 @@
 			isa = PBXGroup;
 			children = (
 				4E1384A12AF37B350063817B /* NoteCard.app */,
-				4EF85F802EB3A0C400D6C2CF /* NoteCard english.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -349,7 +250,6 @@
 				4E1384B02AF37B370063817B /* Assets.xcassets */,
 				4E1384B22AF37B370063817B /* LaunchScreen.storyboard */,
 				4E1384B52AF37B370063817B /* Info.plist */,
-				4EEFF40A2B5CC155008F0BBB /* InfoPlist.strings */,
 			);
 			path = NoteCard;
 			sourceTree = "<group>";
@@ -633,32 +533,6 @@
 			productReference = 4E1384A12AF37B350063817B /* NoteCard.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4EF85F252EB3A0C400D6C2CF /* NoteCard english */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4EF85F7D2EB3A0C400D6C2CF /* Build configuration list for PBXNativeTarget "NoteCard english" */;
-			buildPhases = (
-				4EF85F262EB3A0C400D6C2CF /* Sources */,
-				4EF85F762EB3A0C400D6C2CF /* Frameworks */,
-				4EF85F782EB3A0C400D6C2CF /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				4E00A0BB2E5E99AD007ABF00 /* Domain */,
-				4E00A0C72E5EB497007ABF00 /* Application */,
-				4E31381D2E7FBD130033B7AB /* Model */,
-				4E5F341D2E717C2200C05FE4 /* Errors */,
-				4EA7B44E2E74882C00A49433 /* Model */,
-				4EC9B5162E4248B80031250B /* Global */,
-				4ECD80EF2E73BA2E003A3931 /* UIModel */,
-			);
-			name = "NoteCard english";
-			productName = CardMemo;
-			productReference = 4EF85F802EB3A0C400D6C2CF /* NoteCard english.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -692,7 +566,6 @@
 			projectRoot = "";
 			targets = (
 				4E1384A02AF37B350063817B /* NoteCard */,
-				4EF85F252EB3A0C400D6C2CF /* NoteCard english */,
 			);
 		};
 /* End PBXProject section */
@@ -705,18 +578,6 @@
 				4E1384B42AF37B370063817B /* LaunchScreen.storyboard in Resources */,
 				4ED42A822B3D6EDA00D14571 /* Localizable.strings in Resources */,
 				4E1384B12AF37B370063817B /* Assets.xcassets in Resources */,
-				4EEFF4082B5CC155008F0BBB /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EF85F782EB3A0C400D6C2CF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4EF85F792EB3A0C400D6C2CF /* LaunchScreen.storyboard in Resources */,
-				4EF85F7A2EB3A0C400D6C2CF /* Localizable.strings in Resources */,
-				4EF85F7B2EB3A0C400D6C2CF /* Assets.xcassets in Resources */,
-				4EF85F7C2EB3A0C400D6C2CF /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -809,92 +670,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4EF85F262EB3A0C400D6C2CF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4EF85F272EB3A0C400D6C2CF /* MemoEntityManager.swift in Sources */,
-				4EF85F292EB3A0C400D6C2CF /* SettingsTableViewCell.swift in Sources */,
-				4EF85F2A2EB3A0C400D6C2CF /* MemoImageCollectionViewCell.swift in Sources */,
-				4EF85F2B2EB3A0C400D6C2CF /* CategoryEntity+Mapping.swift in Sources */,
-				4EF85F2C2EB3A0C400D6C2CF /* CategorySelectionViewController.swift in Sources */,
-				4EF85F2D2EB3A0C400D6C2CF /* HomeCardCell.swift in Sources */,
-				4EF85F2F2EB3A0C400D6C2CF /* ThemeColorPickingViewController.swift in Sources */,
-				4EF85F302EB3A0C400D6C2CF /* TimeFormatSettingViewController.swift in Sources */,
-				4EF85F312EB3A0C400D6C2CF /* HomeViewController.swift in Sources */,
-				4EF85F322EB3A0C400D6C2CF /* CreateCategoryView.swift in Sources */,
-				4EF85F332EB3A0C400D6C2CF /* MainSplitViewController.swift in Sources */,
-				4EF85F342EB3A0C400D6C2CF /* DataManager.swift in Sources */,
-				4EF85F352EB3A0C400D6C2CF /* DateFormatSettingTableViewCell.swift in Sources */,
-				4EF85F362EB3A0C400D6C2CF /* MemoViewController.swift in Sources */,
-				4EF85F372EB3A0C400D6C2CF /* MemoView.swift in Sources */,
-				4EF85F382EB3A0C400D6C2CF /* TimeFormatSettingTableViewCell.swift in Sources */,
-				4EF85F392EB3A0C400D6C2CF /* TextSizeSettingViewController.swift in Sources */,
-				4EF85F3A2EB3A0C400D6C2CF /* CategoryListTableViewCell.swift in Sources */,
-				4EF85F3B2EB3A0C400D6C2CF /* HomeCategoryCell.swift in Sources */,
-				4EF85F3C2EB3A0C400D6C2CF /* MainTabBarController.swift in Sources */,
-				4EF85F3D2EB3A0C400D6C2CF /* NoteCardCoreData.xcdatamodeld in Sources */,
-				4EF85F3E2EB3A0C400D6C2CF /* OrderSettingTableViewCell.swift in Sources */,
-				4EF85F3F2EB3A0C400D6C2CF /* CategoryListTableViewDiffableDataSource.swift in Sources */,
-				4EF85F402EB3A0C400D6C2CF /* DateFormatSettingView.swift in Sources */,
-				4EF85F412EB3A0C400D6C2CF /* TimeFormatSettingView.swift in Sources */,
-				4EF85F422EB3A0C400D6C2CF /* OrderSettingView.swift in Sources */,
-				4EF85F432EB3A0C400D6C2CF /* PopupCardView.swift in Sources */,
-				4EF85F442EB3A0C400D6C2CF /* SettingsViewController.swift in Sources */,
-				4EF85F452EB3A0C400D6C2CF /* TextSizeSettingView.swift in Sources */,
-				4EF85F462EB3A0C400D6C2CF /* MemoEntity+Mapping.swift in Sources */,
-				4EF85F472EB3A0C400D6C2CF /* CreateCategoryViewController.swift in Sources */,
-				4EF85F482EB3A0C400D6C2CF /* CategoryEntity+CoreDataClass.swift in Sources */,
-				4EF85F492EB3A0C400D6C2CF /* ImageEntity+CoreDataProperties.swift in Sources */,
-				4EF85F4A2EB3A0C400D6C2CF /* MemoEntity+CoreDataProperties.swift in Sources */,
-				4EF85F4B2EB3A0C400D6C2CF /* ImageEntity+CoreDataClass.swift in Sources */,
-				4EF85F4C2EB3A0C400D6C2CF /* MemoEntity+CoreDataClass.swift in Sources */,
-				4EF85F4D2EB3A0C400D6C2CF /* CategoryEntity+CoreDataProperties.swift in Sources */,
-				4EF85F4E2EB3A0C400D6C2CF /* ThemeColorPickingView.swift in Sources */,
-				4EF85F4F2EB3A0C400D6C2CF /* ThirdTabViewController.swift in Sources */,
-				4EF85F502EB3A0C400D6C2CF /* DarkModeSettingViewController.swift in Sources */,
-				4EF85F512EB3A0C400D6C2CF /* DateManager.swift in Sources */,
-				4EF85F522EB3A0C400D6C2CF /* SearchBar.swift in Sources */,
-				4EF85F542EB3A0C400D6C2CF /* MemoSearchingViewController.swift in Sources */,
-				4EF85F552EB3A0C400D6C2CF /* CategoryListViewController.swift in Sources */,
-				4EF85F572EB3A0C400D6C2CF /* CategoryEntityManager.swift in Sources */,
-				4EF85F582EB3A0C400D6C2CF /* HomeView.swift in Sources */,
-				4EF85F592EB3A0C400D6C2CF /* SmallCardCollectionViewCell.swift in Sources */,
-				4EF85F5A2EB3A0C400D6C2CF /* CardImageShowingScrollView.swift in Sources */,
-				4EF85F5C2EB3A0C400D6C2CF /* PopupCategoryCell.swift in Sources */,
-				4EF85F5D2EB3A0C400D6C2CF /* CoreDataStack.swift in Sources */,
-				4EF85F5E2EB3A0C400D6C2CF /* DarkModeSettingTableViewCell.swift in Sources */,
-				4EF85F5F2EB3A0C400D6C2CF /* CustomIntensityBlurView.swift in Sources */,
-				4EF85F602EB3A0C400D6C2CF /* HomeHeaderButton.swift in Sources */,
-				4EF85F612EB3A0C400D6C2CF /* ViewController.swift in Sources */,
-				4EF85F622EB3A0C400D6C2CF /* HomeHeaderView.swift in Sources */,
-				4EF85F632EB3A0C400D6C2CF /* DateFormatSettingViewController.swift in Sources */,
-				4EF85F642EB3A0C400D6C2CF /* CardImageShowingCollectionViewCell.swift in Sources */,
-				4EF85F652EB3A0C400D6C2CF /* CategoryListView.swift in Sources */,
-				4EF85F8F2EB3A1E600D6C2CF /* DetailViewSelectedImageViewController.swift in Sources */,
-				4EF85F902EB3A1E600D6C2CF /* MemoDetailViewSelectedImageCell.swift in Sources */,
-				4EF85F912EB3A1E600D6C2CF /* MemoDetailView.swift in Sources */,
-				4EF85F922EB3A1E600D6C2CF /* MemoDetailViewCategoryListCell.swift in Sources */,
-				4EF85F942EB3A1E600D6C2CF /* LeftAlignedFlowLayout.swift in Sources */,
-				4EF85F952EB3A1E600D6C2CF /* MemoDetailViewController.swift in Sources */,
-				4EF85F962EB3A1E600D6C2CF /* MemoDetailViewSelectedImageCollectionView.swift in Sources */,
-				4EF85F972EB3A1E600D6C2CF /* DetailViewSelectedImageView.swift in Sources */,
-				4EF85F662EB3A0C400D6C2CF /* PopupCardViewController.swift in Sources */,
-				4EF85F672EB3A0C400D6C2CF /* MemoSearchingCell.swift in Sources */,
-				4EF85F682EB3A0C400D6C2CF /* CardImageShowingViewController.swift in Sources */,
-				4EF85F692EB3A0C400D6C2CF /* CardImageShowingView.swift in Sources */,
-				4EF85F6A2EB3A0C400D6C2CF /* DarkModeSettingView.swift in Sources */,
-				4EF85F6B2EB3A0C400D6C2CF /* InsetTextField.swift in Sources */,
-				4EF85F6C2EB3A0C400D6C2CF /* ImageEntityManager.swift in Sources */,
-				4EF85F6D2EB3A0C400D6C2CF /* SettingsView.swift in Sources */,
-				4EF85F6E2EB3A0C400D6C2CF /* ImageEntity+Mapping.swift in Sources */,
-				4EF85F6F2EB3A0C400D6C2CF /* ThemeColorPickingTableViewCell.swift in Sources */,
-				4EF85F702EB3A0C400D6C2CF /* SmallCardCollectionView.swift in Sources */,
-				4EF85F722EB3A0C400D6C2CF /* MemoSearchingView.swift in Sources */,
-				4EF85F732EB3A0C400D6C2CF /* OrderSettingViewController.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -917,15 +692,6 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
-		4EEFF40A2B5CC155008F0BBB /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4EEFF4092B5CC155008F0BBB /* ko */,
-				4EEFF40C2B5CC167008F0BBB /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -933,6 +699,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = NoteCard;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -998,6 +765,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = NoteCard;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1055,6 +823,7 @@
 		4E1384B92AF37B370063817B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APP_DISPLAY_NAME = "NoteCard(Dev)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1063,7 +832,7 @@
 				DEVELOPMENT_TEAM = 548W892M42;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NoteCard/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NoteCard;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
@@ -1103,7 +872,7 @@
 				DEVELOPMENT_TEAM = 548W892M42;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NoteCard/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NoteCard;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
@@ -1132,47 +901,73 @@
 			};
 			name = Release;
 		};
-		4EF85F7E2EB3A0C400D6C2CF /* Debug */ = {
+		4EF487172EE2EA7C006ABC71 /* DebugEng */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = 548W892M42;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "NoteCard copy-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = NoteCard;
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "포토 라이브러리 쓰기 권한 요청";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "포토 라이브러리 읽기 권한 요청";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportsDocumentBrowser = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_DISPLAY_NAME = "NoteCard-Eng";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
 					"$(inherited)",
-					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.minsung.NoteCard.eng;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Debug;
+			name = DebugEng;
 		};
-		4EF85F7F2EB3A0C400D6C2CF /* Release */ = {
+		4EF487182EE2EA7C006ABC71 /* DebugEng */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1182,8 +977,8 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 548W892M42;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "NoteCard copy-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = NoteCard;
+				INFOPLIST_FILE = NoteCard/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
@@ -1210,7 +1005,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Release;
+			name = DebugEng;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1219,6 +1014,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4E1384B62AF37B370063817B /* Debug */,
+				4EF487172EE2EA7C006ABC71 /* DebugEng */,
 				4E1384B72AF37B370063817B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1228,16 +1024,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4E1384B92AF37B370063817B /* Debug */,
+				4EF487182EE2EA7C006ABC71 /* DebugEng */,
 				4E1384BA2AF37B370063817B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4EF85F7D2EB3A0C400D6C2CF /* Build configuration list for PBXNativeTarget "NoteCard english" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4EF85F7E2EB3A0C400D6C2CF /* Debug */,
-				4EF85F7F2EB3A0C400D6C2CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1254,11 +1042,6 @@
 /* Begin XCSwiftPackageProductDependency section */
 		4EAF4F2B2E38580500A1AA36 /* Wisp */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Wisp;
-		};
-		4EF85FC02EB3A26000D6C2CF /* Wisp */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4EAF4F2A2E38580500A1AA36 /* XCLocalSwiftPackageReference "../Library/Wisp" */;
 			productName = Wisp;
 		};
 /* End XCSwiftPackageProductDependency section */
