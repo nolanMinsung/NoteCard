@@ -162,8 +162,7 @@ private extension MemoDetailViewController {
     func setupActions() {
         rootView.memoTextView.textPublisher
             .receive(on: RunLoop.main)
-            .map(\.isEmpty)
-            .map({ return !$0 })
+            .map({ !$0.isEmpty})
             .assign(to: \.isHidden, on: rootView.textPlaceholderLabel)
             .store(in: &cancellables)
     }
