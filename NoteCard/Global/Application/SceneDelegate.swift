@@ -23,6 +23,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window?.tintColor = UIColor.currentTheme
         
         let mainTabBarCon = MainTabBarController()
+        if #available(iOS 18.0, *) {
+            mainTabBarCon.mode = .tabSidebar
+        }
         self.window?.rootViewController = mainTabBarCon
         self.window?.backgroundColor = .clear
         
