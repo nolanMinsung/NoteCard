@@ -120,7 +120,12 @@ extension MemoSearchingViewController: UICollectionViewDelegate {
             indexPath: indexPath,
         )
         
-        let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+        let topInset: CGFloat
+        if #available(iOS 26.0, *), [.pad, .vision].contains(UIDevice.current.userInterfaceIdiom) {
+            topInset = splitViewController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+        } else {
+            topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+        }
         
         let wispConfiguration = WispConfiguration { config in
             config.setAnimation { animation in

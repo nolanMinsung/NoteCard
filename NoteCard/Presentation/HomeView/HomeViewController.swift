@@ -248,7 +248,12 @@ extension HomeViewController: UICollectionViewDelegate {
         
         let config = WispConfiguration { config in
             config.setLayout { layout in
-                let topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+                let topInset: CGFloat
+                if #available(iOS 26.0, *), [.pad, .vision].contains(UIDevice.current.userInterfaceIdiom) {
+                    topInset = view.safeAreaInsets.top
+                } else {
+                    topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+                }
                 layout.presentedAreaInset = .init(top: topInset, left: 0, bottom: 0, right: 0)
                 layout.initialCornerRadius = 20
                 layout.finalCornerRadius = 37

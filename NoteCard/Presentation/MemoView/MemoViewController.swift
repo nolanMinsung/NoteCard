@@ -555,10 +555,24 @@ extension MemoViewController: UICollectionViewDelegate {
         if collectionView.isEditing {
             return true
         } else {
-            let popupCardTopInset = navigationController?.view.safeAreaInsets.top ?? 0
+            let topInset: CGFloat
+            if #available(iOS 26.0, *), [.pad, .vision].contains(UIDevice.current.userInterfaceIdiom) {
+                switch memoVCType {
+                case .trash:
+                    if let splitViewController, splitViewController.isCollapsed {
+                        topInset = view.safeAreaInsets.top
+                    } else {
+                        topInset = navigationController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+                    }
+                default:
+                    topInset = view.safeAreaInsets.top
+                }
+            } else {
+                topInset = tabBarController?.view.safeAreaInsets.top ?? view.safeAreaInsets.top
+            }
             presentPopupCardVC(
                 at: indexPath,
-                inset: .init(top: popupCardTopInset, left: 0, bottom: 0, right: 0)
+                inset: .init(top: topInset, left: 0, bottom: 0, right: 0)
             )
             return false
         }
