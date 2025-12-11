@@ -26,7 +26,7 @@ final class SearchBar: UIView {
         searchTextField.leftViewMode = .always
         searchTextField.layer.cornerRadius = 10
         searchTextField.layer.cornerCurve = .continuous
-        searchTextField.backgroundColor = .systemGray6
+        searchTextField.backgroundColor = .systemBackground
         searchTextField.placeholder = "검색"
         
         addSubview(searchTextField)

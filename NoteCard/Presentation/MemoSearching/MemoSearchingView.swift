@@ -55,7 +55,7 @@ final class MemoSearchingView: UIView {
         
         backgroundColor = .homeViewBackground
         
-        searchBar.backgroundColor = .systemBackground
+        searchBar.backgroundColor = .memoViewBackground
         
         let searchingLayout = UICollectionViewCompositionalLayout.wisp.make(sectionProvider: sectionProvider)
         collectionView = WispableCollectionView(frame: .zero, collectionViewLayout: searchingLayout)
