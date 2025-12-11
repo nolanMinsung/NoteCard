@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-@UserSettingsActor
+@MainActor
 final class OrderSettingManager {
     
     static let shared = OrderSettingManager()

@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-@UserSettingsActor
+@MainActor
 final class ThemeManager {
     
     private let currentThemeSubject: CurrentValueSubject<UIColor, Never> = .init(UIColor.currentTheme)
