@@ -295,53 +295,83 @@ extension SettingsViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(self.settingTitles[indexPath.section][indexPath.row])
+        tableView.deselectRow(at: indexPath, animated: true)
+        var targetVC: UIViewController?
         
         switch indexPath {
         case IndexPath(row: 0, section: 0):
-            self.navigationController?.pushViewController(ThemeColorPickingViewController(), animated: true)
+            targetVC = ThemeColorPickingViewController()
         case IndexPath(row: 1, section: 0):
-            self.navigationController?.pushViewController(TimeFormatSettingViewController(), animated: true)
+            targetVC = TimeFormatSettingViewController()
         case IndexPath(row: 2, section: 0):
-            self.navigationController?.pushViewController(OrderSettingViewController(), animated: true)
+            targetVC = OrderSettingViewController()
         case IndexPath(row: 3, section: 0):
-            self.navigationController?.pushViewController(DarkModeSettingViewController(), animated: true)
+            targetVC = DarkModeSettingViewController()
             
         case IndexPath(row: 2, section: 1):
-            self.navigationController?.pushViewController(MemoViewController(memoVCType: .trash), animated: true)
+            targetVC = MemoViewController(memoVCType: .trash)
         case IndexPath(row: 3, section: 1):
-            let alertCon = UIAlertController(
-                title: "휴지통 비우기".localized(),
-                message: "휴지통의 모든 메모가 삭제됩니다.\n이 동작은 취소할 수 없습니다.".localized(),
-                preferredStyle: UIAlertController.Style.actionSheet)
-            let deleteAction = UIAlertAction(
-                title: "휴지통 비우기".localized(),
-                style: UIAlertAction.Style.destructive,
-                handler: { [weak self] action in
-                    guard let self else { fatalError() }
-                    let memoEntitiesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash()
-                    memoEntitiesInTrash.forEach { memoEntity in
-                        MemoEntityManager.shared.deleteMemoEntity(memoEntity: memoEntity)
-                    }
-                    self.settingsTableView.reloadRows(at: [indexPath, IndexPath(row: indexPath.row - 1, section: indexPath.section)], with: UITableView.RowAnimation.automatic)
-                    
-                })
-            
-            let cancelAction = UIAlertAction(
-                title: "취소".localized(),
-                style: UIAlertAction.Style.cancel,
-                handler: { [weak self] action in
-                    guard let self else { fatalError() }
-                    self.settingsTableView.reloadRows(at: [indexPath, IndexPath(row: indexPath.row - 1, section: indexPath.section)], with: UITableView.RowAnimation.automatic)
-                })
-            alertCon.addAction(deleteAction)
-            alertCon.addAction(cancelAction)
-            self.present(alertCon, animated: true)
+            showDeleteAllAlert(indexPath: indexPath)
             
         default:
             return
         }
         
+        if let targetVC {
+            showDetailView(viewController: targetVC)
+        }
+    }
+    
+    private func showDetailView(viewController: UIViewController) {
+        guard let splitVC = self.splitViewController else {
+            self.navigationController?.pushViewController(viewController, animated: true)
+            return
+        }
+        
+        if splitVC.isCollapsed {
+            self.navigationController?.pushViewController(viewController, animated: true)
+        } else {
+            let naviCon = UINavigationController(rootViewController: viewController)
+            splitVC.setViewController(naviCon, for: .secondary)
+        }
+    }
+    
+    private func showDeleteAllAlert(indexPath: IndexPath) {
+        let alertCon = UIAlertController(
+            title: "휴지통 비우기".localized(),
+            message: "휴지통의 모든 메모가 삭제됩니다.\n이 동작은 취소할 수 없습니다.".localized(),
+            preferredStyle: UIAlertController.Style.actionSheet)
+        let deleteAction = UIAlertAction(
+            title: "휴지통 비우기".localized(),
+            style: UIAlertAction.Style.destructive,
+            handler: { [weak self] action in
+                guard let self else { fatalError() }
+                let memoEntitiesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash()
+                memoEntitiesInTrash.forEach { memoEntity in
+                    MemoEntityManager.shared.deleteMemoEntity(memoEntity: memoEntity)
+                }
+                self.settingsTableView.reloadRows(at: [indexPath, IndexPath(row: indexPath.row - 1, section: indexPath.section)], with: UITableView.RowAnimation.automatic)
+                
+            })
+        
+        let cancelAction = UIAlertAction(
+            title: "취소".localized(),
+            style: UIAlertAction.Style.cancel,
+            handler: { [weak self] action in
+                guard let self else { fatalError() }
+                self.settingsTableView.reloadRows(at: [indexPath, IndexPath(row: indexPath.row - 1, section: indexPath.section)], with: UITableView.RowAnimation.automatic)
+            })
+        alertCon.addAction(deleteAction)
+        alertCon.addAction(cancelAction)
+        
+        // 아이패드에서 ActionSheet는 popoverPresentationController 설정이 필요함 (크래시 방지)
+        if let popoverController = alertCon.popoverPresentationController {
+            popoverController.sourceView = self.tableView
+            popoverController.sourceRect = self.tableView.rectForRow(at: indexPath)
+            popoverController.permittedArrowDirections = [.up, .down]
+        }
+        
+        self.present(alertCon, animated: true)
     }
     
 }

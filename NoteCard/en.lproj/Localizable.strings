@@ -185,6 +185,8 @@
 
 "설정" = "Settings";
 
+"Settings_Placeholder_text" = "Select Setting to ";
+
 "Black/White" = "Black/White";
 "Brown" = "Brown";
 "Red" = "Red";

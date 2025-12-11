@@ -82,40 +82,39 @@ class MainTabBarController: UITabBarController {
             selectedImage: UIImage(systemName: "magnifyingglass")
         )
         
+        // tab 4: 설정(UISplitViewController)
+        let settingsVC = SettingsViewController()
+        let settingNaviCon = UINavigationController(rootViewController: settingsVC)
         
-        // tab 4: 설정
-        let settingNaviCon = UINavigationController(rootViewController: SettingsViewController())
-        settingNaviCon.tabBarItem = UITabBarItem(
+        let emptyDetailVC = SettingsPlaceholderViewController()
+        let emptyDetailNaviCon = UINavigationController(rootViewController: emptyDetailVC)
+        
+        let splitVC = UISplitViewController(style: .doubleColumn)
+        
+        splitVC.delegate = self
+        splitVC.setViewController(settingsVC, for: .primary)
+        splitVC.setViewController(emptyDetailNaviCon, for: .secondary)
+        
+        splitVC.preferredDisplayMode = .oneBesideSecondary
+        splitVC.preferredSplitBehavior = .tile
+        
+        splitVC.tabBarItem = UITabBarItem(
             title: "설정".localized(),
             image: UIImage(systemName: "gearshape.2"),
             selectedImage: UIImage(systemName: "gearshape.2.fill")
         )
         
-        // tab 5: 설정
         self.setViewControllers(
             [
                 homeNaviCon,
                 noCategoriesCardNaviCon,
                 thirdTabViewController,
                 memoSearchingNaviCon,
-                settingNaviCon
+                splitVC
             ],
             animated: true
         )
     }
-    
-//    private func configureViewHierarchy() {
-//        self.view.addSubview(self.blurView)
-//    }
-    
-//    private func setupConstraints() {
-//        NSLayoutConstraint.activate(
-//            [self.blurView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0),
-//             self.blurView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0),
-//             self.blurView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0),
-//             self.blurView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0)]
-//        )
-//    }
     
 }
 
@@ -133,6 +132,30 @@ extension MainTabBarController: UITabBarControllerDelegate {
         memoMakingNaviCon.modalPresentationStyle = .formSheet
         tabBarController.present(memoMakingNaviCon, animated: true)
         return false
+    }
+    
+}
+
+// MARK: - UISplitViewControllerDelegate
+extension MainTabBarController: UISplitViewControllerDelegate {
+    
+    func splitViewController(
+        _ svc: UISplitViewController,
+        topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
+    ) -> UISplitViewController.Column {
+        
+        guard let secondaryNaviCon = svc.viewController(for: .secondary) as? UINavigationController,
+              let topVC = secondaryNaviCon.topViewController
+        else {
+            return .primary
+        }
+        
+        if topVC is SettingsPlaceholderViewController {
+            return .primary
+        } else {
+            return .secondary
+        }
+        
     }
     
 }

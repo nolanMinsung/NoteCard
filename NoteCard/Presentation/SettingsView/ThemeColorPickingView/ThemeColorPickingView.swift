@@ -31,8 +31,7 @@ final class ThemeColorPickingView: UIView {
     }
     
     private func setupUI() {
-        self.backgroundColor = .systemBackground
-        
+        self.backgroundColor = .systemGray6
         self.addSubview(themeColorPickingTableView)
     }
     

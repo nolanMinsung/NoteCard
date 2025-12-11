@@ -185,6 +185,8 @@
 
 "설정" = "설정";
 
+"Settings_Placeholder_text" = "Select a Setting";
+
 "Black/White" = "흑백";
 "Brown" = "갈색";
 "Red" = "빨강";

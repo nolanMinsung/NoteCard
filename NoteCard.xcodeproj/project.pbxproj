@@ -67,6 +67,7 @@
 		4E59602D2B064BE20029BA3D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602C2B064BE20029BA3D /* SettingsViewController.swift */; };
 		4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602E2B064C290029BA3D /* SettingsView.swift */; };
 		4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */; };
+		4E69E3ED2EEA87A700A05E94 /* SettingsPlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E69E3EC2EEA87A700A05E94 /* SettingsPlaceholderViewController.swift */; };
 		4EAF4F2C2E38580500A1AA36 /* Wisp in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF4F2B2E38580500A1AA36 /* Wisp */; };
 		4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */; };
 		4EC9B6502E42EBD40031250B /* MemoSearchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B64F2E42EBD40031250B /* MemoSearchingViewController.swift */; };
@@ -156,6 +157,7 @@
 		4E59602C2B064BE20029BA3D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4E59602E2B064C290029BA3D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
+		4E69E3EC2EEA87A700A05E94 /* SettingsPlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPlaceholderViewController.swift; sourceTree = "<group>"; };
 		4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListTableViewDiffableDataSource.swift; sourceTree = "<group>"; };
 		4EC9B64F2E42EBD40031250B /* MemoSearchingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingViewController.swift; sourceTree = "<group>"; };
 		4EC9B6512E42EBE80031250B /* MemoSearchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingView.swift; sourceTree = "<group>"; };
@@ -415,6 +417,7 @@
 				4E59602C2B064BE20029BA3D /* SettingsViewController.swift */,
 				4E59602E2B064C290029BA3D /* SettingsView.swift */,
 				4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */,
+				4E69E3EC2EEA87A700A05E94 /* SettingsPlaceholderViewController.swift */,
 				4ED333A42B332F7100492B0F /* ThemeColorPickingView */,
 				4E4FCCB82B3C3335000CBE17 /* DateFormatSettingView */,
 				4E4FCCBF2B3C46FE000CBE17 /* TimeFormatSettingView */,
@@ -638,6 +641,7 @@
 				4EEEB25E2B0864740027AF01 /* MemoDetailViewSelectedImageCell.swift in Sources */,
 				4E1384E32AF3839F0063817B /* CategoryEntityManager.swift in Sources */,
 				4E1384ED2AF3846C0063817B /* HomeView.swift in Sources */,
+				4E69E3ED2EEA87A700A05E94 /* SettingsPlaceholderViewController.swift in Sources */,
 				4E1385192AF387100063817B /* SmallCardCollectionViewCell.swift in Sources */,
 				4EE926872B4AB14900DC4674 /* CardImageShowingScrollView.swift in Sources */,
 				4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */,
