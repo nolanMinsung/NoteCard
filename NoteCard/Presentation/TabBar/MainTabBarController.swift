@@ -84,20 +84,25 @@ class MainTabBarController: UITabBarController {
         
         // tab 4: 설정(UISplitViewController)
         let settingsVC = SettingsViewController()
-        let settingNaviCon = UINavigationController(rootViewController: settingsVC)
+        let settingsNaviCon = UINavigationController(rootViewController: settingsVC)
         
         let emptyDetailVC = SettingsPlaceholderViewController()
         let emptyDetailNaviCon = UINavigationController(rootViewController: emptyDetailVC)
         
-        let splitVC = UISplitViewController(style: .doubleColumn)
+        let splitVC: UISplitViewController
+        
+        if #available(iOS 18.0, *) {
+            splitVC = UISplitViewController(style: .doubleColumn)
+            splitVC.setViewController(settingsVC, for: .primary)
+            splitVC.setViewController(emptyDetailNaviCon, for: .secondary)
+            splitVC.preferredSplitBehavior = .tile
+        } else {
+            splitVC = UISplitViewController()
+            splitVC.viewControllers = [settingsNaviCon, emptyDetailNaviCon]
+        }
         
         splitVC.delegate = self
-        splitVC.setViewController(settingsVC, for: .primary)
-        splitVC.setViewController(emptyDetailNaviCon, for: .secondary)
-        
         splitVC.preferredDisplayMode = .oneBesideSecondary
-        splitVC.preferredSplitBehavior = .tile
-        
         splitVC.tabBarItem = UITabBarItem(
             title: "설정".localized(),
             image: UIImage(systemName: "gearshape.2"),
@@ -143,7 +148,6 @@ extension MainTabBarController: UISplitViewControllerDelegate {
         _ svc: UISplitViewController,
         topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
     ) -> UISplitViewController.Column {
-        
         guard let secondaryNaviCon = svc.viewController(for: .secondary) as? UINavigationController,
               let topVC = secondaryNaviCon.topViewController
         else {
@@ -155,7 +159,20 @@ extension MainTabBarController: UISplitViewControllerDelegate {
         } else {
             return .secondary
         }
+    }
+    
+    func splitViewController(
+        _ splitViewController: UISplitViewController,
+        collapseSecondary secondaryViewController: UIViewController,
+        onto primaryViewController: UIViewController
+    ) -> Bool {
+        guard let secondaryNaviCon = secondaryViewController as? UINavigationController,
+              let topVC = secondaryNaviCon.topViewController else {
+            return true
+        }
         
+        // 빈 화면(Placeholder)인 경우 목록만 보여줌
+        return topVC is SettingsPlaceholderViewController
     }
     
 }
