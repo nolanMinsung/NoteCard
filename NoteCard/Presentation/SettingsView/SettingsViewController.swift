@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 class SettingsViewController: UITableViewController {
     
@@ -39,12 +40,15 @@ class SettingsViewController: UITableViewController {
         return tableView
     }()
     
+    private var cancellables = Set<AnyCancellable>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
         setupNaviBar()
         setupDelegates()
+        setSubscriptions()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,6 +93,17 @@ class SettingsViewController: UITableViewController {
     private func setupDelegates() {
         self.settingsTableView.dataSource = self
         self.settingsTableView.delegate = self
+    }
+    
+    private func setSubscriptions() {
+        
+        ThemeManager.shared.currentThemePublisher
+            .subscribe(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.tableView.reloadData()
+            }
+            .store(in: &cancellables)
     }
     
 }
@@ -323,17 +338,25 @@ extension SettingsViewController {
     }
     
     private func showDetailView(viewController: UIViewController) {
-        guard let splitVC = self.splitViewController else {
-            self.navigationController?.pushViewController(viewController, animated: true)
-            return
-        }
         
-        if splitVC.isCollapsed {
-            self.navigationController?.pushViewController(viewController, animated: true)
+        let naviCon = UINavigationController(rootViewController: viewController)
+        if let splitViewController {
+            splitViewController.showDetailViewController(naviCon, sender: self)
         } else {
-            let naviCon = UINavigationController(rootViewController: viewController)
-            splitVC.setViewController(naviCon, for: .secondary)
+            self.navigationController?.pushViewController(viewController, animated: true)
         }
+//        
+//        guard let splitVC = self.splitViewController else {
+//            self.navigationController?.pushViewController(viewController, animated: true)
+//            return
+//        }
+//        
+//        if splitVC.isCollapsed {
+//            self.navigationController?.pushViewController(viewController, animated: true)
+//        } else {
+//            let naviCon = UINavigationController(rootViewController: viewController)
+//            splitVC.setViewController(naviCon, for: .secondary)
+//        }
     }
     
     private func showDeleteAllAlert(indexPath: IndexPath) {
