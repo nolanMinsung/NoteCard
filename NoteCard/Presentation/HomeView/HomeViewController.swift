@@ -185,49 +185,32 @@ class HomeViewController: UIViewController {
 //        }
 //        .store(in: &cancellables)
         
-        Task {
-            await ThemeManager.shared.currentThemePublisher
-                .sink { [weak self] color in
-                    guard let self else { return }
-                    Task {
-                        self.tabBarController?.tabBar.tintColor = UIColor.currentTheme
-                        self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
-                        self.navigationController?.toolbar.tintColor = UIColor.currentTheme
-                        self.homeCollectionView.reloadData()
-                    }
-                }.store(in: &cancellables)
-            
-            let coreDataChangeStream = coreDataChangePublisher.map { _ in return () }
-            let orderSettingChangeStream = await OrderSettingManager.shared.orderSettingChangedPublisher
-            
-            coreDataChangeStream
-                .merge(with: orderSettingChangeStream)
-                .sink { [weak self] _ in
-                    guard let self else { return }
-                    Task {
-                        try await self.fetchData()
-                        self.applySnapshot()
-                    }
+        ThemeManager.shared.currentThemePublisher
+            .sink { [weak self] color in
+                guard let self else { return }
+                self.tabBarController?.tabBar.tintColor = UIColor.currentTheme
+                self.navigationController?.navigationBar.tintColor = UIColor.currentTheme
+                self.navigationController?.toolbar.tintColor = UIColor.currentTheme
+                self.view.setNeedsLayout()
+                self.homeCollectionView.visibleCells.forEach { cell in
+                    // 테마 색에 맞게 그림자를 그리는 작업이 layoutSubviews에서 진행되기 때문...
+                    cell.setNeedsLayout()
                 }
-                .store(in: &cancellables)
-        }
+            }.store(in: &cancellables)
         
-//        NotificationCenter.default.addObserver(
-//            forName: NSNotification.Name("didCreateNewCategoryNotification"),
-//            object: nil, queue: nil
-//        ) { [weak self] _ in
-//            guard let self else { return }
-//            guard let homeView = self.view as? HomeView else { return }
-//            homeView.homeCollectionView.reloadData()
-//        }
+        let coreDataChangeStream = coreDataChangePublisher.map { _ in return () }
+        let orderSettingChangeStream = OrderSettingManager.shared.orderSettingChangedPublisher
         
-//        NotificationCenter.default.addObserver(
-//            self,
-//            selector: #selector(memoEdited),
-//            name: NSNotification.Name("editingCompleteNotification"),
-//            object: nil
-//        )
-        
+        coreDataChangeStream
+            .merge(with: orderSettingChangeStream)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Task {
+                    try await self.fetchData()
+                    self.applySnapshot()
+                }
+            }
+            .store(in: &cancellables)
     }
     
     @objc private func onHeaderButtonTapped(_ sender: UIButton) {

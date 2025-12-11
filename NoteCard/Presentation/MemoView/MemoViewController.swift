@@ -308,19 +308,15 @@ private extension MemoViewController {
             print("복구 notification 추가됨")
         }
         
-        Task {
-            await ThemeManager.shared.currentThemePublisher
-                .sink { [weak self] _ in
-                    guard let self else { return }
-                    Task {
-                        self.rootView.smallCardCollectionView.visibleCells.forEach { cell in
-                            // 테마 색에 맞게 그림자를 그리는 작업이 layoutSubviews에서 진행되기 때문...
-                            cell.setNeedsLayout()
-                        }
-                    }
+        ThemeManager.shared.currentThemePublisher
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.rootView.smallCardCollectionView.visibleCells.forEach { cell in
+                    // 테마 색에 맞게 그림자를 그리는 작업이 layoutSubviews에서 진행되기 때문...
+                    cell.setNeedsLayout()
                 }
-                .store(in: &cancellables)
-        }
+            }
+            .store(in: &cancellables)
     }
     
 }

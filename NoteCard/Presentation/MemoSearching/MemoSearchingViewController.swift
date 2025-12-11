@@ -83,19 +83,14 @@ private extension MemoSearchingViewController {
             }
             .store(in: &cancellables)
         
-        Task {
-            await ThemeManager.shared.currentThemePublisher
-                .sink { [weak self] _ in
-                    guard let self else { return }
-                    Task {
-                        self.rootView.collectionView.visibleCells.forEach { cell in
-                            // 테마 색에 맞게 그림자를 그리는 작업이 layoutSubviews에서 진행되기 때문...
-                            cell.setNeedsLayout()
-                        }
-                    }
+        ThemeManager.shared.currentThemePublisher
+            .sink { [weak self] _ in
+                self?.rootView.collectionView.visibleCells.forEach { cell in
+                    // 테마 색에 맞게 그림자를 그리는 작업이 layoutSubviews에서 진행되기 때문...
+                    cell.setNeedsLayout()
                 }
-                .store(in: &cancellables)
-        }
+            }
+            .store(in: &cancellables)
     }
     
 }
