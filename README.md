@@ -24,6 +24,23 @@
     
     이메일: mskim4048@naver.com
 
-| | | | | |
-|:-:|:-:|:-:|:-:|:-:|
+## 스크린샷
+
 | <img width="200" alt="image" src="https://github.com/user-attachments/assets/76a7724f-5ab5-433a-a1e7-28c6322efbdc" />|<img width="200" alt="image" src="https://github.com/user-attachments/assets/5554162f-806f-4037-ae0b-0154ff052d67" />| <img width="200" alt="image" src="https://github.com/user-attachments/assets/cd3d6de4-1e75-4693-bd21-93bd7f7a87e7" />| <img width="200" alt="image" src="https://github.com/user-attachments/assets/de2c3630-b4b8-402c-98c9-2e8a46510fc6" />|<img width="200" alt="image" src="https://github.com/user-attachments/assets/618f9955-da4b-4bcc-9f10-473e0a619e0a" />|
+|:-:|:-:|:-:|:-:|:-:|
+| | | | | |
+
+## 주요 구현 사항
+
+- **Combine**: `Combine` 프레임워크를 사용하여 비동기 이벤트 및 데이터 흐름을 반응형 처리
+- **Core Data Migration**: Core Data Lightweight Migration을 통한 데이터베이스 버전 관리
+- **Custom Design System**: `Assets`의 Color Set과 `UIColor` Extension을 활용하여 커스텀 디자인 시스템 구축 및 이를 통해 다크 모드/라이트 모드 지원
+- **Localization**: 다국어 지원(한국어, 영어)
+
+## 기술 스택 및 아키텍처
+- **Architecture**: Clean Architecture를 지향
+    - Presentation, Application, Domain, Data의 4가지 주요 레이어로 구성되어 의존성 규칙 준수
+- **UI**: UIKit(codebase)
+- **Data Persistence**: Core Data
+- **Asynchronous**: Combine
+- **Language**: Swift
