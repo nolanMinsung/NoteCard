@@ -18,15 +18,15 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     private let imageView = UIImageView()
     private let scrollView = CardImageShowingScrollView()
     
-    lazy var scrollViewCenterXConstraint = self.scrollView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: 0)
-    lazy var scrollViewCenterYConstraint = self.scrollView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 0)
-    lazy var scrollViewWidthConstraint = self.scrollView.widthAnchor.constraint(equalToConstant: self.contentView.bounds.width)
-    lazy var scrollViewHeightConstraint = self.scrollView.heightAnchor.constraint(equalToConstant: self.contentView.bounds.height)
+    lazy var scrollViewCenterXConstraint = scrollView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 0)
+    lazy var scrollViewCenterYConstraint = scrollView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 0)
+    lazy var scrollViewWidthConstraint = scrollView.widthAnchor.constraint(equalToConstant: contentView.bounds.width)
+    lazy var scrollViewHeightConstraint = scrollView.heightAnchor.constraint(equalToConstant: contentView.bounds.height)
     
-    lazy var imageViewCenterXConstraint = self.imageView.centerXAnchor.constraint(equalTo: self.scrollView.centerXAnchor, constant: 0)
-    lazy var imageViewCenterYConstraint = self.imageView.centerYAnchor.constraint(equalTo: self.scrollView.centerYAnchor, constant: 0)
-    lazy var imageViewWidthConstraint = self.imageView.widthAnchor.constraint(equalToConstant: self.contentView.bounds.width)
-    lazy var imageViewHeightConstraint = self.imageView.heightAnchor.constraint(equalToConstant: self.contentView.bounds.height)
+    lazy var imageViewCenterXConstraint = imageView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 0)
+    lazy var imageViewCenterYConstraint = imageView.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor, constant: 0)
+    lazy var imageViewWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: contentView.bounds.width)
+    lazy var imageViewHeightConstraint = imageView.heightAnchor.constraint(equalToConstant: contentView.bounds.height)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -89,19 +89,19 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupDelegates() {
-        self.scrollView.delegate = self
+        scrollView.delegate = self
     }
     
     private func setupGestures() {
-        self.imageView.addGestureRecognizer(self.doubleTapGesture)
-        self.doubleTapGesture.numberOfTapsRequired = 2
-        self.doubleTapGesture.addTarget(self, action: #selector(handleDoubleTapGesture))
+        imageView.addGestureRecognizer(self.doubleTapGesture)
+        doubleTapGesture.numberOfTapsRequired = 2
+        doubleTapGesture.addTarget(self, action: #selector(handleDoubleTapGesture))
     }
     
     @objc private func handleDoubleTapGesture(gesture: UITapGestureRecognizer) {
         print(#function)
-        let touchPoint = gesture.location(ofTouch: 0, in: self.imageView)
-        let imageFrame = self.imageView.frame
+        let touchPoint = gesture.location(ofTouch: 0, in: imageView)
+        let imageFrame = imageView.frame
         print(imageFrame)
         print(touchPoint)
         
@@ -109,30 +109,30 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         var rectToZoom = CGRect()
         rectToZoom.origin = CGPoint(x: location.x - 50, y: location.y - 50)
         rectToZoom.size = CGSize(width: 100, height: 100)
-        if self.scrollView.zoomScale > 1 {
-            self.scrollView.setZoomScale(1.0, animated: true)
+        if scrollView.zoomScale > 1 {
+            scrollView.setZoomScale(1.0, animated: true)
         } else {
-            self.scrollView.zoom(to: rectToZoom, animated: true)
+            scrollView.zoom(to: rectToZoom, animated: true)
         }
     }
     
     func configureCell(with image: UIImage) {
-        self.imageView.image = image
+        imageView.image = image
         let contentViewRatio = self.contentView.bounds.height / self.contentView.bounds.width
         let imageSizeRatio = image.size.height / image.size.width
         
         if imageSizeRatio <= contentViewRatio {
-            self.scrollViewWidthConstraint.constant = self.contentView.bounds.width
-            self.imageViewWidthConstraint.constant = self.contentView.bounds.width
+            scrollViewWidthConstraint.constant = contentView.bounds.width
+            imageViewWidthConstraint.constant = contentView.bounds.width
             
-            self.scrollViewHeightConstraint.constant = self.contentView.bounds.width * imageSizeRatio
-            self.imageViewHeightConstraint.constant = self.contentView.bounds.width * imageSizeRatio
+            scrollViewHeightConstraint.constant = contentView.bounds.width * imageSizeRatio
+            imageViewHeightConstraint.constant = contentView.bounds.width * imageSizeRatio
         } else {
-            self.scrollViewHeightConstraint.constant = self.contentView.bounds.height
-            self.imageViewHeightConstraint.constant = self.contentView.bounds.height
+            scrollViewHeightConstraint.constant = contentView.bounds.height
+            imageViewHeightConstraint.constant = contentView.bounds.height
             
-            self.scrollViewWidthConstraint.constant = self.contentView.bounds.height / imageSizeRatio
-            self.imageViewWidthConstraint.constant = self.contentView.bounds.height / imageSizeRatio
+            scrollViewWidthConstraint.constant = contentView.bounds.height / imageSizeRatio
+            imageViewWidthConstraint.constant = contentView.bounds.height / imageSizeRatio
         }
         updateConstraints()
     }
@@ -142,7 +142,7 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
 extension CardImageShowingCollectionViewCell: UIScrollViewDelegate {
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return self.imageView
+        return imageView
     }
     
 }
