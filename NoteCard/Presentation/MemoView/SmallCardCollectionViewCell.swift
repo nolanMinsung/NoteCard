@@ -117,7 +117,7 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         
         titleTextLabel.isEnabled = false
         titleTextLabel.borderStyle = .none
-        titleTextLabel.placeholder = "제목 없음".localized()
+        titleTextLabel.placeholder = L10n.PopupCard.noTitle
         titleTextLabel.font = UIFont.systemFont(ofSize: 15)
         titleTextLabel.textColor = .label
         titleTextLabel.textAlignment = .center

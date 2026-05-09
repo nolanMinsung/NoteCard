@@ -51,7 +51,7 @@ private extension MemoSearchingViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         
-        navigationItem.title = "메모 검색".localized()
+        navigationItem.title = L10n.TabBar.searchMemo
     }
     
     func setupDiffableDataSource() {

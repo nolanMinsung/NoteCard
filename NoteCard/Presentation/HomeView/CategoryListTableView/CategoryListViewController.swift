@@ -124,7 +124,7 @@ class CategoryListViewController: UITableViewController {
     
     private func setupNaviBar() {
         print(#function)
-        self.title = "전체 카테고리 목록".localized()
+        self.title = L10n.CategoryList.allCategoriesTitle
         
         self.navigationItem.searchController = self.searchController
         self.navigationItem.hidesSearchBarWhenScrolling = true
@@ -219,22 +219,22 @@ extension CategoryListViewController {
         guard let swipedCell = tableView.cellForRow(at: indexPath) as? CategoryListTableViewCell else { fatalError() }
         let selectedCategoryEntity = swipedCell.categoryEntity
         
-        let editNameContextualAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "이름 변경".localized()) { [weak self] contextualAction, view, completionHandler in
+        let editNameContextualAction = UIContextualAction(style: UIContextualAction.Style.normal, title: L10n.CategoryList.rename) { [weak self] contextualAction, view, completionHandler in
             guard let self else { return }
             
             tableView.setEditing(false, animated: true)
             
             guard let selectedCategoryEntity else { return }
             //let alertCon = UIAlertController(title: "카테고리 이름 변경", message: "새 카테고리 이름을 적어주세요.", preferredStyle: UIAlertController.Style.alert)
-            let alertCon = UIAlertController(title: "카테고리 이름 변경".localized(), message: "", preferredStyle: UIAlertController.Style.alert)
+            let alertCon = UIAlertController(title: L10n.CategoryList.renameCategory, message: "", preferredStyle: UIAlertController.Style.alert)
             alertCon.addTextField { textField in
                 self.categoryNameChangingTextField = textField
-                self.categoryNameChangingTextField.placeholder = "새 카테고리 이름을 입력하세요.".localized()
+                self.categoryNameChangingTextField.placeholder = L10n.CategoryList.enterNewCategoryName
                 self.categoryNameChangingTextField.text = selectedCategoryEntity.name
                 self.categoryNameChangingTextField.addTarget(self, action: #selector(self.toggleSaveAction), for: UIControl.Event.editingChanged)
             }
             
-            self.saveAction = UIAlertAction(title: "저장".localized(), style: UIAlertAction.Style.destructive) { [weak self] action in
+            self.saveAction = UIAlertAction(title: L10n.Common.save, style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { return }
                 //guard let cardView = self.view as? CardView else { return }
                 guard let newCategoryName = alertCon.textFields?[0].text else { return }
@@ -244,11 +244,11 @@ extension CategoryListViewController {
                 } catch {
                     print(error.localizedDescription)
                     let duplicateAlertCon = UIAlertController(
-                        title: "이름 중복".localized(),
-                        message: "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요.".localized(),
+                        title: L10n.CategoryList.duplicateName,
+                        message: L10n.CategoryList.duplicateNameMessage,
                         preferredStyle: UIAlertController.Style.actionSheet
                     )
-                    let okAction = UIAlertAction(title: "확인".localized(), style: UIAlertAction.Style.cancel) { action in
+                    let okAction = UIAlertAction(title: L10n.Common.ok, style: UIAlertAction.Style.cancel) { action in
                         self.navigationController?.present(alertCon, animated: true)
                     }
                     duplicateAlertCon.addAction(okAction)
@@ -260,7 +260,7 @@ extension CategoryListViewController {
                 return
             }
             
-            let cancelAction = UIAlertAction(title: "취소".localized(), style: UIAlertAction.Style.cancel) { action in return }
+            let cancelAction = UIAlertAction(title: L10n.Common.cancel, style: UIAlertAction.Style.cancel) { action in return }
             
             alertCon.addAction(self.saveAction)
             alertCon.addAction(cancelAction)
@@ -269,19 +269,19 @@ extension CategoryListViewController {
         }
         
         
-        let deleteContextualAction = UIContextualAction(style: UIContextualAction.Style.destructive, title: "삭제".localized()) { [weak self] contextualAction, view, completionHandler in
+        let deleteContextualAction = UIContextualAction(style: UIContextualAction.Style.destructive, title: L10n.Common.delete) { [weak self] contextualAction, view, completionHandler in
             guard let self else { fatalError() }
             
             let alertCon = UIAlertController(
-                title: "카테고리 삭제".localized(),
-                message: "카테고리를 삭제하시겠습니까?\n카테고리에 속한 메모들은 삭제되지 않습니다.".localized(),
+                title: L10n.CategoryList.deleteCategory,
+                message: L10n.CategoryList.deleteCategoryConfirm,
                 preferredStyle: UIAlertController.Style.alert
             )
-            let cancelAction = UIAlertAction(title: "취소".localized(), style: UIAlertAction.Style.cancel) { action in
+            let cancelAction = UIAlertAction(title: L10n.Common.cancel, style: UIAlertAction.Style.cancel) { action in
                 completionHandler(true)
             }
             
-            let deleteAction = UIAlertAction(title: "삭제".localized(), style: UIAlertAction.Style.destructive) { [weak self] action in
+            let deleteAction = UIAlertAction(title: L10n.Common.delete, style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { fatalError() }
                 Task {
                     try await CategoryEntityRepository.shared.deleteCategory(swipedCell.categoryEntity.toDomain())

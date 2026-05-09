@@ -9,7 +9,7 @@ import UIKit
 
 final class OrderSettingViewController: UIViewController {
     
-    let dataSource = ["수정 시간".localized(), "만든 시간".localized()]
+    let dataSource = [L10n.Settings.modificationTime, L10n.Settings.creationTime]
     let isOrderAscending: Bool = false
     
     lazy var orderSettingView = self.view as! OrderSettingView
@@ -43,7 +43,7 @@ final class OrderSettingViewController: UIViewController {
     }
     
     private func setupNaviBar() {
-        self.title = "메모 순서 표시".localized()
+        self.title = L10n.Settings.memoSortingTitle
         self.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.navigationBar.tintColor = .currentTheme
     }
@@ -74,9 +74,9 @@ extension OrderSettingViewController: UITableViewDataSource {
             cell.configureCell(text: self.dataSource[indexPath.row])
         case 1:
             if indexPath.row == 0 {
-                cell.configureCell(text: "오름차순".localized())
+                cell.configureCell(text: L10n.Settings.ascending)
             } else if indexPath.row == 1 {
-                cell.configureCell(text: "내림차순".localized())
+                cell.configureCell(text: L10n.Settings.descending)
             }
             
         default:
@@ -88,7 +88,7 @@ extension OrderSettingViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return "메모 정렬 기준".localized()
+            return L10n.Settings.memoSortingCriteria
         } else {
             return nil
         }

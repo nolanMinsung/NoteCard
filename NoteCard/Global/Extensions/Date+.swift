@@ -33,9 +33,9 @@ extension Date {
         let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         
         if calendar.isDateInToday(self) {
-            return "오늘".localized() + " " + formatterForTime.string(from: self)
+            return L10n.Date.today + " " + formatterForTime.string(from: self)
         } else if calendar.isDateInYesterday(self) {
-            return "어제".localized() + " " + formatterForTime.string(from: self)
+            return L10n.Date.yesterday + " " + formatterForTime.string(from: self)
         } else {
             return formatterForDate.string(from: self)
         }
@@ -57,9 +57,9 @@ extension Date {
         let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         
         if calendar.isDateInToday(modificationDate) {
-            return "오늘".localized() + " " + formatterForTime.string(from: modificationDate)
+            return L10n.Date.today + " " + formatterForTime.string(from: modificationDate)
         } else if calendar.isDateInYesterday(self) {
-            return "어제".localized() + " " + formatterForTime.string(from: modificationDate)
+            return L10n.Date.yesterday + " " + formatterForTime.string(from: modificationDate)
         } else {
             return formatterForDate.string(from: modificationDate)
         }

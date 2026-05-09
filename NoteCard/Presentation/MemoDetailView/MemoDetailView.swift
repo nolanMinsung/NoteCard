@@ -372,7 +372,7 @@ extension MemoDetailView {
         titleTextField.layer.cornerCurve = .continuous
         titleTextField.tintColor = UIColor.currentTheme
         titleTextField.font = UIFont.systemFont(ofSize: 20)
-        titleTextField.placeholder = "제목 없음".localized()
+        titleTextField.placeholder = L10n.PopupCard.noTitle
         titleTextField.textAlignment = NSTextAlignment.left
         titleTextField.tintColor = .currentTheme
         
@@ -421,7 +421,7 @@ extension MemoDetailView {
         memoTextView.textContainerInset = UIEdgeInsets(top: 15, left: 6, bottom: 10, right: 6)
         
         memoTextView.setLineSpace(
-            with: "".localized(),
+            with: "",
             lineSpace: 5,
             font: UIFont.systemFont(ofSize: 15)
         )
@@ -429,7 +429,7 @@ extension MemoDetailView {
     
     private func setupPlaceholderLabel() {
         textPlaceholderLabel.font = .systemFont(ofSize: 15)
-        textPlaceholderLabel.text = "메모를 입력하세요.".localized()
+        textPlaceholderLabel.text = L10n.MemoDetail.writeMemoPlaceholder
         textPlaceholderLabel.textColor = .tertiaryLabel
         textPlaceholderLabel.isUserInteractionEnabled = false
     }
@@ -454,7 +454,7 @@ extension MemoDetailView {
         config.baseBackgroundColor = .clear
         config.baseForegroundColor = .currentTheme
         config.image = UIImage(systemName: "chevron.right")
-        config.title = "카테고리".localized()
+        config.title = L10n.Home.category
         config.imagePadding = 5
         config.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
         

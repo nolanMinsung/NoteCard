@@ -52,25 +52,25 @@ final class ThemeColorPickingTableViewCell: UITableViewCell {
         switch themeColor {
 
         case .themeColorBlack:
-            defaultContentConfig.text = "Black/White".localized()
+            defaultContentConfig.text = L10n.ThemeColor.blackWhite
         case .themeColorBrown:
-            defaultContentConfig.text = "Brown".localized()
+            defaultContentConfig.text = L10n.ThemeColor.brown
         case .themeColorRed:
-            defaultContentConfig.text = "Red".localized()
+            defaultContentConfig.text = L10n.ThemeColor.red
         case .themeColorOrange:
-            defaultContentConfig.text = "Orange".localized()
+            defaultContentConfig.text = L10n.ThemeColor.orange
         case .themeColorYellow:
-            defaultContentConfig.text = "Yellow".localized()
+            defaultContentConfig.text = L10n.ThemeColor.yellow
         case .themeColorGreen:
-            defaultContentConfig.text = "Green".localized()
+            defaultContentConfig.text = L10n.ThemeColor.green
         case .themeColorSkyBlue:
-            defaultContentConfig.text = "Skyblue".localized()
+            defaultContentConfig.text = L10n.ThemeColor.skyblue
         case .themeColorBlue:
-            defaultContentConfig.text = "Blue".localized()
+            defaultContentConfig.text = L10n.ThemeColor.blue
         case .themeColorPurple:
-            defaultContentConfig.text = "Purple".localized()
+            defaultContentConfig.text = L10n.ThemeColor.purple
         default:
-            defaultContentConfig.text = "Black".localized()
+            defaultContentConfig.text = L10n.ThemeColor.black
         }
         
         self.contentConfiguration = defaultContentConfig

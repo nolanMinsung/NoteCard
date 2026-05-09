@@ -219,9 +219,9 @@ final class PopupCardView: UIView {
             guard let hourAfterDeleted = dateAfterDeleted.hour else { fatalError() }
             
             if dayAfterDeleted < 13 {
-                self.memoDateLabel.text = String(format: "%d일 뒤에 삭제됨".localized(), 14 - dayAfterDeleted)
+                self.memoDateLabel.text = String(format: L10n.Date.willBeDeletedInDays, 14 - dayAfterDeleted)
             } else {
-                self.memoDateLabel.text = "1일 이내에 삭제됨".localized()
+                self.memoDateLabel.text = L10n.Date.willBeDeletedWithin24h
             }
             
             self.likeButton.isEnabled = false
@@ -231,12 +231,12 @@ final class PopupCardView: UIView {
             
         } else if orderCriterion == OrderCriterion.creationDate.rawValue {
             self.memoDateLabel.text = String(
-                format: "%@에 생성됨".localized(),
+                format: L10n.Date.createdOn,
                 memo.creationDate.getCreationDateInString()
             )
         } else {
             self.memoDateLabel.text = String(
-                format: "%@에 수정됨".localized(),
+                format: L10n.Date.editedOn,
                 memo.modificationDate.getModificationDateString()
             )
         }
@@ -305,7 +305,7 @@ extension PopupCardView {
         titleTextField.inputAccessoryView = bar
         
         titleTextField.font = UIFont.systemFont(ofSize: 18)
-        titleTextField.placeholder = "제목 없음".localized()
+        titleTextField.placeholder = L10n.PopupCard.noTitle
         titleTextField.borderStyle = .none
         titleTextField.text = ""
         titleTextField.textAlignment = .left

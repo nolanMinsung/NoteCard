@@ -64,11 +64,11 @@ class CategorySelectionViewController: UIViewController {
     }
     
     private func setupNaviBar() {
-        self.title = "카테고리 선택하기".localized()
+        self.title = L10n.CategorySelection.selectCategoryTitle
         self.navigationController?.navigationBar.tintColor = .currentTheme
-        let cancelBarButtonItem = UIBarButtonItem(title: "취소".localized(), style: UIBarButtonItem.Style.done, target: self, action: #selector(cancelCategorySelection))
-        let appendBarButtonItem = UIBarButtonItem(title: "추가".localized(), style: UIBarButtonItem.Style.done, target: self, action: #selector(appendCategories))
-        let removeBarButtonItem = UIBarButtonItem(title: "해제".localized(), style: UIBarButtonItem.Style.done, target: self, action: #selector(removeCategories))
+        let cancelBarButtonItem = UIBarButtonItem(title: L10n.Common.cancel, style: UIBarButtonItem.Style.done, target: self, action: #selector(cancelCategorySelection))
+        let appendBarButtonItem = UIBarButtonItem(title: L10n.Common.add, style: UIBarButtonItem.Style.done, target: self, action: #selector(appendCategories))
+        let removeBarButtonItem = UIBarButtonItem(title: L10n.Common.remove, style: UIBarButtonItem.Style.done, target: self, action: #selector(removeCategories))
         
         self.navigationItem.leftBarButtonItem = cancelBarButtonItem
         
@@ -212,7 +212,7 @@ extension CategorySelectionViewController: UICollectionViewDelegate {
             self.navigationItem.rightBarButtonItem?.isEnabled = true
         }
         
-        self.title = String(format: "%d개의 카테고리 선택됨".localized(), self.categoryListCollectionView.indexPathsForSelectedItems?.count ?? 0)
+        self.title = String(format: L10n.CategorySelection.categoriesSelectedFormat, self.categoryListCollectionView.indexPathsForSelectedItems?.count ?? 0)
         
     }
     
@@ -227,7 +227,7 @@ extension CategorySelectionViewController: UICollectionViewDelegate {
         }
         
         guard let numberOfSelectedCategories = self.categoryListCollectionView.indexPathsForSelectedItems?.count else { fatalError() }
-        self.title = numberOfSelectedCategories == 0 ? "카테고리 선택하기".localized() : String(format: "%d개의 카테고리 선택됨".localized(), numberOfSelectedCategories)
+        self.title = numberOfSelectedCategories == 0 ? L10n.CategorySelection.selectCategoryTitle : String(format: L10n.CategorySelection.categoriesSelectedFormat, numberOfSelectedCategories)
     }
     
 }

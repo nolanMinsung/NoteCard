@@ -41,7 +41,7 @@ final class ThemeColorPickingViewController: UIViewController {
     }
     
     private func setupNaviBar() {
-        self.title = "테마 색 선택".localized()
+        self.title = L10n.Settings.selectThemeColor
         
         let standardAppearance: UINavigationBarAppearance = {
             let appearance = UINavigationBarAppearance()
