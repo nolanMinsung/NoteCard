@@ -45,18 +45,49 @@ platform :ios do
   # TestFlight build & upload
   # ─────────────────────────────────────────────────────────────
 
-  desc "Build the app and upload to TestFlight. No App Store submission."
-  lane :beta do
-    bump_build
-
-    match(type: "appstore", readonly: true)
+  desc "Verify build: archive only, no upload, no version bump. Use for fastlane setup validation."
+  lane :verify_build do
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key: asc_api_key
+    )
 
     build_app(
       scheme: "NoteCard",
       configuration: "Release",
       export_method: "app-store",
       output_directory: "build",
-      clean: true
+      clean: true,
+      export_options: {
+        provisioningProfiles: {
+          "com.minsung.NoteCard" => "match AppStore com.minsung.NoteCard"
+        }
+      }
+    )
+  end
+
+  desc "Build the app and upload to TestFlight. No App Store submission."
+  lane :beta do
+    bump_build
+
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key: asc_api_key
+    )
+
+    build_app(
+      scheme: "NoteCard",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      clean: true,
+      export_options: {
+        provisioningProfiles: {
+          "com.minsung.NoteCard" => "match AppStore com.minsung.NoteCard"
+        }
+      }
     )
 
     upload_to_testflight(
@@ -86,10 +117,10 @@ platform :ios do
   # First-time / maintenance lanes
   # ─────────────────────────────────────────────────────────────
 
-  desc "Initial match setup. Run once. Requires the certificate repo URL configured in Matchfile."
+  desc "Initial match setup. Run once. Generates dev + appstore certs/profiles and pushes to the cert repo."
   lane :match_setup do
-    match(type: "development")
-    match(type: "appstore")
+    match(type: "development", api_key: asc_api_key)
+    match(type: "appstore", api_key: asc_api_key)
   end
 
   desc "Sync existing local metadata/screenshots from App Store Connect to local files."

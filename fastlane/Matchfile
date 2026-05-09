@@ -1,0 +1,5 @@
+git_url("git@github.com:nolanMinsung/notecard-certs.git")
+storage_mode("git")
+
+type("development") # default; override per-lane via match(type: "appstore")
+app_identifier(["com.minsung.NoteCard"])
