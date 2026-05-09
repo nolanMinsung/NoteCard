@@ -1,4 +1,46 @@
+require 'xcodeproj'
+
 default_platform(:ios)
+
+PROJECT_PATH = File.expand_path('../NoteCard.xcodeproj', __dir__)
+TARGET_NAME = "NoteCard"
+
+# Direct pbxproj manipulation via xcodeproj gem.
+# Why: agvtool-based fastlane actions (increment_version_number) don't accept a
+# `target` parameter, so they fail on multi-target projects (e.g., NoteCard + NoteCard.eng).
+def update_marketing_version(bump_type:)
+  project = Xcodeproj::Project.open(PROJECT_PATH)
+  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
+  current = target.build_configurations.first.build_settings["MARKETING_VERSION"]
+  parts = current.split(".").map(&:to_i)
+  parts << 0 while parts.length < 3
+  case bump_type
+  when "major" then parts[0] += 1; parts[1] = 0; parts[2] = 0
+  when "minor" then parts[1] += 1; parts[2] = 0
+  else              parts[2] += 1   # patch
+  end
+  new_version = parts.join(".")
+  target.build_configurations.each { |c| c.build_settings["MARKETING_VERSION"] = new_version }
+  project.save
+  new_version
+end
+
+def set_build_number(value)
+  project = Xcodeproj::Project.open(PROJECT_PATH)
+  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
+  target.build_configurations.each { |c| c.build_settings["CURRENT_PROJECT_VERSION"] = value.to_s }
+  project.save
+end
+
+def increment_build_number_pbxproj
+  project = Xcodeproj::Project.open(PROJECT_PATH)
+  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
+  current = target.build_configurations.first.build_settings["CURRENT_PROJECT_VERSION"].to_i
+  new_build = current + 1
+  target.build_configurations.each { |c| c.build_settings["CURRENT_PROJECT_VERSION"] = new_build.to_s }
+  project.save
+  new_build
+end
 
 platform :ios do
   before_all do
@@ -26,18 +68,16 @@ platform :ios do
 
   desc "Increment build number and commit. Run on release branch."
   lane :bump_build do
-    increment_build_number(xcodeproj: "NoteCard.xcodeproj")
-    build = get_build_number(xcodeproj: "NoteCard.xcodeproj")
-    version = get_version_number(xcodeproj: "NoteCard.xcodeproj", target: "NoteCard")
+    build = increment_build_number_pbxproj
+    version = get_version_number(xcodeproj: "NoteCard.xcodeproj", target: TARGET_NAME)
     sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump build to #{version} (#{build})'")
   end
 
   desc "Increment marketing version. Resets build number to 1. Pass type:'patch'|'minor'|'major' (default 'patch')."
   lane :bump_version do |options|
     bump_type = options[:type] || "patch"
-    increment_version_number(bump_type: bump_type, xcodeproj: "NoteCard.xcodeproj")
-    increment_build_number(build_number: 1, xcodeproj: "NoteCard.xcodeproj")
-    version = get_version_number(xcodeproj: "NoteCard.xcodeproj", target: "NoteCard")
+    version = update_marketing_version(bump_type: bump_type)
+    set_build_number(1)
     sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump version to #{version}'")
   end
 
