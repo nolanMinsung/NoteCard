@@ -24,21 +24,23 @@
     
     이메일: mskim4048@naver.com
 
-# 특징 📍
+## 스크린샷
 
-- ### 저의 첫 iOS (개인) 프로젝트로, git을 사용하지 않던 시점에 개발을 진행하였기 때문에, 1.0.0 부터 github 레포지토리에서 관리됩니다.
+| <img width="200" alt="image" src="https://github.com/user-attachments/assets/76a7724f-5ab5-433a-a1e7-28c6322efbdc" />|<img width="200" alt="image" src="https://github.com/user-attachments/assets/5554162f-806f-4037-ae0b-0154ff052d67" />| <img width="200" alt="image" src="https://github.com/user-attachments/assets/cd3d6de4-1e75-4693-bd21-93bd7f7a87e7" />| <img width="200" alt="image" src="https://github.com/user-attachments/assets/de2c3630-b4b8-402c-98c9-2e8a46510fc6" />|<img width="200" alt="image" src="https://github.com/user-attachments/assets/618f9955-da4b-4bcc-9f10-473e0a619e0a" />|
+|:-:|:-:|:-:|:-:|:-:|
+| | | | | |
 
-## 기술 스택 🛠️
-- UIKit: 앱의 전반적인 디자인과 애니메이션을 담당합니다.
-- CoreData: 메모 내용과 메타데이터를 기기 저장소에 저장하고 관리합니다.
-- FileManager: 메모에 포함되는 이미지들을 관리합니다.
-- MVC: (거의 대부분) MVC 아키텍처가 사용되었습니다.
-## 개선할 점 📝
-- MVC 아키텍처 사용으로 인해 지나치게 거대해진 ViewController들이 다수 존재함.
-  MVVM 아키텍처 등 적용 필요
-- 재사용되는 코드가 많고 프로토콜과 구조체보다는 클래스를 사용하는 경우가 많아 상속 관계에 의존하는 경우가 많음.<br/>
-  - 프로토콜을 통한 추상화를 이용하여 유연한 코드 구현과 Swift의 이점을 활용할 수 있음.
-- 서버 연동 혹은 iCloud 등을 활용하여 기기에 저장되는 저장 공간 효율화<br/>
-  - 별도의 서버 연동이 없어 작성되는 메모와 이미지 모두 기기 내부에 저장됨.<br/>
-  - 기기 내부에 저장되는 용량을 줄이기 위해서 서버에 데이터를 저장하거나 CloudKit등을 활용하여 사용자의 iCloud 저장 공간을 활용할 수 있는 방안이 필요해 보임.
-- 기타 의미없는 주석 혹은 지저분한 코드들 정리 필요
+## 주요 구현 사항
+
+- **Combine**: `Combine` 프레임워크를 사용하여 비동기 이벤트 및 데이터 흐름을 반응형 처리
+- **Core Data Migration**: Core Data Lightweight Migration을 통한 데이터베이스 버전 관리
+- **Custom Design System**: `Assets`의 Color Set과 `UIColor` Extension을 활용하여 커스텀 디자인 시스템 구축 및 이를 통해 다크 모드/라이트 모드 지원
+- **Localization**: 다국어 지원(한국어, 영어)
+
+## 기술 스택 및 아키텍처
+- **Architecture**: Clean Architecture를 지향
+    - Presentation, Application, Domain, Data의 4가지 주요 레이어로 구성되어 의존성 규칙 준수
+- **UI**: UIKit(codebase)
+- **Data Persistence**: Core Data
+- **Asynchronous**: Combine
+- **Language**: Swift
