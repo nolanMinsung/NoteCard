@@ -229,7 +229,7 @@ extension CategoryListViewController {
             let alertCon = UIAlertController(title: L10n.CategoryList.renameCategory, message: "", preferredStyle: UIAlertController.Style.alert)
             alertCon.addTextField { textField in
                 self.categoryNameChangingTextField = textField
-                self.categoryNameChangingTextField.placeholder = "새 카테고리 이름을 입력하세요.".localized()
+                self.categoryNameChangingTextField.placeholder = L10n.CategoryList.enterNewCategoryName
                 self.categoryNameChangingTextField.text = selectedCategoryEntity.name
                 self.categoryNameChangingTextField.addTarget(self, action: #selector(self.toggleSaveAction), for: UIControl.Event.editingChanged)
             }

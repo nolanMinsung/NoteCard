@@ -421,7 +421,7 @@ extension MemoDetailView {
         memoTextView.textContainerInset = UIEdgeInsets(top: 15, left: 6, bottom: 10, right: 6)
         
         memoTextView.setLineSpace(
-            with: "".localized(),
+            with: "",
             lineSpace: 5,
             font: UIFont.systemFont(ofSize: 15)
         )
