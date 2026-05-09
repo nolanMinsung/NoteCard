@@ -12,7 +12,7 @@ final class CreateCategoryView: UIView {
     
     let categoryNameTextField: InsetTextField = {
         let textField = InsetTextField(top: 0, left: 10, bottom: 0, right: 0)
-        textField.placeholder = "카테고리 이름 입력".localized()
+        textField.placeholder = L10n.CreateCategory.categoryNamePlaceholder
         textField.borderStyle = UITextField.BorderStyle.none
         textField.clipsToBounds = true
         textField.layer.cornerRadius = 10

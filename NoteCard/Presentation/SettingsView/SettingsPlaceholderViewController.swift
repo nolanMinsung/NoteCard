@@ -15,7 +15,7 @@ class SettingsPlaceholderViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         let label = UILabel()
-        label.text = "Settings_Placeholder_text".localized()
+        label.text = L10n.Settings.placeholderText
         label.textColor = .secondaryLabel
         label.font = .preferredFont(forTextStyle: .title2)
         label.translatesAutoresizingMaskIntoConstraints = false

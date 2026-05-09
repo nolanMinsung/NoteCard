@@ -16,13 +16,13 @@ class CreateCategoryViewController: UIViewController {
     
     let doneBarButtonItem: UIBarButtonItem = {
         let item = UIBarButtonItem()
-        item.title = "완료".localized()
+        item.title = L10n.Common.done
         return item
     }()
     
     let cancelBarButtonItem: UIBarButtonItem = {
         let item = UIBarButtonItem()
-        item.title = "취소".localized()
+        item.title = L10n.Common.cancel
         return item
     }()
     
@@ -47,7 +47,7 @@ class CreateCategoryViewController: UIViewController {
     
     
     private func setupNaviBar() {
-        self.title = "카테고리 생성".localized()
+        self.title = L10n.CreateCategory.createCategoryTitle
         
         let appearanceForStandard: UINavigationBarAppearance = {
             let appearance = UINavigationBarAppearance()
@@ -77,8 +77,8 @@ class CreateCategoryViewController: UIViewController {
         print(text)
         guard text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) != "" else {
             
-            let alertCon = UIAlertController(title: "카테고리 이름이 비었습니다.".localized(), message: "카테고리 이름을 입력하여 카테고리를 추가하세요.".localized(), preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "확인".localized(), style: UIAlertAction.Style.cancel)
+            let alertCon = UIAlertController(title: L10n.CreateCategory.emptyCategoryName, message: L10n.CreateCategory.emptyCategoryNameMessage, preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: L10n.Common.ok, style: UIAlertAction.Style.cancel)
             alertCon.addAction(okAction)
             self.present(alertCon, animated: true)
             
@@ -92,7 +92,7 @@ class CreateCategoryViewController: UIViewController {
                 onCategoryCreated?()
                 dismiss(animated: true)
             } catch CoreDataError.duplicateCategoryDetected {
-                let alertCon = UIAlertController(title: "이름 중복".localized(), message: "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요.".localized(), preferredStyle: UIAlertController.Style.actionSheet)
+                let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)
                 let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel)
                 alertCon.addAction(okAction)
                 self.present(alertCon, animated: true)

@@ -9,7 +9,7 @@ import UIKit
 
 final class TimeFormatSettingViewController: UIViewController {
     
-    let dataSource = ["24시간제".localized()]
+    let dataSource = [L10n.Settings.format24h]
     
     lazy var timeFormatSettingView = self.view as! TimeFormatSettingView
     lazy var timeFormatSettingTableView = self.timeFormatSettingView.timeFormatSettingTableView
@@ -30,7 +30,7 @@ final class TimeFormatSettingViewController: UIViewController {
     }
     
     private func setupNaviBar() {
-        self.title = "시간 표시 형식".localized()
+        self.title = L10n.Settings.timeFormat
         self.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.navigationBar.tintColor = .currentTheme
     }

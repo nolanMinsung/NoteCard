@@ -52,15 +52,15 @@ final class DarkModeSettingTableViewCell: UITableViewCell {
         case .light:
             defaultContentConfig.image = UIImage(systemName: "circle")?.withTintColor(.label, 
                                                                                       renderingMode: UIImage.RenderingMode.alwaysOriginal)
-            defaultContentConfig.text = "라이트 모드".localized()
+            defaultContentConfig.text = L10n.Settings.lightMode
         case .dark:
             defaultContentConfig.image = UIImage(systemName: "circle.fill")?.withTintColor(.black,
                                                                                       renderingMode: UIImage.RenderingMode.alwaysOriginal)
-            defaultContentConfig.text = "다크 모드".localized()
+            defaultContentConfig.text = L10n.Settings.darkMode
         case .unspecified:
             defaultContentConfig.image = UIImage(named: "darkModeSymbol")?.withTintColor(UIColor.label,
                                                                                          renderingMode: UIImage.RenderingMode.alwaysOriginal)
-            defaultContentConfig.text = "시스템 모드".localized()
+            defaultContentConfig.text = L10n.Settings.systemMode
             
         @unknown default:
             return

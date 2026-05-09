@@ -31,9 +31,9 @@ class HomeViewController: UIViewController {
     typealias MemoCellRegistration = UICollectionView.CellRegistration<HomeCardCell, MemoHomeUIModel>
     
     let sectionHederTitleArray: [String] = [
-        "카테고리".localized(),
-        "즐겨찾기".localized(),
-        "전체 메모".localized()
+        L10n.Home.category,
+        L10n.Home.favorites,
+        L10n.Home.allMemos
     ]
     
     lazy var homeView = HomeView()
@@ -81,7 +81,7 @@ class HomeViewController: UIViewController {
     }
     
     private func setupNaviBar() {
-        self.title = "홈 화면".localized()
+        self.title = L10n.TabBar.home
         
         let standardAppearance = UINavigationBarAppearance()
         standardAppearance.configureWithDefaultBackground()

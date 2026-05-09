@@ -60,7 +60,7 @@ class MainTabBarController: UITabBarController {
         let noCategoriesCardNaviCon = UINavigationController(rootViewController: uncategorizedMemoVC)
         noCategoriesCardNaviCon.navigationController?.toolbar.tintColor = .currentTheme
         noCategoriesCardNaviCon.tabBarItem = UITabBarItem(
-            title: "카테고리 없음".localized(),
+            title: L10n.TabBar.uncategorized,
             image: UIImage(systemName: "app.dashed"),
             selectedImage: UIImage(systemName: "inset.filled.square.dashed")
         )
@@ -68,7 +68,7 @@ class MainTabBarController: UITabBarController {
         // tab: 2: 빠른 메모 , 탭바 컨트롤러에 실제로는 메모 작성 VC 대신 ThirdTabViewController가 들어감.
         let thirdTabViewController = ThirdTabViewController()
         thirdTabViewController.tabBarItem = UITabBarItem(
-            title: "빠른 메모".localized(),
+            title: L10n.TabBar.quickMemo,
             image: UIImage(systemName: "plus.app"),
             selectedImage: UIImage(systemName: "plus.app")
         )
@@ -77,7 +77,7 @@ class MainTabBarController: UITabBarController {
         let memoSearchingVC = MemoSearchingViewController()
         let memoSearchingNaviCon = UINavigationController(rootViewController: memoSearchingVC)
         memoSearchingNaviCon.tabBarItem = UITabBarItem(
-            title: "메모 검색".localized(),
+            title: L10n.TabBar.searchMemo,
             image: UIImage(systemName: "magnifyingglass"),
             selectedImage: UIImage(systemName: "magnifyingglass")
         )
@@ -104,7 +104,7 @@ class MainTabBarController: UITabBarController {
         splitVC.delegate = self
         splitVC.preferredDisplayMode = .oneBesideSecondary
         splitVC.tabBarItem = UITabBarItem(
-            title: "설정".localized(),
+            title: L10n.TabBar.settings,
             image: UIImage(systemName: "gearshape.2"),
             selectedImage: UIImage(systemName: "gearshape.2.fill")
         )

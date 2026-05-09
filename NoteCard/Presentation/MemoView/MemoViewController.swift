@@ -22,10 +22,10 @@ class MemoViewController: UIViewController {
         var initialCategoryTitle: String? {
             switch self {
             case .category(let category):    category.name
-            case .uncategorized:             "카테고리 없음".localized()
-            case .favorite:                  "즐겨찾기한 메모".localized()
-            case .all:                       "전체 메모 목록".localized()
-            case .trash:                     "휴지통".localized()
+            case .uncategorized:             L10n.TabBar.uncategorized
+            case .favorite:                  L10n.MemoView.favoriteMemos
+            case .all:                       L10n.MemoView.allMemosTitle
+            case .trash:                     L10n.MemoView.trash
             }
         }
         
@@ -118,7 +118,7 @@ class MemoViewController: UIViewController {
         self.smallCardCollectionView.delaysContentTouches = editing
         self.categoryNameTextField.isEnabled = (!editing && memoVCType.isCategory)
         // editnButtonItem 의 기본 구현이라서 굳이 필요 없는 듯...?
-//        self.editButtonItem.title = editing ? "완료".localized() : "선택".localized()
+//        self.editButtonItem.title = editing ? L10n.Common.done : L10n.Common.select
         
         switch editing {
         case true:
@@ -189,7 +189,7 @@ private extension MemoViewController {
     
     func setupBarButtonActions() {
         restoreMemoAction = UIAction(
-            title: "카테고리 없는 메모들로 복구".localized(),
+            title: L10n.MemoView.recoverAsUncategorizedMultiple,
             image: UIImage(systemName: "arrow.counterclockwise")?
                 .withTintColor(
                     .currentTheme,
@@ -207,7 +207,7 @@ private extension MemoViewController {
         )
         
         batchAddCategoryMenuAction = UIAction(
-            title: self.memoVCType == .trash ? "복구할 카테고리 선택".localized() : "카테고리 일괄 추가".localized(),
+            title: self.memoVCType == .trash ? L10n.MemoView.selectCategoriesToRecover : L10n.MemoView.batchAddCategories,
             image: UIImage(systemName: "tag")?
                 .withTintColor(
                     batchUpdateActionTintColor,
@@ -219,7 +219,7 @@ private extension MemoViewController {
         )
         
         batchRemoveCategoryMenuAction = UIAction(
-            title: "카테고리 일괄 해제".localized(),
+            title: L10n.MemoView.batchRemoveCategories,
             image: UIImage(systemName: "tag")?
                 .withTintColor(
                     consume batchUpdateActionTintColor,
@@ -231,7 +231,7 @@ private extension MemoViewController {
         )
         
         setFavoriteMenuAction = UIAction(
-            title: "즐겨찾기에 추가".localized(),
+            title: L10n.MemoView.addToFavorites,
             image: UIImage(systemName: "heart")?
                 .withTintColor(.systemRed, renderingMode: .alwaysOriginal),
             handler: { [weak self] _ in
@@ -240,7 +240,7 @@ private extension MemoViewController {
         )
         
         unsetFavoriteMenuAction = UIAction(
-            title: "즐겨찾기에 해제".localized(),
+            title: L10n.MemoView.removeFromFavorites,
             image: UIImage(systemName: "heart.slash")?
                 .withTintColor(.systemRed, renderingMode: .alwaysOriginal),
             handler: { [weak self] _ in
@@ -282,7 +282,7 @@ private extension MemoViewController {
         )
         labelBarButtonItem.tintColor = .label
         labelBarButtonItem.title = String(
-            format: "%d개의 메모 선택됨".localized(),
+            format: L10n.MemoView.memosSelectedFormat,
             smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
         )
     }
@@ -326,11 +326,11 @@ private extension MemoViewController {
     
     func askToRestoreMemo() {
         let alertCon = UIAlertController(
-            title: "이 메모들을 복구하시겠습니까?".localized(),
-            message: "복구된 메모들은 '카테고리 없음' 항목에서 확인할 수 있습니다.".localized(),
+            title: L10n.MemoView.recoverTheseMemosConfirm,
+            message: L10n.MemoView.recoverTheseMemosMessage,
             preferredStyle: UIAlertController.Style.alert
         )
-        let restoreAction = UIAlertAction(title: "복구".localized(), style: .default) { [weak self] action in
+        let restoreAction = UIAlertAction(title: L10n.Common.recover, style: .default) { [weak self] action in
             guard let self else { return }
             guard self.smallCardCollectionView.isEditing else { return }
             guard let selectedIndexPaths = self.smallCardCollectionView.indexPathsForSelectedItems else { fatalError() }
@@ -344,7 +344,7 @@ private extension MemoViewController {
                 try await self.updateMemoContents()
             }
         }
-        let cancelAction = UIAlertAction(title: "취소".localized(), style: .cancel)
+        let cancelAction = UIAlertAction(title: L10n.Common.cancel, style: .cancel)
         alertCon.addAction(restoreAction)
         alertCon.addAction(cancelAction)
         present(alertCon, animated: true)
@@ -419,20 +419,20 @@ private extension MemoViewController {
         let alertCon: UIAlertController
         if self.memoVCType == .trash {
             alertCon = UIAlertController(
-                title: "선택한 메모들을 영구적으로 삭제하시겠습니까?".localized(),
-                message: "이 동작은 취소할 수 없습니다.".localized(),
+                title: L10n.MemoView.deleteSelectedMemosConfirm,
+                message: L10n.Common.actionCannotBeUndone,
                 preferredStyle: UIAlertController.Style.actionSheet
             )
         } else {
             alertCon = UIAlertController(
-                title: "선택된 메모 삭제".localized(),
-                message: "선택한 메모들을 모두 삭제하시겠습니까?".localized(),
+                title: L10n.MemoView.deleteSelectedMemos,
+                message: L10n.MemoView.deleteSelectedMemosMessage,
                 preferredStyle: UIAlertController.Style.alert
             )
         }
         alertCon.view.tintColor = .currentTheme
-        let cancelAction = UIAlertAction(title: "취소".localized(), style: UIAlertAction.Style.cancel)
-        let deleteAction = UIAlertAction(title: "삭제".localized(), style: UIAlertAction.Style.destructive) { [weak self] action in
+        let cancelAction = UIAlertAction(title: L10n.Common.cancel, style: UIAlertAction.Style.cancel)
+        let deleteAction = UIAlertAction(title: L10n.Common.delete, style: UIAlertAction.Style.destructive) { [weak self] action in
             guard let self else { return }
             let selectedIndexes = selectedIndexPaths.map(\.item)
             let selectedMemos: [Memo] = self.memoArray.enumerated()
@@ -583,7 +583,7 @@ extension MemoViewController: UICollectionViewDelegate {
         self.deleteBarButtonItem.isEnabled = true
         self.ellipsisBarButtonItem.isEnabled = true
         labelBarButtonItem.title = String(
-            format: "%d개의 메모 선택됨".localized(),
+            format: L10n.MemoView.memosSelectedFormat,
             smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
         )
     }
@@ -591,7 +591,7 @@ extension MemoViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard collectionView == self.smallCardCollectionView else { return }
         labelBarButtonItem.title = String(
-            format: "%d개의 메모 선택됨".localized(),
+            format: L10n.MemoView.memosSelectedFormat,
             smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
         )
         if self.smallCardCollectionView.indexPathsForSelectedItems?.count == 0 {
@@ -653,7 +653,7 @@ extension MemoViewController: UITextFieldDelegate {
                 try await CategoryEntityRepository.shared.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
             } catch {
                 print(error.localizedDescription)
-                let alertCon = UIAlertController(title: "이름 중복".localized(), message: "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요.".localized(), preferredStyle: UIAlertController.Style.actionSheet)
+                let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)
                 let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel) { action in
                     self.categoryNameTextField.becomeFirstResponder()
                 }
@@ -672,7 +672,7 @@ extension MemoViewController: UITextFieldDelegate {
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         if textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
             
-            makeAlert(title: "알림".localized(), message: "카테고리 이름을 비울 수 없습니다.".localized(), answer: "확인".localized())
+            makeAlert(title: L10n.Common.alert, message: L10n.MemoView.categoryNameCannotBeEmpty, answer: L10n.Common.ok)
             
             return false
         } else {

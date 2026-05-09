@@ -116,13 +116,13 @@ private extension MemoDetailViewController {
     }
     
     func setupBarButtonActions() {
-        let cancelAction = UIAction(title: "취소".localized()) { [weak self] _ in
+        let cancelAction = UIAction(title: L10n.Common.cancel) { [weak self] _ in
             guard let self else { return }
             self.dismiss(animated: true)
         }
         cancelBarButtonItem.primaryAction = cancelAction
         
-        let completeAction = UIAction(title: "완료".localized()) { _ in
+        let completeAction = UIAction(title: L10n.Common.done) { _ in
             Task {
                 do {
                     try await self.updateMemoContent()

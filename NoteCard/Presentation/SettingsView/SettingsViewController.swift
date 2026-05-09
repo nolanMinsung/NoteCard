@@ -14,20 +14,20 @@ class SettingsViewController: UITableViewController {
         
         //design
         //표시 순서는 각 컬렉션뷰에서 선택
-        ["테마 색".localized(),
-         "시간 표시 형식".localized(),
-         "표시 순서".localized(),
-         "다크 모드".localized()
+        [L10n.Settings.themeColor,
+         L10n.Settings.timeFormat,
+         L10n.Settings.displayOrder,
+         L10n.Settings.darkMode
         ],
         //표시 순서 대신, 표시 안의 하위 항목으로 앱 잠금 시 표시 방법? 이런 걸 써도 좋을 듯. (앱 잠금 시 제목만 보일 건지, 아니면 수정 날짜만 보일 건지...등)
         //그리고 표시 안의 하위 항목으로 다른 것들 도 표시할 수 있으니...
         
         //data
         //"메모 검색" 기능은 추후 아예 탭으로 빼 버릴 수도 있음.
-        ["총 메모 수".localized(), "총 카테고리 수".localized(), "휴지통".localized(), "휴지통 비우기".localized()],
+        [L10n.Settings.totalMemos, L10n.Settings.totalCategories, L10n.MemoView.trash, L10n.Settings.emptyTrash],
         
         //contact
-        ["버전 정보".localized()]
+        [L10n.Settings.version]
         
     ]
     
@@ -70,7 +70,7 @@ class SettingsViewController: UITableViewController {
     
     private func setupNaviBar() {
         
-        self.title = "설정".localized()
+        self.title = L10n.TabBar.settings
         
         let standardAppearance: UINavigationBarAppearance = {
             let appearance = UINavigationBarAppearance()
@@ -129,25 +129,25 @@ extension SettingsViewController {
             switch currentTheme {
 
             case ThemeColor.black.rawValue:
-                secondaryText = "Black/White".localized()
+                secondaryText = L10n.ThemeColor.blackWhite
             case ThemeColor.brown.rawValue:
-                secondaryText = "Brown".localized()
+                secondaryText = L10n.ThemeColor.brown
             case ThemeColor.red.rawValue:
-                secondaryText = "Red".localized()
+                secondaryText = L10n.ThemeColor.red
             case ThemeColor.orange.rawValue:
-                secondaryText = "Orange".localized()
+                secondaryText = L10n.ThemeColor.orange
             case ThemeColor.yellow.rawValue:
-                secondaryText = "Yellow".localized()
+                secondaryText = L10n.ThemeColor.yellow
             case ThemeColor.green.rawValue:
-                secondaryText = "Green".localized()
+                secondaryText = L10n.ThemeColor.green
             case ThemeColor.skyBlue.rawValue:
-                secondaryText = "Skyblue".localized()
+                secondaryText = L10n.ThemeColor.skyblue
             case ThemeColor.blue.rawValue:
-                secondaryText = "Blue".localized()
+                secondaryText = L10n.ThemeColor.blue
             case ThemeColor.purple.rawValue:
-                secondaryText = "Purple".localized()
+                secondaryText = L10n.ThemeColor.purple
             default:
-                secondaryText = "Black".localized()
+                secondaryText = L10n.ThemeColor.black
                 
             }
             
@@ -161,7 +161,7 @@ extension SettingsViewController {
             let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
             cell.configureCell(image: UIImage(systemName: "clock"), 
                                text: self.settingTitles[indexPath.section][indexPath.row],
-                               secondaryText: isTimeFormat24 ? "24시간제".localized() : "12시간제".localized(),
+                               secondaryText: isTimeFormat24 ? L10n.Settings.format24h : L10n.Settings.format12h,
                                accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
             )
             
@@ -173,18 +173,18 @@ extension SettingsViewController {
             
             switch userDefaultCriterion {
             case OrderCriterion.modificationDate.rawValue:
-                currentState1 = "SettingsVC/수정 시간".localized()
+                currentState1 = L10n.Settings.modificationLabel
             case OrderCriterion.creationDate.rawValue:
-                currentState1 = "SettingsVC/만든 시간".localized()
+                currentState1 = L10n.Settings.creationLabel
             default:
                 fatalError()
             }
             
             switch userDefautlAscendingValue {
             case true:
-                currentState2 = "SettingsVC/오름차순".localized()
+                currentState2 = L10n.Settings.ascendingLabel
             case false:
-                currentState2 = "SettingsVC/내림차순".localized()
+                currentState2 = L10n.Settings.descendingLabel
             }
             
             cell.configureCell(image: UIImage(systemName: "arrow.up.arrow.down.square"),
@@ -200,14 +200,14 @@ extension SettingsViewController {
             case DarkModeTheme.light.rawValue:
                 cell.configureCell(image: UIImage(named: "darkModeSymbol"),
                                    text: self.settingTitles[indexPath.section][indexPath.row],
-                                   secondaryText: "라이트 모드".localized(),
+                                   secondaryText: L10n.Settings.lightMode,
                                    accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
                 )
                 
             case DarkModeTheme.dark.rawValue:
                 cell.configureCell(image: UIImage(named: "darkModeSymbol"),
                                    text: self.settingTitles[indexPath.section][indexPath.row],
-                                   secondaryText: "다크 모드".localized(),
+                                   secondaryText: L10n.Settings.darkMode,
                                    accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
                 )
                 
@@ -216,7 +216,7 @@ extension SettingsViewController {
                 
                 cell.configureCell(image: UIImage(named: "darkModeSymbol", in: nil, with: configuration),
                                    text: self.settingTitles[indexPath.section][indexPath.row],
-                                   secondaryText: "시스템 모드".localized(),
+                                   secondaryText: L10n.Settings.systemMode,
                                    accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
                 )
                 
@@ -287,7 +287,7 @@ extension SettingsViewController {
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == 1 {
-            return "휴지통에 들어간 메모는 삭제된 지 2주가 지나면 영구적으로 삭제됩니다.".localized()
+            return L10n.Settings.trashRetentionMessage
         } else {
             return nil
         }
@@ -361,11 +361,11 @@ extension SettingsViewController {
     
     private func showDeleteAllAlert(indexPath: IndexPath) {
         let alertCon = UIAlertController(
-            title: "휴지통 비우기".localized(),
-            message: "휴지통의 모든 메모가 삭제됩니다.\n이 동작은 취소할 수 없습니다.".localized(),
+            title: L10n.Settings.emptyTrash,
+            message: L10n.Settings.emptyTrashConfirm,
             preferredStyle: UIAlertController.Style.actionSheet)
         let deleteAction = UIAlertAction(
-            title: "휴지통 비우기".localized(),
+            title: L10n.Settings.emptyTrash,
             style: UIAlertAction.Style.destructive,
             handler: { [weak self] action in
                 guard let self else { fatalError() }
@@ -378,7 +378,7 @@ extension SettingsViewController {
             })
         
         let cancelAction = UIAlertAction(
-            title: "취소".localized(),
+            title: L10n.Common.cancel,
             style: UIAlertAction.Style.cancel,
             handler: { [weak self] action in
                 guard let self else { fatalError() }
