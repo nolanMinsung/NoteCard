@@ -108,3 +108,19 @@ iOSInjectionProject/
 # Python
 __pycache__/
 *.pyc
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+fastlane/README.md.bak
+
+# Secrets / API keys (never commit)
+.env
+.env.local
+*.p8
+
+# Bundler
+vendor/bundle/
+.bundle/

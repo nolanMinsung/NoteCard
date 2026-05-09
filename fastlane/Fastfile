@@ -1,0 +1,100 @@
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    # On CI, create a temporary keychain for code signing.
+    # On local machine, use the user's login keychain.
+    setup_ci if ENV["CI"]
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # Helper: load App Store Connect API key from .env
+  # ─────────────────────────────────────────────────────────────
+  def asc_api_key
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_filepath: ENV["ASC_KEY_FILEPATH"],
+      duration: 1200,
+      in_house: false
+    )
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # Version / Build number bumping
+  # ─────────────────────────────────────────────────────────────
+
+  desc "Increment build number and commit. Run on release branch."
+  lane :bump_build do
+    increment_build_number(xcodeproj: "NoteCard.xcodeproj")
+    build = get_build_number(xcodeproj: "NoteCard.xcodeproj")
+    version = get_version_number(xcodeproj: "NoteCard.xcodeproj", target: "NoteCard")
+    sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump build to #{version} (#{build})'")
+  end
+
+  desc "Increment marketing version. Resets build number to 1. Pass type:'patch'|'minor'|'major' (default 'patch')."
+  lane :bump_version do |options|
+    bump_type = options[:type] || "patch"
+    increment_version_number(bump_type: bump_type, xcodeproj: "NoteCard.xcodeproj")
+    increment_build_number(build_number: 1, xcodeproj: "NoteCard.xcodeproj")
+    version = get_version_number(xcodeproj: "NoteCard.xcodeproj", target: "NoteCard")
+    sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump version to #{version}'")
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # TestFlight build & upload
+  # ─────────────────────────────────────────────────────────────
+
+  desc "Build the app and upload to TestFlight. No App Store submission."
+  lane :beta do
+    bump_build
+
+    match(type: "appstore", readonly: true)
+
+    build_app(
+      scheme: "NoteCard",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      clean: true
+    )
+
+    upload_to_testflight(
+      api_key: asc_api_key,
+      skip_waiting_for_build_processing: true,
+      skip_submission: true            # Do NOT submit for App Store review (manual step)
+    )
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # Metadata / screenshots only (no binary)
+  # ─────────────────────────────────────────────────────────────
+
+  desc "Upload App Store metadata and screenshots only (no binary)."
+  lane :metadata do
+    upload_to_app_store(
+      api_key: asc_api_key,
+      skip_binary_upload: true,
+      skip_screenshots: false,
+      skip_metadata: false,
+      submit_for_review: false,
+      force: true                      # Skip HTML preview confirmation
+    )
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # First-time / maintenance lanes
+  # ─────────────────────────────────────────────────────────────
+
+  desc "Initial match setup. Run once. Requires the certificate repo URL configured in Matchfile."
+  lane :match_setup do
+    match(type: "development")
+    match(type: "appstore")
+  end
+
+  desc "Sync existing local metadata/screenshots from App Store Connect to local files."
+  lane :pull_metadata do
+    sh("cd .. && bundle exec fastlane deliver download_metadata --api-key-path /tmp/asc_api_key.json --force")
+    sh("cd .. && bundle exec fastlane deliver download_screenshots --api-key-path /tmp/asc_api_key.json --force")
+  end
+end
