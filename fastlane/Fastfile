@@ -109,7 +109,14 @@ platform :ios do
 
   desc "Build the app and upload to TestFlight. No App Store submission."
   lane :beta do
-    bump_build
+    if ENV["GITHUB_RUN_NUMBER"]
+      # On CI: use GitHub run number as build number (always monotonically increasing).
+      # No commit/push back — pbxproj edit is ephemeral on the CI runner.
+      set_build_number(ENV["GITHUB_RUN_NUMBER"])
+      UI.message("CI mode — build number set to GITHUB_RUN_NUMBER=#{ENV['GITHUB_RUN_NUMBER']}")
+    else
+      bump_build
+    end
 
     match(
       type: "appstore",

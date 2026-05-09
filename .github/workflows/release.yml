@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  # Every Monday 00:00 UTC (= 09:00 KST)
+  schedule:
+    - cron: "0 0 * * 1"
+  # Manual trigger from Actions tab
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: "Version bump type (patch / minor / major)"
+        required: false
+        default: "patch"
+  # Auto-build on bug-fix pushes to release branches
+  push:
+    branches:
+      - "release/**"
+
+# Prevent overlapping uploads (Apple rejects parallel uploads of same train).
+concurrency:
+  group: testflight-upload
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    permissions:
+      contents: write   # Required to create and push release branches.
+
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_FILEPATH: /Users/runner/.appstoreconnect/AuthKey.p8
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Default GITHUB_TOKEN is enough for pushing to this repo.
+          # NOTE: Pushing with GITHUB_TOKEN will NOT re-trigger this workflow
+          # (GitHub policy). That's intentional — this same job continues
+          # to build & upload after creating the branch.
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Configure git auth for cert repo (match)
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.MATCH_GIT_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true   # auto bundle install + cache
+
+      - name: Set up App Store Connect API key (.p8)
+        run: |
+          mkdir -p /Users/runner/.appstoreconnect
+          echo "${{ secrets.ASC_KEY_CONTENT }}" > /Users/runner/.appstoreconnect/AuthKey.p8
+          chmod 600 /Users/runner/.appstoreconnect/AuthKey.p8
+
+      # ────────────────────────────────────────────────────────────
+      # Branch handling: create new release branch on schedule/dispatch
+      # main is never modified — branch is created first, bump happens on it.
+      # ────────────────────────────────────────────────────────────
+      - name: Create new release branch (schedule / manual trigger)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          BUMP_TYPE="${{ github.event.inputs.bump_type || 'patch' }}"
+          echo "Bump type: $BUMP_TYPE"
+
+          # 1. Read current version from main's pbxproj.
+          CURRENT=$(grep -m1 'MARKETING_VERSION =' NoteCard.xcodeproj/project.pbxproj | awk '{print $3}' | tr -d ';')
+          IFS='.' read -ra V <<< "$CURRENT"
+          while [ ${#V[@]} -lt 3 ]; do V+=(0); done
+          case "$BUMP_TYPE" in
+            major) V[0]=$((V[0]+1)); V[1]=0; V[2]=0 ;;
+            minor) V[1]=$((V[1]+1)); V[2]=0 ;;
+            patch|*) V[2]=$((V[2]+1)) ;;
+          esac
+          NEW_VERSION="${V[0]}.${V[1]}.${V[2]}"
+          BRANCH="release/v${NEW_VERSION}"
+          echo "Current: $CURRENT → New: $NEW_VERSION (branch: $BRANCH)"
+
+          # 2. Fail fast if release branch already exists remotely.
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "::error::Remote branch '$BRANCH' already exists. Did you forget to merge the previous release back to main?"
+            exit 1
+          fi
+
+          # 3. Create branch from main, then bump version on it (commit lands here).
+          git checkout -b "$BRANCH"
+          bundle exec fastlane bump_version type:$BUMP_TYPE
+          git push -u origin "$BRANCH"
+
+          echo "RELEASE_BRANCH=$BRANCH" >> "$GITHUB_ENV"
+
+      - name: Resolve current branch name (push trigger)
+        if: github.event_name == 'push'
+        run: echo "RELEASE_BRANCH=${GITHUB_REF#refs/heads/}" >> "$GITHUB_ENV"
+
+      # ────────────────────────────────────────────────────────────
+      # Build & upload to TestFlight
+      # ────────────────────────────────────────────────────────────
+      - name: Build & upload to TestFlight
+        run: bundle exec fastlane beta
+        env:
+          # GITHUB_RUN_NUMBER is set automatically by Actions, but make it
+          # explicit so the Fastfile branch is unambiguous.
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Release run summary"
+            echo "- Branch: \`${RELEASE_BRANCH:-unknown}\`"
+            echo "- Build number: \`${{ github.run_number }}\`"
+            echo "- Trigger: \`${{ github.event_name }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
