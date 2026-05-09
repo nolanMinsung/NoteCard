@@ -81,7 +81,7 @@
 		4ED333A62B332FCD00492B0F /* ThemeColorPickingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */; };
 		4ED333A82B332FF000492B0F /* ThemeColorPickingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */; };
 		4ED333AA2B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED333A92B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift */; };
-		4ED42A822B3D6EDA00D14571 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4ED42A842B3D6EDA00D14571 /* Localizable.strings */; };
+		4ED42A822B3D6EDA00D14571 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 4ED42A842B3D6EDA00D14571 /* Localizable.xcstrings */; };
 		4EDD37012E330286002AF29B /* CustomIntensityBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */; };
 		4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */; };
 		4EE7396E2EADCA0400DD3912 /* PopupCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE7396D2EADCA0400DD3912 /* PopupCategoryCell.swift */; };
@@ -170,10 +170,9 @@
 		4ED333A52B332FCD00492B0F /* ThemeColorPickingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingViewController.swift; sourceTree = "<group>"; };
 		4ED333A72B332FF000492B0F /* ThemeColorPickingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingView.swift; sourceTree = "<group>"; };
 		4ED333A92B3336CB00492B0F /* ThemeColorPickingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColorPickingTableViewCell.swift; sourceTree = "<group>"; };
+		4ED42A842B3D6EDA00D14571 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		4ED42A912B3DA5CE00D14571 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		4ED42A922B3DA5CE00D14571 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4ED42A962B3DA69300D14571 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		4ED42A972B3DA6E000D14571 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4EDD37002E330286002AF29B /* CustomIntensityBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomIntensityBlurView.swift; sourceTree = "<group>"; };
 		4EDF43162B2EB3F200AFEEB5 /* CategorySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectionViewController.swift; sourceTree = "<group>"; };
 		4EE7396D2EADCA0400DD3912 /* PopupCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupCategoryCell.swift; sourceTree = "<group>"; };
@@ -245,7 +244,7 @@
 				4EC9B5162E4248B80031250B /* Global */,
 				4EDD36FF2E33027A002AF29B /* CustomDesign */,
 				4E57A5F72E5436F400418962 /* Presentation */,
-				4ED42A842B3D6EDA00D14571 /* Localizable.strings */,
+				4ED42A842B3D6EDA00D14571 /* Localizable.xcstrings */,
 				4E1384BB2AF37DE10063817B /* CoreData */,
 				4E1384BC2AF37E070063817B /* Models */,
 				4E1384A82AF37B350063817B /* ViewController.swift */,
@@ -579,7 +578,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E1384B42AF37B370063817B /* LaunchScreen.storyboard in Resources */,
-				4ED42A822B3D6EDA00D14571 /* Localizable.strings in Resources */,
+				4ED42A822B3D6EDA00D14571 /* Localizable.xcstrings in Resources */,
 				4E1384B12AF37B370063817B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -685,15 +684,6 @@
 				4ED42A962B3DA69300D14571 /* en */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		4ED42A842B3D6EDA00D14571 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4ED42A922B3DA5CE00D14571 /* ko */,
-				4ED42A972B3DA6E000D14571 /* en */,
-			);
-			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
