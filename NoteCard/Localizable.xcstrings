@@ -1,7 +1,7 @@
 {
-  "sourceLanguage": "ko",
+  "sourceLanguage": "en",
   "strings": {
-    "%@에 생성됨": {
+    "date.createdOn": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -17,7 +17,7 @@
         }
       }
     },
-    "%@에 수정됨": {
+    "date.editedOn": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -33,7 +33,7 @@
         }
       }
     },
-    "%d개의 메모 선택됨": {
+    "memoView.memosSelectedFormat": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -49,7 +49,7 @@
         }
       }
     },
-    "%d개의 카테고리 선택됨": {
+    "categorySelection.categoriesSelectedFormat": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -65,7 +65,7 @@
         }
       }
     },
-    "%d일 뒤에 삭제됨": {
+    "date.willBeDeletedInDays": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -81,7 +81,7 @@
         }
       }
     },
-    "12시간제": {
+    "settings.format12h": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -97,7 +97,7 @@
         }
       }
     },
-    "1일 이내에 삭제됨": {
+    "date.willBeDeletedWithin24h": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -113,7 +113,7 @@
         }
       }
     },
-    "24시간제": {
+    "settings.format24h": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -129,7 +129,7 @@
         }
       }
     },
-    "Black": {
+    "themeColor.black": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -145,7 +145,7 @@
         }
       }
     },
-    "Black/White": {
+    "themeColor.blackWhite": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -161,7 +161,7 @@
         }
       }
     },
-    "Blue": {
+    "themeColor.blue": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -177,7 +177,7 @@
         }
       }
     },
-    "Brown": {
+    "themeColor.brown": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -193,7 +193,7 @@
         }
       }
     },
-    "Green": {
+    "themeColor.green": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -209,7 +209,7 @@
         }
       }
     },
-    "Orange": {
+    "themeColor.orange": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -225,7 +225,7 @@
         }
       }
     },
-    "Purple": {
+    "themeColor.purple": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -241,7 +241,7 @@
         }
       }
     },
-    "Red": {
+    "themeColor.red": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -257,7 +257,7 @@
         }
       }
     },
-    "SettingsVC/내림차순": {
+    "settings.descendingLabel": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -273,7 +273,7 @@
         }
       }
     },
-    "SettingsVC/만든 시간": {
+    "settings.creationLabel": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -289,7 +289,7 @@
         }
       }
     },
-    "SettingsVC/수정 시간": {
+    "settings.modificationLabel": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -305,7 +305,7 @@
         }
       }
     },
-    "SettingsVC/오름차순": {
+    "settings.ascendingLabel": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -321,7 +321,7 @@
         }
       }
     },
-    "Settings_Placeholder_text": {
+    "settings.placeholderText": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -337,7 +337,7 @@
         }
       }
     },
-    "Skyblue": {
+    "themeColor.skyblue": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -353,7 +353,7 @@
         }
       }
     },
-    "Yellow": {
+    "themeColor.yellow": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -369,7 +369,7 @@
         }
       }
     },
-    "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요.": {
+    "categoryList.duplicateNameMessage": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -385,7 +385,7 @@
         }
       }
     },
-    "개발자 이메일": {
+    "settings.contactDeveloper": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -401,7 +401,7 @@
         }
       }
     },
-    "계속 작성": {
+    "memoDetail.continueWriting": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -417,7 +417,7 @@
         }
       }
     },
-    "날짜 표시 형식": {
+    "settings.dateFormat": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -433,7 +433,7 @@
         }
       }
     },
-    "내림차순": {
+    "settings.descending": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -449,7 +449,7 @@
         }
       }
     },
-    "다크 모드": {
+    "settings.darkMode": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -465,7 +465,7 @@
         }
       }
     },
-    "라이트 모드": {
+    "settings.lightMode": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -481,7 +481,7 @@
         }
       }
     },
-    "만든 시간": {
+    "settings.creationTime": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -497,7 +497,7 @@
         }
       }
     },
-    "메모 검색": {
+    "tabBar.searchMemo": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -513,7 +513,7 @@
         }
       }
     },
-    "메모 내용이 없습니다.": {
+    "memoDetail.memoIsEmpty": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -529,7 +529,7 @@
         }
       }
     },
-    "메모 삭제": {
+    "popupCard.deleteMemoTitle": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -545,7 +545,7 @@
         }
       }
     },
-    "메모 순서 표시": {
+    "settings.memoSortingTitle": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -561,7 +561,7 @@
         }
       }
     },
-    "메모 작성 취소": {
+    "memoDetail.cancelMemoCreation": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -577,7 +577,7 @@
         }
       }
     },
-    "메모 작성을 취소하시겠습니까?": {
+    "memoDetail.cancelMemoCreationConfirm": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -593,7 +593,7 @@
         }
       }
     },
-    "메모 정렬 기준": {
+    "settings.memoSortingCriteria": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -609,7 +609,7 @@
         }
       }
     },
-    "메모 추가하기": {
+    "memoDetail.addMemo": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -625,7 +625,7 @@
         }
       }
     },
-    "메모당 이미지 저장은 최대 10개까지 가능합니다.": {
+    "memoDetail.imageLimitMessage": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -641,7 +641,7 @@
         }
       }
     },
-    "메모를 삭제하시겠습니까?": {
+    "popupCard.deleteMemoConfirm": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -657,7 +657,7 @@
         }
       }
     },
-    "메모를 입력하세요.": {
+    "memoDetail.writeMemoPlaceholder": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -673,7 +673,7 @@
         }
       }
     },
-    "버전 정보": {
+    "settings.version": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -689,7 +689,7 @@
         }
       }
     },
-    "별점/리뷰 남기기": {
+    "settings.rateApp": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -705,7 +705,7 @@
         }
       }
     },
-    "복구": {
+    "common.recover": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -721,7 +721,7 @@
         }
       }
     },
-    "복구된 메모는 '카테고리 없음' 항목에서 확인할 수 있습니다.": {
+    "popupCard.recoverThisMemoMessage": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -737,7 +737,7 @@
         }
       }
     },
-    "복구된 메모들은 '카테고리 없음' 항목에서 확인할 수 있습니다.": {
+    "memoView.recoverTheseMemosMessage": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -753,7 +753,7 @@
         }
       }
     },
-    "복구할 카테고리 선택": {
+    "memoView.selectCategoriesToRecover": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -769,7 +769,7 @@
         }
       }
     },
-    "빠른 메모": {
+    "tabBar.quickMemo": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -785,7 +785,7 @@
         }
       }
     },
-    "삭제": {
+    "common.delete": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -801,7 +801,7 @@
         }
       }
     },
-    "새 카테고리 이름을 입력하세요": {
+    "categoryList.enterNewCategoryName": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -817,7 +817,7 @@
         }
       }
     },
-    "선택": {
+    "common.select": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -833,7 +833,7 @@
         }
       }
     },
-    "선택된 메모 삭제": {
+    "memoView.deleteSelectedMemos": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -849,7 +849,7 @@
         }
       }
     },
-    "선택한 메모들을 모두 삭제하시겠습니까?": {
+    "memoView.deleteSelectedMemosMessage": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -865,7 +865,7 @@
         }
       }
     },
-    "선택한 메모들을 영구적으로 삭제하시겠습니까?": {
+    "memoView.deleteSelectedMemosConfirm": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -881,7 +881,7 @@
         }
       }
     },
-    "선택한 메모를 영구적으로 삭제하시겠습니까?": {
+    "popupCard.deleteSelectedMemoConfirm": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -897,7 +897,7 @@
         }
       }
     },
-    "설정": {
+    "tabBar.settings": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -913,7 +913,7 @@
         }
       }
     },
-    "수정 시간": {
+    "settings.modificationTime": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -929,7 +929,7 @@
         }
       }
     },
-    "시간 표시 형식": {
+    "settings.timeFormat": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -945,7 +945,7 @@
         }
       }
     },
-    "시스템 모드": {
+    "settings.systemMode": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -961,7 +961,7 @@
         }
       }
     },
-    "알림": {
+    "common.alert": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -977,7 +977,7 @@
         }
       }
     },
-    "어제": {
+    "date.yesterday": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -993,7 +993,7 @@
         }
       }
     },
-    "오늘": {
+    "date.today": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1009,7 +1009,7 @@
         }
       }
     },
-    "오름차순": {
+    "settings.ascending": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1025,7 +1025,7 @@
         }
       }
     },
-    "완료": {
+    "common.done": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1041,7 +1041,7 @@
         }
       }
     },
-    "이 동작은 취소할 수 없습니다.": {
+    "common.actionCannotBeUndone": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1057,7 +1057,7 @@
         }
       }
     },
-    "이 메모 삭제하기": {
+    "popupCard.deleteThisMemo": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1073,7 +1073,7 @@
         }
       }
     },
-    "이 메모들을 복구하시겠습니까?": {
+    "memoView.recoverTheseMemosConfirm": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1089,7 +1089,7 @@
         }
       }
     },
-    "이 메모를 복구하시겠습니까?": {
+    "popupCard.recoverThisMemoConfirm": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1105,7 +1105,7 @@
         }
       }
     },
-    "이름 변경": {
+    "categoryList.rename": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1121,7 +1121,7 @@
         }
       }
     },
-    "이름 중복": {
+    "categoryList.duplicateName": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1137,7 +1137,7 @@
         }
       }
     },
-    "이미지 한도 초과": {
+    "memoDetail.imageLimitExceeded": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1153,7 +1153,7 @@
         }
       }
     },
-    "저장": {
+    "common.save": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1169,7 +1169,7 @@
         }
       }
     },
-    "전체 메모": {
+    "home.allMemos": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1185,7 +1185,7 @@
         }
       }
     },
-    "전체 메모 목록": {
+    "memoView.allMemosTitle": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1201,7 +1201,7 @@
         }
       }
     },
-    "전체 카테고리 목록": {
+    "categoryList.allCategoriesTitle": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1217,7 +1217,7 @@
         }
       }
     },
-    "제목 없음": {
+    "popupCard.noTitle": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1233,7 +1233,7 @@
         }
       }
     },
-    "즐겨찾기": {
+    "home.favorites": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1249,7 +1249,7 @@
         }
       }
     },
-    "즐겨찾기 없음": {
+    "home.noFavorites": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1265,7 +1265,7 @@
         }
       }
     },
-    "즐겨찾기에 추가": {
+    "memoView.addToFavorites": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1281,7 +1281,7 @@
         }
       }
     },
-    "즐겨찾기에 해제": {
+    "memoView.removeFromFavorites": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1297,7 +1297,7 @@
         }
       }
     },
-    "즐겨찾기한 메모": {
+    "memoView.favoriteMemos": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1313,7 +1313,7 @@
         }
       }
     },
-    "총 메모 수": {
+    "settings.totalMemos": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1329,7 +1329,7 @@
         }
       }
     },
-    "총 카테고리 수": {
+    "settings.totalCategories": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1345,7 +1345,7 @@
         }
       }
     },
-    "추가": {
+    "common.add": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1361,7 +1361,7 @@
         }
       }
     },
-    "취소": {
+    "common.cancel": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1377,7 +1377,7 @@
         }
       }
     },
-    "카테고리": {
+    "home.category": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1393,7 +1393,7 @@
         }
       }
     },
-    "카테고리 만들기": {
+    "home.makeCategory": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1409,7 +1409,7 @@
         }
       }
     },
-    "카테고리 삭제": {
+    "categoryList.deleteCategory": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1425,7 +1425,7 @@
         }
       }
     },
-    "카테고리 생성": {
+    "createCategory.createCategoryTitle": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1441,7 +1441,7 @@
         }
       }
     },
-    "카테고리 선택하기": {
+    "categorySelection.selectCategoryTitle": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1457,7 +1457,7 @@
         }
       }
     },
-    "카테고리 없는 메모들로 복구": {
+    "memoView.recoverAsUncategorizedMultiple": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1473,7 +1473,7 @@
         }
       }
     },
-    "카테고리 없는 메모로 복구": {
+    "popupCard.recoverAsUncategorizedSingle": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1489,7 +1489,7 @@
         }
       }
     },
-    "카테고리 없음": {
+    "tabBar.uncategorized": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1505,7 +1505,7 @@
         }
       }
     },
-    "카테고리 이름 변경": {
+    "categoryList.renameCategory": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1521,7 +1521,7 @@
         }
       }
     },
-    "카테고리 이름 입력": {
+    "createCategory.categoryNamePlaceholder": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1537,7 +1537,7 @@
         }
       }
     },
-    "카테고리 이름을 비울 수 없습니다.": {
+    "memoView.categoryNameCannotBeEmpty": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1553,7 +1553,7 @@
         }
       }
     },
-    "카테고리 이름을 입력하여 카테고리를 추가하세요.": {
+    "createCategory.emptyCategoryNameMessage": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1569,7 +1569,7 @@
         }
       }
     },
-    "카테고리 이름이 비었습니다.": {
+    "createCategory.emptyCategoryName": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1585,7 +1585,7 @@
         }
       }
     },
-    "카테고리 일괄 추가": {
+    "memoView.batchAddCategories": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1601,7 +1601,7 @@
         }
       }
     },
-    "카테고리 일괄 해제": {
+    "memoView.batchRemoveCategories": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1617,7 +1617,7 @@
         }
       }
     },
-    "카테고리를 삭제하시겠습니까?\n카테고리에 속한 메모들은 삭제되지 않습니다.": {
+    "categoryList.deleteCategoryConfirm": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1633,7 +1633,7 @@
         }
       }
     },
-    "테마 색": {
+    "settings.themeColor": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1649,7 +1649,7 @@
         }
       }
     },
-    "테마 색 선택": {
+    "settings.selectThemeColor": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1665,7 +1665,7 @@
         }
       }
     },
-    "편집 모드": {
+    "common.editingMode": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1681,7 +1681,7 @@
         }
       }
     },
-    "표시 순서": {
+    "settings.displayOrder": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1697,7 +1697,7 @@
         }
       }
     },
-    "해제": {
+    "common.remove": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1713,7 +1713,7 @@
         }
       }
     },
-    "홈 화면": {
+    "tabBar.home": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1729,7 +1729,7 @@
         }
       }
     },
-    "확인": {
+    "common.ok": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1745,7 +1745,7 @@
         }
       }
     },
-    "휴지통": {
+    "memoView.trash": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1761,7 +1761,7 @@
         }
       }
     },
-    "휴지통 비우기": {
+    "settings.emptyTrash": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1777,7 +1777,7 @@
         }
       }
     },
-    "휴지통에 들어간 메모는 삭제된 지 2주가 지나면 영구적으로 삭제됩니다.": {
+    "settings.trashRetentionMessage": {
       "localizations": {
         "ko": {
           "stringUnit": {
@@ -1793,7 +1793,7 @@
         }
       }
     },
-    "휴지통의 모든 메모가 삭제됩니다.\n이 동작은 취소할 수 없습니다.": {
+    "settings.emptyTrashConfirm": {
       "localizations": {
         "ko": {
           "stringUnit": {
