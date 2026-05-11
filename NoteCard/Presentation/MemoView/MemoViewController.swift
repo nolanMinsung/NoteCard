@@ -53,13 +53,7 @@ class MemoViewController: UIViewController {
     
     // navigationItems
     private let plusBarButtonItem = UIBarButtonItem()
-    
-    // (bottom) tool bar Items
-    private let labelBarButtonItem = UIBarButtonItem()
-    private let flexibleBarButtonItems = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-    private let deleteBarButtonItem = UIBarButtonItem()
-    private let ellipsisBarButtonItem = UIBarButtonItem()
-    
+
     private var restoreMemoAction: UIAction!
     private var batchAddCategoryMenuAction: UIAction!
     private var batchRemoveCategoryMenuAction: UIAction!
@@ -91,11 +85,11 @@ class MemoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupNaviBar()
-        setupToolbar()
         setupBarButtonActions()
         setupBarButtonItems()
+        setupEditingToolbar()
         setupDelegates()
         setupObservers()
         Task {
@@ -109,32 +103,31 @@ class MemoViewController: UIViewController {
     
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        
+
         UIView.springAnimate(withDuration: 0.4) { [weak self] in
-            self?.navigationController?.isToolbarHidden = !editing
             self?.rootView.layoutIfNeeded()
         }
         self.smallCardCollectionView.isEditing = editing
         self.smallCardCollectionView.delaysContentTouches = editing
         self.categoryNameTextField.isEnabled = (!editing && memoVCType.isCategory)
-        // editnButtonItem 의 기본 구현이라서 굳이 필요 없는 듯...?
-//        self.editButtonItem.title = editing ? L10n.Common.done : L10n.Common.select
-        
+
         switch editing {
         case true:
             self.smallCardCollectionView.reconfigureItems(at: self.smallCardCollectionView.indexPathsForVisibleItems)
             self.smallCardCollectionView.visibleCells.forEach { cell in
                 cell.layoutSubviews()
             }
-            
+
             self.plusBarButtonItem.isEnabled = false
-            self.deleteBarButtonItem.isEnabled = false
-            self.ellipsisBarButtonItem.isEnabled = false
-            
+            let selectedCount = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
+            rootView.editingToolbar.setSelectedCount(selectedCount)
+            rootView.editingToolbar.setVisible(selectedCount > 0, animated: animated)
+
         case false:
             self.tabBarController?.tabBar.clipsToBounds = false
             self.smallCardCollectionView.reconfigureItems(at: self.smallCardCollectionView.indexPathsForVisibleItems)
             self.plusBarButtonItem.isEnabled = true
+            rootView.editingToolbar.setVisible(false, animated: animated)
         }
     }
     
@@ -164,29 +157,8 @@ private extension MemoViewController {
         self.navigationController?.navigationBar.compactAppearance = appearance
         self.navigationController?.navigationBar.compactScrollEdgeAppearance = appearance
         self.navigationController?.navigationBar.tintColor = .currentTheme
-        
-        let toolbarAppearance = UIToolbarAppearance()
-        toolbarAppearance.configureWithDefaultBackground()
-        
-        let transparentToolbarAppearance = UIToolbarAppearance()
-        transparentToolbarAppearance.configureWithTransparentBackground()
-        
-        self.navigationController?.toolbar.standardAppearance = toolbarAppearance
-        self.navigationController?.toolbar.scrollEdgeAppearance = toolbarAppearance
-        self.navigationController?.isToolbarHidden = true
     }
-    
-    func setupToolbar(animated: Bool = true) {
-        setToolbarItems(
-            [flexibleBarButtonItems,
-             labelBarButtonItem,
-             flexibleBarButtonItems,
-             deleteBarButtonItem,
-             ellipsisBarButtonItem],
-            animated: animated
-        )
-    }
-    
+
     func setupBarButtonActions() {
         restoreMemoAction = UIAction(
             title: L10n.MemoView.recoverAsUncategorizedMultiple,
@@ -253,38 +225,28 @@ private extension MemoViewController {
         plusBarButtonItem.image = UIImage(systemName: "plus")
         plusBarButtonItem.target = self
         plusBarButtonItem.action = #selector(presentMemoMakingVC)
-        
-        deleteBarButtonItem.image = UIImage(systemName: "trash")
-        deleteBarButtonItem.tintColor = .systemRed
-        deleteBarButtonItem.target = self
-        deleteBarButtonItem.action = #selector(deleteEverySelectedMemo)
-        
-        ellipsisBarButtonItem.image = UIImage(systemName: "ellipsis.circle")
-        let ellipsisBarButtonItemMenu: UIMenu
+    }
+
+    func setupEditingToolbar() {
+        let menu: UIMenu
         if memoVCType == .trash {
-            ellipsisBarButtonItemMenu = UIMenu(children: [
+            menu = UIMenu(children: [
                 batchAddCategoryMenuAction,
                 restoreMemoAction
             ])
         } else {
-            ellipsisBarButtonItemMenu = UIMenu(children: [
+            menu = UIMenu(children: [
                 batchRemoveCategoryMenuAction,
                 batchAddCategoryMenuAction,
                 unsetFavoriteMenuAction,
                 setFavoriteMenuAction
             ])
         }
-        ellipsisBarButtonItem.menu = ellipsisBarButtonItemMenu
-        
-        labelBarButtonItem.setTitleTextAttributes(
-            [.font: UIFont.systemFont(ofSize: 17, weight: .bold)],
-            for: .normal
-        )
-        labelBarButtonItem.tintColor = .label
-        labelBarButtonItem.title = String(
-            format: L10n.MemoView.memosSelectedFormat,
-            smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
-        )
+        rootView.editingToolbar.configureMenu(menu)
+        rootView.editingToolbar.setSelectedCount(0)
+        rootView.editingToolbar.onDeleteTapped = { [weak self] in
+            self?.deleteEverySelectedMemo()
+        }
     }
     
     func setupDelegates() {
@@ -580,26 +542,19 @@ extension MemoViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard self.smallCardCollectionView.isEditing else { return }
-        self.deleteBarButtonItem.isEnabled = true
-        self.ellipsisBarButtonItem.isEnabled = true
-        labelBarButtonItem.title = String(
-            format: L10n.MemoView.memosSelectedFormat,
-            smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
-        )
+        let count = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
+        rootView.editingToolbar.setSelectedCount(count)
+        if count == 1 {
+            rootView.editingToolbar.setVisible(true, animated: true)
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard collectionView == self.smallCardCollectionView else { return }
-        labelBarButtonItem.title = String(
-            format: L10n.MemoView.memosSelectedFormat,
-            smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
-        )
-        if self.smallCardCollectionView.indexPathsForSelectedItems?.count == 0 {
-            self.ellipsisBarButtonItem.isEnabled = false
-            self.deleteBarButtonItem.isEnabled = false
-        } else {
-            self.deleteBarButtonItem.isEnabled = true
-            self.ellipsisBarButtonItem.isEnabled = true
+        let count = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
+        rootView.editingToolbar.setSelectedCount(count)
+        if count == 0 {
+            rootView.editingToolbar.setVisible(false, animated: true)
         }
     }
     

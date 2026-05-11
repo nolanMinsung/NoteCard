@@ -159,4 +159,9 @@ final class MemoEditingToolbarView: UIView {
         menuButton.menu = menu
     }
 
+    /// Toolbar의 가시성을 토글한다. (이 단계에선 즉시 토글만, 다음 단계에서 슬라이드/페이드 애니메이션 추가)
+    func setVisible(_ visible: Bool, animated: Bool) {
+        isHidden = !visible
+    }
+
 }
