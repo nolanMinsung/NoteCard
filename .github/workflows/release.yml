@@ -67,6 +67,11 @@ jobs:
           # Debug: verify both rewrites are present (tokens masked in log).
           git config --global --get-all "url.${AUTHED}.insteadOf" | sed 's|^|insteadOf -> |'
 
+      - name: Select Xcode 26 (required by App Store Connect — iOS 26 SDK or later)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
