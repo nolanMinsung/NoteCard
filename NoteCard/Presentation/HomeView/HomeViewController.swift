@@ -123,11 +123,20 @@ class HomeViewController: UIViewController {
         let placeholderCellRegistration = PlaceholderCellRegistration { cell, indexPath, item in
             switch item {
             case .addCategoryPlaceholder:
-                // HomeCategoryCell의 cornerRadius(25)와 동일.
-                cell.configure(title: L10n.Home.addCategoryPlaceholder, cornerRadius: 25)
+                // 카테고리 셀은 폭이 좁아 영문 "Add Category"가 줄바꿈되므로 시각 라벨은 생략하고
+                // VoiceOver에만 문구를 노출한다. cornerRadius는 HomeCategoryCell(25)과 동일.
+                cell.configure(
+                    displayedTitle: nil,
+                    accessibilityLabel: L10n.Home.addCategoryPlaceholder,
+                    cornerRadius: 25
+                )
             case .addMemoPlaceholder:
                 // HomeCardCell의 cornerRadius(20)와 동일.
-                cell.configure(title: L10n.Home.addMemoPlaceholder, cornerRadius: 20)
+                cell.configure(
+                    displayedTitle: L10n.Home.addMemoPlaceholder,
+                    accessibilityLabel: L10n.Home.addMemoPlaceholder,
+                    cornerRadius: 20
+                )
             case .category, .memo:
                 // 등록은 placeholder 전용이라 도달 불가.
                 break

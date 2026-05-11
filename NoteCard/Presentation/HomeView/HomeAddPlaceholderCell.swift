@@ -35,6 +35,8 @@ final class HomeAddPlaceholderCell: UICollectionViewCell, ViewShrinkable {
         return label
     }()
 
+    private var plusImageCenterYConstraint: NSLayoutConstraint!
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -52,12 +54,17 @@ final class HomeAddPlaceholderCell: UICollectionViewCell, ViewShrinkable {
 
         contentView.addSubview(plusImageView)
         contentView.addSubview(titleLabel)
+
+        isAccessibilityElement = true
+        accessibilityTraits = .button
     }
 
     private func setupConstraints() {
+        plusImageCenterYConstraint = plusImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -10)
+
         NSLayoutConstraint.activate([
             plusImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            plusImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -10),
+            plusImageCenterYConstraint,
             plusImageView.widthAnchor.constraint(equalToConstant: 32),
             plusImageView.heightAnchor.constraint(equalToConstant: 32),
 
@@ -68,9 +75,17 @@ final class HomeAddPlaceholderCell: UICollectionViewCell, ViewShrinkable {
     }
 
     /// Placeholder 셀의 모양을 카테고리/메모 셀과 동일한 크기·코너로 맞춘다.
-    func configure(title: String, cornerRadius: CGFloat) {
-        titleLabel.text = title
+    /// - Parameters:
+    ///   - displayedTitle: 시각적으로 표시할 문구. nil이면 라벨을 숨기고 + 아이콘만 노출한다.
+    ///   - accessibilityLabel: VoiceOver에서 읽어줄 문구. 시각 라벨 유무와 무관하게 항상 설정한다.
+    ///   - cornerRadius: 셀 모서리 반경.
+    func configure(displayedTitle: String?, accessibilityLabel: String, cornerRadius: CGFloat) {
+        titleLabel.text = displayedTitle
+        titleLabel.isHidden = (displayedTitle == nil)
+        // 라벨이 숨겨지면 + 아이콘을 정중앙으로, 보이면 라벨 공간을 비워두기 위해 살짝 위로 이동.
+        plusImageCenterYConstraint.constant = (displayedTitle == nil) ? 0 : -10
         contentView.layer.cornerRadius = cornerRadius
+        self.accessibilityLabel = accessibilityLabel
     }
 
 }
