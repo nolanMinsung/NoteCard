@@ -58,10 +58,14 @@ jobs:
           # Rewrite ONLY the notecard-certs URL — both SSH and HTTPS forms — to
           # authenticated HTTPS via PAT. Scoped to that repo so the workflow's
           # own push to NoteCard (release branch) still uses GITHUB_TOKEN.
+          # NOTE: use `--add` because insteadOf is multi-valued; without --add
+          # the second call would overwrite the first.
           TOKEN="${{ secrets.MATCH_GIT_TOKEN }}"
           AUTHED="https://x-access-token:${TOKEN}@github.com/nolanMinsung/notecard-certs"
-          git config --global url."${AUTHED}".insteadOf "git@github.com:nolanMinsung/notecard-certs"
-          git config --global url."${AUTHED}".insteadOf "https://github.com/nolanMinsung/notecard-certs"
+          git config --global --add url."${AUTHED}".insteadOf "git@github.com:nolanMinsung/notecard-certs"
+          git config --global --add url."${AUTHED}".insteadOf "https://github.com/nolanMinsung/notecard-certs"
+          # Debug: verify both rewrites are present (tokens masked in log).
+          git config --global --get-all "url.${AUTHED}.insteadOf" | sed 's|^|insteadOf -> |'
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
