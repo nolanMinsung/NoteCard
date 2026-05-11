@@ -1,0 +1,178 @@
+require 'xcodeproj'
+
+default_platform(:ios)
+
+PROJECT_PATH = File.expand_path('../NoteCard.xcodeproj', __dir__)
+TARGET_NAME = "NoteCard"
+
+# Direct pbxproj manipulation via xcodeproj gem.
+# Why: agvtool-based fastlane actions (increment_version_number) don't accept a
+# `target` parameter, so they fail on multi-target projects (e.g., NoteCard + NoteCard.eng).
+def update_marketing_version(bump_type:)
+  project = Xcodeproj::Project.open(PROJECT_PATH)
+  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
+  current = target.build_configurations.first.build_settings["MARKETING_VERSION"]
+  parts = current.split(".").map(&:to_i)
+  parts << 0 while parts.length < 3
+  case bump_type
+  when "major" then parts[0] += 1; parts[1] = 0; parts[2] = 0
+  when "minor" then parts[1] += 1; parts[2] = 0
+  else              parts[2] += 1   # patch
+  end
+  new_version = parts.join(".")
+  target.build_configurations.each { |c| c.build_settings["MARKETING_VERSION"] = new_version }
+  project.save
+  new_version
+end
+
+def set_build_number(value)
+  project = Xcodeproj::Project.open(PROJECT_PATH)
+  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
+  target.build_configurations.each { |c| c.build_settings["CURRENT_PROJECT_VERSION"] = value.to_s }
+  project.save
+end
+
+def increment_build_number_pbxproj
+  project = Xcodeproj::Project.open(PROJECT_PATH)
+  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
+  current = target.build_configurations.first.build_settings["CURRENT_PROJECT_VERSION"].to_i
+  new_build = current + 1
+  target.build_configurations.each { |c| c.build_settings["CURRENT_PROJECT_VERSION"] = new_build.to_s }
+  project.save
+  new_build
+end
+
+platform :ios do
+  before_all do
+    # On CI, create a temporary keychain for code signing.
+    # On local machine, use the user's login keychain.
+    setup_ci if ENV["CI"]
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # Helper: load App Store Connect API key from .env
+  # ─────────────────────────────────────────────────────────────
+  def asc_api_key
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_filepath: ENV["ASC_KEY_FILEPATH"],
+      duration: 1200,
+      in_house: false
+    )
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # Version / Build number bumping
+  # ─────────────────────────────────────────────────────────────
+
+  desc "Increment build number and commit. Run on release branch."
+  lane :bump_build do
+    build = increment_build_number_pbxproj
+    version = get_version_number(xcodeproj: "NoteCard.xcodeproj", target: TARGET_NAME)
+    sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump build to #{version} (#{build})'")
+  end
+
+  desc "Increment marketing version. Resets build number to 1. Pass type:'patch'|'minor'|'major' (default 'patch')."
+  lane :bump_version do |options|
+    bump_type = options[:type] || "patch"
+    version = update_marketing_version(bump_type: bump_type)
+    set_build_number(1)
+    sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump version to #{version}'")
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # TestFlight build & upload
+  # ─────────────────────────────────────────────────────────────
+
+  desc "Verify build: archive only, no upload, no version bump. Use for fastlane setup validation."
+  lane :verify_build do
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key: asc_api_key
+    )
+
+    build_app(
+      scheme: "NoteCard",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      clean: true,
+      export_options: {
+        provisioningProfiles: {
+          "com.minsung.NoteCard" => "match AppStore com.minsung.NoteCard"
+        }
+      }
+    )
+  end
+
+  desc "Build the app and upload to TestFlight. No App Store submission."
+  lane :beta do
+    if ENV["GITHUB_RUN_NUMBER"]
+      # On CI: use GitHub run number as build number (always monotonically increasing).
+      # No commit/push back — pbxproj edit is ephemeral on the CI runner.
+      set_build_number(ENV["GITHUB_RUN_NUMBER"])
+      UI.message("CI mode — build number set to GITHUB_RUN_NUMBER=#{ENV['GITHUB_RUN_NUMBER']}")
+    else
+      bump_build
+    end
+
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key: asc_api_key
+    )
+
+    build_app(
+      scheme: "NoteCard",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      clean: true,
+      export_options: {
+        provisioningProfiles: {
+          "com.minsung.NoteCard" => "match AppStore com.minsung.NoteCard"
+        }
+      }
+    )
+
+    upload_to_testflight(
+      api_key: asc_api_key,
+      skip_waiting_for_build_processing: true,
+      skip_submission: true            # Do NOT submit for App Store review (manual step)
+    )
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # Metadata / screenshots only (no binary)
+  # ─────────────────────────────────────────────────────────────
+
+  desc "Upload App Store metadata and screenshots only (no binary)."
+  lane :metadata do
+    upload_to_app_store(
+      api_key: asc_api_key,
+      skip_binary_upload: true,
+      skip_screenshots: false,
+      skip_metadata: false,
+      submit_for_review: false,
+      force: true                      # Skip HTML preview confirmation
+    )
+  end
+
+  # ─────────────────────────────────────────────────────────────
+  # First-time / maintenance lanes
+  # ─────────────────────────────────────────────────────────────
+
+  desc "Initial match setup. Run once. Generates dev + appstore certs/profiles and pushes to the cert repo."
+  lane :match_setup do
+    match(type: "development", api_key: asc_api_key)
+    match(type: "appstore", api_key: asc_api_key)
+  end
+
+  desc "Sync existing local metadata/screenshots from App Store Connect to local files."
+  lane :pull_metadata do
+    sh("cd .. && bundle exec fastlane deliver download_metadata --api-key-path /tmp/asc_api_key.json --force")
+    sh("cd .. && bundle exec fastlane deliver download_screenshots --api-key-path /tmp/asc_api_key.json --force")
+  end
+end
