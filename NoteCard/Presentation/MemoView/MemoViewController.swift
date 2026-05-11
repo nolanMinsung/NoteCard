@@ -121,13 +121,33 @@ class MemoViewController: UIViewController {
             self.plusBarButtonItem.isEnabled = false
             let selectedCount = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
             rootView.editingToolbar.setSelectedCount(selectedCount)
-            rootView.editingToolbar.setVisible(selectedCount > 0, animated: animated)
+            updateToolbarVisibility(visible: selectedCount > 0, animated: animated)
 
         case false:
             self.tabBarController?.tabBar.clipsToBounds = false
             self.smallCardCollectionView.reconfigureItems(at: self.smallCardCollectionView.indexPathsForVisibleItems)
             self.plusBarButtonItem.isEnabled = true
-            rootView.editingToolbar.setVisible(false, animated: animated)
+            updateToolbarVisibility(visible: false, animated: animated)
+        }
+    }
+
+    /// 편집 toolbar 가시성과 콘텐츠 인셋을 함께 보간한다.
+    /// toolbar 등장 시 collection view 마지막 셀이 가려지지 않도록 additionalSafeAreaInsets.bottom을 토글.
+    private func updateToolbarVisibility(visible: Bool, animated: Bool) {
+        rootView.editingToolbar.setVisible(visible, animated: animated)
+        let targetBottomInset: CGFloat = visible ? MemoEditingToolbarView.preferredHeight : 0
+        guard additionalSafeAreaInsets.bottom != targetBottomInset else { return }
+
+        let apply = { [weak self] in
+            guard let self else { return }
+            self.additionalSafeAreaInsets.bottom = targetBottomInset
+            self.view.layoutIfNeeded()
+        }
+
+        if animated {
+            UIView.springAnimate(withDuration: 0.35, dampingRatio: 0.85, animations: apply)
+        } else {
+            apply()
         }
     }
     
@@ -545,7 +565,7 @@ extension MemoViewController: UICollectionViewDelegate {
         let count = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
         rootView.editingToolbar.setSelectedCount(count)
         if count == 1 {
-            rootView.editingToolbar.setVisible(true, animated: true)
+            updateToolbarVisibility(visible: true, animated: true)
         }
     }
 
@@ -554,7 +574,7 @@ extension MemoViewController: UICollectionViewDelegate {
         let count = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
         rootView.editingToolbar.setSelectedCount(count)
         if count == 0 {
-            rootView.editingToolbar.setVisible(false, animated: true)
+            updateToolbarVisibility(visible: false, animated: true)
         }
     }
     

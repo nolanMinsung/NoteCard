@@ -84,7 +84,6 @@ final class MemoView: UIView {
         ])
 
         editingToolbar.translatesAutoresizingMaskIntoConstraints = false
-        editingToolbar.isHidden = true
         NSLayoutConstraint.activate([
             editingToolbar.leadingAnchor.constraint(equalTo: leadingAnchor),
             editingToolbar.trailingAnchor.constraint(equalTo: trailingAnchor),

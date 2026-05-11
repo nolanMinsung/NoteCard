@@ -17,6 +17,14 @@ final class MemoEditingToolbarView: UIView {
     /// 권장 높이 — 시스템 toolbar(44~49pt)와 시각적으로 동등.
     static let preferredHeight: CGFloat = 49
 
+    /// 마지막으로 적용한 가시성. 같은 값으로 setVisible이 들어오면 무시한다.
+    private var isToolbarVisible: Bool = false
+
+    /// 숨겨진 상태에서 적용할 transform — 화면 아래로 살짝 더 밀어둠.
+    private var hiddenTransform: CGAffineTransform {
+        CGAffineTransform(translationX: 0, y: Self.preferredHeight + 12)
+    }
+
     // MARK: - Callbacks
 
     var onDeleteTapped: (() -> Void)?
@@ -80,6 +88,12 @@ final class MemoEditingToolbarView: UIView {
         setupLayoutConstraints()
         setupActions()
         setupAccessibility()
+
+        // 초기 상태: 화면 밖 + 투명 + 비활성. setVisible(true, ...)로 등장.
+        alpha = 0
+        transform = hiddenTransform
+        isUserInteractionEnabled = false
+        accessibilityElementsHidden = true
     }
 
     required init?(coder: NSCoder) {
@@ -159,9 +173,30 @@ final class MemoEditingToolbarView: UIView {
         menuButton.menu = menu
     }
 
-    /// Toolbar의 가시성을 토글한다. (이 단계에선 즉시 토글만, 다음 단계에서 슬라이드/페이드 애니메이션 추가)
+    /// Toolbar의 가시성을 토글한다. transform + alpha 보간으로 슬라이드 + 페이드.
     func setVisible(_ visible: Bool, animated: Bool) {
-        isHidden = !visible
+        guard visible != isToolbarVisible else { return }
+        isToolbarVisible = visible
+
+        let apply: () -> Void = { [weak self] in
+            guard let self else { return }
+            self.alpha = visible ? 1 : 0
+            self.transform = visible ? .identity : self.hiddenTransform
+        }
+
+        if animated {
+            UIView.springAnimate(
+                withDuration: 0.35,
+                dampingRatio: 0.85,
+                options: [.beginFromCurrentState],
+                animations: apply
+            )
+        } else {
+            apply()
+        }
+
+        isUserInteractionEnabled = visible
+        accessibilityElementsHidden = !visible
     }
 
 }
