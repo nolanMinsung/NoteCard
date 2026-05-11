@@ -45,7 +45,11 @@ final class MemoEditingToolbarView: UIView {
 
     private let countLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .bold)
+        // Dynamic Type 대응: 17pt bold를 baseline으로 시스템 텍스트 크기 설정에 따라 스케일.
+        // pill 높이(49pt)를 유지하기 위해 AX 크기는 cap 처리 — 표준 XXXL까지만 적용.
+        label.font = UIFontMetrics.default.scaledFont(for: .systemFont(ofSize: 17, weight: .bold))
+        label.adjustsFontForContentSizeCategory = true
+        label.maximumContentSizeCategory = .extraExtraExtraLarge
         label.textColor = .label
         label.textAlignment = .natural
         label.lineBreakMode = .byTruncatingTail
@@ -59,9 +63,12 @@ final class MemoEditingToolbarView: UIView {
     private let deleteButton: UIButton = {
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "trash")
+        // SF Symbol도 라벨과 같이 스케일하도록 textStyle 기반 symbol configuration 적용.
+        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(textStyle: .body)
         config.baseForegroundColor = .systemRed
         config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
         let button = UIButton(configuration: config)
+        button.maximumContentSizeCategory = .extraExtraExtraLarge
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -69,9 +76,11 @@ final class MemoEditingToolbarView: UIView {
     private let menuButton: UIButton = {
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "ellipsis.circle")
+        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(textStyle: .body)
         config.baseForegroundColor = .label
         config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
         let button = UIButton(configuration: config)
+        button.maximumContentSizeCategory = .extraExtraExtraLarge
         button.showsMenuAsPrimaryAction = true
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
