@@ -55,7 +55,13 @@ jobs:
 
       - name: Configure git auth for cert repo (match)
         run: |
-          git config --global url."https://x-access-token:${{ secrets.MATCH_GIT_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          # Rewrite ONLY the notecard-certs URL — both SSH and HTTPS forms — to
+          # authenticated HTTPS via PAT. Scoped to that repo so the workflow's
+          # own push to NoteCard (release branch) still uses GITHUB_TOKEN.
+          TOKEN="${{ secrets.MATCH_GIT_TOKEN }}"
+          AUTHED="https://x-access-token:${TOKEN}@github.com/nolanMinsung/notecard-certs"
+          git config --global url."${AUTHED}".insteadOf "git@github.com:nolanMinsung/notecard-certs"
+          git config --global url."${AUTHED}".insteadOf "https://github.com/nolanMinsung/notecard-certs"
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

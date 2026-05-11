@@ -86,7 +86,7 @@ platform :ios do
   # ─────────────────────────────────────────────────────────────
 
   desc "Verify build: archive only, no upload, no version bump. Use for fastlane setup validation."
-  lane :verify_build do
+  lane :verify_archive do
     match(
       type: "appstore",
       readonly: true,
