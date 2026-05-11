@@ -132,16 +132,18 @@ class MemoViewController: UIViewController {
     }
 
     /// 편집 toolbar 가시성과 콘텐츠 인셋을 함께 보간한다.
-    /// toolbar 등장 시 collection view 마지막 셀이 가려지지 않도록 additionalSafeAreaInsets.bottom을 토글.
+    /// toolbar 등장 시 collection view 마지막 셀이 가려지지 않도록 contentInset.bottom을 토글한다.
+    /// (additionalSafeAreaInsets 대신 contentInset을 쓰는 이유: 전자는 safeAreaLayoutGuide에 묶인
+    /// toolbar 자체까지 위로 밀어버려 탭바와의 간격을 망가뜨림.)
     private func updateToolbarVisibility(visible: Bool, animated: Bool) {
         rootView.editingToolbar.setVisible(visible, animated: animated)
         let targetBottomInset: CGFloat = visible ? MemoEditingToolbarView.preferredHeight : 0
-        guard additionalSafeAreaInsets.bottom != targetBottomInset else { return }
+        let cv = rootView.smallCardCollectionView
+        guard cv.contentInset.bottom != targetBottomInset else { return }
 
-        let apply = { [weak self] in
-            guard let self else { return }
-            self.additionalSafeAreaInsets.bottom = targetBottomInset
-            self.view.layoutIfNeeded()
+        let apply = {
+            cv.contentInset.bottom = targetBottomInset
+            cv.verticalScrollIndicatorInsets.bottom = targetBottomInset
         }
 
         if animated {

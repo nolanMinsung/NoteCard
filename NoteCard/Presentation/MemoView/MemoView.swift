@@ -80,7 +80,10 @@ final class MemoView: UIView {
             smallCardCollectionView.topAnchor.constraint(equalTo: categoryNameTextField.bottomAnchor, constant: 20),
             smallCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             smallCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            smallCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0)
+            // 카드가 글래스 탭바/편집 toolbar 뒤로 스크롤되어 깊이감을 살리도록 화면 최하단까지 확장.
+            // 콘텐츠가 가려지지 않도록 하는 건 contentInsetAdjustmentBehavior(.automatic)의 safe area 보정 +
+            // MemoViewController가 toolbar 가시성에 맞춰 토글하는 contentInset.bottom이 함께 처리한다.
+            smallCardCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
         ])
 
         editingToolbar.translatesAutoresizingMaskIntoConstraints = false
