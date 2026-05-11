@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  # Runs on every push EXCEPT main and release branches.
+  # main is protected via PR review; release/** is handled by release.yml.
+  push:
+    branches-ignore:
+      - main
+      - "release/**"
+  # Runs on every PR targeting main.
+  pull_request:
+    branches:
+      - main
+
+# When a new push arrives on the same branch, cancel the previous in-flight run.
+# Saves runner time on rapid pushes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Compile check (simulator)
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    env:
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode (latest-stable, same as Release workflow)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Resolve SPM dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project NoteCard.xcodeproj \
+            -scheme NoteCard
+
+      - name: Build for iOS Simulator (Debug)
+        run: |
+          set -euo pipefail
+          xcodebuild build \
+            -project NoteCard.xcodeproj \
+            -scheme NoteCard \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
