@@ -100,16 +100,30 @@ final class MemoEditingToolbarView: UIView {
     // MARK: - Setup
 
     private func setupViewHierarchy() {
+        // 그림자가 잘리지 않도록 self는 clip하지 않고, 내부 backgroundEffectView에 코너 처리 + 클립.
         // 양 끝이 반원인 pill 모양. 탭바와 떨어져 떠 있는 floating bar 느낌.
-        clipsToBounds = true
-        layer.cornerRadius = Self.preferredHeight / 2
-        layer.cornerCurve = .continuous
+        backgroundEffectView.layer.cornerRadius = Self.preferredHeight / 2
+        backgroundEffectView.layer.cornerCurve = .continuous
+        backgroundEffectView.clipsToBounds = true
+
+        // 배경과의 경계가 흐릿한 글래스 머티리얼을 시각적으로 분리하기 위한 그림자.
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.22
+        layer.shadowRadius = 12
+        layer.shadowOffset = CGSize(width: 0, height: 4)
 
         addSubview(backgroundEffectView)
         let contentContainer: UIView = backgroundEffectView.contentView
         contentContainer.addSubview(countLabel)
         contentContainer.addSubview(deleteButton)
         contentContainer.addSubview(menuButton)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // pill 모양 그대로 그림자를 그리도록 path 캐시. 매 프레임 렌더링 비용 ↓.
+        let path = UIBezierPath(roundedRect: bounds, cornerRadius: Self.preferredHeight / 2)
+        layer.shadowPath = path.cgPath
     }
 
     private func setupLayoutConstraints() {
