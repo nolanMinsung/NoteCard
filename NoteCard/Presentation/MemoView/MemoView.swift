@@ -9,9 +9,10 @@ import UIKit
 
 
 final class MemoView: UIView {
-    
+
     let categoryNameTextField = UITextField()
     let smallCardCollectionView = SmallCardCollectionView()
+    let editingToolbar = MemoEditingToolbarView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,8 +64,9 @@ final class MemoView: UIView {
     private func configureViewHierarchy() {
         self.addSubview(categoryNameTextField)
         self.addSubview(smallCardCollectionView)
+        self.addSubview(editingToolbar)
     }
-    
+
     func setupConstraints() {
         categoryNameTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -72,13 +74,22 @@ final class MemoView: UIView {
             categoryNameTextField.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
             categoryNameTextField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
         ])
-        
+
         smallCardCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             smallCardCollectionView.topAnchor.constraint(equalTo: categoryNameTextField.bottomAnchor, constant: 20),
             smallCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             smallCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
             smallCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0)
+        ])
+
+        editingToolbar.translatesAutoresizingMaskIntoConstraints = false
+        editingToolbar.isHidden = true
+        NSLayoutConstraint.activate([
+            editingToolbar.leadingAnchor.constraint(equalTo: leadingAnchor),
+            editingToolbar.trailingAnchor.constraint(equalTo: trailingAnchor),
+            editingToolbar.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            editingToolbar.heightAnchor.constraint(equalToConstant: MemoEditingToolbarView.preferredHeight),
         ])
     }
     
