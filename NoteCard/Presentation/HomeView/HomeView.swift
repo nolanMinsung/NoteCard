@@ -119,6 +119,7 @@ final class HomeView: UIView {
         
         self.homeCollectionView.register(HomeCategoryCell.self, forCellWithReuseIdentifier: HomeCategoryCell.reuseIdentifier)
         self.homeCollectionView.register(HomeCardCell.self, forCellWithReuseIdentifier: HomeCardCell.reuseIdentifier)
+        self.homeCollectionView.register(HomeAddPlaceholderCell.self, forCellWithReuseIdentifier: HomeAddPlaceholderCell.reuseIdentifier)
     }
     
     private func setupStyle() {
