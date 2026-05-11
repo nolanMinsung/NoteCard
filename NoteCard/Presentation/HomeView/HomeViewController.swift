@@ -21,14 +21,17 @@ class HomeViewController: UIViewController {
     enum HomeItem: Hashable {
         case category(Category)
         case memo(MemoHomeUIModel)
+        case addCategoryPlaceholder
+        case addMemoPlaceholder
     }
-    
+
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, HomeItem>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, HomeItem>
     typealias CellProvider = DiffableDataSource.CellProvider
     typealias HeaderRegistration = UICollectionView.SupplementaryRegistration<HomeHeaderView>
     typealias CategoryCellRegistration = UICollectionView.CellRegistration<HomeCategoryCell, Category>
     typealias MemoCellRegistration = UICollectionView.CellRegistration<HomeCardCell, MemoHomeUIModel>
+    typealias PlaceholderCellRegistration = UICollectionView.CellRegistration<HomeAddPlaceholderCell, HomeItem>
     
     let sectionHederTitleArray: [String] = [
         L10n.Home.category,
@@ -112,11 +115,34 @@ class HomeViewController: UIViewController {
         let categoryCellRegistration = CategoryCellRegistration { cell, indexPath, category in
             cell.configure(with: category)
         }
-        
+
         let memoCellRegistration = MemoCellRegistration { cell, indexPath, memoUIModel in
             cell.configure(with: memoUIModel)
         }
-        
+
+        let placeholderCellRegistration = PlaceholderCellRegistration { cell, indexPath, item in
+            switch item {
+            case .addCategoryPlaceholder:
+                // 카테고리 셀은 폭이 좁아 영문 "Add Category"가 줄바꿈되므로 시각 라벨은 생략하고
+                // VoiceOver에만 문구를 노출한다. cornerRadius는 HomeCategoryCell(25)과 동일.
+                cell.configure(
+                    displayedTitle: nil,
+                    accessibilityLabel: L10n.Home.addCategoryPlaceholder,
+                    cornerRadius: 25
+                )
+            case .addMemoPlaceholder:
+                // HomeCardCell의 cornerRadius(20)와 동일.
+                cell.configure(
+                    displayedTitle: L10n.Home.addMemoPlaceholder,
+                    accessibilityLabel: L10n.Home.addMemoPlaceholder,
+                    cornerRadius: 20
+                )
+            case .category, .memo:
+                // 등록은 placeholder 전용이라 도달 불가.
+                break
+            }
+        }
+
         let headerViewRegistration = HeaderRegistration.init(
             elementKind: UICollectionView.elementKindSectionHeader
         ) { [weak self] headerView, elementKind, indexPath in
@@ -127,7 +153,7 @@ class HomeViewController: UIViewController {
             headerView.button.configuration?.title = self.sectionHederTitleArray[indexPath.section] + " "
             headerView.button.addTarget(self, action: #selector(self.onHeaderButtonTapped), for: .touchUpInside)
         }
-        
+
         // Cell Provider
         let cellProvider: CellProvider = { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
@@ -141,6 +167,12 @@ class HomeViewController: UIViewController {
                     using: memoCellRegistration,
                     for: indexPath,
                     item: memo
+                )
+            case .addCategoryPlaceholder, .addMemoPlaceholder:
+                return collectionView.dequeueConfiguredReusableCell(
+                    using: placeholderCellRegistration,
+                    for: indexPath,
+                    item: itemIdentifier
                 )
             }
         }
@@ -165,9 +197,21 @@ class HomeViewController: UIViewController {
     private func applySnapshot() {
         var snapshot: Snapshot = .init()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(categories.map({ .category($0) }), toSection: .category)
+
+        if categories.isEmpty {
+            snapshot.appendItems([.addCategoryPlaceholder], toSection: .category)
+        } else {
+            snapshot.appendItems(categories.map({ .category($0) }), toSection: .category)
+        }
+
         snapshot.appendItems(favoriteMemos.map({ .memo(MemoHomeUIModel(memo: $0, section: .favorite)) }), toSection: .favorite)
-        snapshot.appendItems(allMemos.map({ .memo(MemoHomeUIModel(memo: $0, section: .all)) }), toSection: .all)
+
+        if allMemos.isEmpty {
+            snapshot.appendItems([.addMemoPlaceholder], toSection: .all)
+        } else {
+            snapshot.appendItems(allMemos.map({ .memo(MemoHomeUIModel(memo: $0, section: .all)) }), toSection: .all)
+        }
+
         diffableDataSource.apply(snapshot)
     }
     
@@ -245,7 +289,25 @@ class HomeViewController: UIViewController {
 extension HomeViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+
+        // 빈 상태 placeholder 탭: 카테고리/메모 생성 화면을 곧바로 띄운다.
+        if let itemIdentifier = diffableDataSource.itemIdentifier(for: indexPath) {
+            switch itemIdentifier {
+            case .addCategoryPlaceholder:
+                let createCategoryVC = CreateCategoryViewController()
+                let naviCon = UINavigationController(rootViewController: createCategoryVC)
+                present(naviCon, animated: true)
+                return
+            case .addMemoPlaceholder:
+                let memoMakingVC = MemoDetailViewController(type: .making(category: nil))
+                let naviCon = UINavigationController(rootViewController: memoMakingVC)
+                present(naviCon, animated: true)
+                return
+            case .category, .memo:
+                break
+            }
+        }
+
         let config = WispConfiguration { config in
             config.setLayout { layout in
                 let topInset: CGFloat

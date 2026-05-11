@@ -26,6 +26,8 @@ enum L10n {
         static let allMemos = "home.allMemos".localized()
         static let makeCategory = "home.makeCategory".localized()
         static let noFavorites = "home.noFavorites".localized()
+        static let addCategoryPlaceholder = "home.addCategoryPlaceholder".localized()
+        static let addMemoPlaceholder = "home.addMemoPlaceholder".localized()
     }
 
     enum CategoryList {
