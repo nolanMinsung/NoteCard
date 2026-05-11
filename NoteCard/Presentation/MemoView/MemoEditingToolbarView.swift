@@ -151,7 +151,8 @@ final class MemoEditingToolbarView: UIView {
 
     private func setupAccessibility() {
         deleteButton.accessibilityLabel = L10n.Common.delete
-        menuButton.accessibilityLabel = L10n.Common.editingMode
+        menuButton.accessibilityLabel = L10n.Common.more
+        countLabel.accessibilityTraits = .updatesFrequently
     }
 
     @objc private func deleteTapped() {
@@ -197,6 +198,11 @@ final class MemoEditingToolbarView: UIView {
 
         isUserInteractionEnabled = visible
         accessibilityElementsHidden = !visible
+
+        if visible && UIAccessibility.isVoiceOverRunning {
+            // VoiceOver 사용자가 toolbar 등장을 알아챌 수 있도록 포커스를 카운트 라벨로 이동
+            UIAccessibility.post(notification: .layoutChanged, argument: countLabel)
+        }
     }
 
 }
