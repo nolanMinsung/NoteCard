@@ -47,8 +47,12 @@ final class MemoEditingToolbarView: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .bold)
         label.textColor = .label
-        label.textAlignment = .center
+        label.textAlignment = .natural
+        label.lineBreakMode = .byTruncatingTail
         label.translatesAutoresizingMaskIntoConstraints = false
+        // 가로 폭이 좁아지면 카운트 라벨을 우선적으로 줄임 (액션 버튼 보존).
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return label
     }()
 
@@ -117,13 +121,16 @@ final class MemoEditingToolbarView: UIView {
             backgroundEffectView.trailingAnchor.constraint(equalTo: trailingAnchor),
             backgroundEffectView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            countLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
+            // 카운트 라벨: 좌측 정렬, pill 둥근 가장자리에서 18pt 안쪽.
+            // 액션 버튼 영역을 침범하지 않도록 trailing은 <=로 두어 좁아질 때 잘리도록 함.
+            countLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 18),
             countLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
+            countLabel.trailingAnchor.constraint(lessThanOrEqualTo: deleteButton.leadingAnchor, constant: -8),
 
+            // 액션 버튼: 우측 정렬, 우선순위 높음 (압축 저항 default → 라벨이 먼저 줄어듦).
             deleteButton.trailingAnchor.constraint(equalTo: menuButton.leadingAnchor, constant: -4),
             deleteButton.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
 
-            // pill의 둥근 우측 가장자리에 가까이 붙지 않도록 인셋을 키움.
             menuButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -14),
             menuButton.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
         ])
