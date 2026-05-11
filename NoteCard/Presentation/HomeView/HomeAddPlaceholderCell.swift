@@ -8,7 +8,7 @@
 import UIKit
 
 /// 홈 화면에서 카테고리 / 전체 메모가 하나도 없을 때 추가를 유도하는 placeholder 셀.
-/// 가운데 + 아이콘과 "OOO 추가" 레이블, 점선 보더로 구성된다.
+/// 회색 배경 위에 가운데 + 아이콘과 "OOO 추가" 레이블로 구성된다.
 final class HomeAddPlaceholderCell: UICollectionViewCell, ViewShrinkable {
 
     override var isHighlighted: Bool {
@@ -20,6 +20,7 @@ final class HomeAddPlaceholderCell: UICollectionViewCell, ViewShrinkable {
         imageView.image = UIImage(systemName: "plus")
         imageView.contentMode = .scaleAspectFit
         imageView.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 26, weight: .medium)
+        imageView.tintColor = .secondaryLabel
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -29,11 +30,10 @@ final class HomeAddPlaceholderCell: UICollectionViewCell, ViewShrinkable {
         label.font = .systemFont(ofSize: 15, weight: .medium)
         label.textAlignment = .center
         label.numberOfLines = 2
+        label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
-    private let borderLayer = CAShapeLayer()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,14 +46,9 @@ final class HomeAddPlaceholderCell: UICollectionViewCell, ViewShrinkable {
     }
 
     private func setupUI() {
-        contentView.backgroundColor = .clear
-        contentView.clipsToBounds = false
+        contentView.backgroundColor = .secondarySystemFill
+        contentView.clipsToBounds = true
         contentView.layer.cornerCurve = .continuous
-
-        borderLayer.fillColor = UIColor.clear.cgColor
-        borderLayer.lineDashPattern = [6, 4]
-        borderLayer.lineWidth = 1.5
-        contentView.layer.addSublayer(borderLayer)
 
         contentView.addSubview(plusImageView)
         contentView.addSubview(titleLabel)
@@ -72,25 +67,10 @@ final class HomeAddPlaceholderCell: UICollectionViewCell, ViewShrinkable {
         ])
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        let cornerRadius = contentView.layer.cornerRadius
-        let path = UIBezierPath(roundedRect: contentView.bounds, cornerRadius: cornerRadius)
-        borderLayer.path = path.cgPath
-        borderLayer.frame = contentView.bounds
-
-        let tint = UIColor.currentTheme.withAlphaComponent(0.55)
-        borderLayer.strokeColor = tint.cgColor
-        plusImageView.tintColor = tint
-        titleLabel.textColor = tint
-    }
-
     /// Placeholder 셀의 모양을 카테고리/메모 셀과 동일한 크기·코너로 맞춘다.
     func configure(title: String, cornerRadius: CGFloat) {
         titleLabel.text = title
         contentView.layer.cornerRadius = cornerRadius
-        setNeedsLayout()
     }
 
 }
