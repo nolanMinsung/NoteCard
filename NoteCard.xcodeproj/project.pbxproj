@@ -45,6 +45,7 @@
 		4E13854C2AF38BE40063817B /* DetailViewSelectedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */; };
 		4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */; };
 		4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */; };
+		4EAA570C2E0F26AB00000002 /* HomeAddPlaceholderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAA570B2E0F26AB00000001 /* HomeAddPlaceholderCell.swift */; };
 		4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */; };
 		4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */; };
 		4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */; };
@@ -141,6 +142,7 @@
 		4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageViewController.swift; sourceTree = "<group>"; };
 		4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageView.swift; sourceTree = "<group>"; };
 		4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderButton.swift; sourceTree = "<group>"; };
+		4EAA570B2E0F26AB00000001 /* HomeAddPlaceholderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAddPlaceholderCell.swift; sourceTree = "<group>"; };
 		4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingViewController.swift; sourceTree = "<group>"; };
 		4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingView.swift; sourceTree = "<group>"; };
 		4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 				4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */,
 				4E1384F02AF384A70063817B /* HomeCategoryCell.swift */,
 				4E1384F22AF384C80063817B /* HomeCardCell.swift */,
+				4EAA570B2E0F26AB00000001 /* HomeAddPlaceholderCell.swift */,
 				4E1384C32AF37E750063817B /* CategoryListTableView */,
 			);
 			path = HomeView;
@@ -597,6 +600,7 @@
 				4E00A0D12E5F4758007ABF00 /* CategoryEntity+Mapping.swift in Sources */,
 				4EDF43172B2EB3F200AFEEB5 /* CategorySelectionViewController.swift in Sources */,
 				4E1384F32AF384C80063817B /* HomeCardCell.swift in Sources */,
+				4EAA570C2E0F26AB00000002 /* HomeAddPlaceholderCell.swift in Sources */,
 				4EFA2F3D2B27413700FCDD1B /* LeftAlignedFlowLayout.swift in Sources */,
 				4ED333A62B332FCD00492B0F /* ThemeColorPickingViewController.swift in Sources */,
 				4E4FCCC32B3C5871000CBE17 /* TimeFormatSettingViewController.swift in Sources */,
