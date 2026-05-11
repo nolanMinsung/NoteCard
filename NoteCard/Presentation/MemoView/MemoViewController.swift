@@ -121,7 +121,9 @@ class MemoViewController: UIViewController {
             self.plusBarButtonItem.isEnabled = false
             let selectedCount = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
             rootView.editingToolbar.setSelectedCount(selectedCount)
-            updateToolbarVisibility(visible: selectedCount > 0, animated: animated)
+            // 선택 카운트와 무관하게 편집 모드 동안은 항상 toolbar 노출.
+            // 0개 선택 시에는 카운트 라벨만 표시되고 액션 버튼은 비활성으로 그레이아웃됨.
+            updateToolbarVisibility(visible: true, animated: animated)
 
         case false:
             self.tabBarController?.tabBar.clipsToBounds = false
@@ -566,18 +568,12 @@ extension MemoViewController: UICollectionViewDelegate {
         guard self.smallCardCollectionView.isEditing else { return }
         let count = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
         rootView.editingToolbar.setSelectedCount(count)
-        if count == 1 {
-            updateToolbarVisibility(visible: true, animated: true)
-        }
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard collectionView == self.smallCardCollectionView else { return }
         let count = smallCardCollectionView.indexPathsForSelectedItems?.count ?? 0
         rootView.editingToolbar.setSelectedCount(count)
-        if count == 0 {
-            updateToolbarVisibility(visible: false, animated: true)
-        }
     }
     
     func updateMemoContents() async throws {
