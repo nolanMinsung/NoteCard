@@ -43,13 +43,6 @@ final class MemoEditingToolbarView: UIView {
         return view
     }()
 
-    private let topSeparator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .separator
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     private let countLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .bold)
@@ -103,13 +96,12 @@ final class MemoEditingToolbarView: UIView {
     // MARK: - Setup
 
     private func setupViewHierarchy() {
+        // 양 끝이 반원인 pill 모양. 탭바와 떨어져 떠 있는 floating bar 느낌.
+        clipsToBounds = true
+        layer.cornerRadius = Self.preferredHeight / 2
+        layer.cornerCurve = .continuous
+
         addSubview(backgroundEffectView)
-        // iOS 26 Liquid Glass에는 별도 separator가 어울리지 않으므로 pre-iOS 26에서만 표시.
-        if #available(iOS 26.0, *) {
-            // separator 미사용
-        } else {
-            addSubview(topSeparator)
-        }
         let contentContainer: UIView = backgroundEffectView.contentView
         contentContainer.addSubview(countLabel)
         contentContainer.addSubview(deleteButton)
@@ -131,18 +123,10 @@ final class MemoEditingToolbarView: UIView {
             deleteButton.trailingAnchor.constraint(equalTo: menuButton.leadingAnchor, constant: -4),
             deleteButton.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
 
-            menuButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -8),
+            // pill의 둥근 우측 가장자리에 가까이 붙지 않도록 인셋을 키움.
+            menuButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -14),
             menuButton.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
         ])
-
-        if topSeparator.superview != nil {
-            NSLayoutConstraint.activate([
-                topSeparator.topAnchor.constraint(equalTo: topAnchor),
-                topSeparator.leadingAnchor.constraint(equalTo: leadingAnchor),
-                topSeparator.trailingAnchor.constraint(equalTo: trailingAnchor),
-                topSeparator.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale),
-            ])
-        }
     }
 
     private func setupActions() {

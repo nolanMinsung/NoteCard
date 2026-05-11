@@ -139,7 +139,9 @@ class MemoViewController: UIViewController {
     /// toolbar 자체까지 위로 밀어버려 탭바와의 간격을 망가뜨림.)
     private func updateToolbarVisibility(visible: Bool, animated: Bool) {
         rootView.editingToolbar.setVisible(visible, animated: animated)
-        let targetBottomInset: CGFloat = visible ? MemoEditingToolbarView.preferredHeight : 0
+        // toolbar는 safe area 위로 12pt 띄워 floating pill로 배치되므로 콘텐츠가
+        // 토글바 바로 위에서 멈추려면 toolbar height + 12pt gap만큼 인셋 확보.
+        let targetBottomInset: CGFloat = visible ? MemoEditingToolbarView.preferredHeight + 12 : 0
         let cv = rootView.smallCardCollectionView
         guard cv.contentInset.bottom != targetBottomInset else { return }
 

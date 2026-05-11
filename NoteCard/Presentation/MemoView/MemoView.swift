@@ -88,9 +88,10 @@ final class MemoView: UIView {
 
         editingToolbar.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            editingToolbar.leadingAnchor.constraint(equalTo: leadingAnchor),
-            editingToolbar.trailingAnchor.constraint(equalTo: trailingAnchor),
-            editingToolbar.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            // 탭바와 떨어진 floating pill로 보이도록 좌우 인셋 + 탭바 위 gap.
+            editingToolbar.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            editingToolbar.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            editingToolbar.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12),
             editingToolbar.heightAnchor.constraint(equalToConstant: MemoEditingToolbarView.preferredHeight),
         ])
     }
