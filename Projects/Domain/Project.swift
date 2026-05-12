@@ -8,5 +8,6 @@ let project = Project.module(
     resources: nil,
     dependencies: [
         .module(.shared),
-    ]
+    ],
+    hasTests: true
 )

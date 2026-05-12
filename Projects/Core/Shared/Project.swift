@@ -6,5 +6,6 @@ let project = Project.module(
     product: .staticFramework,
     sources: ["Sources/**"],
     resources: ["Resources/**"],
-    dependencies: []
+    dependencies: [],
+    hasTests: true
 )
