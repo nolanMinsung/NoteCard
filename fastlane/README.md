@@ -29,12 +29,12 @@ Increment build number and commit. Run on release branch.
 [bundle exec] fastlane ios bump_version
 ```
 
-Increment marketing version. Resets build number to 1. Pass type:'patch'|'minor'|'major' (default 'patch').
+Increment marketing version. Resets build number to 1. Pass type:'patch'|'minor'|'major' (default 'minor'). 'patch' is reserved for hotfix releases.
 
-### ios verify_build
+### ios verify_archive
 
 ```sh
-[bundle exec] fastlane ios verify_build
+[bundle exec] fastlane ios verify_archive
 ```
 
 Verify build: archive only, no upload, no version bump. Use for fastlane setup validation.
