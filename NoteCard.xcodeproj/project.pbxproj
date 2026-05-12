@@ -37,7 +37,6 @@
 		4E1385092AF386260063817B /* InsetTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385082AF386260063817B /* InsetTextField.swift */; };
 		4E13850F2AF386750063817B /* MemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13850E2AF386750063817B /* MemoViewController.swift */; };
 		4E1385112AF386920063817B /* MemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385102AF386920063817B /* MemoView.swift */; };
-		4EBB000B2E0F30CD00000011 /* MemoEditingToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBB000A2E0F30CD00000010 /* MemoEditingToolbarView.swift */; };
 		4E1385192AF387100063817B /* SmallCardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385182AF387100063817B /* SmallCardCollectionViewCell.swift */; };
 		4E13851C2AF387480063817B /* CardImageShowingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851B2AF387480063817B /* CardImageShowingViewController.swift */; };
 		4E13851E2AF3875D0063817B /* CardImageShowingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851D2AF3875D0063817B /* CardImageShowingView.swift */; };
@@ -46,7 +45,6 @@
 		4E13854C2AF38BE40063817B /* DetailViewSelectedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */; };
 		4E13854E2AF38BFD0063817B /* DetailViewSelectedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */; };
 		4E2712082DA1A5D30007D53A /* HomeHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */; };
-		4EAA570C2E0F26AB00000002 /* HomeAddPlaceholderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAA570B2E0F26AB00000001 /* HomeAddPlaceholderCell.swift */; };
 		4E3E75742B678EB80073A951 /* DarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */; };
 		4E3E75752B678EBA0073A951 /* DarkModeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */; };
 		4E3E75762B678EBD0073A951 /* DarkModeSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */; };
@@ -70,7 +68,9 @@
 		4E59602F2B064C290029BA3D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E59602E2B064C290029BA3D /* SettingsView.swift */; };
 		4E5960312B0652AF0029BA3D /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */; };
 		4E69E3ED2EEA87A700A05E94 /* SettingsPlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E69E3EC2EEA87A700A05E94 /* SettingsPlaceholderViewController.swift */; };
+		4EAA570C2E0F26AB00000002 /* HomeAddPlaceholderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAA570B2E0F26AB00000001 /* HomeAddPlaceholderCell.swift */; };
 		4EAF4F2C2E38580500A1AA36 /* Wisp in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF4F2B2E38580500A1AA36 /* Wisp */; };
+		4EBB000B2E0F30CD00000011 /* MemoEditingToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBB000A2E0F30CD00000010 /* MemoEditingToolbarView.swift */; };
 		4EBF7A212B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */; };
 		4EC9B6502E42EBD40031250B /* MemoSearchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B64F2E42EBD40031250B /* MemoSearchingViewController.swift */; };
 		4EC9B6522E42EBE80031250B /* MemoSearchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC9B6512E42EBE80031250B /* MemoSearchingView.swift */; };
@@ -134,7 +134,6 @@
 		4E1385082AF386260063817B /* InsetTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsetTextField.swift; sourceTree = "<group>"; };
 		4E13850E2AF386750063817B /* MemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoViewController.swift; sourceTree = "<group>"; };
 		4E1385102AF386920063817B /* MemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoView.swift; sourceTree = "<group>"; };
-		4EBB000A2E0F30CD00000010 /* MemoEditingToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditingToolbarView.swift; sourceTree = "<group>"; };
 		4E1385142AF386D10063817B /* MemoImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		4E1385182AF387100063817B /* SmallCardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallCardCollectionViewCell.swift; sourceTree = "<group>"; };
 		4E13851B2AF387480063817B /* CardImageShowingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingViewController.swift; sourceTree = "<group>"; };
@@ -144,7 +143,6 @@
 		4E13854B2AF38BE40063817B /* DetailViewSelectedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageViewController.swift; sourceTree = "<group>"; };
 		4E13854D2AF38BFD0063817B /* DetailViewSelectedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewSelectedImageView.swift; sourceTree = "<group>"; };
 		4E2712072DA1A5D30007D53A /* HomeHeaderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderButton.swift; sourceTree = "<group>"; };
-		4EAA570B2E0F26AB00000001 /* HomeAddPlaceholderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAddPlaceholderCell.swift; sourceTree = "<group>"; };
 		4E3E75712B677EFB0073A951 /* DarkModeSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingViewController.swift; sourceTree = "<group>"; };
 		4E3E75722B677EFB0073A951 /* DarkModeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingView.swift; sourceTree = "<group>"; };
 		4E3E75732B677EFB0073A951 /* DarkModeSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeSettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -162,6 +160,8 @@
 		4E59602E2B064C290029BA3D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4E5960302B0652AF0029BA3D /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
 		4E69E3EC2EEA87A700A05E94 /* SettingsPlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPlaceholderViewController.swift; sourceTree = "<group>"; };
+		4EAA570B2E0F26AB00000001 /* HomeAddPlaceholderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAddPlaceholderCell.swift; sourceTree = "<group>"; };
+		4EBB000A2E0F30CD00000010 /* MemoEditingToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditingToolbarView.swift; sourceTree = "<group>"; };
 		4EBF7A202B0C8BAE0068BE57 /* CategoryListTableViewDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListTableViewDiffableDataSource.swift; sourceTree = "<group>"; };
 		4EC9B64F2E42EBD40031250B /* MemoSearchingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingViewController.swift; sourceTree = "<group>"; };
 		4EC9B6512E42EBE80031250B /* MemoSearchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoSearchingView.swift; sourceTree = "<group>"; };
@@ -190,13 +190,83 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		4E00A0BB2E5E99AD007ABF00 /* Domain */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Domain; sourceTree = "<group>"; };
-		4E00A0C72E5EB497007ABF00 /* Application */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Application; sourceTree = "<group>"; };
-		4E31381D2E7FBD130033B7AB /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
-		4E5F341D2E717C2200C05FE4 /* Errors */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Errors; sourceTree = "<group>"; };
-		4EA7B44E2E74882C00A49433 /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
-		4EC9B5162E4248B80031250B /* Global */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Global; sourceTree = "<group>"; };
-		4ECD80EF2E73BA2E003A3931 /* UIModel */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UIModel; sourceTree = "<group>"; };
+		4E00A0BB2E5E99AD007ABF00 /* Domain */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		4E00A0C72E5EB497007ABF00 /* Application */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		4E31381D2E7FBD130033B7AB /* Model */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		4E5F341D2E717C2200C05FE4 /* Errors */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Errors;
+			sourceTree = "<group>";
+		};
+		4EA7B44E2E74882C00A49433 /* Model */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		4EC9B5162E4248B80031250B /* Global */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Global;
+			sourceTree = "<group>";
+		};
+		4ECD80EF2E73BA2E003A3931 /* UIModel */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = UIModel;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -850,7 +920,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.2;
+				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.minsung.NoteCard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -890,7 +960,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.2;
+				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.minsung.NoteCard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.minsung.NoteCard";
@@ -996,7 +1066,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.2;
+				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.minsung.NoteCard.eng;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
