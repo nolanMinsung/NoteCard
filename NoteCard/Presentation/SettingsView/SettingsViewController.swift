@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Shared
 import Combine
 
 class SettingsViewController: UITableViewController {

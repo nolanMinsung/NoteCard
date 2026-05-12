@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Shared
 
 struct Category: Hashable {
     var name: String

@@ -57,7 +57,6 @@ let project = Project(
             ],
             resources: [
                 "NoteCard/Assets.xcassets",
-                "NoteCard/Localizable.xcstrings",
                 "NoteCard/Base.lproj/LaunchScreen.storyboard",
                 "NoteCard/Base.lproj/Main.storyboard",
                 "NoteCard/ko.lproj/**",
@@ -67,6 +66,7 @@ let project = Project(
             ],
             dependencies: [
                 .external(name: "Wisp"),
+                .project(target: "Shared", path: .relativeToRoot("Projects/Core/Shared")),
             ],
             settings: .settings(
                 base: infoPlistKeys.merging([

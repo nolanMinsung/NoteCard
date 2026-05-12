@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Shared
 import CoreData
 
 //코어데이터를 관리하는 매니저입니다

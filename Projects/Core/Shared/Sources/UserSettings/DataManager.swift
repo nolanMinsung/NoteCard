@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum MemoProperties: String {
+public enum MemoProperties: String {
     
     case creationDate
     case isFavorite
@@ -22,18 +22,18 @@ enum MemoProperties: String {
     case deletedDate
 }
 
-enum CategoryProperties: String {
+public enum CategoryProperties: String {
     case name
     case creationDate
     case modificationDate
 }
 
-enum ImageOrderIndexKind: String {
+public enum ImageOrderIndexKind: String {
     case orderIndex
     case temporaryOrderIndex
 }
 
-enum UserDefaultsKeys: String {
+public enum UserDefaultsKeys: String {
     case themeColor
     case dateFormat
     case isTimeFormat24
@@ -43,29 +43,29 @@ enum UserDefaultsKeys: String {
     case darkModeTheme
 }
 
-enum OrderCriterion: String, CaseIterable {
+public enum OrderCriterion: String, CaseIterable {
     case modificationDate
     case creationDate
 //    case memoTitle
 }
 
 
-enum DarkModeTheme: String, CaseIterable {
+public enum DarkModeTheme: String, CaseIterable {
     case light
     case dark
     case systemTheme
 }
 
 
-struct CGSizeConstant {
-    static let screenSize = UIScreen.current!.bounds.size
-    static let popupCardThumbnailSize = CGSize(width: 70, height: 70)
-    static let detailViewThumbnailSize = CGSize(width: 90, height: 90)
-    static let compositionalCardThumbnailSize = CGSize(width: 70, height: 70)
+public struct CGSizeConstant {
+    public static let screenSize = UIScreen.current!.bounds.size
+    public static let popupCardThumbnailSize = CGSize(width: 70, height: 70)
+    public static let detailViewThumbnailSize = CGSize(width: 90, height: 90)
+    public static let compositionalCardThumbnailSize = CGSize(width: 70, height: 70)
 }
 
 
-enum NotificationName: String {
+public enum NotificationName: String {
     case cellSelectedNotification
     case createdMemoNotification
     case editingCompleteNotification

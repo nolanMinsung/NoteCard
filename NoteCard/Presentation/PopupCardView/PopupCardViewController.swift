@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Shared
 import UIKit
 
 class PopupCardViewController: UIViewController {

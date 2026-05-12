@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Shared
 
 protocol ComparableValue: Comparable {}
 extension String: ComparableValue {}

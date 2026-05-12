@@ -8,7 +8,7 @@
 import UIKit
 
 
-extension UIView {
+public extension UIView {
     
     static func springAnimate(
         withDuration: TimeInterval,
@@ -29,14 +29,14 @@ extension UIView {
         )
     }
     
-    func currentWindowScene() -> UIWindowScene? {
+    public func currentWindowScene() -> UIWindowScene? {
         guard let window = self.window else { return nil }
         guard let windowScene = window.windowScene else { return nil }
         return windowScene
     }
     
     // window가 여러 개인 경우는 어떡함?
-    func currentSceneSize() -> CGSize? {
+    public func currentSceneSize() -> CGSize? {
         return currentWindowScene()?.windows.first?.bounds.size
     }
     

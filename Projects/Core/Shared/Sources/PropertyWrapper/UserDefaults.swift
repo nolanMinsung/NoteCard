@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum UserDefaultsKey: String {
+public enum UserDefaultsKey: String {
     case themeColor // themeColor는 ThemeManager를 통해서만 관리.
     case dateFormat
     case isTimeFormat24
@@ -24,14 +24,19 @@ enum UserDefaultsKey: String {
 ///     @UserDefault(key: .userName, defaultValue: "")
 ///     let userName: String
 /// }
-@propertyWrapper struct UserDefault<T> {
-    
-    let key: UserDefaultsKey
-    let defaultValue: T
-    
-    var wrappedValue: T {
-        get { return UserDefaults.standard.object(forKey: key.rawValue) as? T ?? defaultValue}
+@propertyWrapper public struct UserDefault<T> {
+
+    public let key: UserDefaultsKey
+    public let defaultValue: T
+
+    public init(key: UserDefaultsKey, defaultValue: T) {
+        self.key = key
+        self.defaultValue = defaultValue
+    }
+
+    public var wrappedValue: T {
+        get { return UserDefaults.standard.object(forKey: key.rawValue) as? T ?? defaultValue }
         set { UserDefaults.standard.set(newValue, forKey: key.rawValue) }
     }
-    
+
 }

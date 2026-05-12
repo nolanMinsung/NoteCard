@@ -6,6 +6,7 @@
 //
 
 import PhotosUI
+import Shared
 import UIKit
 
 // MARK: - Repository Protocol

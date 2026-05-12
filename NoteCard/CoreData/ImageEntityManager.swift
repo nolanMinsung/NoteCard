@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Shared
 import CoreData
 
 final class ImageEntityManager {

@@ -9,10 +9,10 @@ import UIKit
 
 final class DateManager {
     
-    static let shared = DateManager()
+    public static let shared = DateManager()
     private init() {}
     
-    enum HowOld: String {
+    public enum HowOld: String {
         case today
         case yesterDay
         case theDayBeforeYesterday

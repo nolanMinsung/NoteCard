@@ -8,7 +8,7 @@
 import UIKit
 
 
-extension UIColor {
+public extension UIColor {
     
     convenience init(hexCode: String, alpha: CGFloat = 1.0) {
         var hexFormatted: String = hexCode.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
@@ -28,7 +28,7 @@ extension UIColor {
                   alpha: alpha)
     }
     
-    func toHexString() -> String {
+    public func toHexString() -> String {
             var r:CGFloat = 0
             var g:CGFloat = 0
             var b:CGFloat = 0

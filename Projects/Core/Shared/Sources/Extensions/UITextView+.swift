@@ -8,7 +8,7 @@
 import UIKit
 
 
-extension UITextView {
+public extension UITextView {
     
     /// UITextView에 행간을 적용한 텍스트를 입력하는 메서드
     /// - Parameters:
@@ -16,7 +16,7 @@ extension UITextView {
     ///   - lineSpace: 텍스트의 행간. CGFloat 타입
     ///   - font: 텍스트의 폰트. UIFont 타입
     ///   - color: 텍스트의 색깔(foregroundColor). UIColo? 타입이며, nil일 경우 UIColor.black 할당)
-    func setLineSpace(with textString: String, lineSpace: CGFloat, font: UIFont, textColor: UIColor? = .label) {
+    public func setLineSpace(with textString: String, lineSpace: CGFloat, font: UIFont, textColor: UIColor? = .label) {
         
         //NSAttributedString.Key 중에는 paragraphStyle이라는 게 있는데, 이는 text 의 여러 줄에 걸쳐서 적용되는 글의 속성을 뜻하는 듯.
         //이 paragraphStyle을 잘 설정해서 글의 좌우정렬, 행간, 들여쓰기 등을 설정할 수 있다.

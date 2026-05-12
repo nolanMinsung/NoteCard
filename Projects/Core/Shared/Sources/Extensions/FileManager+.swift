@@ -7,15 +7,15 @@
 
 import Foundation
 
-extension FileManager {
+public extension FileManager {
     
-    enum FileStatus {
+    public enum FileStatus {
         case isDirectory
         case isFile
         case notExist
     }
     
-    func fileOrDirectoryExist(at path: URL) -> FileStatus {
+    public func fileOrDirectoryExist(at path: URL) -> FileStatus {
         var isDirectory = ObjCBool(false)
         let isExistAtPath: Bool
         if #available(iOS 16, *) {

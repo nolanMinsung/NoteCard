@@ -6,6 +6,7 @@
 //
 
 import PhotosUI
+import Shared
 import UIKit
 
 struct ImageUITemporaryModel: Hashable, TemporaryImageInfo {

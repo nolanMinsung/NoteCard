@@ -8,8 +8,8 @@
 import UIKit
 
 
-extension CALayer {
-    func addBorder(_ arr_edge: [UIRectEdge], color: UIColor, width: CGFloat) {
+public extension CALayer {
+    public func addBorder(_ arr_edge: [UIRectEdge], color: UIColor, width: CGFloat) {
         for edge in arr_edge {
             let border = CALayer()
             switch edge {

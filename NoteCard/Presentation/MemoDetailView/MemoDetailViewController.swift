@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Shared
 import CoreData
 import PhotosUI
 import UIKit

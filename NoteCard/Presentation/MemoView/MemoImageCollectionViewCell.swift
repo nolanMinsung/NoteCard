@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Shared
 
 
 /// collection view cell for image picking collection view.

@@ -13,6 +13,7 @@
 //
 
 import UIKit
+import Shared
 
 enum CategoryListTableViewSection: CaseIterable {
     case main

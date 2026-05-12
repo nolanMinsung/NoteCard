@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import Shared
 
 extension CategoryEntity {
     

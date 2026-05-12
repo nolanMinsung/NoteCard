@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-extension UITextView {
+public extension UITextView {
     
     var textPublisher: AnyPublisher<String, Never> {
         let textChangePublisher = NotificationCenter.default

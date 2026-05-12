@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Shared
 
 struct MemoImageInfo: Hashable {
     let id: UUID
