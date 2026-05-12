@@ -10,7 +10,7 @@ import DesignSystem
 import Shared
 
 /// 이미지 파일 처리 및 데이터 변환과 관련된 에러 타입
-enum ImageFileError: NoteCardError {
+public enum ImageFileError: NoteCardError {
     case loadingDataFromNSProviderFaild
     case loadedFromNSProviderButDataNotFound
     case imageFileExtensionError
@@ -23,7 +23,7 @@ enum ImageFileError: NoteCardError {
     case fileDeleteError(Error)
     case fileURLGenerationFailed
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .loadingDataFromNSProviderFaild:
             return "NSProvider로부터 데이터를 로딩하는 데 실패했습니다."
@@ -50,7 +50,7 @@ enum ImageFileError: NoteCardError {
         }
     }
     
-    var displayingMessage: String {
+    public var displayingMessage: String {
         switch self {
         case .loadingDataFromNSProviderFaild, .loadedFromNSProviderButDataNotFound:
             return "이미지를 저장하는 데 실패했습니다."

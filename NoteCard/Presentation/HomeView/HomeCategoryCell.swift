@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Domain
 import DesignSystem
 import Shared
 
@@ -70,7 +71,7 @@ class HomeCategoryCell: UICollectionViewCell, ViewShrinkable {
         labelCategoryName.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5).isActive = true
     }
     
-    func configure(with category: Category) {
+    func configure(with category: Domain.Category) {
         labelCategoryName.text = category.name
     }
     

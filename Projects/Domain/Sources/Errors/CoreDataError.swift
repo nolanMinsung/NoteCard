@@ -10,7 +10,7 @@ import DesignSystem
 import Shared
 
 /// Core Data 작업과 관련된 에러 타입
-enum CoreDataError: NoteCardError {
+public enum CoreDataError: NoteCardError {
     case fetchFailed(Error?)
     case saveFailed(Error?)
     case objectNotFound
@@ -18,7 +18,7 @@ enum CoreDataError: NoteCardError {
     case duplicateCategoryDetected
     case duplicateImageDetected
     
-    var displayingMessage: String {
+    public var displayingMessage: String {
         switch self {
         case .fetchFailed:
             return "데이터를 불러오는 데 실패했습니다. 다시 시도해 주세요."

@@ -68,6 +68,7 @@ let project = Project(
                 .external(name: "Wisp"),
                 .project(target: "Shared", path: .relativeToRoot("Projects/Core/Shared")),
                 .project(target: "DesignSystem", path: .relativeToRoot("Projects/Core/DesignSystem")),
+                .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
             ],
             settings: .settings(
                 base: infoPlistKeys.merging([

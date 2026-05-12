@@ -5,6 +5,10 @@
 //  Created by 김민성 on 8/27/25.
 //
 
+import CoreData
+import Domain
+import Shared
+
 extension MemoEntity {
     
     func toDomain() -> Memo {

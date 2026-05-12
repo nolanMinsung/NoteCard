@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Domain
 import DesignSystem
 import Shared
 import CoreData
@@ -202,7 +203,7 @@ final class CategoryEntityManager {
             
             CoreDataStack.shared.saveContext()
         } catch {
-            print("Category Name Update Failed")
+            print("Domain.Category Name Update Failed")
         }
     }
     

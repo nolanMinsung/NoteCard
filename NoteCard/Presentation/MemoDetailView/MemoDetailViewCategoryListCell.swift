@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Domain
 import DesignSystem
 import Shared
 
@@ -123,7 +124,7 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         self.label.text = categoryEntity.name
     }
     
-    func configureCell(with category: Category) {
+    func configureCell(with category: Domain.Category) {
         self.label.text = category.name
         self.layoutSubviews()
     }

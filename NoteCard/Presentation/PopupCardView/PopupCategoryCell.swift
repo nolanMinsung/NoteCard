@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Domain
 import DesignSystem
 import Shared
 
@@ -59,7 +60,7 @@ private extension PopupCategoryCell {
 
 extension PopupCategoryCell {
     
-    func configure(with category: Category) {
+    func configure(with category: Domain.Category) {
         nameLabel.text = category.name
     }
     

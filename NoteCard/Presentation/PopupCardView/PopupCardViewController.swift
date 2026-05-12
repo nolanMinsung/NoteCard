@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Domain
 import DesignSystem
 import Shared
 import UIKit
@@ -17,7 +18,7 @@ class PopupCardViewController: UIViewController {
     private let memoTextViewTapGesture = UITapGestureRecognizer()
     
     private var memo: Memo
-    private var categories: [Category] = []
+    private var categories: [Domain.Category] = []
     private var imageUIModels: [ImageUIModel] = [] {
         didSet {
             rootView.imageCollectionViewHeight.constant = imageUIModels.isEmpty ? 0 : 70
@@ -358,10 +359,10 @@ extension PopupCardViewController {
 }
 
 
-// MARK: - Category Fetching
+// MARK: - Domain.Category Fetching
 private extension PopupCardViewController {
     
-    private func fetchCategories() async throws -> [Category] {
+    private func fetchCategories() async throws -> [Domain.Category] {
         return try await CategoryEntityRepository.shared.getAllCategories(
             ofMemo: memo,
             inOrderOf: .modificationDate,

@@ -6,13 +6,14 @@
 //
 
 import CoreData
+import Domain
 import DesignSystem
 import Shared
 
 extension CategoryEntity {
     
-    func toDomain() -> Category {
-        Category(
+    func toDomain() -> Domain.Category {
+        Domain.Category(
             name: self.name,
             creationDate: self.creationDate,
             modificationDate: self.modificationDate,
@@ -21,7 +22,7 @@ extension CategoryEntity {
     
 }
 
-extension Category {
+extension Domain.Category {
     
     func toEntity(in context: NSManagedObjectContext) -> CategoryEntity {
         let request = CategoryEntity.fetchRequest()

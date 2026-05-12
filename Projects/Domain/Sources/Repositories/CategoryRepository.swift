@@ -9,7 +9,7 @@ import Foundation
 import DesignSystem
 import Shared
 
-protocol CategoryRepository {
+public protocol CategoryRepository {
     
     func create(name: String) async throws
     

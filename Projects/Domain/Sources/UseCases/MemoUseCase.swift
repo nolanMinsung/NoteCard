@@ -9,7 +9,7 @@ import Foundation
 import DesignSystem
 import Shared
 
-protocol MemoUseCase {
+public protocol MemoUseCase {
     
     // MARK: - CREATE
     func createNewMemo() throws -> Memo

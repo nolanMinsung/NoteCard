@@ -5,6 +5,10 @@
 //  Created by 김민성 on 8/28/25.
 //
 
+import CoreData
+import Domain
+import Shared
+
 extension ImageEntity {
     
     func toDomain() -> MemoImageInfo {

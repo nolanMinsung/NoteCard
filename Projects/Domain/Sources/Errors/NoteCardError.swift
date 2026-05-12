@@ -10,7 +10,7 @@ import DesignSystem
 import Shared
 
 /// NoteCard 모든 커스텀 에러가 준수하는 기본 프로토콜
-protocol NoteCardError: LocalizedError {
+public protocol NoteCardError: LocalizedError {
     /// 사용자에게 보여줄 에러 제목 (Optional)
     var title: String? { get }
     
@@ -18,14 +18,14 @@ protocol NoteCardError: LocalizedError {
     var displayingMessage: String { get }
 }
 
-extension NoteCardError {
+public extension NoteCardError {
     
-    var title: String? {
+    public var title: String? {
         return "오류"
     }
     
     // LocalizedError 프로토콜의 errorDescription을 기본 구현으로 사용
-    var errorDescription: String? {
+    public var errorDescription: String? {
         return self.displayingMessage
     }
 }

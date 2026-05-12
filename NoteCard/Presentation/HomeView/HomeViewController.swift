@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Domain
 import DesignSystem
 import Shared
 import UIKit
@@ -21,7 +22,7 @@ class HomeViewController: UIViewController {
     }
     
     enum HomeItem: Hashable {
-        case category(Category)
+        case category(Domain.Category)
         case memo(MemoHomeUIModel)
         case addCategoryPlaceholder
         case addMemoPlaceholder
@@ -31,7 +32,7 @@ class HomeViewController: UIViewController {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, HomeItem>
     typealias CellProvider = DiffableDataSource.CellProvider
     typealias HeaderRegistration = UICollectionView.SupplementaryRegistration<HomeHeaderView>
-    typealias CategoryCellRegistration = UICollectionView.CellRegistration<HomeCategoryCell, Category>
+    typealias CategoryCellRegistration = UICollectionView.CellRegistration<HomeCategoryCell, Domain.Category>
     typealias MemoCellRegistration = UICollectionView.CellRegistration<HomeCardCell, MemoHomeUIModel>
     typealias PlaceholderCellRegistration = UICollectionView.CellRegistration<HomeAddPlaceholderCell, HomeItem>
     
@@ -45,7 +46,7 @@ class HomeViewController: UIViewController {
     
     var homeCollectionView: WispableCollectionView { self.homeView.homeCollectionView }
     
-    private var categories: [Category] = []
+    private var categories: [Domain.Category] = []
     private var favoriteMemos: [Memo] = []
     private var allMemos: [Memo] = []
     private var diffableDataSource: DiffableDataSource!
@@ -125,7 +126,7 @@ class HomeViewController: UIViewController {
         let placeholderCellRegistration = PlaceholderCellRegistration { cell, indexPath, item in
             switch item {
             case .addCategoryPlaceholder:
-                // 카테고리 셀은 폭이 좁아 영문 "Add Category"가 줄바꿈되므로 시각 라벨은 생략하고
+                // 카테고리 셀은 폭이 좁아 영문 "Add Domain.Category"가 줄바꿈되므로 시각 라벨은 생략하고
                 // VoiceOver에만 문구를 노출한다. cornerRadius는 HomeCategoryCell(25)과 동일.
                 cell.configure(
                     displayedTitle: nil,

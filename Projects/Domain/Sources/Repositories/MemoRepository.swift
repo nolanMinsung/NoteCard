@@ -9,7 +9,7 @@ import Foundation
 import DesignSystem
 import Shared
 
-protocol MemoRepository: Actor {
+public protocol MemoRepository: Actor {
     
     func createNewMemo() async throws -> Memo
     

@@ -11,7 +11,7 @@ import Shared
 import UIKit
 
 // MARK: - Repository Protocol
-protocol ImageRepository {
+public protocol ImageRepository {
     func createImage(
         from pickerResult: PHPickerResult,
         for memo: Memo,

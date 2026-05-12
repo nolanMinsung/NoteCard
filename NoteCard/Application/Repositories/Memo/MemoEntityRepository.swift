@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Domain
 import DesignSystem
 import Shared
 import CoreData
@@ -80,7 +81,7 @@ actor MemoEntityRepository: MemoRepository {
         return NSPredicate(format: "memoText CONTAINS[cd] %@", searchText)
     }
     /// `category` 인자가 `nil`인 경우, 카테고리가 없는 데이터를 가져옴.
-    private func memoHasCategory(_ category: Category?) -> NSPredicate {
+    private func memoHasCategory(_ category: Domain.Category?) -> NSPredicate {
         if let category {
             return NSPredicate(format: "ANY categories.name == %@", category.name as CVarArg)
         } else {
@@ -167,7 +168,7 @@ extension MemoEntityRepository {
     }
     
     /// `category`에 `nil`이 할당될 경우, 아무런 카테고리에도 속하지 않은 메모들을 반환
-    func getAllMemos(inCategory category: Category?) async throws -> [Memo] {
+    func getAllMemos(inCategory category: Domain.Category?) async throws -> [Memo] {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
             
@@ -194,7 +195,7 @@ extension MemoEntityRepository {
     /// `category`에 `nil`이 할당될 경우, 전체 메모 목록에서 검색한 결과를 반환
     ///
     /// - Note: `getAllMemos(inCategory:)`과 `category`가 `nil`인 경우의 로직이 다름.
-    func searchMemo(searchText: String, inCategory category: Category? = nil) async throws -> [Memo] {
+    func searchMemo(searchText: String, inCategory category: Domain.Category? = nil) async throws -> [Memo] {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
@@ -343,7 +344,7 @@ extension MemoEntityRepository {
 // MARK: - UPDATE
 extension MemoEntityRepository {
     
-    func replaceCategories(to memo: Memo, newCategories: Set<Category>) async throws {
+    func replaceCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let oldCategories = memoEntity.categories
@@ -361,7 +362,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
-    func replaceCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
+    func replaceCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
@@ -381,7 +382,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: memos.map(\.memoID))))
     }
     
-    func addCategories(to memo: Memo, newCategories: Set<Category>) async throws {
+    func addCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
@@ -394,7 +395,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
-    func addCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
+    func addCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
@@ -409,7 +410,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: memos.map(\.memoID))))
     }
     
-    func removeCategories(to memo: Memo, newCategories: Set<Category>) async throws {
+    func removeCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
@@ -422,7 +423,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
-    func removeCategories(to memos: [Memo], newCategories: Set<Category>) async throws {
+    func removeCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
