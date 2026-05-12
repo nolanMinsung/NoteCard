@@ -1,5 +1,4 @@
 {
-  "originHash" : "a2ad2756b88796bada4f6a7e18c7f68bd8ec22ef46a16ef3049c6e30e40fa73b",
   "pins" : [
     {
       "identity" : "wisp",
@@ -11,5 +10,5 @@
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }

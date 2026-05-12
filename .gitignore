@@ -98,6 +98,14 @@ iOSInjectionProject/
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 
+### Tuist generated ###
+# Tuist generates these from Project.swift / Workspace.swift — do not commit.
+*.xcodeproj
+*.xcworkspace
+Derived/
+.tuist-version
+graph.dot
+
 # End of https://www.toptal.com/developers/gitignore/api/swift,xcode
 
 *.xcappdata
