@@ -68,6 +68,8 @@ let project = Project(
                 .project(target: "DesignSystem", path: .relativeToRoot("Projects/Core/DesignSystem")),
                 .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
                 .project(target: "Data", path: .relativeToRoot("Projects/Data")),
+                .project(target: "AnalyticsInterface", path: .relativeToRoot("Projects/Core/AnalyticsInterface")),
+                .project(target: "AnalyticsImpl", path: .relativeToRoot("Projects/Core/AnalyticsImpl")),
             ],
             settings: .settings(
                 base: infoPlistKeys.merging([
