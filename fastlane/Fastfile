@@ -73,9 +73,9 @@ platform :ios do
     sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump build to #{version} (#{build})'")
   end
 
-  desc "Increment marketing version. Resets build number to 1. Pass type:'patch'|'minor'|'major' (default 'patch')."
+  desc "Increment marketing version. Resets build number to 1. Pass type:'patch'|'minor'|'major' (default 'minor'). 'patch' is reserved for hotfix releases."
   lane :bump_version do |options|
-    bump_type = options[:type] || "patch"
+    bump_type = options[:type] || "minor"
     version = update_marketing_version(bump_type: bump_type)
     set_build_number(1)
     sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump version to #{version}'")

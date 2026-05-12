@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       bump_type:
-        description: "Version bump type (patch / minor / major)"
+        description: "Version bump type (patch / minor / major). Default 'minor' — use 'patch' only for hotfix releases."
         required: false
-        default: "patch"
+        default: "minor"
   # Auto-build on bug-fix pushes to release branches
   push:
     branches:
@@ -91,7 +91,9 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
           set -euo pipefail
-          BUMP_TYPE="${{ github.event.inputs.bump_type || 'patch' }}"
+          # Default 'minor' for regular periodic releases.
+          # 'patch' is reserved for hotfix releases (must be explicitly chosen via workflow_dispatch).
+          BUMP_TYPE="${{ github.event.inputs.bump_type || 'minor' }}"
           echo "Bump type: $BUMP_TYPE"
 
           # 1. Read current version from main's pbxproj.
@@ -100,8 +102,9 @@ jobs:
           while [ ${#V[@]} -lt 3 ]; do V+=(0); done
           case "$BUMP_TYPE" in
             major) V[0]=$((V[0]+1)); V[1]=0; V[2]=0 ;;
+            patch) V[2]=$((V[2]+1)) ;;
             minor) V[1]=$((V[1]+1)); V[2]=0 ;;
-            patch|*) V[2]=$((V[2]+1)) ;;
+            *) echo "::error::Unknown bump type: $BUMP_TYPE (expected: patch / minor / major)"; exit 1 ;;
           esac
           NEW_VERSION="${V[0]}.${V[1]}.${V[2]}"
           BRANCH="release/v${NEW_VERSION}"
