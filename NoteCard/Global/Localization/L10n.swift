@@ -149,6 +149,7 @@ enum L10n {
         static let remove = "common.remove".localized()
         static let select = "common.select".localized()
         static let editingMode = "common.editingMode".localized()
+        static let more = "common.more".localized()
         static let recover = "common.recover".localized()
         static let alert = "common.alert".localized()
         static let actionCannotBeUndone = "common.actionCannotBeUndone".localized()

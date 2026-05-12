@@ -9,9 +9,10 @@ import UIKit
 
 
 final class MemoView: UIView {
-    
+
     let categoryNameTextField = UITextField()
     let smallCardCollectionView = SmallCardCollectionView()
+    let editingToolbar = MemoEditingToolbarView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,8 +64,9 @@ final class MemoView: UIView {
     private func configureViewHierarchy() {
         self.addSubview(categoryNameTextField)
         self.addSubview(smallCardCollectionView)
+        self.addSubview(editingToolbar)
     }
-    
+
     func setupConstraints() {
         categoryNameTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -72,13 +74,25 @@ final class MemoView: UIView {
             categoryNameTextField.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
             categoryNameTextField.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
         ])
-        
+
         smallCardCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             smallCardCollectionView.topAnchor.constraint(equalTo: categoryNameTextField.bottomAnchor, constant: 20),
             smallCardCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             smallCardCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
-            smallCardCollectionView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0)
+            // 카드가 글래스 탭바/편집 toolbar 뒤로 스크롤되어 깊이감을 살리도록 화면 최하단까지 확장.
+            // 콘텐츠가 가려지지 않도록 하는 건 contentInsetAdjustmentBehavior(.automatic)의 safe area 보정 +
+            // MemoViewController가 toolbar 가시성에 맞춰 토글하는 contentInset.bottom이 함께 처리한다.
+            smallCardCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
+        ])
+
+        editingToolbar.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            // 탭바와 떨어진 floating pill로 보이도록 좌우 인셋 + 탭바 위 gap.
+            editingToolbar.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            editingToolbar.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            editingToolbar.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12),
+            editingToolbar.heightAnchor.constraint(equalToConstant: MemoEditingToolbarView.preferredHeight),
         ])
     }
     

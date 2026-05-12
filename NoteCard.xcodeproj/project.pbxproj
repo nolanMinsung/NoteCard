@@ -37,6 +37,7 @@
 		4E1385092AF386260063817B /* InsetTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385082AF386260063817B /* InsetTextField.swift */; };
 		4E13850F2AF386750063817B /* MemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13850E2AF386750063817B /* MemoViewController.swift */; };
 		4E1385112AF386920063817B /* MemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385102AF386920063817B /* MemoView.swift */; };
+		4EBB000B2E0F30CD00000011 /* MemoEditingToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBB000A2E0F30CD00000010 /* MemoEditingToolbarView.swift */; };
 		4E1385192AF387100063817B /* SmallCardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1385182AF387100063817B /* SmallCardCollectionViewCell.swift */; };
 		4E13851C2AF387480063817B /* CardImageShowingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851B2AF387480063817B /* CardImageShowingViewController.swift */; };
 		4E13851E2AF3875D0063817B /* CardImageShowingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13851D2AF3875D0063817B /* CardImageShowingView.swift */; };
@@ -133,6 +134,7 @@
 		4E1385082AF386260063817B /* InsetTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsetTextField.swift; sourceTree = "<group>"; };
 		4E13850E2AF386750063817B /* MemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoViewController.swift; sourceTree = "<group>"; };
 		4E1385102AF386920063817B /* MemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoView.swift; sourceTree = "<group>"; };
+		4EBB000A2E0F30CD00000010 /* MemoEditingToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditingToolbarView.swift; sourceTree = "<group>"; };
 		4E1385142AF386D10063817B /* MemoImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		4E1385182AF387100063817B /* SmallCardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallCardCollectionViewCell.swift; sourceTree = "<group>"; };
 		4E13851B2AF387480063817B /* CardImageShowingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageShowingViewController.swift; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 			children = (
 				4E13850E2AF386750063817B /* MemoViewController.swift */,
 				4E1385102AF386920063817B /* MemoView.swift */,
+				4EBB000A2E0F30CD00000010 /* MemoEditingToolbarView.swift */,
 				4E462D682E2A1AF5004C0215 /* SmallCardCollectionView.swift */,
 				4E1385182AF387100063817B /* SmallCardCollectionViewCell.swift */,
 				4E1385142AF386D10063817B /* MemoImageCollectionViewCell.swift */,
@@ -611,6 +614,7 @@
 				4E4FCCBE2B3C3644000CBE17 /* DateFormatSettingTableViewCell.swift in Sources */,
 				4E13850F2AF386750063817B /* MemoViewController.swift in Sources */,
 				4E1385112AF386920063817B /* MemoView.swift in Sources */,
+				4EBB000B2E0F30CD00000011 /* MemoEditingToolbarView.swift in Sources */,
 				4E4FCCC52B3C5875000CBE17 /* TimeFormatSettingTableViewCell.swift in Sources */,
 				4EFC02DE2B42927700C778DF /* TextSizeSettingViewController.swift in Sources */,
 				4E1385032AF385B00063817B /* CategoryListTableViewCell.swift in Sources */,

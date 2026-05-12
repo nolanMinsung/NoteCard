@@ -39,7 +39,12 @@ class MainTabBarController: UITabBarController {
         let standardAppearance = UITabBarAppearance()
         standardAppearance.configureWithDefaultBackground()
         tabBar.standardAppearance = standardAppearance
-        
+        // scrollEdgeAppearance를 명시하지 않으면 시스템이 standardAppearance를
+        // 가져다 배경을 투명으로 바꿔 사용함. content가 작아 scroll edge에 머무는 화면
+        // (예: 메모가 적은 MemoView)에서 tab bar가 투명해지는 현상의 원인.
+        // iOS 26+에서는 default background가 곧 Liquid Glass 머티리얼이므로 동일 객체로 충분.
+        tabBar.scrollEdgeAppearance = standardAppearance
+
         tabBar.tintColor = UIColor.currentTheme
     }
     
