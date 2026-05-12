@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import DesignSystem
 import Shared
 
 class MainSplitViewController: UISplitViewController {

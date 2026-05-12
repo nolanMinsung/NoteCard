@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import DesignSystem
 import Shared
 
 /// NoteCard 모든 커스텀 에러가 준수하는 기본 프로토콜

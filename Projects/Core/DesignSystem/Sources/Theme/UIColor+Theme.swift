@@ -8,9 +8,9 @@
 import UIKit
 import Shared
 
-extension UIColor {
+public extension UIColor {
     
-    static var currentTheme: UIColor {
+    public static var currentTheme: UIColor {
         guard let colorName = UserDefaults.standard.string(forKey: UserDefaultsKey.themeColor.rawValue) else {
             return .msBlack
         }
@@ -20,7 +20,7 @@ extension UIColor {
         return themeColor.toUIColor()
     }
     
-    static let msBlack = UIColor { traitCollection in
+    public static let msBlack = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "FFFFFF").withAlphaComponent(0.847)
         } else {
@@ -28,7 +28,7 @@ extension UIColor {
         }
     }
     
-    static let msBrown = UIColor { traitCollection in
+    public static let msBrown = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "BF6032")
         } else {
@@ -36,7 +36,7 @@ extension UIColor {
         }
     }
     
-    static let msRed = UIColor { traitCollection in
+    public static let msRed = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "E02300")
         } else {
@@ -44,7 +44,7 @@ extension UIColor {
         }
     }
     
-    static let msOrange = UIColor { traitCollection in
+    public static let msOrange = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "F89010")
         } else {
@@ -52,7 +52,7 @@ extension UIColor {
         }
     }
     
-    static let msYellow = UIColor { traitCollection in
+    public static let msYellow = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "FFCA40")
         } else {
@@ -60,7 +60,7 @@ extension UIColor {
         }
     }
     
-    static let msGreen = UIColor { traitCollection in
+    public static let msGreen = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "25CF68")
         } else {
@@ -68,7 +68,7 @@ extension UIColor {
         }
     }
     
-    static let msSkyBlue = UIColor { traitCollection in
+    public static let msSkyBlue = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "56DAFF")
         } else {
@@ -76,7 +76,7 @@ extension UIColor {
         }
     }
     
-    static let msBlue = UIColor { traitCollection in
+    public static let msBlue = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "0A84FF")
         } else {
@@ -84,7 +84,7 @@ extension UIColor {
         }
     }
     
-    static let msPurple = UIColor { traitCollection in
+    public static let msPurple = UIColor { traitCollection in
         if traitCollection.userInterfaceStyle == .dark {
             return .init(hexCode: "A250CA")
         } else {

@@ -12,7 +12,7 @@ import Shared
 
 // curve는 항상 linear
 // animator를 갈아끼우는 식으로 구현?
-class CustomIntensityBlurView: UIView {
+public class CustomIntensityBlurView: UIView {
     
     //MARK: - Properties
     
@@ -74,7 +74,7 @@ class CustomIntensityBlurView: UIView {
     
     
     // 무조건 블러 없음 -> 커스텀 강도 블러 식으로 애니메이션이 진행됨.
-    func setBlurFromZero(intensity: Double, animated: Bool, duration: TimeInterval = 0.5) {
+    public func setBlurFromZero(intensity: Double, animated: Bool, duration: TimeInterval = 0.5) {
         // DispatchQueue.main.async { } 블럭 안에 감싸지 않으면
         // 다른 애니메이션 블럭 안에서 호출했을 때 의도한 바와 다르게 동작하는 듯 함..
         DispatchQueue.main.async { [weak self] in
@@ -100,7 +100,7 @@ class CustomIntensityBlurView: UIView {
         }
     }
     
-    func removeBlur(animated: Bool, duration: TimeInterval = 0.5) {
+    public func removeBlur(animated: Bool, duration: TimeInterval = 0.5) {
         if animated {
             UIView.animate(withDuration: duration) { [weak self] in
                 self?.blurView.effect = nil
@@ -112,11 +112,11 @@ class CustomIntensityBlurView: UIView {
     
 }
 
-extension CustomIntensityBlurView {
+public extension CustomIntensityBlurView {
     
     //MARK: - Func
     
-    func applyBlurEffectAsync() {
+    public func applyBlurEffectAsync() {
         DispatchQueue.main.async { [weak self] in
             self?.animator?.startAnimation()
         }

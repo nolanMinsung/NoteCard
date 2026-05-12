@@ -8,7 +8,7 @@
 import UIKit
 import Shared
 
-enum ThemeColor: String, CaseIterable {
+public enum ThemeColor: String, CaseIterable {
     
     case black
     case brown
@@ -20,7 +20,7 @@ enum ThemeColor: String, CaseIterable {
     case blue
     case purple
     
-    func toUIColor() -> UIColor {
+    public func toUIColor() -> UIColor {
         let uiColor: UIColor
         
         switch self {

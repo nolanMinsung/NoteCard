@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import DesignSystem
 import Shared
 import CoreData
 

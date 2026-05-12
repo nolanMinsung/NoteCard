@@ -6,5 +6,7 @@ let project = Project.module(
     product: .staticFramework,
     sources: ["Sources/**"],
     resources: nil,
-    dependencies: []
+    dependencies: [
+        .module(.shared),
+    ]
 )

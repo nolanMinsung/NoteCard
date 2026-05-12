@@ -10,14 +10,14 @@ import Shared
 import UIKit
 
 @MainActor
-final class ThemeManager {
+public final class ThemeManager {
     
     private let currentThemeSubject: CurrentValueSubject<UIColor, Never> = .init(UIColor.currentTheme)
-    var currentThemePublisher: AnyPublisher<UIColor, Never> {
+    public var currentThemePublisher: AnyPublisher<UIColor, Never> {
         return currentThemeSubject.eraseToAnyPublisher()
     }
     
-    static let shared = ThemeManager()
+    public static let shared = ThemeManager()
     private init() {}
     
     // ThemeColor의 UserDefault 설정은 오직 ThemeManager에서만 접근 가능하도록
@@ -26,7 +26,7 @@ final class ThemeManager {
         currentThemeSubject.send(color.toUIColor())
     }
     
-    func setThemeColor(_ color: ThemeColor) {
+    public func setThemeColor(_ color: ThemeColor) {
         guard currentThemeSubject.value != color.toUIColor() else { return }
         setUserDefault(color: color)
     }

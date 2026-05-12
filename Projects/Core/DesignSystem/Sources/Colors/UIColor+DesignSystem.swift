@@ -8,9 +8,9 @@
 import UIKit
 import Shared
 
-extension UIColor {
+public extension UIColor {
     
-    static let homeViewBackground = UIColor { traitCollection in
+    public static let homeViewBackground = UIColor { traitCollection in
         return (traitCollection.userInterfaceStyle == .dark) ? .black : .systemGray6
     }
     

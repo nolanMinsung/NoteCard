@@ -6,27 +6,26 @@
 //
 
 import Combine
-import Shared
 import Foundation
 
 @MainActor
-final class OrderSettingManager {
+public final class OrderSettingManager {
     
-    static let shared = OrderSettingManager()
+    public static let shared = OrderSettingManager()
     private init() { }
     
     private let orderSettingChangedSubject: PassthroughSubject<Void, Never> = .init()
-    var orderSettingChangedPublisher: AnyPublisher<Void, Never> {
+    public var orderSettingChangedPublisher: AnyPublisher<Void, Never> {
         return orderSettingChangedSubject
             .eraseToAnyPublisher()
     }
     
-    func setOrderCriterion(_ criterion: OrderCriterion) {
+    public func setOrderCriterion(_ criterion: OrderCriterion) {
         UserDefaults.standard.setValue(criterion.rawValue, forKey: UserDefaultsKeys.orderCriterion.rawValue)
         orderSettingChangedSubject.send(())
     }
     
-    func setIsOrderAscending(_ isAscending: Bool) {
+    public func setIsOrderAscending(_ isAscending: Bool) {
         UserDefaults.standard.setValue(isAscending, forKey: UserDefaultsKeys.isOrderAscending.rawValue)
         orderSettingChangedSubject.send(())
     }

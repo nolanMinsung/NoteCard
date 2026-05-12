@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import DesignSystem
 import Shared
 
 /// Core Data 작업과 관련된 에러 타입
