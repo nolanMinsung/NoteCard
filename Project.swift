@@ -71,8 +71,6 @@ let project = Project(
             settings: .settings(
                 base: infoPlistKeys.merging([
                     "GENERATE_INFOPLIST_FILE": "YES",
-                    "MARKETING_VERSION": "2.1.2",
-                    "CURRENT_PROJECT_VERSION": "1",
                     "IPHONEOS_DEPLOYMENT_TARGET": "15.0",
                     "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
                     "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
@@ -84,22 +82,22 @@ let project = Project(
                         "APP_BUNDLE_ID": .string(bundleIdProd),
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
-                    ]),
+                    ], xcconfig: "Configs/Version.xcconfig"),
                     .release(name: "Release", settings: [
                         "APP_BUNDLE_ID": .string(bundleIdProd),
                         "CODE_SIGN_STYLE": "Manual",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.minsung.NoteCard",
-                    ]),
+                    ], xcconfig: "Configs/Version.xcconfig"),
                     .debug(name: "DebugEng", settings: [
                         "APP_BUNDLE_ID": .string(bundleIdEng),
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
-                    ]),
+                    ], xcconfig: "Configs/Version.xcconfig"),
                     .release(name: "ReleaseEng", settings: [
                         "APP_BUNDLE_ID": .string(bundleIdEng),
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
-                    ]),
+                    ], xcconfig: "Configs/Version.xcconfig"),
                 ]
             )
         ),

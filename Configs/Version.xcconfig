@@ -1,0 +1,7 @@
+// Version.xcconfig
+//
+// fastlane lanes(bump_version, bump_build)는 이 파일을 정규식으로 직접 편집한다.
+// Tuist는 Project.swift에서 이 파일을 모든 configuration의 base로 참조한다.
+
+MARKETING_VERSION = 2.1.2
+CURRENT_PROJECT_VERSION = 1
