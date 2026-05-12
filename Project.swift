@@ -101,13 +101,25 @@ let project = Project(
                 ]
             )
         ),
+        .target(
+            name: "\(appName)Tests",
+            destinations: .iOS,
+            product: .unitTests,
+            bundleId: "com.minsung.NoteCardTests",
+            deploymentTargets: deploymentTarget,
+            infoPlist: .default,
+            sources: ["Tests/AppTests/**/*.swift"],
+            dependencies: [
+                .target(name: appName),
+            ]
+        ),
     ],
     schemes: [
         .scheme(
             name: appName,
             shared: true,
             buildAction: .buildAction(targets: ["\(appName)"]),
-            testAction: nil,
+            testAction: .targets(["\(appName)Tests"]),
             runAction: .runAction(configuration: "Debug"),
             archiveAction: .archiveAction(configuration: "Release"),
             profileAction: .profileAction(configuration: "Release"),
