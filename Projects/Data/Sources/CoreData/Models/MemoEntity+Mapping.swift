@@ -9,9 +9,9 @@ import CoreData
 import Domain
 import Shared
 
-extension MemoEntity {
+public extension MemoEntity {
     
-    func toDomain() -> Memo {
+    public func toDomain() -> Memo {
         Memo(
             memoID:           self.memoID,
             creationDate:     self.creationDate,

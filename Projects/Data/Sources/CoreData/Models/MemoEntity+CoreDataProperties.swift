@@ -8,12 +8,11 @@
 
 import Foundation
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 
 
-extension MemoEntity {
+public extension MemoEntity {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<MemoEntity> {
         return NSFetchRequest<MemoEntity>(entityName: "MemoEntity")
@@ -33,7 +32,7 @@ extension MemoEntity {
 }
 
 // MARK: Generated accessors for categories
-extension MemoEntity {
+public extension MemoEntity {
 
     @objc(addCategoriesObject:)
     @NSManaged public func addToCategories(_ value: CategoryEntity)
@@ -50,7 +49,7 @@ extension MemoEntity {
 }
 
 // MARK: Generated accessors for images
-extension MemoEntity {
+public extension MemoEntity {
 
     @objc(addImagesObject:)
     @NSManaged public func addToImages(_ value: ImageEntity)
@@ -66,6 +65,4 @@ extension MemoEntity {
 
 }
 
-extension MemoEntity : Identifiable {
-
-}
+extension MemoEntity: Identifiable {}

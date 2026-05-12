@@ -8,12 +8,11 @@
 
 import Foundation
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 
 
-extension ImageEntity {
+public extension ImageEntity {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<ImageEntity> {
         return NSFetchRequest<ImageEntity>(entityName: "ImageEntity")
@@ -30,6 +29,4 @@ extension ImageEntity {
 
 }
 
-extension ImageEntity : Identifiable {
-
-}
+extension ImageEntity: Identifiable {}

@@ -7,32 +7,29 @@
 
 import UIKit
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 
 //코어데이터를 관리하는 매니저입니다
-final class MemoEntityManager {
+public final class MemoEntityManager {
     
-    let fileManager = FileManager.default
-    let context = CoreDataStack.shared.persistentContainer.viewContext
-    let imageEntityManager = ImageEntityManager.shared
-    static let shared = MemoEntityManager()
+    public let fileManager = FileManager.default
+    public let context = CoreDataStack.shared.persistentContainer.viewContext
+    public let imageEntityManager = ImageEntityManager.shared
+    public static let shared = MemoEntityManager()
     private init() {}
     
-    let categoryManager = CategoryEntityManager.shared
-    
-    weak var appDelegate = UIApplication.shared.delegate as? AppDelegate
+    public let categoryManager = CategoryEntityManager.shared
 //    lazy var context = appDelegate?.persistentContainer.viewContext
 //    weak var context: NSManagedObjectContext? {
 //        guard let appDelegate else { fatalError() }
 //        return appDelegate.persistentContainer.viewContext
 //    }
     
-    let entityName: String = "MemoEntity"
+    public let entityName: String = "MemoEntity"
     
     // MARK: - Create
-    func createMemoEntity(
+    public func createMemoEntity(
         memoTitleText: String,
         memoText: String,
         categorySet: Set<CategoryEntity> = Set<CategoryEntity>(),
@@ -86,7 +83,7 @@ final class MemoEntityManager {
     
     
     // MARK: - Read
-    func getMemoEntitiesFromCoreData() -> [MemoEntity] {
+    public func getMemoEntitiesFromCoreData() -> [MemoEntity] {
         
         guard let orderCriterion = UserDefaults.standard.string(
             forKey: UserDefaultsKeys.orderCriterion.rawValue
@@ -117,7 +114,7 @@ final class MemoEntityManager {
     }
     
     // MARK: - Filter
-    func getSpecificMemoEntitiesFromCoreData(inCategory category: CategoryEntity?) -> [MemoEntity] {
+    public func getSpecificMemoEntitiesFromCoreData(inCategory category: CategoryEntity?) -> [MemoEntity] {
         
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
@@ -151,7 +148,7 @@ final class MemoEntityManager {
     }
     
     // MARK: - memoID로 특정 메모 검색(임시)
-    func getSpecificMemoEntity(memoID: UUID) -> MemoEntity {
+    public func getSpecificMemoEntity(memoID: UUID) -> MemoEntity {
         
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
@@ -179,7 +176,7 @@ final class MemoEntityManager {
     }
     
     // MARK: - Read From Trash
-    func getMemoEntitiesInTrash() -> [MemoEntity] {
+    public func getMemoEntitiesInTrash() -> [MemoEntity] {
         
 //        guard let orderCriterion = UserDefaults.standard.string(forKey: KeysForUserDefaults.orderCriterion.rawValue) else { fatalError() }
         guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
@@ -217,7 +214,7 @@ final class MemoEntityManager {
     /// - Returns: 검색된 메모엔티티를 요소로 갖는 배열을 반환
     /// 원래는 searchText에 아무것도 안 넣으면 모든 메모를 반환해야 하는게 직관적인데, nspredicate format에서는 빈칸은 CONTAINS에서 결과가 true로 나오지 않나보다.
     /// 이 부분은 searchText.isEmpty 메서드를 이용해서 searchText에 빈칸을 넣어도 전부 검색되게 구현함.
-    func searchMemoEntity(with searchText: String, category: CategoryEntity? = nil) -> [MemoEntity] {
+    public func searchMemoEntity(with searchText: String, category: CategoryEntity? = nil) -> [MemoEntity] {
         
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
@@ -250,7 +247,7 @@ final class MemoEntityManager {
     
     // MARK: - Read Favorite
     
-    func getFavoriteMemoEntities() -> [MemoEntity] {
+    public func getFavoriteMemoEntities() -> [MemoEntity] {
         
         guard let orderCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
         guard let isAscending = UserDefaults.standard.value(forKey: UserDefaultsKeys.isOrderAscending.rawValue) as? Bool else { fatalError() }
@@ -279,7 +276,7 @@ final class MemoEntityManager {
     // MARK: - Delete(Soft)
     
     
-    func trashMemo(_ memoEntity: MemoEntity) {
+    public func trashMemo(_ memoEntity: MemoEntity) {
         memoEntity.isFavorite = false
 //        memoEntity.categories = NSSet()
         memoEntity.isInTrash = true
@@ -294,7 +291,7 @@ final class MemoEntityManager {
     
     // MARK: - Restoring from Trash
     
-    func restoreMemo(_ memoEntity: MemoEntity) {
+    public func restoreMemo(_ memoEntity: MemoEntity) {
         memoEntity.isInTrash = false
         memoEntity.deletedDate = nil
         CoreDataStack.shared.saveContext()
@@ -307,7 +304,7 @@ final class MemoEntityManager {
     /// - Parameter memoEntity: 삭제할 memoEntity
     ///
     /// 매개변수로 들어온 memoEntity와 그 메모에 속한 이미지들 및 imageEntity들까지 모두 삭제한다.
-    func deleteMemoEntity(memoEntity: MemoEntity) {
+    public func deleteMemoEntity(memoEntity: MemoEntity) {
         let categories = memoEntity.categories
         guard let images = memoEntity.images as? Set<ImageEntity> else { return }
         memoEntity.removeFromCategories(categories)
@@ -351,7 +348,7 @@ final class MemoEntityManager {
     
     // MARK: - Replace Categories
     
-    func replaceCategories(of memoEntity: MemoEntity, with newCategorySet: Set<CategoryEntity>) {
+    public func replaceCategories(of memoEntity: MemoEntity, with newCategorySet: Set<CategoryEntity>) {
         
         let categories = memoEntity.categories
         let newNSSet = newCategorySet as NSSet
@@ -392,14 +389,14 @@ final class MemoEntityManager {
     
     // MARK: - Toggle Favorite
     
-    func togglesFavorite(in memoEntity: MemoEntity) {
+    public func togglesFavorite(in memoEntity: MemoEntity) {
         memoEntity.isFavorite.toggle()
         CoreDataStack.shared.saveContext()
     }
     
     // MARK: - Set Favorite
     
-    func setFavorite(of memoEntity: MemoEntity, to value: Bool) {
+    public func setFavorite(of memoEntity: MemoEntity, to value: Bool) {
         memoEntity.isFavorite = value
         CoreDataStack.shared.saveContext()
     }

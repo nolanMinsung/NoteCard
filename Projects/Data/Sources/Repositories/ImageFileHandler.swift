@@ -7,19 +7,18 @@
 
 import UIKit
 import Domain
-import DesignSystem
 import Shared
 import PhotosUI
 import UniformTypeIdentifiers
 
 // MARK: - ImageFileHandler
 /// 이미지 데이터와 파일 시스템을 다루는 유틸리티 네임스페이스
-enum ImageFileHandler {
+public enum ImageFileHandler {
 
     // MARK: - Data Preparation
     
     /// `PHPickerResult`의 `provider`에서 원본 이미지 데이터를 비동기적으로 로드.
-    static func prepareImageData(from provider: NSItemProvider) async throws(ImageFileError) -> (data: Data, type: UTType) {
+    public static func prepareImageData(from provider: NSItemProvider) async throws(ImageFileError) -> (data: Data, type: UTType) {
         if let heicData = try? await provider.loadDataRepresentation(for: .heic) {
             return (heicData, .heic)
         } else if let jpegData = try? await provider.loadDataRepresentation(for: .jpeg) {
@@ -35,14 +34,14 @@ enum ImageFileHandler {
     }
     
     /// 원본 이미지 데이터로부터 썸네일 데이터를 생성.
-    static func createThumbnailData(from originalData: Data, maxPixelSize: CGFloat = 400) throws -> Data {
+    public static func createThumbnailData(from originalData: Data, maxPixelSize: CGFloat = 400) throws -> Data {
         guard let sourceImage = UIImage(data: originalData) else {
             throw ImageFileError.dataToImageConversionFailed
         }
         return try createThumbnailData(from: sourceImage, maxPixelSize: maxPixelSize)
     }
     
-    static func createThumbnailData(from sourceImage: UIImage, maxPixelSize: CGFloat = 400) throws -> Data {
+    public static func createThumbnailData(from sourceImage: UIImage, maxPixelSize: CGFloat = 400) throws -> Data {
         let resizedImage = try createThumbnailImage(from: sourceImage, maxPixelSize: maxPixelSize)
         guard let thumbnailData = resizedImage.jpegData(compressionQuality: 0.7) else {
             throw ImageFileError.thumbnailCreationError
@@ -50,7 +49,7 @@ enum ImageFileHandler {
         return thumbnailData
     }
     
-    static func createThumbnailImage(from sourceImage: UIImage, maxPixelSize: CGFloat = 400) throws -> UIImage {
+    public static func createThumbnailImage(from sourceImage: UIImage, maxPixelSize: CGFloat = 400) throws -> UIImage {
         let size = sourceImage.size
         let newSize: CGSize
         
@@ -72,7 +71,7 @@ enum ImageFileHandler {
     // MARK: - File System Operations
     
     /// 주어진 데이터를 특정 경로에 파일로 저장.
-    static func save(data: Data, to directory: URL, with id: UUID, fileExtension: String) throws {
+    public static func save(data: Data, to directory: URL, with id: UUID, fileExtension: String) throws {
         let fileURL = directory
             .appendingPathComponent(id.uuidString)
             .appendingPathExtension(fileExtension)
@@ -84,7 +83,7 @@ enum ImageFileHandler {
     }
 
     /// 특정 경로의 파일을 로드하여 UIImage로 반환.
-    static func loadUIImage(from fileURL: URL) throws -> UIImage {
+    public static func loadUIImage(from fileURL: URL) throws -> UIImage {
         do {
             let data = try Data(contentsOf: fileURL)
             guard let image = UIImage(data: data) else {
@@ -97,7 +96,7 @@ enum ImageFileHandler {
     }
     
     /// 특정 경로의 파일을 삭제.
-    static func delete(at fileURL: URL) throws {
+    public static func delete(at fileURL: URL) throws {
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
                 try FileManager.default.removeItem(at: fileURL)
@@ -110,7 +109,7 @@ enum ImageFileHandler {
     // MARK: - Path Management
     
     /// 특정 메모 ID에 대한 디렉토리 URL을 가져오고, 없으면 생성.
-    static func getDirectory(for memoID: UUID) throws -> URL {
+    public static func getDirectory(for memoID: UUID) throws -> URL {
         let fileManager = FileManager.default
         guard let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
             throw ImageFileError.fileURLGenerationFailed
@@ -124,7 +123,7 @@ enum ImageFileHandler {
     }
 
     /// 이미지 정보를 바탕으로 파일 전체 URL을 불러옴.
-    static func getFileURL(for imageInfo: MemoImageInfo, thumbnail: Bool = false) throws -> URL {
+    public static func getFileURL(for imageInfo: MemoImageInfo, thumbnail: Bool = false) throws -> URL {
         let directory = try getDirectory(for: imageInfo.memoID)
         let imageID = thumbnail ? imageInfo.thumbnailID : imageInfo.id
         
@@ -157,7 +156,7 @@ enum ImageFileHandler {
 
 private extension NSItemProvider {
     
-    func loadDataRepresentation(for contentType: UTType) async throws -> Data {
+    public func loadDataRepresentation(for contentType: UTType) async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
             if #available(iOS 16, *) {
                 let _ = loadDataRepresentation(for: contentType) { data, error in
@@ -189,7 +188,7 @@ private extension NSItemProvider {
         }
     }
     
-    func loadJPEGDataRepresentation() async throws -> Data {
+    public func loadJPEGDataRepresentation() async throws -> Data {
         guard canLoadObject(ofClass: UIImage.self) else {
             throw ImageFileError.loadingDataFromNSProviderFaild
         }
@@ -220,9 +219,9 @@ private extension NSItemProvider {
 }
 
 
-extension NSItemProvider {
+public extension NSItemProvider {
     
-    func loadImageOnly() async throws -> UIImage {
+    public func loadImageOnly() async throws -> UIImage {
         guard self.canLoadObject(ofClass: UIImage.self) else {
             throw ImageFileError.loadingDataFromNSProviderFaild
         }

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import DesignSystem
 import Shared
 
 /// 이미지 파일 처리 및 데이터 변환과 관련된 에러 타입

@@ -7,17 +7,16 @@
 
 import Combine
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 import Foundation
 
-enum MemoEntityError: LocalizedError {
+public enum MemoEntityError: LocalizedError {
     
     case memoNotFound(id: UUID)
     case duplicateMemoDetected
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .memoNotFound(let id):
             "메모를 찾을 수 없습니다. UUID: \(id)"
@@ -28,15 +27,15 @@ enum MemoEntityError: LocalizedError {
     
 }
 
-actor MemoEntityRepository: MemoRepository {
+public actor MemoEntityRepository: MemoRepository {
     
-    enum MemoUpdateType: Equatable {
-        enum UpdateAttribute: Equatable {
+    public enum MemoUpdateType: Equatable {
+        public enum UpdateAttribute: Equatable {
             case favorite(memoIDs: [UUID])
             case titleText(memoIDs: [UUID])
             case category(memoIDs: [UUID])
-            
-            var memoIDs: [UUID] {
+
+            public var memoIDs: [UUID] {
                 switch self {
                 case .favorite(let memoIDs): return memoIDs
                 case .titleText(let memoIDs): return memoIDs
@@ -52,7 +51,7 @@ actor MemoEntityRepository: MemoRepository {
         case update(content: UpdateAttribute)
     }
     
-    static let shared = MemoEntityRepository()
+    public static let shared = MemoEntityRepository()
     private init() { }
     
     private let context = CoreDataStack.shared.backgroundContext
@@ -92,16 +91,16 @@ actor MemoEntityRepository: MemoRepository {
     // MARK: - Subjects, Publisher
     
     nonisolated private let memoUpdatedSubject = PassthroughSubject<MemoUpdateType, Never>()
-    nonisolated var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
+    public nonisolated var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
         memoUpdatedSubject.eraseToAnyPublisher()
     }
 }
 
 
 // MARK: - CREATE
-extension MemoEntityRepository {
+public extension MemoEntityRepository {
     
-    func createNewMemo() async throws -> Memo {
+    public func createNewMemo() async throws -> Memo {
         let createdMemo = try await context.perform { [unowned self] in
             let newMemoEntity = MemoEntity(context: self.context)
             try self.context.save()
@@ -115,9 +114,9 @@ extension MemoEntityRepository {
 
 
 // MARK: - READ
-extension MemoEntityRepository {
+public extension MemoEntityRepository {
     
-    func fetchMemoEntity(id: UUID) throws -> MemoEntity {
+    public func fetchMemoEntity(id: UUID) throws -> MemoEntity {
         let request = MemoEntity.fetchRequest()
         request.predicate = NSCompoundPredicate(
             type: .and,
@@ -134,7 +133,7 @@ extension MemoEntityRepository {
         }
     }
     
-    func fetchTrashMemoEntity(id: UUID) throws -> MemoEntity? {
+    public func fetchTrashMemoEntity(id: UUID) throws -> MemoEntity? {
         let request = MemoEntity.fetchRequest()
         request.predicate = NSCompoundPredicate(
             type: .and,
@@ -151,13 +150,13 @@ extension MemoEntityRepository {
         }
     }
     
-    func getMemo(id: UUID) async throws -> Memo {
+    public func getMemo(id: UUID) async throws -> Memo {
         try await context.perform { [unowned self] in
             try fetchMemoEntity(id: id).toDomain()
         }
     }
     
-    func getAllMemos() async throws -> [Memo]  {
+    public func getAllMemos() async throws -> [Memo]  {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
@@ -168,7 +167,7 @@ extension MemoEntityRepository {
     }
     
     /// `category`에 `nil`이 할당될 경우, 아무런 카테고리에도 속하지 않은 메모들을 반환
-    func getAllMemos(inCategory category: Domain.Category?) async throws -> [Memo] {
+    public func getAllMemos(inCategory category: Domain.Category?) async throws -> [Memo] {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
             
@@ -182,7 +181,7 @@ extension MemoEntityRepository {
         }
     }
     
-    func getAllMemosInTrash() async throws -> [Memo] {
+    public func getAllMemosInTrash() async throws -> [Memo] {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
@@ -195,7 +194,7 @@ extension MemoEntityRepository {
     /// `category`에 `nil`이 할당될 경우, 전체 메모 목록에서 검색한 결과를 반환
     ///
     /// - Note: `getAllMemos(inCategory:)`과 `category`가 `nil`인 경우의 로직이 다름.
-    func searchMemo(searchText: String, inCategory category: Domain.Category? = nil) async throws -> [Memo] {
+    public func searchMemo(searchText: String, inCategory category: Domain.Category? = nil) async throws -> [Memo] {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
@@ -223,7 +222,7 @@ extension MemoEntityRepository {
         }
     }
     
-    func getFavoriteMemos() async throws -> [Memo] {
+    public func getFavoriteMemos() async throws -> [Memo] {
         try await context.perform { [unowned self] in
             let request = MemoEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: self.orderCriterion, ascending: self.isOrderAscending)
@@ -240,9 +239,9 @@ extension MemoEntityRepository {
 
 
 // MARK: - DELETE(Soft)
-extension MemoEntityRepository {
+public extension MemoEntityRepository {
     
-    func moveToTrash(_ memo: Memo) async throws {
+    public func moveToTrash(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
             let memoEntityToTrash = try self.fetchMemoEntity(id: memo.memoID)
             memoEntityToTrash.isFavorite = false
@@ -254,7 +253,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send((.trash))
     }
     
-    func moveToTrash(_ memos: [Memo]) async throws {
+    public func moveToTrash(_ memos: [Memo]) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 let memoEntityToTrash = try self.fetchMemoEntity(id: memo.memoID)
@@ -272,9 +271,9 @@ extension MemoEntityRepository {
 
 
 // MARK: - ⚠️ DELETE(Hard)
-extension MemoEntityRepository {
+public extension MemoEntityRepository {
     
-    func deleteMemo(_ memo: Memo) async throws {
+    public func deleteMemo(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
             guard let memoEntityToDelete = try self.fetchTrashMemoEntity(id: memo.memoID) else { return }
             // FileManager에서 메모 디렉토리(및 이미지들) 삭제
@@ -291,7 +290,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.delete)
     }
     
-    func deleteMemos(_ memos: [Memo]) async throws {
+    public func deleteMemos(_ memos: [Memo]) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 guard let memoEntityToDelete = try self.fetchTrashMemoEntity(id: memo.memoID) else { continue }
@@ -314,9 +313,9 @@ extension MemoEntityRepository {
 
 
 // MARK: - RESTORING
-extension MemoEntityRepository {
+public extension MemoEntityRepository {
     
-    func restore(_ memo: Memo) async throws {
+    public func restore(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
             guard let memoEntityToRestore = try self.fetchTrashMemoEntity(id: memo.memoID) else { return }
             memoEntityToRestore.isInTrash = false
@@ -326,7 +325,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.restore)
     }
     
-    func restore(_ memos: [Memo]) async throws {
+    public func restore(_ memos: [Memo]) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 guard let memoEntityToRestore = try self.fetchTrashMemoEntity(id: memo.memoID) else { continue }
@@ -342,9 +341,9 @@ extension MemoEntityRepository {
 
 
 // MARK: - UPDATE
-extension MemoEntityRepository {
+public extension MemoEntityRepository {
     
-    func replaceCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
+    public func replaceCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let oldCategories = memoEntity.categories
@@ -362,7 +361,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
-    func replaceCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
+    public func replaceCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
@@ -382,7 +381,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: memos.map(\.memoID))))
     }
     
-    func addCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
+    public func addCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
@@ -395,7 +394,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
-    func addCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
+    public func addCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
@@ -410,7 +409,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: memos.map(\.memoID))))
     }
     
-    func removeCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
+    public func removeCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             let newCategorySet: NSSet = Set(newCategories.map { $0.toEntity(in: self.context) }) as NSSet
@@ -423,7 +422,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: [memo.memoID])))
     }
     
-    func removeCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
+    public func removeCategories(to memos: [Memo], newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
@@ -438,7 +437,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .category(memoIDs: memos.map(\.memoID))))
     }
     
-    func setFavorite(_ memo: Memo, to value: Bool) async throws {
+    public func setFavorite(_ memo: Memo, to value: Bool) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             memoEntity.isFavorite = value
@@ -447,7 +446,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .favorite(memoIDs: [memo.memoID])))
     }
     
-    func setFavorite(_ memos: [Memo], to value: Bool) async throws {
+    public func setFavorite(_ memos: [Memo], to value: Bool) async throws {
         try await context.perform { [unowned self] in
             for memo in memos {
                 let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
@@ -458,7 +457,7 @@ extension MemoEntityRepository {
         memoUpdatedSubject.send(.update(content: .favorite(memoIDs: memos.map(\.memoID))))
     }
     
-    func updateMemoContent(_ memo: Memo, newTitle: String? = nil, newMemoText: String? = nil) async throws {
+    public func updateMemoContent(_ memo: Memo, newTitle: String? = nil, newMemoText: String? = nil) async throws {
         try await context.perform { [unowned self] in
             let memoEntity = try self.fetchMemoEntity(id: memo.memoID)
             if let newTitle {

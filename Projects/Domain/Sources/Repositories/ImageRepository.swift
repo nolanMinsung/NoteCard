@@ -6,7 +6,6 @@
 //
 
 import PhotosUI
-import DesignSystem
 import Shared
 import UIKit
 

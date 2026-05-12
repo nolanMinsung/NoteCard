@@ -9,9 +9,9 @@ import CoreData
 import Domain
 import Shared
 
-extension ImageEntity {
+public extension ImageEntity {
     
-    func toDomain() -> MemoImageInfo {
+    public func toDomain() -> MemoImageInfo {
         MemoImageInfo(
             id: self.uuid,
             thumbnailID: self.thumbnailUUID,

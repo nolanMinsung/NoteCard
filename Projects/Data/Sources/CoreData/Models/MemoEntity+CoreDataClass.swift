@@ -8,7 +8,6 @@
 
 import Foundation
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 
@@ -25,7 +24,7 @@ public class MemoEntity: NSManagedObject {
         super.init(entity: entity, insertInto: context)
     }
     
-    init(context: NSManagedObjectContext) {
+    public init(context: NSManagedObjectContext) {
         guard let entityDescription = NSEntityDescription.entity(forEntityName: "MemoEntity", in: context) else { fatalError() }
         super.init(entity: entityDescription, insertInto: context)
         
@@ -43,9 +42,9 @@ public class MemoEntity: NSManagedObject {
     
 }
 
-extension MemoEntity {
+public extension MemoEntity {
     
-    var memoTextShortBuffer: String {
+    public var memoTextShortBuffer: String {
         let paragraphsInString = self.memoText.components(separatedBy: CharacterSet.newlines)
         if self.memoText.count > 5000 && paragraphsInString.count > 4 {
             var buffer: String = ""
@@ -59,7 +58,7 @@ extension MemoEntity {
         }
     }
     
-    var memoTextLongBuffer: String {
+    public var memoTextLongBuffer: String {
         let paragraphsInString = self.memoText.components(separatedBy: CharacterSet.newlines)
         if self.memoText.count > 5000 && paragraphsInString.count > 4 {
             var buffer: String = ""
@@ -94,7 +93,7 @@ extension MemoEntity {
     
     
     
-    func getModificationDateString() -> String {
+    public func getModificationDateString() -> String {
         let modificationDate = self.modificationDate
         let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         let formatterForDate = DateFormatter()
@@ -118,7 +117,7 @@ extension MemoEntity {
     }
     
     
-    func getCreationDateInString() -> String {
+    public func getCreationDateInString() -> String {
         
 //        let dateFormat = UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue)!
         let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
@@ -154,7 +153,7 @@ extension MemoEntity {
     
     
     
-    func getDeletedDateInString() -> String {
+    public func getDeletedDateInString() -> String {
         guard let deletedDate else { fatalError() }
         
 //        let dateFormat = UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue)!

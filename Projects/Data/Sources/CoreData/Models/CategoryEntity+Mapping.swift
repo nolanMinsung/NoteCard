@@ -7,12 +7,11 @@
 
 import CoreData
 import Domain
-import DesignSystem
 import Shared
 
-extension CategoryEntity {
+public extension CategoryEntity {
     
-    func toDomain() -> Domain.Category {
+    public func toDomain() -> Domain.Category {
         Domain.Category(
             name: self.name,
             creationDate: self.creationDate,
@@ -22,9 +21,9 @@ extension CategoryEntity {
     
 }
 
-extension Domain.Category {
+public extension Domain.Category {
     
-    func toEntity(in context: NSManagedObjectContext) -> CategoryEntity {
+    public func toEntity(in context: NSManagedObjectContext) -> CategoryEntity {
         let request = CategoryEntity.fetchRequest()
         request.predicate = NSPredicate(format: "name == %@", name as CVarArg)
 

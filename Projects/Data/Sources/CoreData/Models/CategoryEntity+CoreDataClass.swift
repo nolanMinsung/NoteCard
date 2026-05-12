@@ -8,7 +8,6 @@
 
 import Foundation
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 
@@ -25,7 +24,7 @@ public class CategoryEntity: NSManagedObject {
         super.init(entity: entity, insertInto: context)
     }
     
-    init(context: NSManagedObjectContext) {
+    public init(context: NSManagedObjectContext) {
         guard let entityDescription = NSEntityDescription.entity(
             forEntityName: "CategoryEntity",
             in: context

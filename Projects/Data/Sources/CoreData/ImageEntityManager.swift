@@ -7,26 +7,22 @@
 
 import UIKit
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 
-final class ImageEntityManager {
+public final class ImageEntityManager {
     
-    let fileManager = FileManager.default
-    let context = CoreDataStack.shared.persistentContainer.viewContext
-    static let shared = ImageEntityManager()
+    public let fileManager = FileManager.default
+    public let context = CoreDataStack.shared.persistentContainer.viewContext
+    public static let shared = ImageEntityManager()
     private init() {}
-    
-    
-    weak var appDelegate = UIApplication.shared.delegate as? AppDelegate
 //    lazy var context = appDeleagate?.persistentContainer.viewContext
 //    weak var context: NSManagedObjectContext? {
 //        guard let appDeleagate else { fatalError() }
 //        return appDeleagate.persistentContainer.viewContext
 //    }
     
-    let entityName: String = "ImageEntity"
+    public let entityName: String = "ImageEntity"
     
     // MARK: - Create
     
@@ -38,7 +34,7 @@ final class ImageEntityManager {
     /// - Returns: ImageEntity를 생성하고, 생성된 ImageEntity? 타입인 인스턴스를 반환값으로 내놓는다.
     ///
     /// 원본 이미지를 바탕으로 썸네일 이미지를 생성하며, 썸네일 이미지의 사이즈는 300 x 300이다.
-    func createImageEntity(image: UIImage, orderIndex: Int, memoEntity: MemoEntity, isTemporaryAppended: Bool = true) -> ImageEntity? {
+    public func createImageEntity(image: UIImage, orderIndex: Int, memoEntity: MemoEntity, isTemporaryAppended: Bool = true) -> ImageEntity? {
         
         guard Int(Int64.min)...Int(Int64.max) ~= orderIndex, orderIndex >= 0 else {
             print("orderIndex is not in range of Int64")
@@ -126,7 +122,7 @@ final class ImageEntityManager {
     /// ImageEntity의 원본 이미지를 반환하는 메서드
     /// - Parameter imageEntity: 원본 이미지에 대한 ImageEntity
     /// - Returns: UIImage? 타입으로 반환.
-    func getImage(imageEntity: ImageEntity) -> UIImage? {
+    public func getImage(imageEntity: ImageEntity) -> UIImage? {
         let imageUUIDInString = imageEntity.uuid.uuidString
         
         
@@ -174,7 +170,7 @@ final class ImageEntityManager {
     
     // MARK: - Read Thumbnail
     
-    func getThumbnailImage(imageEntity: ImageEntity) -> UIImage? {
+    public func getThumbnailImage(imageEntity: ImageEntity) -> UIImage? {
         let thumbnailUUIDInString = imageEntity.thumbnailUUID.uuidString
         
         
@@ -220,7 +216,7 @@ final class ImageEntityManager {
     ///   - memoEntity: 이미지가 들어있는 메모
     ///   - orderIndexKind: orderIndex인지, 임시 index인지의 여부
     /// - Returns: ImageEntity를 요소로 갖는 배열
-    func getImageEntities(
+    public func getImageEntities(
         from memoEntity: MemoEntity,
         inOrderOf orderIndexKind: ImageOrderIndexKind,
         isTemporaryDeleted: Bool? = nil,
@@ -299,7 +295,7 @@ final class ImageEntityManager {
     ///   - uuid: 지울 이미지 엔티티의 uuid(고유 번호)
     ///
     /// 메모엔티티와, 해당 엔티티에 해당하는 이미지 파일을 fileManager에서 찾아서 삭제한다. 썸네일까지 모두 삭제.
-    func deleteImageEntity(imageEntity: ImageEntity) {
+    public func deleteImageEntity(imageEntity: ImageEntity) {
         //1) 파일 지우기
         let uuidInString = imageEntity.uuid.uuidString
         let thumbnailUUIDInsString = imageEntity.thumbnailUUID.uuidString

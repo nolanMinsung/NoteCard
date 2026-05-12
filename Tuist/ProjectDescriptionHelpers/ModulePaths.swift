@@ -32,8 +32,17 @@ public enum Module: String {
         }
     }
 
-    /// 저장소 루트 기준 모듈 폴더 경로 (예: "Projects/Core/DesignSystem")
-    public var path: String { "\(layer.rawValue)/\(rawValue)" }
+    /// 저장소 루트 기준 모듈 폴더 경로.
+    /// Domain / Data는 레이어 자체가 단일 모듈이므로 하위 폴더를 두지 않는다.
+    /// 그 외(Core, Presentation, App)는 "<Layer>/<ModuleName>" 형태.
+    public var path: String {
+        switch self {
+        case .domain, .data:
+            return layer.rawValue
+        default:
+            return "\(layer.rawValue)/\(rawValue)"
+        }
+    }
 
     /// 외부 SPM 의존성과 충돌하지 않도록 모듈별로 고유한 bundle id.
     public var bundleId: String { "com.minsung.NoteCard.\(rawValue)" }

@@ -7,21 +7,20 @@
 
 import Combine
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 import PhotosUI
 import UIKit
 import UniformTypeIdentifiers
 
-actor ImageEntityRepository: ImageRepository {
+public actor ImageEntityRepository: ImageRepository {
     
-    enum ImageUpdateType: Equatable {
+    public enum ImageUpdateType: Equatable {
         case create(memoID: UUID)
         case delete(memoID: UUID)
         case update(memoID: UUID)
         
-        var memoID: UUID {
+        public var memoID: UUID {
             switch self {
             case .create(let memoID):
                 return memoID
@@ -33,7 +32,7 @@ actor ImageEntityRepository: ImageRepository {
         }
     }
     
-    static let shared = ImageEntityRepository()
+    public static let shared = ImageEntityRepository()
     private init() { }
     
     private let context = CoreDataStack.shared.backgroundContext
@@ -41,12 +40,12 @@ actor ImageEntityRepository: ImageRepository {
     // MARK: - Subjects, Publisher
     
     nonisolated private let imageUpdatedSubject = PassthroughSubject<ImageUpdateType, Never>()
-    nonisolated var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> {
+    public nonisolated var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> {
         imageUpdatedSubject.eraseToAnyPublisher()
     }
     private var cancellables = Set<AnyCancellable>()
     
-    func createImage(
+    public func createImage(
         from pickerResult: PHPickerResult,
         for memo: Memo,
         originalImageID: UUID? = nil,
@@ -110,19 +109,19 @@ actor ImageEntityRepository: ImageRepository {
     }
     
     // MemoImageInfo의 정보를 바탕으로 원본 이미지의 UIImage를 가져오는 함수 (화면에 표시하기 위함)
-    func getImage(from imageInfo: MemoImageInfo) async throws -> UIImage {
+    public func getImage(from imageInfo: MemoImageInfo) async throws -> UIImage {
         let fileURL = try ImageFileHandler.getFileURL(for: imageInfo, thumbnail: false)
         return try ImageFileHandler.loadUIImage(from: fileURL)
     }
     
     // MemoImageInfo의 정보를 바탕으로 썸네일 이미지의 UIImage를 가져오는 함수 (화면에 표시하기 위함)
-    func getThumbnailImage(from imageInfo: MemoImageInfo) async throws -> UIImage {
+    public func getThumbnailImage(from imageInfo: MemoImageInfo) async throws -> UIImage {
         let fileURL = try ImageFileHandler.getFileURL(for: imageInfo, thumbnail: true)
         return try ImageFileHandler.loadUIImage(from: fileURL)
     }
     
     // 특정 메모가 가진 모든 MemoImageInfo 배열을 반환 (순서 무관. 후에 orderIndex로 정렬하면 됨. 이 함수에서 정렬 후 반환해도 상관없음.)
-    func getAllImageInfo(for memo: Memo) async throws -> [MemoImageInfo] {
+    public func getAllImageInfo(for memo: Memo) async throws -> [MemoImageInfo] {
         try await context.perform {
             let request = ImageEntity.fetchRequest()
             request.predicate = NSPredicate(format: "memo.memoID == %@", memo.memoID as CVarArg)
@@ -133,7 +132,7 @@ actor ImageEntityRepository: ImageRepository {
         }
     }
     
-    func updateImageIndex(_ image: MemoImageInfo, newIndex: Int) async throws {
+    public func updateImageIndex(_ image: MemoImageInfo, newIndex: Int) async throws {
         try await context.perform {
             let request = ImageEntity.fetchRequest()
             request.predicate = NSPredicate(format: "uuid = %@", image.id as CVarArg)
@@ -157,7 +156,7 @@ actor ImageEntityRepository: ImageRepository {
     // 이미지를 영구적으로 삭제.
     // 모든 이미지 데이터를 안전하게 삭제하기 위해서 FileManager 에 있는 이미지 및 썸네일 파일을 먼저 지우고,
     // 그 다음에 CoreData의 DB에서 ImageEntity 삭제
-    func deleteImage(_ imageInfo: MemoImageInfo) async throws {
+    public func deleteImage(_ imageInfo: MemoImageInfo) async throws {
         // 파일 시스템에서 파일을 먼저 삭제. 실패해도 DB 삭제는 시도
         let originalURL = try ImageFileHandler.getFileURL(for: imageInfo, thumbnail: false)
         let thumbnailURL = try ImageFileHandler.getFileURL(for: imageInfo, thumbnail: true)

@@ -8,12 +8,11 @@
 
 import Foundation
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 
 
-extension CategoryEntity {
+public extension CategoryEntity {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<CategoryEntity> {
         return NSFetchRequest<CategoryEntity>(entityName: "CategoryEntity")
@@ -27,7 +26,7 @@ extension CategoryEntity {
 }
 
 // MARK: Generated accessors for memoSet
-extension CategoryEntity {
+public extension CategoryEntity {
 
     @objc(addMemoSetObject:)
     @NSManaged public func addToMemoSet(_ value: MemoEntity)
@@ -43,6 +42,4 @@ extension CategoryEntity {
 
 }
 
-extension CategoryEntity : Identifiable {
-
-}
+extension CategoryEntity: Identifiable {}

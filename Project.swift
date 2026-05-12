@@ -61,14 +61,13 @@ let project = Project(
                 "NoteCard/Base.lproj/Main.storyboard",
                 "NoteCard/ko.lproj/**",
                 "NoteCard/en.lproj/**",
-                "NoteCard/CoreData/**/*.xcdatamodeld",
-                "NoteCard/CoreData/**/*.xcmappingmodel",
             ],
             dependencies: [
                 .external(name: "Wisp"),
                 .project(target: "Shared", path: .relativeToRoot("Projects/Core/Shared")),
                 .project(target: "DesignSystem", path: .relativeToRoot("Projects/Core/DesignSystem")),
                 .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
+                .project(target: "Data", path: .relativeToRoot("Projects/Data")),
             ],
             settings: .settings(
                 base: infoPlistKeys.merging([

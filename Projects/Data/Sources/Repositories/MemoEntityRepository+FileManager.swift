@@ -7,17 +7,16 @@
 
 import Foundation
 import Domain
-import DesignSystem
 import Shared
 
 
-enum MemoEntityFileManagerError: LocalizedError {
+public enum MemoEntityFileManagerError: LocalizedError {
     
     case documentDirectoryNotFound // 이건 추후 FileManagerError 등으로 빼는 게 나을 듯...?
     case failedToCreateNewDirectory
     case fileExistInMemoID
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .documentDirectoryNotFound:
             return "FileManager에서 Document Directory를 찾을 수 없습니다."
@@ -30,9 +29,9 @@ enum MemoEntityFileManagerError: LocalizedError {
     
 }
 
-extension MemoEntityRepository {
+public extension MemoEntityRepository {
     
-    func getMemoDirectoryURL(of memo: MemoEntity) throws -> URL {
+    public func getMemoDirectoryURL(of memo: MemoEntity) throws -> URL {
         guard let documentURL = FileManager.default.urls(
             for: .documentDirectory,
             in: .userDomainMask

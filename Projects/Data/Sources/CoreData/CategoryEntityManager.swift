@@ -7,32 +7,29 @@
 
 import UIKit
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 
 
-enum CategoryNameError: Error {
+public enum CategoryNameError: Error {
     case duplicatedNameError
 }
 
 
-final class CategoryEntityManager {
+public final class CategoryEntityManager {
     
-    static let shared = CategoryEntityManager()
+    public static let shared = CategoryEntityManager()
     private init() { }
     
-    let fileManager = FileManager.default
-    let context = CoreDataStack.shared.persistentContainer.viewContext
-
-    weak var appDelegate = UIApplication.shared.delegate as? AppDelegate
+    public let fileManager = FileManager.default
+    public let context = CoreDataStack.shared.persistentContainer.viewContext
 //    lazy var context = appDelegate?.persistentContainer.viewContext
 //    weak var context: NSManagedObjectContext? {
 //        guard let appDelegate else {fatalError() }
 //        return appDelegate.persistentContainer.viewContext
 //    }
 
-    let entityName: String = "CategoryEntity"
+    public let entityName: String = "CategoryEntity"
     
     
     /*
@@ -46,7 +43,7 @@ final class CategoryEntityManager {
     
     
     
-    func createCategoryEntity(withName name: String) throws {
+    public func createCategoryEntity(withName name: String) throws {
         
         let trimmedName = name.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         guard trimmedName != "" else {
@@ -84,7 +81,7 @@ final class CategoryEntityManager {
     
     
     
-    func getCategoryEntities(memo memoEntity: MemoEntity? = nil, inOrderOf criterion: CategoryProperties, isAscending: Bool) -> [CategoryEntity] {
+    public func getCategoryEntities(memo memoEntity: MemoEntity? = nil, inOrderOf criterion: CategoryProperties, isAscending: Bool) -> [CategoryEntity] {
         
         var categoryEntityArray: [CategoryEntity] = []
 //        if let context = self.context {
@@ -115,7 +112,7 @@ final class CategoryEntityManager {
     }
     
     
-    func searchCategoryEntity(with searchText: String, order criterion: CategoryProperties, ascending: Bool) -> [CategoryEntity] {
+    public func searchCategoryEntity(with searchText: String, order criterion: CategoryProperties, ascending: Bool) -> [CategoryEntity] {
         
         let searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         var searchResult: [CategoryEntity] = []
@@ -187,7 +184,7 @@ final class CategoryEntityManager {
     
     
     //위 메서드랑 하나로 통일
-    func changeCategoryEntityName(ofEntity entity: CategoryEntity, newName: String) throws {
+    public func changeCategoryEntityName(ofEntity entity: CategoryEntity, newName: String) throws {
         let categoryNamesArray = self.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false).map({ $0.name })
         if entity.name != newName && categoryNamesArray.contains(newName.trimmingCharacters(in: .whitespacesAndNewlines)) {
             throw CategoryNameError.duplicatedNameError
@@ -214,7 +211,7 @@ final class CategoryEntityManager {
     /// - Parameter entity: a category entity to delete from coredate
     ///
     /// this method can fetch category entity as a [CategoryEntity] type. If you want to delete a number of category entity at once, you can change this method or make similar method
-    func deleteCategoryEntity(of entity: CategoryEntity) {
+    public func deleteCategoryEntity(of entity: CategoryEntity) {
         
         //        if let context = context {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: self.entityName)
@@ -265,7 +262,7 @@ final class CategoryEntityManager {
     
     
     
-    func memoCounted(of category: CategoryEntity) -> Int {
+    public func memoCounted(of category: CategoryEntity) -> Int {
         
 //        if let context {
         let request = NSFetchRequest<MemoEntity>(entityName: "MemoEntity")

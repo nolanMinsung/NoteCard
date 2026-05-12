@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import DesignSystem
 import Shared
 
 public protocol CategoryRepository {

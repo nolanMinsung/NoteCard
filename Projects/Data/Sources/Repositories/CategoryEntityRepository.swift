@@ -7,16 +7,15 @@
 
 import Foundation
 import Domain
-import DesignSystem
 import Shared
 
-protocol ComparableValue: Comparable {}
+public protocol ComparableValue: Comparable {}
 extension String: ComparableValue {}
 extension Date: ComparableValue {}
 
-actor CategoryEntityRepository: CategoryRepository {
+public actor CategoryEntityRepository: CategoryRepository {
     
-    static let shared = CategoryEntityRepository()
+    public static let shared = CategoryEntityRepository()
     private init() { }
     
     private let context = CoreDataStack.shared.backgroundContext
@@ -33,7 +32,7 @@ actor CategoryEntityRepository: CategoryRepository {
 }
 
 
-extension CategoryEntityRepository {
+public extension CategoryEntityRepository {
     
     private func fetchMemoEntity(id: UUID) throws -> MemoEntity {
         let request = MemoEntity.fetchRequest()
@@ -52,7 +51,7 @@ extension CategoryEntityRepository {
 }
 
 
-extension CategoryEntityRepository {
+public extension CategoryEntityRepository {
     
     private func fetchCategoryEntity(name: String) throws -> CategoryEntity {
         let request = CategoryEntity.fetchRequest()
@@ -68,7 +67,7 @@ extension CategoryEntityRepository {
         }
     }
     
-    func create(name: String) async throws {
+    public func create(name: String) async throws {
         let allCategoryNames = try await getAllCategories(inOrderOf: .modificationDate, isAscending: false).map(\.name)
         guard !allCategoryNames.contains(name) else {
             throw CoreDataError.duplicateCategoryDetected
@@ -80,7 +79,7 @@ extension CategoryEntityRepository {
         }
     }
     
-    func getAllCategories(inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] {
+    public func getAllCategories(inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] {
         try await context.perform { [unowned self] in
             let request = CategoryEntity.fetchRequest()
             let modificationDate = NSSortDescriptor(key: "modificationDate", ascending: isAscending)
@@ -90,7 +89,7 @@ extension CategoryEntityRepository {
         }
     }
     
-    func getAllCategories(
+    public func getAllCategories(
         ofMemo memo: Memo,
         inOrderOf orderCriterion: CategoryProperties,
         isAscending: Bool
@@ -105,7 +104,7 @@ extension CategoryEntityRepository {
         }
     }
     
-    func searchCategory(_ searchText: String, inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] {
+    public func searchCategory(_ searchText: String, inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] {
         try await context.perform { [unowned self] in
             let request = CategoryEntity.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: orderCriterion.rawValue, ascending: isAscending)
@@ -115,7 +114,7 @@ extension CategoryEntityRepository {
         }
     }
     
-    func changeCategoryName(_ category: Domain.Category, newName: String) async throws {
+    public func changeCategoryName(_ category: Domain.Category, newName: String) async throws {
         let allCategoryNames = try await getAllCategories(inOrderOf: .modificationDate, isAscending: false).map(\.name)
         guard !allCategoryNames.contains(newName) else {
             throw CoreDataError.duplicateCategoryDetected
@@ -127,7 +126,7 @@ extension CategoryEntityRepository {
         }
     }
     
-    func deleteCategory(_ category: Domain.Category) async throws {
+    public func deleteCategory(_ category: Domain.Category) async throws {
         try await context.perform { [unowned self] in
             let categoryEntity = try fetchCategoryEntity(name: category.name)
             context.delete(categoryEntity)
@@ -135,14 +134,14 @@ extension CategoryEntityRepository {
         }
     }
     
-    func memoCount(of category: Domain.Category) async throws -> Int {
+    public func memoCount(of category: Domain.Category) async throws -> Int {
         try await context.perform { [unowned self] in
             let categoryEntity = try fetchCategoryEntity(name: category.name)
             return categoryEntity.memoSet.count
         }
     }
     
-    func updateModificationDate(of category: Domain.Category) async throws {
+    public func updateModificationDate(of category: Domain.Category) async throws {
         try await context.perform { [unowned self] in
             let categoryEntity = try fetchCategoryEntity(name: category.name)
             categoryEntity.modificationDate = .now

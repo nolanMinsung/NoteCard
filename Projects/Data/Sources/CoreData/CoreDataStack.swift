@@ -7,26 +7,30 @@
 
 import Combine
 import Domain
-import DesignSystem
 import Shared
 import CoreData
 import Foundation
 
-final class CoreDataStack: ObservableObject {
-    
-    static let shared = CoreDataStack()
+public final class CoreDataStack: ObservableObject {
+
+    public static let shared = CoreDataStack()
     private init() { }
-    
+
     // MARK: - Core Data stack
 
-    lazy var persistentContainer: NSPersistentContainer = {
-        /*
-         The persistent container for the application. This implementation
-         creates and returns a container, having loaded the store for the
-         application to it. This property is optional since there are legitimate
-         error conditions that could cause the creation of the store to fail.
-        */
-        let container = NSPersistentContainer(name: "NoteCardCoreData")
+    public lazy var persistentContainer: NSPersistentContainer = {
+        // Data 모듈로 옮긴 뒤 NSPersistentContainer(name:)은 Bundle.main에서 .momd를
+        // 찾기 때문에 Data.framework 번들 안의 모델 파일을 못 찾고 빈 모델로 만들어진다.
+        // 명시적으로 Bundle(for: Self.self)에서 모델 URL을 가져와 컨테이너에 주입한다.
+        // mapping model(.cdm)도 같은 번들에 함께 존재해야 heavyweight migration이
+        // NSMigrationManager에 의해 자동 검색된다 (Project.swift의 resources glob에
+        // **/*.xcmappingmodel 포함됨).
+        guard let modelURL = Bundle(for: CoreDataStack.self)
+                .url(forResource: "NoteCardCoreData", withExtension: "momd"),
+              let model = NSManagedObjectModel(contentsOf: modelURL) else {
+            fatalError("Failed to locate NoteCardCoreData.momd in Data bundle.")
+        }
+        let container = NSPersistentContainer(name: "NoteCardCoreData", managedObjectModel: model)
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
@@ -46,11 +50,11 @@ final class CoreDataStack: ObservableObject {
         return container
     }()
     
-    private(set) lazy var backgroundContext = persistentContainer.newBackgroundContext()
+    public private(set) lazy var backgroundContext = persistentContainer.newBackgroundContext()
 
     // MARK: - Core Data Saving support
 
-    func saveContext () {
+    public func saveContext () {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
