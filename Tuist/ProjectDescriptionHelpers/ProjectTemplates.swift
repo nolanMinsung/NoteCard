@@ -1,6 +1,18 @@
 import Foundation
 import ProjectDescription
 
+/// App 타겟이 4개 configuration(Debug/Release/DebugEng/ReleaseEng)을 가지므로,
+/// 모든 sub-module도 동일한 4개 configuration을 가져야 한다. 그렇지 않으면 Tuist가
+/// "missing or mismatching configurations" 경고를 띄우고, DebugEng/ReleaseEng로 빌드
+/// 시 sub-module은 자동 fallback으로 Debug/Release에 매핑된다 (동작에는 무해하나
+/// 명시적이지 않음).
+private let standardConfigurations: [Configuration] = [
+    .debug(name: "Debug"),
+    .release(name: "Release"),
+    .debug(name: "DebugEng"),
+    .release(name: "ReleaseEng"),
+]
+
 public extension Project {
 
     /// 단일 모듈(Project + 1 target, 선택적으로 Tests).
@@ -42,7 +54,11 @@ public extension Project {
                 )
             )
         }
-        return Project(name: module.rawValue, targets: targets)
+        return Project(
+            name: module.rawValue,
+            settings: .settings(configurations: standardConfigurations),
+            targets: targets
+        )
     }
 
     /// Feature 모듈 전용 팩토리. Domain / DesignSystem / Shared / AnalyticsInterface를
@@ -101,6 +117,7 @@ public extension Project {
         )
         return Project(
             name: interface.rawValue.replacingOccurrences(of: "Interface", with: ""),
+            settings: .settings(configurations: standardConfigurations),
             targets: [interfaceTarget, implTarget]
         )
     }
