@@ -1,12 +1,16 @@
 import ProjectDescription
 
-/// Clean Architecture 레이어. `Projects/` 하위의 폴더와 1:1 대응.
+/// 모듈러 아키텍처의 레이어. `Projects/` 하위의 폴더와 1:1 대응.
+///
+/// 명명 메모: 일반적으로 "Presentation"이라 불리는 UI 레이어를 여기서는 `feature`로
+/// 둔다. 사용자 가치 단위(UI든 비-UI든)를 포괄적으로 담기 위함. Widget / App Intents /
+/// Spotlight 같은 비-UI 기능이 같은 도메인 안에 추가되어도 같은 모듈에 자연스레 흡수.
 public enum Layer: String {
-    case app          = "Projects/App"
-    case presentation = "Projects/Presentation"
-    case domain       = "Projects/Domain"
-    case data         = "Projects/Data"
-    case core         = "Projects/Core"
+    case app     = "Projects/App"
+    case feature = "Projects/Feature"
+    case domain  = "Projects/Domain"
+    case data    = "Projects/Data"
+    case core    = "Projects/Core"
 }
 
 /// 모듈 이름과 거주 레이어를 한 곳에서 관리.
@@ -20,9 +24,6 @@ public enum Module: String {
     case homeFeature        = "HomeFeature"
     case memoFeature        = "MemoFeature"
     case settingsFeature    = "SettingsFeature"
-    /// 임시: Presentation 전체를 단일 모듈로 묶음. 추후 HomeFeature / MemoFeature /
-    /// SettingsFeature로 sub-split하기 전에는 이 모듈이 모든 화면 코드를 흡수한다.
-    case presentation       = "Presentation"
 
     public var layer: Layer {
         switch self {
@@ -30,17 +31,17 @@ public enum Module: String {
         case .data:   return .data
         case .designSystem, .shared, .analyticsInterface, .analyticsImpl:
             return .core
-        case .homeFeature, .memoFeature, .settingsFeature, .presentation:
-            return .presentation
+        case .homeFeature, .memoFeature, .settingsFeature:
+            return .feature
         }
     }
 
     /// 저장소 루트 기준 모듈 폴더 경로.
-    /// Domain / Data / Presentation(단일 모듈일 때)은 레이어 자체가 단일 모듈이므로
-    /// 하위 폴더를 두지 않는다. 그 외(Core)는 "<Layer>/<ModuleName>" 형태.
+    /// Domain / Data는 레이어 자체가 단일 모듈이므로 하위 폴더를 두지 않는다.
+    /// 그 외(Core, Feature)는 "<Layer>/<ModuleName>" 형태.
     public var path: String {
         switch self {
-        case .domain, .data, .presentation:
+        case .domain, .data:
             return layer.rawValue
         default:
             return "\(layer.rawValue)/\(rawValue)"
