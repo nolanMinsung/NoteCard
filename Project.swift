@@ -61,6 +61,7 @@ let project = Project(
     name: appName,
     organizationName: "Minsung Kim",
     options: .options(
+        automaticSchemesOptions: .disabled,
         defaultKnownRegions: ["en", "ko", "Base"],
         developmentRegion: "ko"
     ),
@@ -89,7 +90,7 @@ let project = Project(
                 base: appTargetBaseSettings,
                 configurations: [
                     .debug(name: "Debug", settings: [
-                        "APP_DISPLAY_NAME": "NoteCard",
+                        "APP_DISPLAY_NAME": "NoteCard(Dev)",
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
                     ], xcconfig: "Configs/Version.xcconfig"),
@@ -120,7 +121,7 @@ let project = Project(
                 base: appTargetBaseSettings,
                 configurations: [
                     .debug(name: "Debug", settings: [
-                        "APP_DISPLAY_NAME": "NoteCard(Dev)",
+                        "APP_DISPLAY_NAME": "NoteCard-Eng",
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
                     ], xcconfig: "Configs/Version.xcconfig"),
