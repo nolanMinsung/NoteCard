@@ -1,0 +1,43 @@
+//
+//  UIView+.swift
+//  NoteCard
+//
+//  Created by 김민성 on 7/17/25.
+//
+
+import UIKit
+
+
+public extension UIView {
+    
+    static func springAnimate(
+        withDuration: TimeInterval,
+        delay: TimeInterval = 0,
+        dampingRatio: CGFloat = 1,
+        options: AnimationOptions = [],
+        animations: @escaping () -> Void,
+        completion: ((Bool) -> Void)? = nil
+    ) {
+        self.animate(
+            withDuration: withDuration,
+            delay: delay,
+            usingSpringWithDamping: dampingRatio,
+            initialSpringVelocity: 1,
+            options: options,
+            animations: animations,
+            completion: completion
+        )
+    }
+    
+    public func currentWindowScene() -> UIWindowScene? {
+        guard let window = self.window else { return nil }
+        guard let windowScene = window.windowScene else { return nil }
+        return windowScene
+    }
+    
+    // window가 여러 개인 경우는 어떡함?
+    public func currentSceneSize() -> CGSize? {
+        return currentWindowScene()?.windows.first?.bounds.size
+    }
+    
+}

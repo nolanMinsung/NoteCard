@@ -6,6 +6,10 @@
 //
 
 import Combine
+import Data
+import Domain
+import DesignSystem
+import Shared
 import UIKit
 
 import Wisp
@@ -13,7 +17,7 @@ import Wisp
 class MemoViewController: UIViewController {
     
     enum MemoVCType: Equatable {
-        case category(selectedCategory: Category)
+        case category(selectedCategory: Domain.Category)
         case uncategorized
         case favorite
         case all
@@ -42,7 +46,7 @@ class MemoViewController: UIViewController {
     private let categoryEntityManager = CategoryEntityManager.shared
     
     // memoVCType이 .category인 경우만 값이 존재
-    var selectedCategory: Category?
+    var selectedCategory: Domain.Category?
     private var userDefaultCriterion: String? { return UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) }
     
     private lazy var rootView = self.view as! MemoView

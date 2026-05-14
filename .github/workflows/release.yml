@@ -77,6 +77,25 @@ jobs:
         with:
           bundler-cache: true   # auto bundle install + cache
 
+      - name: Install Tuist
+        run: brew install tuist
+
+      - name: Cache Tuist dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            Tuist/.build
+            .build
+            ~/Library/Caches/tuist
+          key: tuist-${{ runner.os }}-${{ hashFiles('Tuist/Package.swift', 'Tuist/Package.resolved') }}
+          restore-keys: |
+            tuist-${{ runner.os }}-
+
+      - name: Tuist install + generate
+        run: |
+          tuist install
+          tuist generate --no-open
+
       - name: Set up App Store Connect API key (.p8)
         run: |
           mkdir -p /Users/runner/.appstoreconnect
@@ -96,8 +115,8 @@ jobs:
           BUMP_TYPE="${{ github.event.inputs.bump_type || 'minor' }}"
           echo "Bump type: $BUMP_TYPE"
 
-          # 1. Read current version from main's pbxproj.
-          CURRENT=$(grep -m1 'MARKETING_VERSION =' NoteCard.xcodeproj/project.pbxproj | awk '{print $3}' | tr -d ';')
+          # 1. Read current version from xcconfig (pbxproj is .gitignored under Tuist).
+          CURRENT=$(grep -m1 '^[[:space:]]*MARKETING_VERSION' Configs/Version.xcconfig | awk -F'=' '{print $2}' | tr -d ' ')
           IFS='.' read -ra V <<< "$CURRENT"
           while [ ${#V[@]} -lt 3 ]; do V+=(0); done
           case "$BUMP_TYPE" in

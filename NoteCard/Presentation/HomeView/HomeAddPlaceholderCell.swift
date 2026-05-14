@@ -6,6 +6,10 @@
 //
 
 import UIKit
+import Data
+import Domain
+import DesignSystem
+import Shared
 
 /// 홈 화면에서 카테고리 / 전체 메모가 하나도 없을 때 추가를 유도하는 placeholder 셀.
 /// 회색 배경 위에 가운데 + 아이콘과 "OOO 추가" 레이블로 구성된다.

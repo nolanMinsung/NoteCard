@@ -6,6 +6,10 @@
 //
 
 import Combine
+import Data
+import Domain
+import DesignSystem
+import Shared
 import CoreData
 import PhotosUI
 import UIKit
@@ -16,7 +20,7 @@ class MemoDetailViewController: UIViewController {
     typealias ImageDataSnapshot = NSDiffableDataSourceSnapshot<Section, EditableImageItem>
     
     enum MemoDetailType {
-        case making(category: Category?)
+        case making(category: Domain.Category?)
         case editing(memo: Memo, images: [ImageUIModel])
     }
     
@@ -27,8 +31,8 @@ class MemoDetailViewController: UIViewController {
     private let rootView = MemoDetailView()
     private let detailType: MemoDetailType
     private var memo: Memo?
-    private var categories: [Category] = []
-    private var selectedCategories: [Category] = []
+    private var categories: [Domain.Category] = []
+    private var selectedCategories: [Domain.Category] = []
     private var editableImageModels: [EditableImageItem] = []
     private var dataSource: DiffableDataSource!
     

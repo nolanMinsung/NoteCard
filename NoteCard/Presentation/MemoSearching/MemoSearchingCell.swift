@@ -6,6 +6,10 @@
 //
 
 import UIKit
+import Data
+import Domain
+import DesignSystem
+import Shared
 
 class MemoSearchingCell: UICollectionViewCell, ViewShrinkable {
     
@@ -13,7 +17,7 @@ class MemoSearchingCell: UICollectionViewCell, ViewShrinkable {
         didSet { isHighlighted ? shrink(scale: 0.97) : restore() }
     }
     
-    private var categories: [Category] = []
+    private var categories: [Domain.Category] = []
     
     private let mainStackView = UIStackView()
     private let titleLabel: UILabel = UILabel()

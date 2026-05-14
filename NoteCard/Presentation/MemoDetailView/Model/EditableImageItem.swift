@@ -5,6 +5,12 @@
 //  Created by 김민성 on 9/18/25.
 //
 
+import UIKit
+import Data
+import Domain
+import DesignSystem
+import Shared
+
 enum EditableImageItem: Hashable {
     case existing(model: ImageUIModel)
     case pendingAddition(model: ImageUITemporaryModel)

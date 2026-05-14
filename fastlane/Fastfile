@@ -1,17 +1,27 @@
-require 'xcodeproj'
-
 default_platform(:ios)
 
-PROJECT_PATH = File.expand_path('../NoteCard.xcodeproj', __dir__)
+VERSION_XCCONFIG = File.expand_path('../Configs/Version.xcconfig', __dir__)
 TARGET_NAME = "NoteCard"
 
-# Direct pbxproj manipulation via xcodeproj gem.
-# Why: agvtool-based fastlane actions (increment_version_number) don't accept a
-# `target` parameter, so they fail on multi-target projects (e.g., NoteCard + NoteCard.eng).
+# Tuist generates NoteCard.xcodeproj from Project.swift; pbxproj is .gitignored.
+# Version/build numbers live in Configs/Version.xcconfig and are edited via regex.
+def read_xcconfig_value(key)
+  content = File.read(VERSION_XCCONFIG)
+  match = content.match(/^\s*#{Regexp.escape(key)}\s*=\s*(.+?)\s*$/)
+  raise "#{key} not found in #{VERSION_XCCONFIG}" unless match
+  match[1].strip
+end
+
+def write_xcconfig_value(key, value)
+  content = File.read(VERSION_XCCONFIG)
+  pattern = /^(\s*#{Regexp.escape(key)}\s*=\s*).+?\s*$/
+  raise "#{key} not found in #{VERSION_XCCONFIG}" unless content.match(pattern)
+  content = content.sub(pattern, "\\1#{value}")
+  File.write(VERSION_XCCONFIG, content)
+end
+
 def update_marketing_version(bump_type:)
-  project = Xcodeproj::Project.open(PROJECT_PATH)
-  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
-  current = target.build_configurations.first.build_settings["MARKETING_VERSION"]
+  current = read_xcconfig_value("MARKETING_VERSION")
   parts = current.split(".").map(&:to_i)
   parts << 0 while parts.length < 3
   case bump_type
@@ -20,26 +30,23 @@ def update_marketing_version(bump_type:)
   else              parts[2] += 1   # patch
   end
   new_version = parts.join(".")
-  target.build_configurations.each { |c| c.build_settings["MARKETING_VERSION"] = new_version }
-  project.save
+  write_xcconfig_value("MARKETING_VERSION", new_version)
   new_version
 end
 
 def set_build_number(value)
-  project = Xcodeproj::Project.open(PROJECT_PATH)
-  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
-  target.build_configurations.each { |c| c.build_settings["CURRENT_PROJECT_VERSION"] = value.to_s }
-  project.save
+  write_xcconfig_value("CURRENT_PROJECT_VERSION", value.to_s)
 end
 
-def increment_build_number_pbxproj
-  project = Xcodeproj::Project.open(PROJECT_PATH)
-  target = project.targets.find { |t| t.name == TARGET_NAME } or raise "Target #{TARGET_NAME} not found"
-  current = target.build_configurations.first.build_settings["CURRENT_PROJECT_VERSION"].to_i
+def increment_build_number_xcconfig
+  current = read_xcconfig_value("CURRENT_PROJECT_VERSION").to_i
   new_build = current + 1
-  target.build_configurations.each { |c| c.build_settings["CURRENT_PROJECT_VERSION"] = new_build.to_s }
-  project.save
+  write_xcconfig_value("CURRENT_PROJECT_VERSION", new_build.to_s)
   new_build
+end
+
+def ensure_xcodeproj_generated
+  sh("cd .. && tuist install && tuist generate --no-open")
 end
 
 platform :ios do
@@ -68,9 +75,9 @@ platform :ios do
 
   desc "Increment build number and commit. Run on release branch."
   lane :bump_build do
-    build = increment_build_number_pbxproj
-    version = get_version_number(xcodeproj: "NoteCard.xcodeproj", target: TARGET_NAME)
-    sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump build to #{version} (#{build})'")
+    build = increment_build_number_xcconfig
+    version = read_xcconfig_value("MARKETING_VERSION")
+    sh("cd .. && git add Configs/Version.xcconfig && git commit -m 'chore: bump build to #{version} (#{build})'")
   end
 
   desc "Increment marketing version. Resets build number to 1. Pass type:'patch'|'minor'|'major' (default 'minor'). 'patch' is reserved for hotfix releases."
@@ -78,7 +85,7 @@ platform :ios do
     bump_type = options[:type] || "minor"
     version = update_marketing_version(bump_type: bump_type)
     set_build_number(1)
-    sh("cd .. && git add NoteCard.xcodeproj/project.pbxproj && git commit -m 'chore: bump version to #{version}'")
+    sh("cd .. && git add Configs/Version.xcconfig && git commit -m 'chore: bump version to #{version}'")
   end
 
   # ─────────────────────────────────────────────────────────────
@@ -87,6 +94,8 @@ platform :ios do
 
   desc "Verify build: archive only, no upload, no version bump. Use for fastlane setup validation."
   lane :verify_archive do
+    ensure_xcodeproj_generated
+
     match(
       type: "appstore",
       readonly: true,
@@ -94,6 +103,7 @@ platform :ios do
     )
 
     build_app(
+      workspace: "NoteCard.xcworkspace",
       scheme: "NoteCard",
       configuration: "Release",
       export_method: "app-store",
@@ -111,12 +121,14 @@ platform :ios do
   lane :beta do
     if ENV["GITHUB_RUN_NUMBER"]
       # On CI: use GitHub run number as build number (always monotonically increasing).
-      # No commit/push back — pbxproj edit is ephemeral on the CI runner.
+      # No commit/push back — xcconfig edit is ephemeral on the CI runner.
       set_build_number(ENV["GITHUB_RUN_NUMBER"])
       UI.message("CI mode — build number set to GITHUB_RUN_NUMBER=#{ENV['GITHUB_RUN_NUMBER']}")
     else
       bump_build
     end
+
+    ensure_xcodeproj_generated
 
     match(
       type: "appstore",
@@ -125,6 +137,7 @@ platform :ios do
     )
 
     build_app(
+      workspace: "NoteCard.xcworkspace",
       scheme: "NoteCard",
       configuration: "Release",
       export_method: "app-store",

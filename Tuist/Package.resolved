@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "wisp",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/WispKit/Wisp.git",
+      "state" : {
+        "revision" : "c4b4151749ea1134f4b42f0dd0ed4a1e8e79ab1b",
+        "version" : "1.10.1"
+      }
+    }
+  ],
+  "version" : 2
+}

@@ -6,6 +6,10 @@
 //
 
 import UIKit
+import Data
+import Domain
+import DesignSystem
+import Shared
 
 class CategorySelectionViewController: UIViewController {
     
@@ -98,7 +102,7 @@ class CategorySelectionViewController: UIViewController {
             .filter { selectedIndexes.contains($0.offset) }
             .map(\.element)
         
-        let selectedCategories: Set<Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
+        let selectedCategories: Set<Domain.Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
         Task {
             try await MemoEntityRepository.shared.restore(selectedMemos)
             try await MemoEntityRepository.shared.addCategories(
@@ -126,7 +130,7 @@ class CategorySelectionViewController: UIViewController {
             .filter { selectedIndexes.contains($0.offset) }
             .map(\.element)
         
-        let selectedCategories: Set<Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
+        let selectedCategories: Set<Domain.Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
         Task {
             try await MemoEntityRepository.shared.removeCategories(
                 to: selectedMemos,

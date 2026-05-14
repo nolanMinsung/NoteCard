@@ -6,6 +6,10 @@
 //
 
 import UIKit
+import Data
+import Domain
+import DesignSystem
+import Shared
 
 /// 탭 바 컨트롤러의 세 번째 항목을 채우기 위한 빈 뷰 컨트롤러.
 ///
