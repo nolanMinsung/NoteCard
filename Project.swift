@@ -1,6 +1,7 @@
 import ProjectDescription
 
 let appName = "NoteCard"
+let engAppName = "NoteCard-Eng"
 let bundleIdProd = "com.minsung.NoteCard"
 let bundleIdEng = "com.minsung.NoteCard.eng"
 let developmentTeam = "548W892M42"
@@ -27,6 +28,35 @@ let projectBaseSettings: SettingsDictionary = [
     "TARGETED_DEVICE_FAMILY": "1,2",
 ]
 
+let appTargetBaseSettings: SettingsDictionary = infoPlistKeys.merging([
+    "GENERATE_INFOPLIST_FILE": "YES",
+    "IPHONEOS_DEPLOYMENT_TARGET": "15.0",
+    "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
+    "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
+    "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "YES",
+    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+])
+
+let appResources: ResourceFileElements = [
+    "NoteCard/Assets.xcassets",
+    "NoteCard/Base.lproj/LaunchScreen.storyboard",
+    "NoteCard/Base.lproj/Main.storyboard",
+    "NoteCard/ko.lproj/**",
+    "NoteCard/en.lproj/**",
+]
+
+let appSources: SourceFilesList = ["NoteCard/**/*.swift"]
+
+let appDependencies: [TargetDependency] = [
+    .external(name: "Wisp"),
+    .project(target: "Shared", path: .relativeToRoot("Projects/Core/Shared")),
+    .project(target: "DesignSystem", path: .relativeToRoot("Projects/Core/DesignSystem")),
+    .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
+    .project(target: "Data", path: .relativeToRoot("Projects/Data")),
+    .project(target: "AnalyticsInterface", path: .relativeToRoot("Projects/Core/AnalyticsInterface")),
+    .project(target: "AnalyticsImpl", path: .relativeToRoot("Projects/Core/AnalyticsImpl")),
+]
+
 let project = Project(
     name: appName,
     organizationName: "Minsung Kim",
@@ -37,73 +67,73 @@ let project = Project(
     settings: .settings(
         base: projectBaseSettings,
         configurations: [
-            .debug(name: "Debug", settings: ["APP_DISPLAY_NAME": "NoteCard"]),
-            .release(name: "Release", settings: ["APP_DISPLAY_NAME": "NoteCard"]),
-            .debug(name: "DebugEng", settings: ["APP_DISPLAY_NAME": "NoteCard(Dev)"]),
-            .release(name: "ReleaseEng", settings: ["APP_DISPLAY_NAME": "NoteCard-Eng"]),
+            .debug(name: "Debug"),
+            .release(name: "Release"),
         ],
         defaultSettings: .recommended
     ),
     targets: [
+
+        // ── 기본 앱 타겟 (한국 / 글로벌 App Store 출시) ───────────────────
         .target(
             name: appName,
             destinations: .iOS,
             product: .app,
-            bundleId: "$(APP_BUNDLE_ID)",
+            bundleId: bundleIdProd,
             deploymentTargets: deploymentTarget,
             infoPlist: .file(path: "NoteCard/Info.plist"),
-            sources: [
-                "NoteCard/**/*.swift",
-            ],
-            resources: [
-                "NoteCard/Assets.xcassets",
-                "NoteCard/Base.lproj/LaunchScreen.storyboard",
-                "NoteCard/Base.lproj/Main.storyboard",
-                "NoteCard/ko.lproj/**",
-                "NoteCard/en.lproj/**",
-            ],
-            dependencies: [
-                .external(name: "Wisp"),
-                .project(target: "Shared", path: .relativeToRoot("Projects/Core/Shared")),
-                .project(target: "DesignSystem", path: .relativeToRoot("Projects/Core/DesignSystem")),
-                .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
-                .project(target: "Data", path: .relativeToRoot("Projects/Data")),
-                .project(target: "AnalyticsInterface", path: .relativeToRoot("Projects/Core/AnalyticsInterface")),
-                .project(target: "AnalyticsImpl", path: .relativeToRoot("Projects/Core/AnalyticsImpl")),
-            ],
+            sources: appSources,
+            resources: appResources,
+            dependencies: appDependencies,
             settings: .settings(
-                base: infoPlistKeys.merging([
-                    "GENERATE_INFOPLIST_FILE": "YES",
-                    "IPHONEOS_DEPLOYMENT_TARGET": "15.0",
-                    "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
-                    "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
-                    "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "YES",
-                    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
-                ]),
+                base: appTargetBaseSettings,
                 configurations: [
                     .debug(name: "Debug", settings: [
-                        "APP_BUNDLE_ID": .string(bundleIdProd),
+                        "APP_DISPLAY_NAME": "NoteCard",
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
                     ], xcconfig: "Configs/Version.xcconfig"),
                     .release(name: "Release", settings: [
-                        "APP_BUNDLE_ID": .string(bundleIdProd),
+                        "APP_DISPLAY_NAME": "NoteCard",
                         "CODE_SIGN_STYLE": "Manual",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.minsung.NoteCard",
                     ], xcconfig: "Configs/Version.xcconfig"),
-                    .debug(name: "DebugEng", settings: [
-                        "APP_BUNDLE_ID": .string(bundleIdEng),
+                ]
+            )
+        ),
+
+        // ── 영어 스크린샷 촬영용 타겟 ────────────────────────────────────
+        // 같은 sources / resources를 공유하되 bundle id만 다르게 두어 시뮬레이터에
+        // NoteCard와 함께 별도 앱으로 설치된다 (= 데이터 sandbox 분리).
+        // App Store 출시 대상 아님 — Debug/Release 둘 다 Automatic signing.
+        .target(
+            name: engAppName,
+            destinations: .iOS,
+            product: .app,
+            bundleId: bundleIdEng,
+            deploymentTargets: deploymentTarget,
+            infoPlist: .file(path: "NoteCard/Info.plist"),
+            sources: appSources,
+            resources: appResources,
+            dependencies: appDependencies,
+            settings: .settings(
+                base: appTargetBaseSettings,
+                configurations: [
+                    .debug(name: "Debug", settings: [
+                        "APP_DISPLAY_NAME": "NoteCard(Dev)",
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
                     ], xcconfig: "Configs/Version.xcconfig"),
-                    .release(name: "ReleaseEng", settings: [
-                        "APP_BUNDLE_ID": .string(bundleIdEng),
+                    .release(name: "Release", settings: [
+                        "APP_DISPLAY_NAME": "NoteCard-Eng",
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
                     ], xcconfig: "Configs/Version.xcconfig"),
                 ]
             )
         ),
+
+        // ── Unit Tests (기본 앱 타겟 대상) ───────────────────────────────
         .target(
             name: "\(appName)Tests",
             destinations: .iOS,
@@ -129,14 +159,14 @@ let project = Project(
             analyzeAction: .analyzeAction(configuration: "Debug")
         ),
         .scheme(
-            name: "\(appName)-Eng",
+            name: engAppName,
             shared: true,
-            buildAction: .buildAction(targets: ["\(appName)"]),
+            buildAction: .buildAction(targets: [.target(engAppName)]),
             testAction: nil,
-            runAction: .runAction(configuration: "DebugEng"),
-            archiveAction: .archiveAction(configuration: "ReleaseEng"),
-            profileAction: .profileAction(configuration: "ReleaseEng"),
-            analyzeAction: .analyzeAction(configuration: "DebugEng")
+            runAction: .runAction(configuration: "Debug"),
+            archiveAction: .archiveAction(configuration: "Release"),
+            profileAction: .profileAction(configuration: "Release"),
+            analyzeAction: .analyzeAction(configuration: "Debug")
         ),
     ]
 )
