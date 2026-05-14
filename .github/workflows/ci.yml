@@ -7,10 +7,6 @@ on:
     branches-ignore:
       - main
       - "release/**"
-  # Runs on every PR targeting main.
-  pull_request:
-    branches:
-      - main
 
 # When a new push arrives on the same branch, cancel the previous in-flight run.
 # Saves runner time on rapid pushes.
