@@ -1,5 +1,5 @@
 //
-//  ImageEntityRepository.swift
+//  ImageRepositoryImpl.swift
 //  NoteCard
 //
 //  Created by 김민성 on 9/10/25.
@@ -13,7 +13,7 @@ import PhotosUI
 import UIKit
 import UniformTypeIdentifiers
 
-public actor ImageEntityRepository: ImageRepository {
+public actor ImageRepositoryImpl: ImageRepository {
     
     public enum ImageUpdateType: Equatable {
         case create(memoID: UUID)
@@ -32,7 +32,7 @@ public actor ImageEntityRepository: ImageRepository {
         }
     }
     
-    public static let shared = ImageEntityRepository()
+    public static let shared = ImageRepositoryImpl()
     private init() { }
     
     private let context = CoreDataStack.shared.backgroundContext

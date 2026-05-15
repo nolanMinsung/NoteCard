@@ -84,7 +84,7 @@ class PopupCardViewController: UIViewController {
             memoTextViewTapGesture.isEnabled = false
         }
         
-        ImageEntityRepository.shared.imageUpdatedPublisher
+        ImageRepositoryImpl.shared.imageUpdatedPublisher
             .filter { [weak self] updateType in
                 guard let self else { return false }
                 return updateType.memoID == self.memo.memoID
@@ -380,7 +380,7 @@ private extension PopupCardViewController {
     private func makeImageUIModels() async throws -> [ImageUIModel] {
         var imageUIModels: [ImageUIModel] = []
         
-        let fetchedImageInfoList = try await ImageEntityRepository.shared.getAllImageInfo(for: memo)
+        let fetchedImageInfoList = try await ImageRepositoryImpl.shared.getAllImageInfo(for: memo)
         let fetchedThumbnails = try await fetchThumbnailsConcurrently(for: fetchedImageInfoList)
         let fetchedImages = try await fetchImagesConcurrently(for: fetchedImageInfoList)
         
@@ -406,7 +406,7 @@ private extension PopupCardViewController {
         try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
             for (index, info) in imageInfos.enumerated() {
                 group.addTask {
-                    let thumbnail = try await ImageEntityRepository.shared.getThumbnailImage(from: info)
+                    let thumbnail = try await ImageRepositoryImpl.shared.getThumbnailImage(from: info)
                     return (index, thumbnail)
                 }
             }
@@ -422,7 +422,7 @@ private extension PopupCardViewController {
         try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
             for (index, info) in imageInfos.enumerated() {
                 group.addTask {
-                    let image = try await ImageEntityRepository.shared.getImage(from: info)
+                    let image = try await ImageRepositoryImpl.shared.getImage(from: info)
                     return (index, image)
                 }
             }

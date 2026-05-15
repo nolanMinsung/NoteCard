@@ -320,14 +320,14 @@ private extension MemoDetailViewController {
                          `model`은 `ImageUIModel` 타입
                          `model`을 바탕으로 `ImageEntity`를 불러온 후 이 레코드의 `index`를 `item.offset`으로 업데이트
                          */
-                        try await ImageEntityRepository.shared.updateImageIndex(model.info, newIndex: index)
+                        try await ImageRepositoryImpl.shared.updateImageIndex(model.info, newIndex: index)
                     case .pendingAddition(model: let model):
                         /**
                          `model`은 `ImageUITemporaryModel` 타입
                          `model`을 바탕으로 새 이미지 파일과 `ImageEntity`를 생성한 후에 각각 `FileManager`, `CoreData`에 저장.
                          저장 시 index 정보는 `item.offset`
                          */
-                        let _ = try await ImageEntityRepository.shared.createImage(
+                        let _ = try await ImageRepositoryImpl.shared.createImage(
                             from: model.pickerResult,
                             for: memo,
                             orderIndex: index,
@@ -338,7 +338,7 @@ private extension MemoDetailViewController {
                          `model`은 `ImageUIModel` 타입
                          model을 바탕으로 `ImageEntity`를 불러온 후 이 이 레코드의 데이터 및 이미지 파일 삭제
                          */
-                        try await ImageEntityRepository.shared.deleteImage(model.info)
+                        try await ImageRepositoryImpl.shared.deleteImage(model.info)
                     }
                 }
                 try await group.waitForAll()
