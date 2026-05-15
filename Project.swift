@@ -97,6 +97,7 @@ let project = Project(
                     .release(name: "Release", settings: [
                         "APP_DISPLAY_NAME": "NoteCard",
                         "CODE_SIGN_STYLE": "Manual",
+                        "CODE_SIGN_IDENTITY": "Apple Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.minsung.NoteCard",
                     ], xcconfig: "Configs/Version.xcconfig"),
                 ]
