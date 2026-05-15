@@ -107,12 +107,12 @@ class HomeViewController: UIViewController {
     }
     
     private func fetchData() async throws {
-        categories = try await CategoryEntityRepository.shared.getAllCategories(
+        categories = try await CategoryRepositoryImpl.shared.getAllCategories(
             inOrderOf: .modificationDate,
             isAscending: false
         )
-        favoriteMemos = try await MemoEntityRepository.shared.getFavoriteMemos()
-        allMemos = try await MemoEntityRepository.shared.getAllMemos()
+        favoriteMemos = try await MemoRepositoryImpl.shared.getFavoriteMemos()
+        allMemos = try await MemoRepositoryImpl.shared.getAllMemos()
     }
     
     private func setupDiffableDataSource() {

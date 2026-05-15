@@ -286,7 +286,7 @@ private extension MemoViewController {
     }
     
     func setupObservers() {
-        MemoEntityRepository.shared.memoUpdatedPublisher
+        MemoRepositoryImpl.shared.memoUpdatedPublisher
             .sink { [weak self] _ in
                 guard let self else { return }
                 Task {
@@ -332,7 +332,7 @@ private extension MemoViewController {
                 selectedMemos.append(memoArray[indexPath.item])
             }
             Task {
-                try await MemoEntityRepository.shared.restore(selectedMemos)
+                try await MemoRepositoryImpl.shared.restore(selectedMemos)
                 try await self.updateMemoContents()
             }
         }
@@ -367,7 +367,7 @@ private extension MemoViewController {
             .map(\.element)
         
         Task {
-            try await MemoEntityRepository.shared.setFavorite(selectedMemos, to: true)
+            try await MemoRepositoryImpl.shared.setFavorite(selectedMemos, to: true)
             self.setEditing(false, animated: true)
         }
     }
@@ -383,7 +383,7 @@ private extension MemoViewController {
             .map(\.element)
         
         Task {
-            try await MemoEntityRepository.shared.setFavorite(selectedMemos, to: false)
+            try await MemoRepositoryImpl.shared.setFavorite(selectedMemos, to: false)
             
             guard self.memoVCType == .favorite else { return }
             try await self.updateMemoContents()
@@ -433,9 +433,9 @@ private extension MemoViewController {
             
             Task {
                 if self.memoVCType == .trash {
-                    try await MemoEntityRepository.shared.deleteMemos(selectedMemos)
+                    try await MemoRepositoryImpl.shared.deleteMemos(selectedMemos)
                 } else {
-                    try await MemoEntityRepository.shared.moveToTrash(selectedMemos)
+                    try await MemoRepositoryImpl.shared.moveToTrash(selectedMemos)
                 }
                 try await self.updateMemoContents()
             }
@@ -590,13 +590,13 @@ extension MemoViewController: UICollectionViewDelegate {
     func fetchMemos() async throws -> [Memo] {
         switch memoVCType {
         case .category, .uncategorized:
-            return try await MemoEntityRepository.shared.getAllMemos(inCategory: selectedCategory)
+            return try await MemoRepositoryImpl.shared.getAllMemos(inCategory: selectedCategory)
         case .favorite:
-            return try await MemoEntityRepository.shared.getFavoriteMemos()
+            return try await MemoRepositoryImpl.shared.getFavoriteMemos()
         case .all:
-            return try await MemoEntityRepository.shared.getAllMemos()
+            return try await MemoRepositoryImpl.shared.getAllMemos()
         case .trash:
-            return try await MemoEntityRepository.shared.getAllMemosInTrash()
+            return try await MemoRepositoryImpl.shared.getAllMemosInTrash()
         }
     }
     
@@ -629,7 +629,7 @@ extension MemoViewController: UITextFieldDelegate {
         
         Task {
             do {
-                try await CategoryEntityRepository.shared.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
+                try await CategoryRepositoryImpl.shared.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
             } catch {
                 print(error.localizedDescription)
                 let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)

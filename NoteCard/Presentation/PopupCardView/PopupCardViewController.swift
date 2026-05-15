@@ -84,7 +84,7 @@ class PopupCardViewController: UIViewController {
             memoTextViewTapGesture.isEnabled = false
         }
         
-        ImageEntityRepository.shared.imageUpdatedPublisher
+        ImageRepositoryImpl.shared.imageUpdatedPublisher
             .filter { [weak self] updateType in
                 guard let self else { return false }
                 return updateType.memoID == self.memo.memoID
@@ -108,7 +108,7 @@ class PopupCardViewController: UIViewController {
             }
             .store(in: &cancellables)
         
-        MemoEntityRepository.shared.memoUpdatedPublisher
+        MemoRepositoryImpl.shared.memoUpdatedPublisher
             .filter({ [weak self] updateType in
                 guard let self else { return false }
                 guard case .update(let updatedAttribute) = updateType else { return false }
@@ -119,7 +119,7 @@ class PopupCardViewController: UIViewController {
                 guard let self else { return }
                 Task {
                     do {
-                        let updatedMemo = try await MemoEntityRepository.shared.getMemo(id: self.memo.memoID)
+                        let updatedMemo = try await MemoRepositoryImpl.shared.getMemo(id: self.memo.memoID)
                         self.memo = updatedMemo
                         self.categories = try await self.fetchCategories()
                         
@@ -215,7 +215,7 @@ private extension PopupCardViewController {
         }
         Task {
             do {
-                try await MemoEntityRepository.shared.updateMemoContent(memo, newTitle: sender.text)
+                try await MemoRepositoryImpl.shared.updateMemoContent(memo, newTitle: sender.text)
             } catch {
                 print(error.localizedDescription)
             }
@@ -242,7 +242,7 @@ private extension PopupCardViewController {
     @objc func likeButtonTapped() {
         Task {
             do {
-                try await MemoEntityRepository.shared.setFavorite(memo, to: !memo.isFavorite)
+                try await MemoRepositoryImpl.shared.setFavorite(memo, to: !memo.isFavorite)
                 rootView.likeButton.isSelected.toggle()
             } catch {
                 print(error.localizedDescription)
@@ -313,7 +313,7 @@ extension PopupCardViewController: UITextViewDelegate {
         }
         Task {
             do {
-                try await MemoEntityRepository.shared.updateMemoContent(memo, newMemoText: textView.text)
+                try await MemoRepositoryImpl.shared.updateMemoContent(memo, newMemoText: textView.text)
             } catch {
                 print(error.localizedDescription)
             }
@@ -333,7 +333,7 @@ extension PopupCardViewController: UITextFieldDelegate {
         }
         Task {
             do {
-                try await MemoEntityRepository.shared.updateMemoContent(memo, newTitle: trimmedInput)
+                try await MemoRepositoryImpl.shared.updateMemoContent(memo, newTitle: trimmedInput)
             } catch {
                 print(error.localizedDescription)
             }
@@ -364,7 +364,7 @@ extension PopupCardViewController {
 private extension PopupCardViewController {
     
     private func fetchCategories() async throws -> [Domain.Category] {
-        return try await CategoryEntityRepository.shared.getAllCategories(
+        return try await CategoryRepositoryImpl.shared.getAllCategories(
             ofMemo: memo,
             inOrderOf: .modificationDate,
             isAscending: false
@@ -380,7 +380,7 @@ private extension PopupCardViewController {
     private func makeImageUIModels() async throws -> [ImageUIModel] {
         var imageUIModels: [ImageUIModel] = []
         
-        let fetchedImageInfoList = try await ImageEntityRepository.shared.getAllImageInfo(for: memo)
+        let fetchedImageInfoList = try await ImageRepositoryImpl.shared.getAllImageInfo(for: memo)
         let fetchedThumbnails = try await fetchThumbnailsConcurrently(for: fetchedImageInfoList)
         let fetchedImages = try await fetchImagesConcurrently(for: fetchedImageInfoList)
         
@@ -406,7 +406,7 @@ private extension PopupCardViewController {
         try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
             for (index, info) in imageInfos.enumerated() {
                 group.addTask {
-                    let thumbnail = try await ImageEntityRepository.shared.getThumbnailImage(from: info)
+                    let thumbnail = try await ImageRepositoryImpl.shared.getThumbnailImage(from: info)
                     return (index, thumbnail)
                 }
             }
@@ -422,7 +422,7 @@ private extension PopupCardViewController {
         try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
             for (index, info) in imageInfos.enumerated() {
                 group.addTask {
-                    let image = try await ImageEntityRepository.shared.getImage(from: info)
+                    let image = try await ImageRepositoryImpl.shared.getImage(from: info)
                     return (index, image)
                 }
             }
@@ -450,7 +450,7 @@ extension PopupCardViewController {
         let restoreAction = UIAlertAction(title: L10n.Common.recover, style: .default) { action in
             Task{
                 do {
-                    try await MemoEntityRepository.shared.restore(self.memo)
+                    try await MemoRepositoryImpl.shared.restore(self.memo)
                     self.dismiss(animated: true)
                 } catch {
                     print(error.localizedDescription)
@@ -477,9 +477,9 @@ extension PopupCardViewController {
             Task {
                 do {
                     if self.memo.isInTrash {
-                        try await MemoEntityRepository.shared.deleteMemo(self.memo)
+                        try await MemoRepositoryImpl.shared.deleteMemo(self.memo)
                     } else {
-                        try await MemoEntityRepository.shared.moveToTrash(self.memo)
+                        try await MemoRepositoryImpl.shared.moveToTrash(self.memo)
                     }
                     self.dismiss(animated: true)
                 } catch {

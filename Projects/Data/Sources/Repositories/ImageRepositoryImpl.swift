@@ -1,5 +1,5 @@
 //
-//  ImageEntityRepository.swift
+//  ImageRepositoryImpl.swift
 //  NoteCard
 //
 //  Created by 김민성 on 9/10/25.
@@ -13,7 +13,7 @@ import PhotosUI
 import UIKit
 import UniformTypeIdentifiers
 
-public actor ImageEntityRepository: ImageRepository {
+public actor ImageRepositoryImpl: ImageRepository {
     
     public enum ImageUpdateType: Equatable {
         case create(memoID: UUID)
@@ -32,7 +32,7 @@ public actor ImageEntityRepository: ImageRepository {
         }
     }
     
-    public static let shared = ImageEntityRepository()
+    public static let shared = ImageRepositoryImpl()
     private init() { }
     
     private let context = CoreDataStack.shared.backgroundContext
@@ -58,7 +58,7 @@ public actor ImageEntityRepository: ImageRepository {
         let thumbnailData = try ImageFileHandler.createThumbnailData(from: originalData)
         
         // MemoEntity 불러오기(후에 ImageEntity에서 생성자의 매개변수로 넣기 위함)
-        let memoEntity = try await MemoEntityRepository.shared.fetchMemoEntity(id: memo.memoID)
+        let memoEntity = try await MemoRepositoryImpl.shared.fetchMemoEntity(id: memo.memoID)
         
         let createdMemoInfo =  try await context.perform { [unowned self] in
             // 코어데이터에 저장할 데이터

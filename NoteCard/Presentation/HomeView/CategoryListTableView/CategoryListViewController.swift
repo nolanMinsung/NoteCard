@@ -288,7 +288,7 @@ extension CategoryListViewController {
             let deleteAction = UIAlertAction(title: L10n.Common.delete, style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { fatalError() }
                 Task {
-                    try await CategoryEntityRepository.shared.deleteCategory(swipedCell.categoryEntity.toDomain())
+                    try await CategoryRepositoryImpl.shared.deleteCategory(swipedCell.categoryEntity.toDomain())
                     self.applySnapshot(animatingDifferences: true, usingReloadData: false)
                     completionHandler(true)
                 }

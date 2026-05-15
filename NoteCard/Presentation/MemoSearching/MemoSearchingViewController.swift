@@ -81,7 +81,7 @@ private extension MemoSearchingViewController {
             .debounce(for: 0.2, scheduler: RunLoop.main)
             .sink { searchText in
                 Task {
-                    let memoSearchResult = try await MemoEntityRepository.shared.searchMemo(searchText: searchText)
+                    let memoSearchResult = try await MemoRepositoryImpl.shared.searchMemo(searchText: searchText)
                     self.applySnapshot(with: memoSearchResult)
                 }
             }
