@@ -112,7 +112,8 @@ graph.png
 *.xcappdata
 
 # Claude Code
-.claude/
+.claude/*
+!.claude/skills/
 
 # Python
 __pycache__/
