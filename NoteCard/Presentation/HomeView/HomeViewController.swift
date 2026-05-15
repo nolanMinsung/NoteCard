@@ -107,7 +107,7 @@ class HomeViewController: UIViewController {
     }
     
     private func fetchData() async throws {
-        categories = try await CategoryEntityRepository.shared.getAllCategories(
+        categories = try await CategoryRepositoryImpl.shared.getAllCategories(
             inOrderOf: .modificationDate,
             isAscending: false
         )

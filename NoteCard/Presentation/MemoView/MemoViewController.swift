@@ -629,7 +629,7 @@ extension MemoViewController: UITextFieldDelegate {
         
         Task {
             do {
-                try await CategoryEntityRepository.shared.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
+                try await CategoryRepositoryImpl.shared.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
             } catch {
                 print(error.localizedDescription)
                 let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)

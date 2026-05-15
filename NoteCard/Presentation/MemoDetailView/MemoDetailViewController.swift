@@ -83,7 +83,7 @@ class MemoDetailViewController: UIViewController {
         setupDelegates()
         Task {
             do {
-                categories = try await CategoryEntityRepository.shared.getAllCategories(
+                categories = try await CategoryRepositoryImpl.shared.getAllCategories(
                     inOrderOf: .modificationDate,
                     isAscending: false
                 )

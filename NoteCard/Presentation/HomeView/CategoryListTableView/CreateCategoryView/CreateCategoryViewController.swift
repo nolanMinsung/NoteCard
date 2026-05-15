@@ -92,7 +92,7 @@ class CreateCategoryViewController: UIViewController {
         Task {
             do {
                 // try categoryManager.createCategoryEntity(withName: text)
-                try await CategoryEntityRepository.shared.create(name: text.trimmingCharacters(in: .whitespacesAndNewlines))
+                try await CategoryRepositoryImpl.shared.create(name: text.trimmingCharacters(in: .whitespacesAndNewlines))
                 onCategoryCreated?()
                 dismiss(animated: true)
             } catch CoreDataError.duplicateCategoryDetected {

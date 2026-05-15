@@ -364,7 +364,7 @@ extension PopupCardViewController {
 private extension PopupCardViewController {
     
     private func fetchCategories() async throws -> [Domain.Category] {
-        return try await CategoryEntityRepository.shared.getAllCategories(
+        return try await CategoryRepositoryImpl.shared.getAllCategories(
             ofMemo: memo,
             inOrderOf: .modificationDate,
             isAscending: false

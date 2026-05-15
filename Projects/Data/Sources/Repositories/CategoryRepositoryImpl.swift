@@ -1,5 +1,5 @@
 //
-//  CategoryEntityRepository.swift
+//  CategoryRepositoryImpl.swift
 //  NoteCard
 //
 //  Created by 김민성 on 8/28/25.
@@ -13,9 +13,9 @@ public protocol ComparableValue: Comparable {}
 extension String: ComparableValue {}
 extension Date: ComparableValue {}
 
-public actor CategoryEntityRepository: CategoryRepository {
+public actor CategoryRepositoryImpl: CategoryRepository {
     
-    public static let shared = CategoryEntityRepository()
+    public static let shared = CategoryRepositoryImpl()
     private init() { }
     
     private let context = CoreDataStack.shared.backgroundContext
@@ -32,7 +32,7 @@ public actor CategoryEntityRepository: CategoryRepository {
 }
 
 
-public extension CategoryEntityRepository {
+public extension CategoryRepositoryImpl {
     
     private func fetchMemoEntity(id: UUID) throws -> MemoEntity {
         let request = MemoEntity.fetchRequest()
@@ -51,7 +51,7 @@ public extension CategoryEntityRepository {
 }
 
 
-public extension CategoryEntityRepository {
+public extension CategoryRepositoryImpl {
     
     private func fetchCategoryEntity(name: String) throws -> CategoryEntity {
         let request = CategoryEntity.fetchRequest()
