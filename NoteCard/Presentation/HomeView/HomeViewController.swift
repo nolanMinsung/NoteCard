@@ -111,8 +111,8 @@ class HomeViewController: UIViewController {
             inOrderOf: .modificationDate,
             isAscending: false
         )
-        favoriteMemos = try await MemoEntityRepository.shared.getFavoriteMemos()
-        allMemos = try await MemoEntityRepository.shared.getAllMemos()
+        favoriteMemos = try await MemoRepositoryImpl.shared.getFavoriteMemos()
+        allMemos = try await MemoRepositoryImpl.shared.getAllMemos()
     }
     
     private func setupDiffableDataSource() {

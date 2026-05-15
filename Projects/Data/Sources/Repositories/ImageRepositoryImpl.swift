@@ -58,7 +58,7 @@ public actor ImageRepositoryImpl: ImageRepository {
         let thumbnailData = try ImageFileHandler.createThumbnailData(from: originalData)
         
         // MemoEntity 불러오기(후에 ImageEntity에서 생성자의 매개변수로 넣기 위함)
-        let memoEntity = try await MemoEntityRepository.shared.fetchMemoEntity(id: memo.memoID)
+        let memoEntity = try await MemoRepositoryImpl.shared.fetchMemoEntity(id: memo.memoID)
         
         let createdMemoInfo =  try await context.perform { [unowned self] in
             // 코어데이터에 저장할 데이터

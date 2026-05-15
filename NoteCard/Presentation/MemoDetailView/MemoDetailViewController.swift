@@ -272,7 +272,7 @@ private extension MemoDetailViewController {
         
         switch detailType {
         case .editing(let memo, _):
-            try await MemoEntityRepository.shared.updateMemoContent(
+            try await MemoRepositoryImpl.shared.updateMemoContent(
                 memo,
                 newTitle: newTitle,
                 newMemoText: newMemoText
@@ -280,8 +280,8 @@ private extension MemoDetailViewController {
             if let newTitle { self.memo?.memoTitle = newTitle }
             if let newMemoText { self.memo?.memoText = newMemoText }
         case .making:
-            let newMemo = try await MemoEntityRepository.shared.createNewMemo()
-            try await MemoEntityRepository.shared.updateMemoContent(
+            let newMemo = try await MemoRepositoryImpl.shared.createNewMemo()
+            try await MemoRepositoryImpl.shared.updateMemoContent(
                 newMemo,
                 newTitle: newTitle,
                 newMemoText: newMemoText
@@ -303,7 +303,7 @@ private extension MemoDetailViewController {
             debugPrint("카테고리 목록에 변화가 없으므로 DB에 덮어쓰지 않음.")
             return
         }
-        try await MemoEntityRepository.shared.replaceCategories(to: memo, newCategories: Set(selectedCategories))
+        try await MemoRepositoryImpl.shared.replaceCategories(to: memo, newCategories: Set(selectedCategories))
     }
     
     func updateImages() async throws {

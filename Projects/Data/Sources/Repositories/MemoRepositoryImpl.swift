@@ -1,5 +1,5 @@
 //
-//  MemoEntityRepository.swift
+//  MemoRepositoryImpl.swift
 //  NoteCard
 //
 //  Created by 김민성 on 8/20/25.
@@ -27,7 +27,7 @@ public enum MemoEntityError: LocalizedError {
     
 }
 
-public actor MemoEntityRepository: MemoRepository {
+public actor MemoRepositoryImpl: MemoRepository {
     
     public enum MemoUpdateType: Equatable {
         public enum UpdateAttribute: Equatable {
@@ -51,7 +51,7 @@ public actor MemoEntityRepository: MemoRepository {
         case update(content: UpdateAttribute)
     }
     
-    public static let shared = MemoEntityRepository()
+    public static let shared = MemoRepositoryImpl()
     private init() { }
     
     private let context = CoreDataStack.shared.backgroundContext
@@ -98,7 +98,7 @@ public actor MemoEntityRepository: MemoRepository {
 
 
 // MARK: - CREATE
-public extension MemoEntityRepository {
+public extension MemoRepositoryImpl {
     
     public func createNewMemo() async throws -> Memo {
         let createdMemo = try await context.perform { [unowned self] in
@@ -114,7 +114,7 @@ public extension MemoEntityRepository {
 
 
 // MARK: - READ
-public extension MemoEntityRepository {
+public extension MemoRepositoryImpl {
     
     public func fetchMemoEntity(id: UUID) throws -> MemoEntity {
         let request = MemoEntity.fetchRequest()
@@ -239,7 +239,7 @@ public extension MemoEntityRepository {
 
 
 // MARK: - DELETE(Soft)
-public extension MemoEntityRepository {
+public extension MemoRepositoryImpl {
     
     public func moveToTrash(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
@@ -271,7 +271,7 @@ public extension MemoEntityRepository {
 
 
 // MARK: - ⚠️ DELETE(Hard)
-public extension MemoEntityRepository {
+public extension MemoRepositoryImpl {
     
     public func deleteMemo(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
@@ -313,7 +313,7 @@ public extension MemoEntityRepository {
 
 
 // MARK: - RESTORING
-public extension MemoEntityRepository {
+public extension MemoRepositoryImpl {
     
     public func restore(_ memo: Memo) async throws {
         try await context.perform { [unowned self] in
@@ -341,7 +341,7 @@ public extension MemoEntityRepository {
 
 
 // MARK: - UPDATE
-public extension MemoEntityRepository {
+public extension MemoRepositoryImpl {
     
     public func replaceCategories(to memo: Memo, newCategories: Set<Domain.Category>) async throws {
         try await context.perform { [unowned self] in

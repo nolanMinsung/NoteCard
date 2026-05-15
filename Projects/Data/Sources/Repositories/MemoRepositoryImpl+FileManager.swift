@@ -1,5 +1,5 @@
 //
-//  MemoEntityRepository+FileManager.swift
+//  MemoRepositoryImpl+FileManager.swift
 //  NoteCard
 //
 //  Created by 김민성 on 8/23/25.
@@ -29,7 +29,7 @@ public enum MemoEntityFileManagerError: LocalizedError {
     
 }
 
-public extension MemoEntityRepository {
+public extension MemoRepositoryImpl {
     
     public func getMemoDirectoryURL(of memo: MemoEntity) throws -> URL {
         guard let documentURL = FileManager.default.urls(

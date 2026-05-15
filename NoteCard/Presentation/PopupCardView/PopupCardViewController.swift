@@ -108,7 +108,7 @@ class PopupCardViewController: UIViewController {
             }
             .store(in: &cancellables)
         
-        MemoEntityRepository.shared.memoUpdatedPublisher
+        MemoRepositoryImpl.shared.memoUpdatedPublisher
             .filter({ [weak self] updateType in
                 guard let self else { return false }
                 guard case .update(let updatedAttribute) = updateType else { return false }
@@ -119,7 +119,7 @@ class PopupCardViewController: UIViewController {
                 guard let self else { return }
                 Task {
                     do {
-                        let updatedMemo = try await MemoEntityRepository.shared.getMemo(id: self.memo.memoID)
+                        let updatedMemo = try await MemoRepositoryImpl.shared.getMemo(id: self.memo.memoID)
                         self.memo = updatedMemo
                         self.categories = try await self.fetchCategories()
                         
@@ -215,7 +215,7 @@ private extension PopupCardViewController {
         }
         Task {
             do {
-                try await MemoEntityRepository.shared.updateMemoContent(memo, newTitle: sender.text)
+                try await MemoRepositoryImpl.shared.updateMemoContent(memo, newTitle: sender.text)
             } catch {
                 print(error.localizedDescription)
             }
@@ -242,7 +242,7 @@ private extension PopupCardViewController {
     @objc func likeButtonTapped() {
         Task {
             do {
-                try await MemoEntityRepository.shared.setFavorite(memo, to: !memo.isFavorite)
+                try await MemoRepositoryImpl.shared.setFavorite(memo, to: !memo.isFavorite)
                 rootView.likeButton.isSelected.toggle()
             } catch {
                 print(error.localizedDescription)
@@ -313,7 +313,7 @@ extension PopupCardViewController: UITextViewDelegate {
         }
         Task {
             do {
-                try await MemoEntityRepository.shared.updateMemoContent(memo, newMemoText: textView.text)
+                try await MemoRepositoryImpl.shared.updateMemoContent(memo, newMemoText: textView.text)
             } catch {
                 print(error.localizedDescription)
             }
@@ -333,7 +333,7 @@ extension PopupCardViewController: UITextFieldDelegate {
         }
         Task {
             do {
-                try await MemoEntityRepository.shared.updateMemoContent(memo, newTitle: trimmedInput)
+                try await MemoRepositoryImpl.shared.updateMemoContent(memo, newTitle: trimmedInput)
             } catch {
                 print(error.localizedDescription)
             }
@@ -450,7 +450,7 @@ extension PopupCardViewController {
         let restoreAction = UIAlertAction(title: L10n.Common.recover, style: .default) { action in
             Task{
                 do {
-                    try await MemoEntityRepository.shared.restore(self.memo)
+                    try await MemoRepositoryImpl.shared.restore(self.memo)
                     self.dismiss(animated: true)
                 } catch {
                     print(error.localizedDescription)
@@ -477,9 +477,9 @@ extension PopupCardViewController {
             Task {
                 do {
                     if self.memo.isInTrash {
-                        try await MemoEntityRepository.shared.deleteMemo(self.memo)
+                        try await MemoRepositoryImpl.shared.deleteMemo(self.memo)
                     } else {
-                        try await MemoEntityRepository.shared.moveToTrash(self.memo)
+                        try await MemoRepositoryImpl.shared.moveToTrash(self.memo)
                     }
                     self.dismiss(animated: true)
                 } catch {
