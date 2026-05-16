@@ -12,9 +12,7 @@ import DesignSystem
 import Shared
 
 class CreateCategoryViewController: UIViewController {
-    
-    let categoryManager = CategoryEntityManager.shared
-    
+
     let createCategoryView = CreateCategoryView()
     lazy var categoryNameTextField = createCategoryView.categoryNameTextField
     

@@ -43,8 +43,6 @@ class MemoViewController: UIViewController {
     
     private let memoVCType: MemoVCType
     private let environment: AppEnvironment
-    private let memoEntityManager = MemoEntityManager.shared
-    private let categoryEntityManager = CategoryEntityManager.shared
     
     // memoVCType이 .category인 경우만 값이 존재
     var selectedCategory: Domain.Category?

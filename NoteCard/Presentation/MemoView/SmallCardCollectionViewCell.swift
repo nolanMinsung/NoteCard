@@ -56,7 +56,6 @@ class SmallCardCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    private let memoManager = MemoEntityManager.shared
     private var longPressGestureToInflate = UILongPressGestureRecognizer()
     private let inflateAnimator = UIViewPropertyAnimator(
         duration: 0.4,
