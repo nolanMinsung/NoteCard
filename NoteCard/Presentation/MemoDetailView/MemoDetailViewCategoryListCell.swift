@@ -121,10 +121,6 @@ final class MemoDetailViewCategoryListCell: UICollectionViewCell {
         self.label.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -5).isActive = true
     }
     
-    func configureCell(with categoryEntity: CategoryEntity) {
-        self.label.text = categoryEntity.name
-    }
-    
     func configureCell(with category: Domain.Category) {
         self.label.text = category.name
         self.layoutSubviews()

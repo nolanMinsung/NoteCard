@@ -38,10 +38,8 @@ class CategorySelectionViewController: UIViewController {
         return collectionView
     }()
     
-    var categoryEntitiesArray: [CategoryEntity] {
-        return CategoryEntityManager.shared.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false)
-    }
-    var selectedCategorySet: Set<CategoryEntity> = []
+    private var categories: [Domain.Category] = []
+    var selectedCategorySet: Set<Domain.Category> = []
     
     private let environment: AppEnvironment
 
@@ -63,6 +61,21 @@ class CategorySelectionViewController: UIViewController {
         setupConstraints()
         setupSheetPresentationController()
         setupDelegates()
+        fetchCategories()
+    }
+
+    private func fetchCategories() {
+        Task {
+            do {
+                categories = try await environment.categoryRepository.getAllCategories(
+                    inOrderOf: .modificationDate,
+                    isAscending: false
+                )
+                categoryListCollectionView.reloadData()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
     
     private func setupUI() {
@@ -105,7 +118,7 @@ class CategorySelectionViewController: UIViewController {
             .filter { selectedIndexes.contains($0.offset) }
             .map(\.element)
         
-        let selectedCategories: Set<Domain.Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
+        let selectedCategories = self.selectedCategorySet
         Task {
             try await environment.memoRepository.restore(selectedMemos)
             try await environment.memoRepository.addCategories(
@@ -133,7 +146,7 @@ class CategorySelectionViewController: UIViewController {
             .filter { selectedIndexes.contains($0.offset) }
             .map(\.element)
         
-        let selectedCategories: Set<Domain.Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
+        let selectedCategories = self.selectedCategorySet
         Task {
             try await environment.memoRepository.removeCategories(
                 to: selectedMemos,
@@ -176,7 +189,7 @@ extension CategorySelectionViewController: UICollectionViewDataSource {
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.categoryEntitiesArray.count
+        return self.categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -185,11 +198,11 @@ extension CategorySelectionViewController: UICollectionViewDataSource {
         }
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MemoDetailViewCategoryListCell.cellID, for: indexPath) as! MemoDetailViewCategoryListCell
-        let categoryEntity = self.categoryEntitiesArray[indexPath.row]
-        
-        cell.configureCell(with: categoryEntity)
-        
-        if self.selectedCategorySet.contains(categoryEntity) {
+        let category = self.categories[indexPath.row]
+
+        cell.configureCell(with: category)
+
+        if self.selectedCategorySet.contains(category) {
             self.categoryListCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionView.ScrollPosition())
         } else {
             self.categoryListCollectionView.deselectItem(at: indexPath, animated: true)
@@ -206,7 +219,7 @@ extension CategorySelectionViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard collectionView == self.categoryListCollectionView else { fatalError() }
-        let selectedCategory = self.categoryEntitiesArray[indexPath.row]
+        let selectedCategory = self.categories[indexPath.row]
         switch self.selectedCategorySet.insert(selectedCategory).inserted {
         case true:
             print("selectedCategory has inserted into temporary category set.")
@@ -225,8 +238,8 @@ extension CategorySelectionViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard collectionView == self.categoryListCollectionView else { fatalError() }
-        let categoryEntityToRemove = self.categoryEntitiesArray[indexPath.row]
-        self.selectedCategorySet.remove(categoryEntityToRemove)
+        let categoryToRemove = self.categories[indexPath.row]
+        self.selectedCategorySet.remove(categoryToRemove)
         if self.categoryListCollectionView.indexPathsForSelectedItems?.count == 0 {
             self.navigationItem.rightBarButtonItem?.isEnabled = false
         } else {
