@@ -17,9 +17,7 @@ class CategoryListTableViewCell: UITableViewCell {
         return String(describing: self)
     }
     
-    let categoryEntityManager = CategoryEntityManager.shared
-    
-    var categoryEntity: CategoryEntity!
+    var category: Domain.Category!
     
     let categoryNameLabel: UILabel = {
         let label = UILabel()
@@ -69,10 +67,10 @@ class CategoryListTableViewCell: UITableViewCell {
         self.memoCountLabel.setContentCompressionResistancePriority(UILayoutPriority(751), for: NSLayoutConstraint.Axis.horizontal)
     }
     
-    func configureCell(with category: CategoryEntity) {
-        self.categoryEntity = category
+    func configureCell(with category: Domain.Category, memoCount: Int) {
+        self.category = category
         self.categoryNameLabel.text = category.name
-        self.memoCountLabel.text = String(self.categoryEntityManager.memoCounted(of: category))
+        self.memoCountLabel.text = String(memoCount)
     }
     
 }

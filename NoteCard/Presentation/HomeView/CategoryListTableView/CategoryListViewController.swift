@@ -24,9 +24,7 @@ enum CategoryListTableViewSection: CaseIterable {
 
 class CategoryListViewController: UITableViewController {
     
-    let categoryEntityManager = CategoryEntityManager.shared
-    let fileManager = FileManager.default
-    let categoryManager = CategoryEntityManager.shared
+    private var memoCountByCategory: [Domain.Category: Int] = [:]
     let addCategoryBarButtonItem: UIBarButtonItem = {
         let item = UIBarButtonItem()
         item.image = UIImage(systemName: "plus")
@@ -99,36 +97,73 @@ class CategoryListViewController: UITableViewController {
     }
     
     private func setupDiffableDataSource() {
-        self.categoryDiffableDataSource = CategoryListTableViewDiffableDataSource(tableView: self.tableView, cellProvider: { tableView, indexPath, categoryEntity in
-            
+        self.categoryDiffableDataSource = CategoryListTableViewDiffableDataSource(tableView: self.tableView, cellProvider: { [weak self] tableView, indexPath, category in
+
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryListTableViewCell.cellID, for: indexPath) as? CategoryListTableViewCell else { fatalError("cell dequeueing failed.") }
-            cell.configureCell(with: categoryEntity)
+            let memoCount = self?.memoCountByCategory[category] ?? 0
+            cell.configureCell(with: category, memoCount: memoCount)
             return cell
         })
     }
     
     func applySnapshot(animatingDifferences: Bool, usingReloadData: Bool, completion: (() -> Void)? = nil) {
-        let categoryList = self.categoryManager.getCategoryEntities(inOrderOf: CategoryProperties.modificationDate, isAscending: false)
-        
-        var snapshot = NSDiffableDataSourceSnapshot<CategoryListTableViewSection, CategoryEntity>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(categoryList, toSection: .main)
-        
-        switch usingReloadData {
-        case true:
-            self.categoryDiffableDataSource.applySnapshotUsingReloadData(snapshot, completion: completion)
-        case false:
-            self.categoryDiffableDataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: completion)
+        Task {
+            do {
+                let categories = try await environment.categoryRepository.getAllCategories(
+                    inOrderOf: .modificationDate,
+                    isAscending: false
+                )
+                try await applySnapshot(
+                    with: categories,
+                    animatingDifferences: animatingDifferences,
+                    usingReloadData: usingReloadData,
+                    completion: completion
+                )
+            } catch {
+                print(error.localizedDescription)
+            }
         }
     }
-    
+
     private func applySnapshot(searchWith searchText: String, animatingDifferences: Bool, usingReloadData: Bool, completion: (() -> Void)? = nil) {
-        let searchedCategoriesArray = self.categoryManager.searchCategoryEntity(with: searchText, order: CategoryProperties.modificationDate, ascending: false)
-        
-        var snapshot = NSDiffableDataSourceSnapshot<CategoryListTableViewSection, CategoryEntity>()
+        Task {
+            do {
+                let categories = try await environment.categoryRepository.searchCategory(
+                    searchText,
+                    inOrderOf: .modificationDate,
+                    isAscending: false
+                )
+                try await applySnapshot(
+                    with: categories,
+                    animatingDifferences: animatingDifferences,
+                    usingReloadData: usingReloadData,
+                    completion: completion
+                )
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+
+    /// 카테고리별 메모 개수를 조회해 캐시한 뒤 diffable snapshot을 적용한다.
+    /// 셀이 표시할 메모 개수(`memoCount`)가 async 조회라 셀에서 직접 못 구하므로,
+    /// VC가 미리 모아 `memoCountByCategory`에 담아두고 cellProvider가 읽는다.
+    private func applySnapshot(
+        with categories: [Domain.Category],
+        animatingDifferences: Bool,
+        usingReloadData: Bool,
+        completion: (() -> Void)?
+    ) async throws {
+        var counts: [Domain.Category: Int] = [:]
+        for category in categories {
+            counts[category] = try await environment.categoryRepository.memoCount(of: category)
+        }
+        self.memoCountByCategory = counts
+
+        var snapshot = NSDiffableDataSourceSnapshot<CategoryListTableViewSection, Domain.Category>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(searchedCategoriesArray, toSection: .main)
-        
+        snapshot.appendItems(categories, toSection: .main)
+
         switch usingReloadData {
         case true:
             self.categoryDiffableDataSource.applySnapshotUsingReloadData(snapshot, completion: completion)
@@ -216,11 +251,15 @@ extension CategoryListViewController {
     //    UITableViewController 되면서 override 함
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            let categoryEntityToDelete = categoryManager.getCategoryEntities(inOrderOf: CategoryProperties.creationDate, isAscending: true)[indexPath.row]
-            
-            categoryManager.deleteCategoryEntity(of: categoryEntityToDelete)
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            guard let categoryToDelete = categoryDiffableDataSource.itemIdentifier(for: indexPath) else { return }
+            Task {
+                do {
+                    try await environment.categoryRepository.deleteCategory(categoryToDelete)
+                    applySnapshot(animatingDifferences: true, usingReloadData: false)
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
         } else if editingStyle == .insert {
             return
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -232,47 +271,43 @@ extension CategoryListViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         guard let swipedCell = tableView.cellForRow(at: indexPath) as? CategoryListTableViewCell else { fatalError() }
-        let selectedCategoryEntity = swipedCell.categoryEntity
-        
+        guard let selectedCategory = swipedCell.category else { return nil }
+
         let editNameContextualAction = UIContextualAction(style: UIContextualAction.Style.normal, title: L10n.CategoryList.rename) { [weak self] contextualAction, view, completionHandler in
             guard let self else { return }
-            
+
             tableView.setEditing(false, animated: true)
-            
-            guard let selectedCategoryEntity else { return }
-            //let alertCon = UIAlertController(title: "카테고리 이름 변경", message: "새 카테고리 이름을 적어주세요.", preferredStyle: UIAlertController.Style.alert)
+
             let alertCon = UIAlertController(title: L10n.CategoryList.renameCategory, message: "", preferredStyle: UIAlertController.Style.alert)
             alertCon.addTextField { textField in
                 self.categoryNameChangingTextField = textField
                 self.categoryNameChangingTextField.placeholder = L10n.CategoryList.enterNewCategoryName
-                self.categoryNameChangingTextField.text = selectedCategoryEntity.name
+                self.categoryNameChangingTextField.text = selectedCategory.name
                 self.categoryNameChangingTextField.addTarget(self, action: #selector(self.toggleSaveAction), for: UIControl.Event.editingChanged)
             }
-            
+
             self.saveAction = UIAlertAction(title: L10n.Common.save, style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { return }
-                //guard let cardView = self.view as? CardView else { return }
                 guard let newCategoryName = alertCon.textFields?[0].text else { return }
-                
-                 do {
-                    try CategoryEntityManager.shared.changeCategoryEntityName(ofEntity: selectedCategoryEntity, newName: newCategoryName)
-                } catch {
-                    print(error.localizedDescription)
-                    let duplicateAlertCon = UIAlertController(
-                        title: L10n.CategoryList.duplicateName,
-                        message: L10n.CategoryList.duplicateNameMessage,
-                        preferredStyle: UIAlertController.Style.actionSheet
-                    )
-                    let okAction = UIAlertAction(title: L10n.Common.ok, style: UIAlertAction.Style.cancel) { action in
-                        self.navigationController?.present(alertCon, animated: true)
+                Task {
+                    do {
+                        try await self.environment.categoryRepository.changeCategoryName(selectedCategory, newName: newCategoryName)
+                        swipedCell.categoryNameLabel.text = newCategoryName
+                        self.applySnapshot(animatingDifferences: true, usingReloadData: false)
+                    } catch {
+                        print(error.localizedDescription)
+                        let duplicateAlertCon = UIAlertController(
+                            title: L10n.CategoryList.duplicateName,
+                            message: L10n.CategoryList.duplicateNameMessage,
+                            preferredStyle: UIAlertController.Style.actionSheet
+                        )
+                        let okAction = UIAlertAction(title: L10n.Common.ok, style: UIAlertAction.Style.cancel) { action in
+                            self.navigationController?.present(alertCon, animated: true)
+                        }
+                        duplicateAlertCon.addAction(okAction)
+                        self.present(duplicateAlertCon, animated: true)
                     }
-                    duplicateAlertCon.addAction(okAction)
-                    self.present(duplicateAlertCon, animated: true)
-                    return
                 }
-                
-                swipedCell.categoryNameLabel.text = newCategoryName
-                return
             }
             
             let cancelAction = UIAlertAction(title: L10n.Common.cancel, style: UIAlertAction.Style.cancel) { action in return }
@@ -299,9 +334,14 @@ extension CategoryListViewController {
             let deleteAction = UIAlertAction(title: L10n.Common.delete, style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { fatalError() }
                 Task {
-                    try await self.environment.categoryRepository.deleteCategory(swipedCell.categoryEntity.toDomain())
-                    self.applySnapshot(animatingDifferences: true, usingReloadData: false)
-                    completionHandler(true)
+                    do {
+                        try await self.environment.categoryRepository.deleteCategory(selectedCategory)
+                        self.applySnapshot(animatingDifferences: true, usingReloadData: false)
+                        completionHandler(true)
+                    } catch {
+                        print(error.localizedDescription)
+                        completionHandler(false)
+                    }
                 }
             }
             
@@ -320,8 +360,8 @@ extension CategoryListViewController {
     
 //    UITableViewController 되면서 override 함
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let selectedCategoryEntity = categoryDiffableDataSource.itemIdentifier(for: indexPath) else { return }
-        let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategoryEntity.toDomain()), environment: environment)
+        guard let selectedCategory = categoryDiffableDataSource.itemIdentifier(for: indexPath) else { return }
+        let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategory), environment: environment)
         memoVC.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(memoVC, animated: true)
         

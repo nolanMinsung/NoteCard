@@ -11,7 +11,7 @@ import Domain
 import DesignSystem
 import Shared
 
-class CategoryListTableViewDiffableDataSource: UITableViewDiffableDataSource<CategoryListTableViewSection, CategoryEntity> {
+class CategoryListTableViewDiffableDataSource: UITableViewDiffableDataSource<CategoryListTableViewSection, Domain.Category> {
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
