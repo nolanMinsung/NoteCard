@@ -13,14 +13,17 @@ import Data
 /// Combine publisher 이벤트도 화면 간에 끊김 없이 전달된다.
 struct AppEnvironment {
 
+    let coreDataStack: CoreDataStack
     let memoRepository: MemoRepositoryImpl
     let categoryRepository: CategoryRepositoryImpl
     let imageRepository: ImageRepositoryImpl
 
-    init(stack: CoreDataStack) {
-        let memoRepository = MemoRepositoryImpl(stack: stack)
+    init() {
+        let coreDataStack = CoreDataStack()
+        self.coreDataStack = coreDataStack
+        let memoRepository = MemoRepositoryImpl(stack: coreDataStack)
         self.memoRepository = memoRepository
-        self.categoryRepository = CategoryRepositoryImpl(stack: stack)
-        self.imageRepository = ImageRepositoryImpl(stack: stack, memoRepository: memoRepository)
+        self.categoryRepository = CategoryRepositoryImpl(stack: coreDataStack)
+        self.imageRepository = ImageRepositoryImpl(stack: coreDataStack, memoRepository: memoRepository)
     }
 }

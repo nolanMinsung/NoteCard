@@ -53,9 +53,9 @@ class HomeViewController: UIViewController {
     private var diffableDataSource: DiffableDataSource!
     
     private var cancellables: Set<AnyCancellable> = []
-    private let coreDataChangePublisher = NotificationCenter.default.publisher(
+    private lazy var coreDataChangePublisher = NotificationCenter.default.publisher(
         for: .NSManagedObjectContextDidSave,
-        object: CoreDataStack.shared.backgroundContext
+        object: environment.coreDataStack.backgroundContext
     )
 
     private let environment: AppEnvironment

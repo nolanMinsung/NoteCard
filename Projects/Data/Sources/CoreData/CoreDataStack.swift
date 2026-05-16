@@ -13,8 +13,7 @@ import Foundation
 
 public final class CoreDataStack: ObservableObject {
 
-    public static let shared = CoreDataStack()
-    private init() { }
+    public init() { }
 
     // MARK: - Core Data stack
 
