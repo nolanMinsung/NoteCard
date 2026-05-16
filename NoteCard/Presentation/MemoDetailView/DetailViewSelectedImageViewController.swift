@@ -18,7 +18,6 @@ final class DetailViewSelectedImageViewController: UIViewController {
     
     let phAsset: PHAsset?
     let image: UIImage?
-    let imageEntityManager = ImageEntityManager.shared
     let imageManager = PHImageManager.default()
     
     lazy var detailViewSelectedImageView = self.view as! DetailViewSelectedImageView
