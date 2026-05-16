@@ -13,7 +13,18 @@ import Shared
 import Combine
 
 class SettingsViewController: UITableViewController {
-    
+
+    private let environment: AppEnvironment
+
+    init(environment: AppEnvironment) {
+        self.environment = environment
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     var settingTitles: [[String]] = [
         
         //design
@@ -328,7 +339,7 @@ extension SettingsViewController {
             targetVC = DarkModeSettingViewController()
             
         case IndexPath(row: 2, section: 1):
-            targetVC = MemoViewController(memoVCType: .trash)
+            targetVC = MemoViewController(memoVCType: .trash, environment: environment)
         case IndexPath(row: 3, section: 1):
             showDeleteAllAlert(indexPath: indexPath)
             

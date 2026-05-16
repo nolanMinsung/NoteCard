@@ -43,8 +43,11 @@ class CategorySelectionViewController: UIViewController {
     }
     var selectedCategorySet: Set<CategoryEntity> = []
     
-    init(selectionType: SelectionType) {
+    private let environment: AppEnvironment
+
+    init(selectionType: SelectionType, environment: AppEnvironment) {
         self.selectionType = selectionType
+        self.environment = environment
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
@@ -104,8 +107,8 @@ class CategorySelectionViewController: UIViewController {
         
         let selectedCategories: Set<Domain.Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
         Task {
-            try await MemoRepositoryImpl.shared.restore(selectedMemos)
-            try await MemoRepositoryImpl.shared.addCategories(
+            try await environment.memoRepository.restore(selectedMemos)
+            try await environment.memoRepository.addCategories(
                 to: selectedMemos,
                 newCategories: selectedCategories
             )
@@ -132,11 +135,11 @@ class CategorySelectionViewController: UIViewController {
         
         let selectedCategories: Set<Domain.Category> = Set(self.selectedCategorySet.map { $0.toDomain() })
         Task {
-            try await MemoRepositoryImpl.shared.removeCategories(
+            try await environment.memoRepository.removeCategories(
                 to: selectedMemos,
                 newCategories: selectedCategories
             )
-            try await MemoRepositoryImpl.shared.restore(selectedMemos)
+            try await environment.memoRepository.restore(selectedMemos)
         }
         
         memoVC.isEditing = false

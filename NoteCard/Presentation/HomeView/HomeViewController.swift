@@ -57,7 +57,18 @@ class HomeViewController: UIViewController {
         for: .NSManagedObjectContextDidSave,
         object: CoreDataStack.shared.backgroundContext
     )
-    
+
+    private let environment: AppEnvironment
+
+    init(environment: AppEnvironment) {
+        self.environment = environment
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func loadView() {
         self.view = homeView
     }
@@ -107,12 +118,12 @@ class HomeViewController: UIViewController {
     }
     
     private func fetchData() async throws {
-        categories = try await CategoryRepositoryImpl.shared.getAllCategories(
+        categories = try await environment.categoryRepository.getAllCategories(
             inOrderOf: .modificationDate,
             isAscending: false
         )
-        favoriteMemos = try await MemoRepositoryImpl.shared.getFavoriteMemos()
-        allMemos = try await MemoRepositoryImpl.shared.getAllMemos()
+        favoriteMemos = try await environment.memoRepository.getFavoriteMemos()
+        allMemos = try await environment.memoRepository.getAllMemos()
     }
     
     private func setupDiffableDataSource() {
@@ -264,14 +275,14 @@ class HomeViewController: UIViewController {
     @objc private func onHeaderButtonTapped(_ sender: UIButton) {
         switch sender.tag {
         case 0:
-            let categoryListVC = CategoryListViewController()
+            let categoryListVC = CategoryListViewController(environment: environment)
             self.navigationController?.pushViewController(categoryListVC, animated: true)
         case 1:
-            let favoriteMemoVC = MemoViewController(memoVCType: .favorite)
+            let favoriteMemoVC = MemoViewController(memoVCType: .favorite, environment: environment)
             favoriteMemoVC.navigationItem.leftBarButtonItem = nil
             self.navigationController?.pushViewController(favoriteMemoVC, animated: true)
         case 2:
-            let allMemoVC = MemoViewController(memoVCType: .all)
+            let allMemoVC = MemoViewController(memoVCType: .all, environment: environment)
             self.navigationController?.pushViewController(allMemoVC, animated: true)
         default:
             fatalError()
@@ -298,12 +309,12 @@ extension HomeViewController: UICollectionViewDelegate {
         if let itemIdentifier = diffableDataSource.itemIdentifier(for: indexPath) {
             switch itemIdentifier {
             case .addCategoryPlaceholder:
-                let createCategoryVC = CreateCategoryViewController()
+                let createCategoryVC = CreateCategoryViewController(environment: environment)
                 let naviCon = UINavigationController(rootViewController: createCategoryVC)
                 present(naviCon, animated: true)
                 return
             case .addMemoPlaceholder:
-                let memoMakingVC = MemoDetailViewController(type: .making(category: nil))
+                let memoMakingVC = MemoDetailViewController(type: .making(category: nil), environment: environment)
                 let naviCon = UINavigationController(rootViewController: memoMakingVC)
                 present(naviCon, animated: true)
                 return
@@ -333,12 +344,12 @@ extension HomeViewController: UICollectionViewDelegate {
         case 0:
             switch CategoryEntityManager.shared.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false).count != 0 {
             case false:
-                let createCategoryVC = CreateCategoryViewController()
+                let createCategoryVC = CreateCategoryViewController(environment: environment)
                 let naviCon = UINavigationController(rootViewController: createCategoryVC)
                 present(naviCon, animated: true)
             case true:
                 let selectedCategory = categories[indexPath.item]
-                let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategory))
+                let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategory), environment: environment)
                 self.navigationController?.pushViewController(memoVC, animated: true)
             }
             
@@ -352,6 +363,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 let popupCardViewCotroller = PopupCardViewController(
                     memo: selectedMemo,
                     indexPath: indexPath,
+                    environment: environment
                 )
                 wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
             }
@@ -360,6 +372,7 @@ extension HomeViewController: UICollectionViewDelegate {
             let popupCardViewCotroller = PopupCardViewController(
                 memo: selectedMemo,
                 indexPath: indexPath,
+                environment: environment
             )
             wisp.present(popupCardViewCotroller, collectionView: homeCollectionView, at: indexPath, configuration: config)
         default:

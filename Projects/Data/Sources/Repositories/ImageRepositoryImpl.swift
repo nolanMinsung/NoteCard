@@ -32,10 +32,13 @@ public actor ImageRepositoryImpl: ImageRepository {
         }
     }
     
-    public static let shared = ImageRepositoryImpl()
-    private init() { }
-    
-    private let context = CoreDataStack.shared.backgroundContext
+    private let context: NSManagedObjectContext
+    private let memoRepository: MemoRepositoryImpl
+
+    public init(stack: CoreDataStack, memoRepository: MemoRepositoryImpl) {
+        self.context = stack.backgroundContext
+        self.memoRepository = memoRepository
+    }
     
     // MARK: - Subjects, Publisher
     
@@ -58,7 +61,7 @@ public actor ImageRepositoryImpl: ImageRepository {
         let thumbnailData = try ImageFileHandler.createThumbnailData(from: originalData)
         
         // MemoEntity 불러오기(후에 ImageEntity에서 생성자의 매개변수로 넣기 위함)
-        let memoEntity = try await MemoRepositoryImpl.shared.fetchMemoEntity(id: memo.memoID)
+        let memoEntity = try await memoRepository.fetchMemoEntity(id: memo.memoID)
         
         let createdMemoInfo =  try await context.perform { [unowned self] in
             // 코어데이터에 저장할 데이터

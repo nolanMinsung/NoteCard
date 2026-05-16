@@ -44,7 +44,18 @@ class CategoryListViewController: UITableViewController {
     var categoryDiffableDataSource: CategoryListTableViewDiffableDataSource!
     var categoryNameChangingTextField: UITextField!
     var saveAction: UIAlertAction!
-    
+
+    private let environment: AppEnvironment
+
+    init(environment: AppEnvironment) {
+        self.environment = environment
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -152,7 +163,7 @@ class CategoryListViewController: UITableViewController {
     }
     
     @objc private func presentCreateCategoryVC() {
-        let createCategoryVC = CreateCategoryViewController()
+        let createCategoryVC = CreateCategoryViewController(environment: environment)
         createCategoryVC.onCategoryCreated = { [weak self] in
             guard let self else { return }
             self.categoryCreated()
@@ -288,7 +299,7 @@ extension CategoryListViewController {
             let deleteAction = UIAlertAction(title: L10n.Common.delete, style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { fatalError() }
                 Task {
-                    try await CategoryRepositoryImpl.shared.deleteCategory(swipedCell.categoryEntity.toDomain())
+                    try await self.environment.categoryRepository.deleteCategory(swipedCell.categoryEntity.toDomain())
                     self.applySnapshot(animatingDifferences: true, usingReloadData: false)
                     completionHandler(true)
                 }
@@ -310,7 +321,7 @@ extension CategoryListViewController {
 //    UITableViewController 되면서 override 함
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let selectedCategoryEntity = categoryDiffableDataSource.itemIdentifier(for: indexPath) else { return }
-        let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategoryEntity.toDomain()))
+        let memoVC = MemoViewController(memoVCType: .category(selectedCategory: selectedCategoryEntity.toDomain()), environment: environment)
         memoVC.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(memoVC, animated: true)
         

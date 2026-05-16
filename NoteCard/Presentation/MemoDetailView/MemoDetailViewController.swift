@@ -30,6 +30,7 @@ class MemoDetailViewController: UIViewController {
     
     private let rootView = MemoDetailView()
     private let detailType: MemoDetailType
+    private let environment: AppEnvironment
     private var memo: Memo?
     private var categories: [Domain.Category] = []
     private var selectedCategories: [Domain.Category] = []
@@ -48,8 +49,9 @@ class MemoDetailViewController: UIViewController {
     private let completeBarButtonItem = UIBarButtonItem()
     private let imageBarButtonItem = UIBarButtonItem()
     
-    init(type: MemoDetailType) {
+    init(type: MemoDetailType, environment: AppEnvironment) {
         self.detailType = type
+        self.environment = environment
         if case .editing(let memo, let imageModels) = type {
             self.memo = memo
             self.editableImageModels = imageModels
@@ -83,7 +85,7 @@ class MemoDetailViewController: UIViewController {
         setupDelegates()
         Task {
             do {
-                categories = try await CategoryRepositoryImpl.shared.getAllCategories(
+                categories = try await environment.categoryRepository.getAllCategories(
                     inOrderOf: .modificationDate,
                     isAscending: false
                 )
@@ -272,7 +274,7 @@ private extension MemoDetailViewController {
         
         switch detailType {
         case .editing(let memo, _):
-            try await MemoRepositoryImpl.shared.updateMemoContent(
+            try await environment.memoRepository.updateMemoContent(
                 memo,
                 newTitle: newTitle,
                 newMemoText: newMemoText
@@ -280,8 +282,8 @@ private extension MemoDetailViewController {
             if let newTitle { self.memo?.memoTitle = newTitle }
             if let newMemoText { self.memo?.memoText = newMemoText }
         case .making:
-            let newMemo = try await MemoRepositoryImpl.shared.createNewMemo()
-            try await MemoRepositoryImpl.shared.updateMemoContent(
+            let newMemo = try await environment.memoRepository.createNewMemo()
+            try await environment.memoRepository.updateMemoContent(
                 newMemo,
                 newTitle: newTitle,
                 newMemoText: newMemoText
@@ -303,7 +305,7 @@ private extension MemoDetailViewController {
             debugPrint("카테고리 목록에 변화가 없으므로 DB에 덮어쓰지 않음.")
             return
         }
-        try await MemoRepositoryImpl.shared.replaceCategories(to: memo, newCategories: Set(selectedCategories))
+        try await environment.memoRepository.replaceCategories(to: memo, newCategories: Set(selectedCategories))
     }
     
     func updateImages() async throws {
@@ -311,6 +313,7 @@ private extension MemoDetailViewController {
             debugPrint("메모가 생성되기 전에 이미지 저장 시도!")
             throw CoreDataError.objectNotFound
         }
+        let imageRepository = environment.imageRepository
         try await withThrowingTaskGroup(of: Void.self) { group in
             for (index, item) in editableImageModels.enumerated() {
                 group.addTask {
@@ -320,14 +323,14 @@ private extension MemoDetailViewController {
                          `model`은 `ImageUIModel` 타입
                          `model`을 바탕으로 `ImageEntity`를 불러온 후 이 레코드의 `index`를 `item.offset`으로 업데이트
                          */
-                        try await ImageRepositoryImpl.shared.updateImageIndex(model.info, newIndex: index)
+                        try await imageRepository.updateImageIndex(model.info, newIndex: index)
                     case .pendingAddition(model: let model):
                         /**
                          `model`은 `ImageUITemporaryModel` 타입
                          `model`을 바탕으로 새 이미지 파일과 `ImageEntity`를 생성한 후에 각각 `FileManager`, `CoreData`에 저장.
                          저장 시 index 정보는 `item.offset`
                          */
-                        let _ = try await ImageRepositoryImpl.shared.createImage(
+                        let _ = try await imageRepository.createImage(
                             from: model.pickerResult,
                             for: memo,
                             orderIndex: index,
@@ -338,7 +341,7 @@ private extension MemoDetailViewController {
                          `model`은 `ImageUIModel` 타입
                          model을 바탕으로 `ImageEntity`를 불러온 후 이 이 레코드의 데이터 및 이미지 파일 삭제
                          */
-                        try await ImageRepositoryImpl.shared.deleteImage(model.info)
+                        try await imageRepository.deleteImage(model.info)
                     }
                 }
                 try await group.waitForAll()
