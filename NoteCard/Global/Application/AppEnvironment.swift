@@ -18,8 +18,9 @@ struct AppEnvironment {
     let imageRepository: ImageRepositoryImpl
 
     init(stack: CoreDataStack) {
-        self.memoRepository = MemoRepositoryImpl.shared
+        let memoRepository = MemoRepositoryImpl(stack: stack)
+        self.memoRepository = memoRepository
         self.categoryRepository = CategoryRepositoryImpl.shared
-        self.imageRepository = ImageRepositoryImpl(stack: stack, memoRepository: MemoRepositoryImpl.shared)
+        self.imageRepository = ImageRepositoryImpl(stack: stack, memoRepository: memoRepository)
     }
 }

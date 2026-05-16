@@ -51,10 +51,11 @@ public actor MemoRepositoryImpl: MemoRepository {
         case update(content: UpdateAttribute)
     }
     
-    public static let shared = MemoRepositoryImpl()
-    private init() { }
-    
-    private let context = CoreDataStack.shared.backgroundContext
+    private let context: NSManagedObjectContext
+
+    public init(stack: CoreDataStack) {
+        self.context = stack.backgroundContext
+    }
     
     @UserDefault<String>(key: .orderCriterion, defaultValue: OrderCriterion.modificationDate.rawValue)
     private var orderCriterion: String
