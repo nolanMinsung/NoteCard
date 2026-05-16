@@ -26,6 +26,10 @@ let projectBaseSettings: SettingsDictionary = [
     "DEVELOPMENT_TEAM": .string(developmentTeam),
     "SWIFT_VERSION": "5.0",
     "TARGETED_DEVICE_FAMILY": "1,2",
+    // static framework 안의 Obj-C 카테고리(예: NSManagedObject 서브클래스의
+    // @NSManaged 프로퍼티)가 링커 dead-stripping으로 제거되지 않도록 강제 로드.
+    // 누락 시 Core Data가 동적 접근자를 만들지 못해 런타임 크래시한다.
+    "OTHER_LDFLAGS": ["$(inherited)", "-ObjC"],
 ]
 
 let appTargetBaseSettings: SettingsDictionary = infoPlistKeys.merging([
