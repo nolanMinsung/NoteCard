@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build:
-    name: Compile check (simulator)
+    name: Build & test (all modules)
     runs-on: macos-15
     timeout-minutes: 30
 
@@ -52,22 +52,12 @@ jobs:
           tuist install
           tuist generate --no-open
 
-      - name: Build for iOS Simulator (Debug)
+      - name: Test — 전체 모듈 테스트 (자동 순회)
         run: |
           set -euo pipefail
-          xcodebuild build \
-            -workspace NoteCard.xcworkspace \
-            -scheme NoteCard \
-            -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO
-
-      - name: Test (Domain / Shared / NoteCard)
-        run: |
-          set -euo pipefail
-          xcodebuild test \
-            -workspace NoteCard.xcworkspace \
-            -scheme NoteCard \
-            -configuration Debug \
-            -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
-            CODE_SIGNING_ALLOWED=NO
+          # 스킴을 지정하지 않은 `tuist test`는 Tuist가 생성한 워크스페이스 스킴
+          # (NoteCard-Workspace)의 모든 testable 타겟을 테스트한다. 각 모듈의
+          # 의존 그래프를 함께 빌드하므로 앱 컴파일 검증도 겸한다.
+          # module(hasTests: true)로 새 모듈이 추가되면 Tuist가 스킴을
+          # 재생성하므로 CI 수정 없이 자동으로 포함된다.
+          tuist test --device "iPhone 17 Pro" -- CODE_SIGNING_ALLOWED=NO
