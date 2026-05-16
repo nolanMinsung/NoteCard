@@ -46,7 +46,11 @@ public extension Project {
                     deploymentTargets: .iOS("15.0"),
                     infoPlist: .default,
                     sources: ["Tests/**"],
-                    dependencies: [.target(name: module.rawValue)]
+                    dependencies: [.target(name: module.rawValue)],
+                    // static framework 안의 Obj-C 카테고리(NSManagedObject 서브클래스의
+                    // @NSManaged 프로퍼티 등)가 링커 dead-stripping으로 제거되지 않도록
+                    // 강제 로드. 누락 시 Core Data 동적 접근자 생성 실패로 크래시한다.
+                    settings: .settings(base: ["OTHER_LDFLAGS": ["$(inherited)", "-ObjC"]])
                 )
             )
         }
