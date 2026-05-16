@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 import Domain
 import Shared
 
@@ -15,10 +16,11 @@ extension Date: ComparableValue {}
 
 public actor CategoryRepositoryImpl: CategoryRepository {
     
-    public static let shared = CategoryRepositoryImpl()
-    private init() { }
-    
-    private let context = CoreDataStack.shared.backgroundContext
+    private let context: NSManagedObjectContext
+
+    public init(stack: CoreDataStack) {
+        self.context = stack.backgroundContext
+    }
     
     private func categoryNameEqual(to name: String) -> NSPredicate {
         return NSPredicate(format: "name == %@", name as CVarArg)
