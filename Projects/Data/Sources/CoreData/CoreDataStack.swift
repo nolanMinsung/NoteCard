@@ -13,7 +13,15 @@ import Foundation
 
 public final class CoreDataStack: ObservableObject {
 
-    public init() { }
+    private let inMemory: Bool
+
+    /// - Parameter inMemory: `true`이면 디스크 대신 휘발성 저장소를 사용한다.
+    ///   store type 자체는 SQLite를 유지하되 파일 경로만 `/dev/null`로 두어,
+    ///   predicate·정렬 동작이 프로덕션과 100% 동일하면서 디스크에는 아무것도
+    ///   남기지 않는다. 단위 테스트에서 격리된 빈 저장소를 매번 새로 만들 때 사용.
+    public init(inMemory: Bool = false) {
+        self.inMemory = inMemory
+    }
 
     // MARK: - Core Data stack
 
@@ -32,6 +40,11 @@ public final class CoreDataStack: ObservableObject {
             fatalError("Failed to locate NoteCardCoreData.momd in Data bundle.")
         }
         let container = NSPersistentContainer(name: "NoteCardCoreData", managedObjectModel: model)
+        if inMemory {
+            container.persistentStoreDescriptions = [
+                NSPersistentStoreDescription(url: URL(fileURLWithPath: "/dev/null"))
+            ]
+        }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
