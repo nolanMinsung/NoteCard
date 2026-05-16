@@ -56,19 +56,25 @@ class SettingsViewController: UITableViewController {
     }()
     
     private var cancellables = Set<AnyCancellable>()
-    
+
+    private var totalMemoCount = 0
+    private var totalCategoryCount = 0
+    private var trashMemoCount = 0
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupUI()
         setupNaviBar()
         setupDelegates()
         setSubscriptions()
+        refreshCounts()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
+        refreshCounts()
     }
     
     override func willMove(toParent parent: UIViewController?) {
@@ -120,7 +126,29 @@ class SettingsViewController: UITableViewController {
             }
             .store(in: &cancellables)
     }
-    
+
+    /// 데이터 개수(전체 메모/카테고리/휴지통)를 비동기로 조회해 캐시한다.
+    /// Repository 호출이 async이므로 동기 UIKit 콜백(`cellForRowAt` 등)에서
+    /// 직접 부를 수 없어, 미리 조회해 프로퍼티에 담아두고 표시 시점엔 캐시를 읽는다.
+    private func refreshCounts() {
+        Task {
+            do {
+                let memoCount = try await environment.memoRepository.getAllMemos().count
+                let categoryCount = try await environment.categoryRepository.getAllCategories(
+                    inOrderOf: .modificationDate,
+                    isAscending: false
+                ).count
+                let trashCount = try await environment.memoRepository.getAllMemosInTrash().count
+                self.totalMemoCount = memoCount
+                self.totalCategoryCount = categoryCount
+                self.trashMemoCount = trashCount
+                self.settingsTableView.reloadData()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+
 }
 
 
@@ -241,7 +269,7 @@ extension SettingsViewController {
             
             
         case IndexPath(row: 0, section: 1):
-            let totalNumberOfMemo = MemoEntityManager.shared.getMemoEntitiesFromCoreData().count
+            let totalNumberOfMemo = self.totalMemoCount
             
             cell.configureCell(image: UIImage(systemName: "rectangle.portrait.on.rectangle.portrait"),
                                text: self.settingTitles[indexPath.section][indexPath.row],
@@ -251,7 +279,7 @@ extension SettingsViewController {
             cell.selectionStyle = .none
             
         case IndexPath(row: 1, section: 1):
-            let totalNumberOfCategory = CategoryEntityManager.shared.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false).count
+            let totalNumberOfCategory = self.totalCategoryCount
             cell.configureCell(image: UIImage(systemName: "circlebadge.2"),
                                text: self.settingTitles[indexPath.section][indexPath.row],
                                secondaryText: "\(totalNumberOfCategory)",
@@ -260,7 +288,7 @@ extension SettingsViewController {
             cell.selectionStyle = .none
             
         case IndexPath(row: 2, section: 1):
-            let numberOfMemoesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash().count
+            let numberOfMemoesInTrash = self.trashMemoCount
             cell.configureCell(image: UIImage(systemName: "trash")?.withTintColor(.systemGray).withRenderingMode(UIImage.RenderingMode.alwaysOriginal),
                                text: self.settingTitles[indexPath.section][indexPath.row],
                                secondaryText: "\(numberOfMemoesInTrash)",
@@ -268,7 +296,7 @@ extension SettingsViewController {
             )
             
         case IndexPath(row: 3, section: 1):
-            let numberOfMemoesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash().count
+            let numberOfMemoesInTrash = self.trashMemoCount
             
             cell.configureCell(text: self.settingTitles[indexPath.section][indexPath.row],
                                textColor: numberOfMemoesInTrash == 0 ? .lightGray : .currentTheme,
@@ -316,7 +344,7 @@ extension SettingsViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         guard indexPath.section == 1, indexPath.row == 3 else { return indexPath }
         guard let cell = self.settingsTableView.cellForRow(at: indexPath) as? SettingsTableViewCell else { fatalError() }
-        let numberOfMemoesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash().count
+        let numberOfMemoesInTrash = self.trashMemoCount
         if numberOfMemoesInTrash == 0 {
             return nil
         } else {
@@ -384,12 +412,16 @@ extension SettingsViewController {
             style: UIAlertAction.Style.destructive,
             handler: { [weak self] action in
                 guard let self else { fatalError() }
-                let memoEntitiesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash()
-                memoEntitiesInTrash.forEach { memoEntity in
-                    MemoEntityManager.shared.deleteMemoEntity(memoEntity: memoEntity)
+                Task {
+                    do {
+                        let trashMemos = try await self.environment.memoRepository.getAllMemosInTrash()
+                        try await self.environment.memoRepository.deleteMemos(trashMemos)
+                        self.refreshCounts()
+                    } catch {
+                        print(error.localizedDescription)
+                    }
                 }
-                self.settingsTableView.reloadRows(at: [indexPath, IndexPath(row: indexPath.row - 1, section: indexPath.section)], with: UITableView.RowAnimation.automatic)
-                
+
             })
         
         let cancelAction = UIAlertAction(

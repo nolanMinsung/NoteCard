@@ -342,7 +342,7 @@ extension HomeViewController: UICollectionViewDelegate {
         
         switch indexPath.section {
         case 0:
-            switch CategoryEntityManager.shared.getCategoryEntities(inOrderOf: .modificationDate, isAscending: false).count != 0 {
+            switch !categories.isEmpty {
             case false:
                 let createCategoryVC = CreateCategoryViewController(environment: environment)
                 let naviCon = UINavigationController(rootViewController: createCategoryVC)
@@ -354,7 +354,7 @@ extension HomeViewController: UICollectionViewDelegate {
             }
             
         case 1:
-            switch MemoEntityManager.shared.getFavoriteMemoEntities().count {
+            switch favoriteMemos.count {
             case 0:
                 return
                 

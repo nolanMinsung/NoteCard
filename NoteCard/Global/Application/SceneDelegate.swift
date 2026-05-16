@@ -108,19 +108,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
         
-        let memoEntitiesInTrash = MemoEntityManager.shared.getMemoEntitiesInTrash()
-        memoEntitiesInTrash.forEach { memo in
-            
-            guard let deletedDate = memo.deletedDate else { fatalError() }
-            let calendar = Calendar.init(identifier: Calendar.Identifier.gregorian)
-            
-            guard let dayAfterDeleted = calendar.dateComponents([.day], from: deletedDate, to: Date()).day else { fatalError() }
-            guard let hourAfterDeleted = calendar.dateComponents([.hour], from: deletedDate, to: Date()).hour else { fatalError() }
-            
-            if dayAfterDeleted >= 14 {
-                print(dayAfterDeleted)
-                print("~~~")
-                MemoEntityManager.shared.deleteMemoEntity(memoEntity: memo)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let memoRepository = appDelegate.environment.memoRepository
+        Task {
+            do {
+                let trashMemos = try await memoRepository.getAllMemosInTrash()
+                let calendar = Calendar(identifier: .gregorian)
+                for memo in trashMemos {
+                    guard let deletedDate = memo.deletedDate else { continue }
+                    guard let dayAfterDeleted = calendar.dateComponents([.day], from: deletedDate, to: Date()).day else { continue }
+                    if dayAfterDeleted >= 14 {
+                        try await memoRepository.deleteMemo(memo)
+                    }
+                }
+            } catch {
+                print(error.localizedDescription)
             }
         }
     }
