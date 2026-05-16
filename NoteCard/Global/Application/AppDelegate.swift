@@ -17,7 +17,7 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /// 앱 전체가 공유하는 의존성. 프로세스 수명 동안 하나만 존재한다.
-    let environment = AppEnvironment(stack: .shared)
+    let environment = AppEnvironment()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
