@@ -16,12 +16,15 @@ class MainTabBarController: UITabBarController {
     var previousSelectedIndex: Int = 0
     
     var isUncategorizedMemoVCHasShown: Bool = false
-    
+
+    private let environment: AppEnvironment
+
     // MARK: - Initialize
-    
-    init() {
+
+    init(environment: AppEnvironment) {
+        self.environment = environment
         super.init(nibName: nil, bundle: nil)
-        
+
         setTabBarDesign()
         initialViewControllersSetting()
     }
@@ -57,7 +60,7 @@ class MainTabBarController: UITabBarController {
     /// https://developer.apple.com/documentation/uikit/uitabbarcontroller#overview
     private func initialViewControllersSetting() {
         // tab 0: 홈 화면
-        let homeNaviCon = UINavigationController(rootViewController: HomeViewController())
+        let homeNaviCon = UINavigationController(rootViewController: HomeViewController(environment: environment))
         homeNaviCon.tabBarItem = UITabBarItem(
             title: "홈 화면",
             image: UIImage(systemName: "house"),
@@ -65,7 +68,7 @@ class MainTabBarController: UITabBarController {
         )
         
         // tab 1: 카테고리 없음.
-        let uncategorizedMemoVC = MemoViewController(memoVCType: .uncategorized)
+        let uncategorizedMemoVC = MemoViewController(memoVCType: .uncategorized, environment: environment)
         let noCategoriesCardNaviCon = UINavigationController(rootViewController: uncategorizedMemoVC)
         noCategoriesCardNaviCon.navigationController?.toolbar.tintColor = .currentTheme
         noCategoriesCardNaviCon.tabBarItem = UITabBarItem(
@@ -83,7 +86,7 @@ class MainTabBarController: UITabBarController {
         )
         
         // tab 3: 메모 검색
-        let memoSearchingVC = MemoSearchingViewController()
+        let memoSearchingVC = MemoSearchingViewController(environment: environment)
         let memoSearchingNaviCon = UINavigationController(rootViewController: memoSearchingVC)
         memoSearchingNaviCon.tabBarItem = UITabBarItem(
             title: L10n.TabBar.searchMemo,
@@ -92,7 +95,7 @@ class MainTabBarController: UITabBarController {
         )
         
         // tab 4: 설정(UISplitViewController)
-        let settingsVC = SettingsViewController()
+        let settingsVC = SettingsViewController(environment: environment)
         let settingsNaviCon = UINavigationController(rootViewController: settingsVC)
         
         let emptyDetailVC = SettingsPlaceholderViewController()
@@ -140,9 +143,9 @@ extension MainTabBarController: UITabBarControllerDelegate {
         guard viewController is ThirdTabViewController else {
             return true
         }
-        let memoMakingVC = MemoDetailViewController(type: .making(category: nil))
+        let memoMakingVC = MemoDetailViewController(type: .making(category: nil), environment: environment)
         let memoMakingNaviCon = UINavigationController(rootViewController: memoMakingVC)
-        
+
         memoMakingNaviCon.modalPresentationStyle = .formSheet
         tabBarController.present(memoMakingNaviCon, animated: true)
         return false

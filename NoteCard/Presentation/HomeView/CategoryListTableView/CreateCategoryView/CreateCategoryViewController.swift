@@ -31,7 +31,18 @@ class CreateCategoryViewController: UIViewController {
     }()
     
     var onCategoryCreated: (() -> Void)? = nil
-    
+
+    private let environment: AppEnvironment
+
+    init(environment: AppEnvironment) {
+        self.environment = environment
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func loadView() {
         self.view = self.createCategoryView
     }
@@ -92,7 +103,7 @@ class CreateCategoryViewController: UIViewController {
         Task {
             do {
                 // try categoryManager.createCategoryEntity(withName: text)
-                try await CategoryRepositoryImpl.shared.create(name: text.trimmingCharacters(in: .whitespacesAndNewlines))
+                try await environment.categoryRepository.create(name: text.trimmingCharacters(in: .whitespacesAndNewlines))
                 onCategoryCreated?()
                 dismiss(animated: true)
             } catch CoreDataError.duplicateCategoryDetected {

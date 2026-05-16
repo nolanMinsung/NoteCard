@@ -26,7 +26,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window?.makeKeyAndVisible()
         self.window?.tintColor = UIColor.currentTheme
         
-        let mainTabBarCon = MainTabBarController()
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("AppDelegate를 찾을 수 없습니다.")
+        }
+        let mainTabBarCon = MainTabBarController(environment: appDelegate.environment)
         if #available(iOS 18.0, *) {
             mainTabBarCon.mode = .tabSidebar
         }

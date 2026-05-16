@@ -57,9 +57,12 @@ final class PopupCardView: UIView {
     
     private(set) var memoTextView: UITextView!
     let memoDateLabel = UILabel()
-    
-    init(memo: Memo) {
+
+    private let environment: AppEnvironment
+
+    init(memo: Memo, environment: AppEnvironment) {
         self.memo = memo
+        self.environment = environment
         super.init(frame: .zero)
         setupUI()
         configureHierarchy()
@@ -191,7 +194,7 @@ final class PopupCardView: UIView {
         if isTextFieldChanged {
             Task {
                 let trimmedTitleText = titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
-                try await MemoRepositoryImpl.shared.updateMemoContent(memo, newTitle: trimmedTitleText)
+                try await environment.memoRepository.updateMemoContent(memo, newTitle: trimmedTitleText)
                 self.isTextFieldChanged = false
             }
         }
@@ -200,7 +203,7 @@ final class PopupCardView: UIView {
     func updateMemoTextView() {
         if isTextViewChanged {
             Task {
-                try await MemoRepositoryImpl.shared.updateMemoContent(memo, newMemoText: memoTextView.text)
+                try await environment.memoRepository.updateMemoContent(memo, newMemoText: memoTextView.text)
                 self.isTextViewChanged = false
             }
         }

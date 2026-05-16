@@ -17,7 +17,18 @@ import Wisp
 class MemoSearchingViewController: UIViewController {
     
     let rootView = MemoSearchingView()
-    
+
+    private let environment: AppEnvironment
+
+    init(environment: AppEnvironment) {
+        self.environment = environment
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     @Published
     private var searchText: String = ""
     private var diffableDataSource: UICollectionViewDiffableDataSource<Int, Memo>!
@@ -81,7 +92,7 @@ private extension MemoSearchingViewController {
             .debounce(for: 0.2, scheduler: RunLoop.main)
             .sink { searchText in
                 Task {
-                    let memoSearchResult = try await MemoRepositoryImpl.shared.searchMemo(searchText: searchText)
+                    let memoSearchResult = try await self.environment.memoRepository.searchMemo(searchText: searchText)
                     self.applySnapshot(with: memoSearchResult)
                 }
             }
@@ -122,6 +133,7 @@ extension MemoSearchingViewController: UICollectionViewDelegate {
         let popupVC = PopupCardViewController(
             memo: selectedMemo,
             indexPath: indexPath,
+            environment: environment
         )
         
         let topInset: CGFloat

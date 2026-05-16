@@ -42,6 +42,7 @@ class MemoViewController: UIViewController {
     }
     
     private let memoVCType: MemoVCType
+    private let environment: AppEnvironment
     private let memoEntityManager = MemoEntityManager.shared
     private let categoryEntityManager = CategoryEntityManager.shared
     
@@ -66,10 +67,11 @@ class MemoViewController: UIViewController {
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(memoVCType: MemoVCType) {
-        
+    init(memoVCType: MemoVCType, environment: AppEnvironment) {
+
         self.memoVCType = memoVCType
-        
+        self.environment = environment
+
         if case let .category(selectedCategory) = memoVCType {
             self.selectedCategory = selectedCategory
         }
@@ -286,7 +288,7 @@ private extension MemoViewController {
     }
     
     func setupObservers() {
-        MemoRepositoryImpl.shared.memoUpdatedPublisher
+        environment.memoRepository.memoUpdatedPublisher
             .sink { [weak self] _ in
                 guard let self else { return }
                 Task {
@@ -332,7 +334,7 @@ private extension MemoViewController {
                 selectedMemos.append(memoArray[indexPath.item])
             }
             Task {
-                try await MemoRepositoryImpl.shared.restore(selectedMemos)
+                try await self.environment.memoRepository.restore(selectedMemos)
                 try await self.updateMemoContents()
             }
         }
@@ -343,14 +345,14 @@ private extension MemoViewController {
     }
     
     func presentCategoriesToAdd() {
-        let categorySelectionVC = CategorySelectionViewController(selectionType: .toAppend)
+        let categorySelectionVC = CategorySelectionViewController(selectionType: .toAppend, environment: environment)
         let naviCon = UINavigationController(rootViewController: categorySelectionVC)
         naviCon.modalPresentationStyle = .pageSheet
         present(naviCon, animated: true)
     }
     
     func presentCategoriesToRemove() {
-        let categorySelectionVC = CategorySelectionViewController(selectionType: .toRemove)
+        let categorySelectionVC = CategorySelectionViewController(selectionType: .toRemove, environment: environment)
         let naviCon = UINavigationController(rootViewController: categorySelectionVC)
         naviCon.modalPresentationStyle = .pageSheet
         present(naviCon, animated: true)
@@ -367,7 +369,7 @@ private extension MemoViewController {
             .map(\.element)
         
         Task {
-            try await MemoRepositoryImpl.shared.setFavorite(selectedMemos, to: true)
+            try await self.environment.memoRepository.setFavorite(selectedMemos, to: true)
             self.setEditing(false, animated: true)
         }
     }
@@ -383,8 +385,8 @@ private extension MemoViewController {
             .map(\.element)
         
         Task {
-            try await MemoRepositoryImpl.shared.setFavorite(selectedMemos, to: false)
-            
+            try await self.environment.memoRepository.setFavorite(selectedMemos, to: false)
+
             guard self.memoVCType == .favorite else { return }
             try await self.updateMemoContents()
             self.setEditing(false, animated: true)
@@ -399,7 +401,7 @@ private extension MemoViewController {
     
     @objc func presentMemoMakingVC() {
         self.view.endEditing(true)
-        let memoMakingVC = MemoDetailViewController(type: .making(category: selectedCategory))
+        let memoMakingVC = MemoDetailViewController(type: .making(category: selectedCategory), environment: environment)
         let naviCon = UINavigationController(rootViewController: memoMakingVC)
         self.present(naviCon, animated: true)
     }
@@ -433,9 +435,9 @@ private extension MemoViewController {
             
             Task {
                 if self.memoVCType == .trash {
-                    try await MemoRepositoryImpl.shared.deleteMemos(selectedMemos)
+                    try await self.environment.memoRepository.deleteMemos(selectedMemos)
                 } else {
-                    try await MemoRepositoryImpl.shared.moveToTrash(selectedMemos)
+                    try await self.environment.memoRepository.moveToTrash(selectedMemos)
                 }
                 try await self.updateMemoContents()
             }
@@ -490,7 +492,8 @@ private extension MemoViewController {
         let popupCardVC = PopupCardViewController(
             memo: selectedMemo,
             indexPath: .init(item: 0, section: 0),
-            editingEnabled: editingEnabled
+            editingEnabled: editingEnabled,
+            environment: environment
         )
         wisp.present(
             popupCardVC,
@@ -590,13 +593,13 @@ extension MemoViewController: UICollectionViewDelegate {
     func fetchMemos() async throws -> [Memo] {
         switch memoVCType {
         case .category, .uncategorized:
-            return try await MemoRepositoryImpl.shared.getAllMemos(inCategory: selectedCategory)
+            return try await environment.memoRepository.getAllMemos(inCategory: selectedCategory)
         case .favorite:
-            return try await MemoRepositoryImpl.shared.getFavoriteMemos()
+            return try await environment.memoRepository.getFavoriteMemos()
         case .all:
-            return try await MemoRepositoryImpl.shared.getAllMemos()
+            return try await environment.memoRepository.getAllMemos()
         case .trash:
-            return try await MemoRepositoryImpl.shared.getAllMemosInTrash()
+            return try await environment.memoRepository.getAllMemosInTrash()
         }
     }
     
@@ -629,7 +632,7 @@ extension MemoViewController: UITextFieldDelegate {
         
         Task {
             do {
-                try await CategoryRepositoryImpl.shared.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
+                try await self.environment.categoryRepository.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
             } catch {
                 print(error.localizedDescription)
                 let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)
