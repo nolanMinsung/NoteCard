@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/02.
 //
 
+import AnalyticsInterface
 import Combine
 import Data
 import Domain
@@ -73,9 +74,14 @@ class HomeViewController: UIViewController {
         self.view = homeView
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        environment.analytics.log(.screenView(.home))
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupNaviBar()
         setupDiffableDataSource()
         Task {

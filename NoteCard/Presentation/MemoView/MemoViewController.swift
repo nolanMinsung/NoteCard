@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/02.
 //
 
+import AnalyticsInterface
 import Combine
 import Data
 import Domain
@@ -87,6 +88,11 @@ class MemoViewController: UIViewController {
         self.view = MemoView()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        environment.analytics.log(.screenView(.memoList))
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -434,8 +440,10 @@ private extension MemoViewController {
             Task {
                 if self.memoVCType == .trash {
                     try await self.environment.memoRepository.deleteMemos(selectedMemos)
+                    self.environment.analytics.log(.memoDeleted(count: selectedMemos.count))
                 } else {
                     try await self.environment.memoRepository.moveToTrash(selectedMemos)
+                    self.environment.analytics.log(.memoMovedToTrash(count: selectedMemos.count))
                 }
                 try await self.updateMemoContents()
             }

@@ -5,6 +5,7 @@
 //  Created by 김민성 on 9/11/25.
 //
 
+import AnalyticsInterface
 import Combine
 import Data
 import Domain
@@ -101,10 +102,15 @@ class MemoDetailViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         rootView.prepareForDismissal()
     }
-    
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        environment.analytics.log(.screenView(.memoEditor))
+    }
+
 }
 
 
@@ -138,8 +144,10 @@ private extension MemoDetailViewController {
                         debugPrint("이미지 정보에 변화가 없으므로 이미지 정보 업데이트하지 않음.")
                     }
                     try await self.updateCategories()
+                    self.logSaveSuccess()
                 } catch {
                     assertionFailure("에러 발생: \(error.localizedDescription)")
+                    self.logSaveFailure()
                 }
                 self.dismiss(animated: true)
             }
@@ -349,6 +357,32 @@ private extension MemoDetailViewController {
         }
     }
     
+}
+
+
+// MARK: - 분석 이벤트
+private extension MemoDetailViewController {
+
+    var isMakingMemo: Bool {
+        if case .making = detailType { return true }
+        return false
+    }
+
+    func logSaveSuccess() {
+        let imageCount = editableImageModels.filter { !$0.isPendingDeleted }.count
+        let categoryCount = (rootView.categoryListCollectionView.indexPathsForSelectedItems ?? []).count
+        let hasTitle = !((rootView.titleTextField.text ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        let event: AnalyticsEvent = isMakingMemo
+            ? .memoCreated(imageCount: imageCount, categoryCount: categoryCount, hasTitle: hasTitle)
+            : .memoEdited(imageCount: imageCount, categoryCount: categoryCount, hasTitle: hasTitle)
+        environment.analytics.log(event)
+    }
+
+    func logSaveFailure() {
+        environment.analytics.log(.memoSaveFailed(mode: isMakingMemo ? "making" : "editing"))
+    }
+
 }
 
 

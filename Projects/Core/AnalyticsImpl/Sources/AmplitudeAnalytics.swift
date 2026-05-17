@@ -12,7 +12,14 @@ public final class AmplitudeAnalytics: Analytics, @unchecked Sendable {
     private let amplitude: Amplitude
 
     public init(apiKey: String) {
-        amplitude = Amplitude(configuration: Configuration(apiKey: apiKey))
+        // dev 빌드의 이벤트가 실사용 지표를 오염시키지 않도록 Amplitude를 opt-out한다.
+        // (Crashlytics를 DEBUG에서 끄는 AnalyticsBootstrap의 정책과 동일.)
+        #if DEBUG
+        let optOut = true
+        #else
+        let optOut = false
+        #endif
+        amplitude = Amplitude(configuration: Configuration(apiKey: apiKey, optOut: optOut))
     }
 
     // AmplitudeSwift에도 `AnalyticsEvent` 타입이 있어 모듈명으로 한정한다.

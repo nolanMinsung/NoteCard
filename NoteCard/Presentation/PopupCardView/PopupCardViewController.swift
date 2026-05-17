@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/02.
 //
 
+import AnalyticsInterface
 import Combine
 import Data
 import Domain
@@ -140,7 +141,8 @@ class PopupCardViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        environment.analytics.log(.screenView(.memoCard))
+
         UIView.animate(
             withDuration: 0.2,
             delay: 0,
@@ -484,8 +486,10 @@ extension PopupCardViewController {
                 do {
                     if self.memo.isInTrash {
                         try await self.environment.memoRepository.deleteMemo(self.memo)
+                        self.environment.analytics.log(.memoDeleted(count: 1))
                     } else {
                         try await self.environment.memoRepository.moveToTrash(self.memo)
+                        self.environment.analytics.log(.memoMovedToTrash(count: 1))
                     }
                     self.dismiss(animated: true)
                 } catch {

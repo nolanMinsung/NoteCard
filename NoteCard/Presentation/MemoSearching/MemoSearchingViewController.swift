@@ -5,6 +5,7 @@
 //  Created by 김민성 on 8/6/25.
 //
 
+import AnalyticsInterface
 import Combine
 import Data
 import Domain
@@ -38,9 +39,14 @@ class MemoSearchingViewController: UIViewController {
         view = rootView
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        environment.analytics.log(.screenView(.search))
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupNaviBar()
         setupDiffableDataSource()
         setupDelegates()
