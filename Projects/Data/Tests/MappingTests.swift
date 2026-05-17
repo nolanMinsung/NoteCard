@@ -186,4 +186,22 @@ final class MappingTests: XCTestCase {
             XCTAssertTrue(entity === existing)
         }
     }
+
+    // MARK: - 양방향 관계
+
+    func test_메모에_카테고리를_추가하면_카테고리도_그_메모를_가리킨다() {
+        context.performAndWait {
+            // given
+            let memoEntity = MemoEntity(context: context)
+            let categoryEntity = CategoryEntity(context: context)
+            categoryEntity.name = "업무"
+
+            // when: 메모 쪽에서만 카테고리를 연결해도
+            memoEntity.addToCategories(categoryEntity)
+
+            // then: 역방향(카테고리 → 메모)이 자동으로 함께 연결된다
+            XCTAssertTrue(categoryEntity.memoSet.contains(memoEntity))
+            XCTAssertEqual(categoryEntity.memoSet.count, 1)
+        }
+    }
 }
