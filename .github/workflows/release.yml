@@ -102,6 +102,18 @@ jobs:
           echo "${{ secrets.ASC_KEY_CONTENT }}" > /Users/runner/.appstoreconnect/AuthKey.p8
           chmod 600 /Users/runner/.appstoreconnect/AuthKey.p8
 
+      # Configs/Secrets.xcconfig는 .gitignored — 릴리스 빌드용으로 여기서 생성한다.
+      # 키가 없으면 출시 앱의 분석(Amplitude)이 NoOp으로 비활성되므로 필수.
+      - name: Inject Amplitude API key (Secrets.xcconfig)
+        run: |
+          echo "AMPLITUDE_API_KEY = ${{ secrets.AMPLITUDE_API_KEY }}" > Configs/Secrets.xcconfig
+
+      # GoogleService-Info.plist도 .gitignored — base64 secret에서 복원한다.
+      # 없으면 출시 앱의 Crashlytics가 비활성되므로 필수.
+      - name: Inject GoogleService-Info.plist
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}" | base64 --decode > NoteCard/GoogleService-Info.plist
+
       # ────────────────────────────────────────────────────────────
       # Branch handling: create new release branch on schedule/dispatch
       # main is never modified — branch is created first, bump happens on it.
