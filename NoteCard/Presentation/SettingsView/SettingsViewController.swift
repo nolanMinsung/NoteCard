@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/16.
 //
 
+import AnalyticsInterface
 import UIKit
 import Data
 import Domain
@@ -60,6 +61,11 @@ class SettingsViewController: UITableViewController {
     private var totalMemoCount = 0
     private var totalCategoryCount = 0
     private var trashMemoCount = 0
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        environment.analytics.log(.screenView(.settings))
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
