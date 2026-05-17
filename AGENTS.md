@@ -88,6 +88,7 @@ Core Data는 가장 위험한 영역이다. 다음을 어기면 사용자 데이
 
 ## Commit / PR conventions
 
+- 커밋, PR 작성 시에는 다음 사항을 참고하되, commit-creator, pr-creator skill을 최우선으로 참고한다.
 - 의미 단위로 분할 commit. 한 commit이 끝난 시점의 코드는 컴파일 통과 보장.
 - 메시지 형식: `scope: 한 줄 요약` (예: `chore(tuist): ...`, `refactor(memo): ...`, `fix(coredata): ...`, `ci: ...`). 본문은 변경사항 bullet list. 줄글 장황 설명 X.
 - Co-authored-by trailer는 AI 어시스턴트로 작업했을 때만 추가.
@@ -110,4 +111,3 @@ bundle exec fastlane beta                      # archive + TestFlight upload
 ## Deferred / known limitations
 
 - **Feature 모듈 분할**: Asset Symbol cross-module access 처리(`ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS_ACCESS_LEVEL = public`) 후 별도 작업으로 진행 예정.
-- **Core Data 회귀 테스트**: v3 fixture `.sqlite` 미확보로 `MigrationTests`가 `XCTSkip` 상태. 모델 변경 시 사용자 시뮬레이터에서 fixture 추출 후 활성화.

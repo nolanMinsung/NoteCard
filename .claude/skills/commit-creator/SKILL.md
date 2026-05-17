@@ -1,11 +1,12 @@
 ---
 name: commit-creator
-description: 현재 변경사항(staged + unstaged)을 의미 단위로 분할해 commit한다. 변경이 여러 의미로 쪼개져 있으면 여러 번 commit. 기존 commit에 합치는 게 더 자연스러우면 rebase로 squash. 매 commit 끝에서 컴파일 통과를 보장.
+description: 사용자가 커밋을 요청할 경우 실행. 현재 변경사항(staged + unstaged)을 의미 단위로 분할해 commit한다. 변경이 여러 의미로 쪼개져 있으면 여러 번 commit. 기존 commit에 합치는 게 더 자연스러우면 rebase로 squash. 매 commit 끝에서 컴파일 통과를 보장.
 ---
 
 # commit-creator
 
 현재 working tree의 변경사항을 의미가 살아있는 최소 단위로 commit한다. PR 리뷰어가 commit 순서를 따라가며 작업 흐름을 유추할 수 있게 만드는 것이 목표.
+커밋 메시지를 작성할 때의 대전제는 리뷰어가 이해하기 편하도록 하는 것. - 맥락을 알기 힘든 단어, 표현 사용은 지양
 
 ## 작업 흐름
 
