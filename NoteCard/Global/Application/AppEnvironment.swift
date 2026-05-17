@@ -3,7 +3,10 @@
 //  NoteCard
 //
 
+import Foundation
 import Data
+import AnalyticsInterface
+import AnalyticsImpl
 
 /// 앱 전체에서 공유되는 의존성 묶음.
 ///
@@ -17,6 +20,7 @@ struct AppEnvironment {
     let memoRepository: MemoRepositoryImpl
     let categoryRepository: CategoryRepositoryImpl
     let imageRepository: ImageRepositoryImpl
+    let analytics: Analytics
 
     init() {
         let coreDataStack = CoreDataStack()
@@ -25,5 +29,23 @@ struct AppEnvironment {
         self.memoRepository = memoRepository
         self.categoryRepository = CategoryRepositoryImpl(stack: coreDataStack)
         self.imageRepository = ImageRepositoryImpl(stack: coreDataStack, memoRepository: memoRepository)
+        self.analytics = Self.setUpAnalytics()
+    }
+
+    /// Crashlytics를 켜고(가능하면) Amplitude 기반 `Analytics`를 만든다.
+    ///
+    /// Firebase 설정 파일(`GoogleService-Info.plist`)이나 Amplitude API Key가
+    /// 빌드에 포함돼 있지 않으면 해당 기능만 조용히 비활성된다 — 키 없이도
+    /// 앱은 정상 동작한다.
+    private static func setUpAnalytics() -> Analytics {
+        if Bundle.main.url(forResource: "GoogleService-Info", withExtension: "plist") != nil {
+            AnalyticsBootstrap.startCrashReporting()
+        }
+
+        let apiKey = Bundle.main.object(forInfoDictionaryKey: "AmplitudeAPIKey") as? String ?? ""
+        guard !apiKey.isEmpty else {
+            return AnalyticsBootstrap.makeNoOpAnalytics()
+        }
+        return AnalyticsBootstrap.makeAnalytics(amplitudeAPIKey: apiKey)
     }
 }

@@ -1,0 +1,13 @@
+// App.xcconfig
+//
+// App 타겟(NoteCard / NoteCard-Eng)의 configuration base.
+// 버전 정보(Version.xcconfig)와 비공개 키(Secrets.xcconfig)를 한곳에 모은다.
+// Tuist는 Project.swift에서 이 파일을 App 타겟 configuration의 xcconfig로 참조한다.
+
+#include "Version.xcconfig"
+
+// Amplitude 프로젝트 API Key.
+// 기본값은 빈 문자열 — 실제 값은 Configs/Secrets.xcconfig(미커밋)가 덮어쓴다.
+// 키가 비어 있으면 앱은 분석을 비활성(NoOp)으로 동작한다.
+AMPLITUDE_API_KEY =
+#include? "Secrets.xcconfig"
