@@ -47,6 +47,10 @@ let appResources: ResourceFileElements = [
     "NoteCard/Base.lproj/Main.storyboard",
     "NoteCard/ko.lproj/**",
     "NoteCard/en.lproj/**",
+    // Firebase 설정 파일. .gitignore 대상이라 로컬/CI에 직접 둬야 한다.
+    // 파일이 없으면 glob이 비어 경고만 나고 빌드는 통과하며, 런타임에
+    // Crashlytics가 비활성된다 (AppEnvironment.setUpAnalytics 참고).
+    "NoteCard/GoogleService-Info.plist",
 ]
 
 let appSources: SourceFilesList = ["NoteCard/**/*.swift"]
@@ -97,13 +101,13 @@ let project = Project(
                         "APP_DISPLAY_NAME": "NoteCard(Dev)",
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
-                    ], xcconfig: "Configs/Version.xcconfig"),
+                    ], xcconfig: "Configs/App.xcconfig"),
                     .release(name: "Release", settings: [
                         "APP_DISPLAY_NAME": "NoteCard",
                         "CODE_SIGN_STYLE": "Manual",
                         "CODE_SIGN_IDENTITY": "Apple Distribution",
                         "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.minsung.NoteCard",
-                    ], xcconfig: "Configs/Version.xcconfig"),
+                    ], xcconfig: "Configs/App.xcconfig"),
                 ]
             )
         ),
@@ -129,12 +133,12 @@ let project = Project(
                         "APP_DISPLAY_NAME": "NoteCard-Eng",
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
-                    ], xcconfig: "Configs/Version.xcconfig"),
+                    ], xcconfig: "Configs/App.xcconfig"),
                     .release(name: "Release", settings: [
                         "APP_DISPLAY_NAME": "NoteCard-Eng",
                         "CODE_SIGN_STYLE": "Automatic",
                         "PROVISIONING_PROFILE_SPECIFIER": "",
-                    ], xcconfig: "Configs/Version.xcconfig"),
+                    ], xcconfig: "Configs/App.xcconfig"),
                 ]
             )
         ),

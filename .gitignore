@@ -130,6 +130,10 @@ fastlane/README.md.bak
 .env
 .env.local
 *.p8
+Configs/Secrets.xcconfig
+# Firebase 설정 파일. 키는 앱 바이너리에 포함되어 비밀은 아니지만,
+# public repo 스크래핑을 피하려 저장소 밖에 둔다. 릴리스 CI가 주입한다.
+GoogleService-Info.plist
 
 # Bundler
 vendor/bundle/
