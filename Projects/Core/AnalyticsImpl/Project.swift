@@ -8,5 +8,8 @@ let project = Project.module(
     resources: nil,
     dependencies: [
         .module(.analyticsInterface),
+        .external(name: "FirebaseCrashlytics"),
+        .external(name: "FirebaseAnalytics"),
+        .external(name: "AmplitudeSwift"),
     ]
 )
