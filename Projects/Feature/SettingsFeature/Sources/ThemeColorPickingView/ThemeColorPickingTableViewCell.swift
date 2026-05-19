@@ -16,8 +16,6 @@ final class ThemeColorPickingTableViewCell: UITableViewCell {
         return String(describing: self)
     }
     
-    let colorNames: [String] = ThemeColor.allCases.map { "\($0)" }
-    
     override var isSelected: Bool {
         didSet {
             switch isSelected {
@@ -42,38 +40,35 @@ final class ThemeColorPickingTableViewCell: UITableViewCell {
         self.selectionStyle = .none
     }
     
-    func configureCell(themeColor: UIColor, text: String? = "", textColor: UIColor = .label, secondaryText: String? = "", accesoryType: UITableViewCell.AccessoryType = .none) {
-        
+    func configureCell(themeColor: ThemeColor, text: String? = "", textColor: UIColor = .label, secondaryText: String? = "", accesoryType: UITableViewCell.AccessoryType = .none) {
+
         var defaultContentConfig = self.defaultContentConfiguration()
-        defaultContentConfig.image = UIImage(systemName: "circle.fill")?.withTintColor(themeColor, 
+        defaultContentConfig.image = UIImage(systemName: "circle.fill")?.withTintColor(themeColor.toUIColor(),
                                                                                        renderingMode: UIImage.RenderingMode.alwaysOriginal)
         defaultContentConfig.text = text
         defaultContentConfig.secondaryText = secondaryText
         defaultContentConfig.textProperties.color = textColor
-        defaultContentConfig.imageProperties.tintColor = .currentTheme//.withAlphaComponent(0.7)
-        
-        switch themeColor {
+        defaultContentConfig.imageProperties.tintColor = .currentTheme
 
-        case SettingsFeatureAsset.themeColorBlack.color:
+        switch themeColor {
+        case .black:
             defaultContentConfig.text = L10n.ThemeColor.blackWhite
-        case SettingsFeatureAsset.themeColorBrown.color:
+        case .brown:
             defaultContentConfig.text = L10n.ThemeColor.brown
-        case SettingsFeatureAsset.themeColorRed.color:
+        case .red:
             defaultContentConfig.text = L10n.ThemeColor.red
-        case SettingsFeatureAsset.themeColorOrange.color:
+        case .orange:
             defaultContentConfig.text = L10n.ThemeColor.orange
-        case SettingsFeatureAsset.themeColorYellow.color:
+        case .yellow:
             defaultContentConfig.text = L10n.ThemeColor.yellow
-        case SettingsFeatureAsset.themeColorGreen.color:
+        case .green:
             defaultContentConfig.text = L10n.ThemeColor.green
-        case SettingsFeatureAsset.themeColorSkyBlue.color:
+        case .skyBlue:
             defaultContentConfig.text = L10n.ThemeColor.skyblue
-        case SettingsFeatureAsset.themeColorBlue.color:
+        case .blue:
             defaultContentConfig.text = L10n.ThemeColor.blue
-        case SettingsFeatureAsset.themeColorPurple.color:
+        case .purple:
             defaultContentConfig.text = L10n.ThemeColor.purple
-        default:
-            defaultContentConfig.text = L10n.ThemeColor.black
         }
         
         self.contentConfiguration = defaultContentConfig
