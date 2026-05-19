@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Data
 import Domain
 import DesignSystem
 import Shared
@@ -55,23 +54,23 @@ final class ThemeColorPickingTableViewCell: UITableViewCell {
         
         switch themeColor {
 
-        case .themeColorBlack:
+        case SettingsFeatureAsset.themeColorBlack.color:
             defaultContentConfig.text = L10n.ThemeColor.blackWhite
-        case .themeColorBrown:
+        case SettingsFeatureAsset.themeColorBrown.color:
             defaultContentConfig.text = L10n.ThemeColor.brown
-        case .themeColorRed:
+        case SettingsFeatureAsset.themeColorRed.color:
             defaultContentConfig.text = L10n.ThemeColor.red
-        case .themeColorOrange:
+        case SettingsFeatureAsset.themeColorOrange.color:
             defaultContentConfig.text = L10n.ThemeColor.orange
-        case .themeColorYellow:
+        case SettingsFeatureAsset.themeColorYellow.color:
             defaultContentConfig.text = L10n.ThemeColor.yellow
-        case .themeColorGreen:
+        case SettingsFeatureAsset.themeColorGreen.color:
             defaultContentConfig.text = L10n.ThemeColor.green
-        case .themeColorSkyBlue:
+        case SettingsFeatureAsset.themeColorSkyBlue.color:
             defaultContentConfig.text = L10n.ThemeColor.skyblue
-        case .themeColorBlue:
+        case SettingsFeatureAsset.themeColorBlue.color:
             defaultContentConfig.text = L10n.ThemeColor.blue
-        case .themeColorPurple:
+        case SettingsFeatureAsset.themeColorPurple.color:
             defaultContentConfig.text = L10n.ThemeColor.purple
         default:
             defaultContentConfig.text = L10n.ThemeColor.black

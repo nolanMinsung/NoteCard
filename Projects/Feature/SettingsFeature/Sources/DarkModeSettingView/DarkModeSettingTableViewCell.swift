@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Data
 import Domain
 import DesignSystem
 import Shared
@@ -62,7 +61,7 @@ final class DarkModeSettingTableViewCell: UITableViewCell {
                                                                                       renderingMode: UIImage.RenderingMode.alwaysOriginal)
             defaultContentConfig.text = L10n.Settings.darkMode
         case .unspecified:
-            defaultContentConfig.image = UIImage(named: "darkModeSymbol")?.withTintColor(UIColor.label,
+            defaultContentConfig.image = UIImage(named: "darkModeSymbol", in: .module, with: nil)?.withTintColor(UIColor.label,
                                                                                          renderingMode: UIImage.RenderingMode.alwaysOriginal)
             defaultContentConfig.text = L10n.Settings.systemMode
             

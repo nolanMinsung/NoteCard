@@ -7,22 +7,32 @@
 
 import AnalyticsInterface
 import UIKit
-import Data
 import Domain
 import DesignSystem
 import Shared
 import Combine
 
-class SettingsViewController: UITableViewController {
+public final class SettingsViewController: UITableViewController {
 
-    private let environment: AppEnvironment
+    private let memoRepository: MemoRepository
+    private let categoryRepository: CategoryRepository
+    private let analytics: Analytics
+    private let makeTrashViewController: () -> UIViewController
 
-    init(environment: AppEnvironment) {
-        self.environment = environment
+    public init(
+        memoRepository: MemoRepository,
+        categoryRepository: CategoryRepository,
+        analytics: Analytics,
+        makeTrashViewController: @escaping () -> UIViewController
+    ) {
+        self.memoRepository = memoRepository
+        self.categoryRepository = categoryRepository
+        self.analytics = analytics
+        self.makeTrashViewController = makeTrashViewController
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -62,12 +72,12 @@ class SettingsViewController: UITableViewController {
     private var totalCategoryCount = 0
     private var trashMemoCount = 0
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        environment.analytics.log(.screenView(.settings))
+        analytics.log(.screenView(.settings))
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         setupUI()
@@ -77,17 +87,17 @@ class SettingsViewController: UITableViewController {
         refreshCounts()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
         refreshCounts()
     }
     
-    override func willMove(toParent parent: UIViewController?) {
+    public override func willMove(toParent parent: UIViewController?) {
         print(#function)
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         self.tableView.reloadRows(at: [IndexPath(row: 3, section: 0)], with: UITableView.RowAnimation.none)
     }
     
@@ -139,12 +149,12 @@ class SettingsViewController: UITableViewController {
     private func refreshCounts() {
         Task {
             do {
-                let memoCount = try await environment.memoRepository.getAllMemos().count
-                let categoryCount = try await environment.categoryRepository.getAllCategories(
+                let memoCount = try await memoRepository.getAllMemos().count
+                let categoryCount = try await categoryRepository.getAllCategories(
                     inOrderOf: .modificationDate,
                     isAscending: false
                 ).count
-                let trashCount = try await environment.memoRepository.getAllMemosInTrash().count
+                let trashCount = try await memoRepository.getAllMemosInTrash().count
                 self.totalMemoCount = memoCount
                 self.totalCategoryCount = categoryCount
                 self.trashMemoCount = trashCount
@@ -160,13 +170,13 @@ class SettingsViewController: UITableViewController {
 
 extension SettingsViewController {
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    public override func numberOfSections(in tableView: UITableView) -> Int {
         return self.settingTitles.count
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return self.settingTitles[section].count }
+    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return self.settingTitles[section].count }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.cellID, for: indexPath) as? SettingsTableViewCell else { fatalError() }
         
@@ -247,14 +257,14 @@ extension SettingsViewController {
                     UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) else { fatalError()}
             switch darkModeTheme {
             case DarkModeTheme.light.rawValue:
-                cell.configureCell(image: UIImage(named: "darkModeSymbol"),
+                cell.configureCell(image: UIImage(named: "darkModeSymbol", in: .module, with: nil),
                                    text: self.settingTitles[indexPath.section][indexPath.row],
                                    secondaryText: L10n.Settings.lightMode,
                                    accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
                 )
                 
             case DarkModeTheme.dark.rawValue:
-                cell.configureCell(image: UIImage(named: "darkModeSymbol"),
+                cell.configureCell(image: UIImage(named: "darkModeSymbol", in: .module, with: nil),
                                    text: self.settingTitles[indexPath.section][indexPath.row],
                                    secondaryText: L10n.Settings.darkMode,
                                    accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
@@ -263,7 +273,7 @@ extension SettingsViewController {
             case DarkModeTheme.systemTheme.rawValue:
                 let configuration = UIImage.SymbolConfiguration(weight: UIImage.SymbolWeight.regular)
                 
-                cell.configureCell(image: UIImage(named: "darkModeSymbol", in: nil, with: configuration),
+                cell.configureCell(image: UIImage(named: "darkModeSymbol", in: .module, with: configuration),
                                    text: self.settingTitles[indexPath.section][indexPath.row],
                                    secondaryText: L10n.Settings.systemMode,
                                    accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
@@ -334,7 +344,7 @@ extension SettingsViewController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    public override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == 1 {
             return L10n.Settings.trashRetentionMessage
         } else {
@@ -347,7 +357,7 @@ extension SettingsViewController {
 
 extension SettingsViewController {
     
-    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+    public override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         guard indexPath.section == 1, indexPath.row == 3 else { return indexPath }
         guard let cell = self.settingsTableView.cellForRow(at: indexPath) as? SettingsTableViewCell else { fatalError() }
         let numberOfMemoesInTrash = self.trashMemoCount
@@ -358,7 +368,7 @@ extension SettingsViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         var targetVC: UIViewController?
         
@@ -373,7 +383,7 @@ extension SettingsViewController {
             targetVC = DarkModeSettingViewController()
             
         case IndexPath(row: 2, section: 1):
-            targetVC = MemoViewController(memoVCType: .trash, environment: environment)
+            targetVC = makeTrashViewController()
         case IndexPath(row: 3, section: 1):
             showDeleteAllAlert(indexPath: indexPath)
             
@@ -420,8 +430,8 @@ extension SettingsViewController {
                 guard let self else { fatalError() }
                 Task {
                     do {
-                        let trashMemos = try await self.environment.memoRepository.getAllMemosInTrash()
-                        try await self.environment.memoRepository.deleteMemos(trashMemos)
+                        let trashMemos = try await self.memoRepository.getAllMemosInTrash()
+                        try await self.memoRepository.deleteMemos(trashMemos)
                         self.refreshCounts()
                     } catch {
                         print(error.localizedDescription)

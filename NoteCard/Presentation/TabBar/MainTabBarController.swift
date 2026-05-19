@@ -5,10 +5,12 @@
 //  Created by 김민성 on 2024/01/30.
 //
 
+import AnalyticsInterface
 import UIKit
 import Data
 import Domain
 import DesignSystem
+import SettingsFeature
 import Shared
 
 class MainTabBarController: UITabBarController {
@@ -95,7 +97,14 @@ class MainTabBarController: UITabBarController {
         )
         
         // tab 4: 설정(UISplitViewController)
-        let settingsVC = SettingsViewController(environment: environment)
+        let settingsVC = SettingsViewController(
+            memoRepository: environment.memoRepository,
+            categoryRepository: environment.categoryRepository,
+            analytics: environment.analytics,
+            makeTrashViewController: { [environment] in
+                MemoViewController(memoVCType: .trash, environment: environment)
+            }
+        )
         let settingsNaviCon = UINavigationController(rootViewController: settingsVC)
         
         let emptyDetailVC = SettingsPlaceholderViewController()

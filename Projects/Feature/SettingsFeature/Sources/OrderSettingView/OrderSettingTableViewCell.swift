@@ -1,26 +1,30 @@
 //
-//  SettingsTableViewCell.swift
+//  TableViewCell.swift
 //  CardMemo
 //
-//  Created by 김민성 on 2023/11/16.
+//  Created by 김민성 on 2023/12/27.
 //
 
 import UIKit
-import Data
 import Domain
 import DesignSystem
 import Shared
 
-class SettingsTableViewCell: UITableViewCell {
-    
-    enum SettingsTableViewCellType: CaseIterable {
-        case pushing
-        case none
-        case button
-    }
+final class OrderSettingTableViewCell: UITableViewCell {
     
     static var cellID: String {
         return String(describing: self)
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            switch isSelected {
+            case true:
+                self.accessoryType = .checkmark
+            case false:
+                self.accessoryType = .none
+            }
+        }
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -32,13 +36,8 @@ class SettingsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        self.selectionStyle = .default
-    }
-    
     private func setupCellStyle() {
-        self.accessoryType = UITableViewCell.AccessoryType.disclosureIndicator
+        self.selectionStyle = UITableViewCell.SelectionStyle.none
     }
     
     func configureCell(image: UIImage? = nil, text: String? = "", textColor: UIColor = .label, secondaryText: String? = "", accesoryType: UITableViewCell.AccessoryType = .none) {
@@ -48,10 +47,16 @@ class SettingsTableViewCell: UITableViewCell {
         defaultContentConfig.text = text
         defaultContentConfig.secondaryText = secondaryText
         defaultContentConfig.textProperties.color = textColor
-        defaultContentConfig.imageProperties.tintColor = .currentTheme.withAlphaComponent(0.8)
+        defaultContentConfig.imageProperties.tintColor = .currentTheme
         self.contentConfiguration = defaultContentConfig
         
         self.accessoryType = accesoryType
+    }
+    
+    
+    override func prepareForReuse() {
+        self.isSelected = false
+        self.accessoryType = UITableViewCell.AccessoryType.none
     }
     
 }

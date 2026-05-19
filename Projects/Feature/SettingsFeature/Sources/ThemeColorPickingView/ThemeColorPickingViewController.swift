@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Data
 import Domain
 import DesignSystem
 import Shared
@@ -14,15 +13,15 @@ import Shared
 final class ThemeColorPickingViewController: UIViewController {
     
     let themeColorsArray: [UIColor] = [
-        .themeColorBlack,
-        .themeColorBrown,
-        .themeColorRed,
-        .themeColorOrange,
-        .themeColorYellow,
-        .themeColorGreen,
-        .themeColorSkyBlue,
-        .themeColorBlue,
-        .themeColorPurple
+        SettingsFeatureAsset.themeColorBlack.color,
+        SettingsFeatureAsset.themeColorBrown.color,
+        SettingsFeatureAsset.themeColorRed.color,
+        SettingsFeatureAsset.themeColorOrange.color,
+        SettingsFeatureAsset.themeColorYellow.color,
+        SettingsFeatureAsset.themeColorGreen.color,
+        SettingsFeatureAsset.themeColorSkyBlue.color,
+        SettingsFeatureAsset.themeColorBlue.color,
+        SettingsFeatureAsset.themeColorPurple.color
     ]
     
     lazy var themeColorPickingView = self.view as! ThemeColorPickingView
