@@ -194,7 +194,7 @@ final class PopupCardView: UIView {
         if isTextFieldChanged {
             Task {
                 let trimmedTitleText = titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
-                try await environment.memoRepository.updateMemoContent(memo, newTitle: trimmedTitleText)
+                try await environment.memoRepository.updateMemoContent(memo, newTitle: trimmedTitleText, newMemoText: nil)
                 self.isTextFieldChanged = false
             }
         }
@@ -203,7 +203,7 @@ final class PopupCardView: UIView {
     func updateMemoTextView() {
         if isTextViewChanged {
             Task {
-                try await environment.memoRepository.updateMemoContent(memo, newMemoText: memoTextView.text)
+                try await environment.memoRepository.updateMemoContent(memo, newTitle: nil, newMemoText: memoTextView.text)
                 self.isTextViewChanged = false
             }
         }
