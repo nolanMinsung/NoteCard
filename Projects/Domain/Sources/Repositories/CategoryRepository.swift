@@ -8,7 +8,7 @@
 import Foundation
 import Shared
 
-public protocol CategoryRepository {
+public protocol CategoryRepository: Sendable {
     
     func create(name: String) async throws
     

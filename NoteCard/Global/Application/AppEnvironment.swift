@@ -19,7 +19,7 @@ struct AppEnvironment {
 
     let coreDataStack: CoreDataStack
     let memoRepository: MemoRepository
-    let categoryRepository: CategoryRepositoryImpl
+    let categoryRepository: CategoryRepository
     let imageRepository: ImageRepositoryImpl
     let analytics: Analytics
 
