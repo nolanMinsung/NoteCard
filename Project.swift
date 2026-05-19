@@ -44,7 +44,6 @@ let appTargetBaseSettings: SettingsDictionary = infoPlistKeys.merging([
 let appResources: ResourceFileElements = [
     "NoteCard/Assets.xcassets",
     "NoteCard/Base.lproj/LaunchScreen.storyboard",
-    "NoteCard/Base.lproj/Main.storyboard",
     "NoteCard/ko.lproj/**",
     "NoteCard/en.lproj/**",
     // Firebase 설정 파일. .gitignore 대상이라 로컬/CI에 직접 둬야 한다.
