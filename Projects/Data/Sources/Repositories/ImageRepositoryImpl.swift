@@ -15,23 +15,6 @@ import UniformTypeIdentifiers
 
 public actor ImageRepositoryImpl: ImageRepository {
     
-    public enum ImageUpdateType: Equatable {
-        case create(memoID: UUID)
-        case delete(memoID: UUID)
-        case update(memoID: UUID)
-        
-        public var memoID: UUID {
-            switch self {
-            case .create(let memoID):
-                return memoID
-            case .delete(let memoID):
-                return memoID
-            case .update(let memoID):
-                return memoID
-            }
-        }
-    }
-    
     private let context: NSManagedObjectContext
     private let memoRepository: MemoRepositoryImpl
 

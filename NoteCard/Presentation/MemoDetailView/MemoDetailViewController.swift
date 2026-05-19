@@ -341,6 +341,8 @@ private extension MemoDetailViewController {
                         let _ = try await imageRepository.createImage(
                             from: model.pickerResult,
                             for: memo,
+                            originalImageID: nil,
+                            thumbnailID: nil,
                             orderIndex: index,
                             isTemporary: false
                         )
