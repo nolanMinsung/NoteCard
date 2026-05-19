@@ -9,13 +9,13 @@ import Foundation
 
 public extension FileManager {
     
-    public enum FileStatus {
+    enum FileStatus {
         case isDirectory
         case isFile
         case notExist
     }
     
-    public func fileOrDirectoryExist(at path: URL) -> FileStatus {
+    func fileOrDirectoryExist(at path: URL) -> FileStatus {
         var isDirectory = ObjCBool(false)
         let isExistAtPath: Bool
         if #available(iOS 16, *) {

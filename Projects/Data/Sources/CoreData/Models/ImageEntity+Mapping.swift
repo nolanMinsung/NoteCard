@@ -11,7 +11,7 @@ import Shared
 
 public extension ImageEntity {
     
-    public func toDomain() -> MemoImageInfo {
+    func toDomain() -> MemoImageInfo {
         MemoImageInfo(
             id: self.uuid,
             thumbnailID: self.thumbnailUUID,

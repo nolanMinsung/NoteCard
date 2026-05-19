@@ -11,7 +11,7 @@ import Shared
 
 public extension CategoryEntity {
     
-    public func toDomain() -> Domain.Category {
+    func toDomain() -> Domain.Category {
         Domain.Category(
             name: self.name,
             creationDate: self.creationDate,
@@ -23,7 +23,7 @@ public extension CategoryEntity {
 
 public extension Domain.Category {
     
-    public func toEntity(in context: NSManagedObjectContext) -> CategoryEntity {
+    func toEntity(in context: NSManagedObjectContext) -> CategoryEntity {
         let request = CategoryEntity.fetchRequest()
         request.predicate = NSPredicate(format: "name == %@", name as CVarArg)
 

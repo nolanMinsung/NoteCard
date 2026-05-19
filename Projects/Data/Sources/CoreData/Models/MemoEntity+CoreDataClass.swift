@@ -44,7 +44,7 @@ public class MemoEntity: NSManagedObject {
 
 public extension MemoEntity {
     
-    public var memoTextShortBuffer: String {
+    var memoTextShortBuffer: String {
         let paragraphsInString = self.memoText.components(separatedBy: CharacterSet.newlines)
         if self.memoText.count > 5000 && paragraphsInString.count > 4 {
             var buffer: String = ""
@@ -58,7 +58,7 @@ public extension MemoEntity {
         }
     }
     
-    public var memoTextLongBuffer: String {
+    var memoTextLongBuffer: String {
         let paragraphsInString = self.memoText.components(separatedBy: CharacterSet.newlines)
         if self.memoText.count > 5000 && paragraphsInString.count > 4 {
             var buffer: String = ""
@@ -93,7 +93,7 @@ public extension MemoEntity {
     
     
     
-    public func getModificationDateString() -> String {
+    func getModificationDateString() -> String {
         let modificationDate = self.modificationDate
         let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         let formatterForDate = DateFormatter()
@@ -117,7 +117,7 @@ public extension MemoEntity {
     }
     
     
-    public func getCreationDateInString() -> String {
+    func getCreationDateInString() -> String {
         
 //        let dateFormat = UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue)!
         let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
@@ -153,7 +153,7 @@ public extension MemoEntity {
     
     
     
-    public func getDeletedDateInString() -> String {
+    func getDeletedDateInString() -> String {
         guard let deletedDate else { fatalError() }
         
 //        let dateFormat = UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue)!

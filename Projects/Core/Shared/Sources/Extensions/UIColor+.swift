@@ -28,7 +28,7 @@ public extension UIColor {
                   alpha: alpha)
     }
     
-    public func toHexString() -> String {
+    func toHexString() -> String {
             var r:CGFloat = 0
             var g:CGFloat = 0
             var b:CGFloat = 0

@@ -14,20 +14,20 @@ import CoreData
 
 public extension MemoEntity {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<MemoEntity> {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<MemoEntity> {
         return NSFetchRequest<MemoEntity>(entityName: "MemoEntity")
     }
 
-    @NSManaged public var creationDate: Date
-    @NSManaged public var deletedDate: Date?
-    @NSManaged public var isFavorite: Bool
-    @NSManaged public var isInTrash: Bool
-    @NSManaged public var memoID: UUID
-    @NSManaged public var memoText: String
-    @NSManaged public var memoTitle: String
-    @NSManaged public var modificationDate: Date
-    @NSManaged public var categories: NSSet
-    @NSManaged public var images: NSSet
+    @NSManaged var creationDate: Date
+    @NSManaged var deletedDate: Date?
+    @NSManaged var isFavorite: Bool
+    @NSManaged var isInTrash: Bool
+    @NSManaged var memoID: UUID
+    @NSManaged var memoText: String
+    @NSManaged var memoTitle: String
+    @NSManaged var modificationDate: Date
+    @NSManaged var categories: NSSet
+    @NSManaged var images: NSSet
 
 }
 
@@ -35,16 +35,16 @@ public extension MemoEntity {
 public extension MemoEntity {
 
     @objc(addCategoriesObject:)
-    @NSManaged public func addToCategories(_ value: CategoryEntity)
+    @NSManaged func addToCategories(_ value: CategoryEntity)
 
     @objc(removeCategoriesObject:)
-    @NSManaged public func removeFromCategories(_ value: CategoryEntity)
+    @NSManaged func removeFromCategories(_ value: CategoryEntity)
 
     @objc(addCategories:)
-    @NSManaged public func addToCategories(_ values: NSSet)
+    @NSManaged func addToCategories(_ values: NSSet)
 
     @objc(removeCategories:)
-    @NSManaged public func removeFromCategories(_ values: NSSet)
+    @NSManaged func removeFromCategories(_ values: NSSet)
 
 }
 
@@ -52,16 +52,16 @@ public extension MemoEntity {
 public extension MemoEntity {
 
     @objc(addImagesObject:)
-    @NSManaged public func addToImages(_ value: ImageEntity)
+    @NSManaged func addToImages(_ value: ImageEntity)
 
     @objc(removeImagesObject:)
-    @NSManaged public func removeFromImages(_ value: ImageEntity)
+    @NSManaged func removeFromImages(_ value: ImageEntity)
 
     @objc(addImages:)
-    @NSManaged public func addToImages(_ values: NSSet)
+    @NSManaged func addToImages(_ values: NSSet)
 
     @objc(removeImages:)
-    @NSManaged public func removeFromImages(_ values: NSSet)
+    @NSManaged func removeFromImages(_ values: NSSet)
 
 }
 

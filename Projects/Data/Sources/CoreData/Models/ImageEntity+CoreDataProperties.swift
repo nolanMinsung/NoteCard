@@ -14,18 +14,18 @@ import CoreData
 
 public extension ImageEntity {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<ImageEntity> {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<ImageEntity> {
         return NSFetchRequest<ImageEntity>(entityName: "ImageEntity")
     }
 
-    @NSManaged public var temporaryOrderIndex: Int64
-    @NSManaged public var orderIndex: Int64
-    @NSManaged public var uuid: UUID
-    @NSManaged public var thumbnailUUID: UUID
-    @NSManaged public var memo: MemoEntity
-    @NSManaged public var isTemporaryDeleted: Bool
-    @NSManaged public var isTemporaryAppended: Bool
-    @NSManaged public var fileExtension: String
+    @NSManaged var temporaryOrderIndex: Int64
+    @NSManaged var orderIndex: Int64
+    @NSManaged var uuid: UUID
+    @NSManaged var thumbnailUUID: UUID
+    @NSManaged var memo: MemoEntity
+    @NSManaged var isTemporaryDeleted: Bool
+    @NSManaged var isTemporaryAppended: Bool
+    @NSManaged var fileExtension: String
 
 }
 

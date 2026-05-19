@@ -14,14 +14,14 @@ import CoreData
 
 public extension CategoryEntity {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<CategoryEntity> {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<CategoryEntity> {
         return NSFetchRequest<CategoryEntity>(entityName: "CategoryEntity")
     }
 
-    @NSManaged public var creationDate: Date
-    @NSManaged public var modificationDate: Date
-    @NSManaged public var name: String
-    @NSManaged public var memoSet: NSSet
+    @NSManaged var creationDate: Date
+    @NSManaged var modificationDate: Date
+    @NSManaged var name: String
+    @NSManaged var memoSet: NSSet
 
 }
 
@@ -29,16 +29,16 @@ public extension CategoryEntity {
 public extension CategoryEntity {
 
     @objc(addMemoSetObject:)
-    @NSManaged public func addToMemoSet(_ value: MemoEntity)
+    @NSManaged func addToMemoSet(_ value: MemoEntity)
 
     @objc(removeMemoSetObject:)
-    @NSManaged public func removeFromMemoSet(_ value: MemoEntity)
+    @NSManaged func removeFromMemoSet(_ value: MemoEntity)
 
     @objc(addMemoSet:)
-    @NSManaged public func addToMemoSet(_ values: NSSet)
+    @NSManaged func addToMemoSet(_ values: NSSet)
 
     @objc(removeMemoSet:)
-    @NSManaged public func removeFromMemoSet(_ values: NSSet)
+    @NSManaged func removeFromMemoSet(_ values: NSSet)
 
 }
 

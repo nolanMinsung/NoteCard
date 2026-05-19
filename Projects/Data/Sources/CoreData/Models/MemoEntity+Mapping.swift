@@ -11,7 +11,7 @@ import Shared
 
 public extension MemoEntity {
     
-    public func toDomain() -> Memo {
+    func toDomain() -> Memo {
         Memo(
             memoID:           self.memoID,
             creationDate:     self.creationDate,
