@@ -1,5 +1,3 @@
-import AnalyticsInterface
-
 /// NoteCard에서 발생하는 분석 이벤트 카탈로그.
 ///
 /// 이벤트 이름·파라미터를 한곳에 모아, 호출부가 여러 곳이어도 정의는 단일
@@ -10,7 +8,7 @@ import AnalyticsInterface
 extension AnalyticsEvent {
 
     /// `screen_view` 이벤트의 화면 이름.
-    enum Screen: String {
+    public enum Screen: String {
         case home
         case memoList = "memo_list"
         case memoCard = "memo_card"
@@ -19,18 +17,18 @@ extension AnalyticsEvent {
         case settings
     }
 
-    static func screenView(_ screen: Screen) -> AnalyticsEvent {
+    public static func screenView(_ screen: Screen) -> AnalyticsEvent {
         AnalyticsEvent(name: "screen_view", properties: ["screen_name": screen.rawValue])
     }
 
-    static func memoCreated(imageCount: Int, categoryCount: Int, hasTitle: Bool) -> AnalyticsEvent {
+    public static func memoCreated(imageCount: Int, categoryCount: Int, hasTitle: Bool) -> AnalyticsEvent {
         AnalyticsEvent(
             name: "memo_created",
             properties: memoProperties(imageCount: imageCount, categoryCount: categoryCount, hasTitle: hasTitle)
         )
     }
 
-    static func memoEdited(imageCount: Int, categoryCount: Int, hasTitle: Bool) -> AnalyticsEvent {
+    public static func memoEdited(imageCount: Int, categoryCount: Int, hasTitle: Bool) -> AnalyticsEvent {
         AnalyticsEvent(
             name: "memo_edited",
             properties: memoProperties(imageCount: imageCount, categoryCount: categoryCount, hasTitle: hasTitle)
@@ -38,15 +36,15 @@ extension AnalyticsEvent {
     }
 
     /// 메모 저장 실패. `mode`는 `"making"` 또는 `"editing"`.
-    static func memoSaveFailed(mode: String) -> AnalyticsEvent {
+    public static func memoSaveFailed(mode: String) -> AnalyticsEvent {
         AnalyticsEvent(name: "memo_save_failed", properties: ["mode": mode])
     }
 
-    static func memoMovedToTrash(count: Int) -> AnalyticsEvent {
+    public static func memoMovedToTrash(count: Int) -> AnalyticsEvent {
         AnalyticsEvent(name: "memo_moved_to_trash", properties: ["count": String(count)])
     }
 
-    static func memoDeleted(count: Int) -> AnalyticsEvent {
+    public static func memoDeleted(count: Int) -> AnalyticsEvent {
         AnalyticsEvent(name: "memo_deleted", properties: ["count": String(count)])
     }
 
