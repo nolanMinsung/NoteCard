@@ -22,6 +22,7 @@ public protocol MemoRepository: Actor {
     
     func moveToTrash(_ memo: Memo) async throws
     func deleteMemo(_ memo: Memo) async throws
+    func deleteMemos(_ memos: [Memo]) async throws
     
     func restore(_ memo: Memo) async throws
     
