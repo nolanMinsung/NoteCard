@@ -116,7 +116,7 @@ public extension CustomIntensityBlurView {
     
     //MARK: - Func
     
-    public func applyBlurEffectAsync() {
+    func applyBlurEffectAsync() {
         DispatchQueue.main.async { [weak self] in
             self?.animator?.startAnimation()
         }

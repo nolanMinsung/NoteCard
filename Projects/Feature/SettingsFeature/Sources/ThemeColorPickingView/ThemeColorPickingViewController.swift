@@ -12,18 +12,6 @@ import Shared
 
 final class ThemeColorPickingViewController: UIViewController {
     
-    let themeColorsArray: [UIColor] = [
-        SettingsFeatureAsset.themeColorBlack.color,
-        SettingsFeatureAsset.themeColorBrown.color,
-        SettingsFeatureAsset.themeColorRed.color,
-        SettingsFeatureAsset.themeColorOrange.color,
-        SettingsFeatureAsset.themeColorYellow.color,
-        SettingsFeatureAsset.themeColorGreen.color,
-        SettingsFeatureAsset.themeColorSkyBlue.color,
-        SettingsFeatureAsset.themeColorBlue.color,
-        SettingsFeatureAsset.themeColorPurple.color
-    ]
-    
     lazy var themeColorPickingView = self.view as! ThemeColorPickingView
     lazy var themeColorPickingTableView = self.themeColorPickingView.themeColorPickingTableView
     
@@ -81,7 +69,7 @@ extension ThemeColorPickingViewController: UITableViewDataSource {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ThemeColorPickingTableViewCell.cellID, for: indexPath) as? ThemeColorPickingTableViewCell else { fatalError("cell dequeuing failed!") }
         
-        cell.configureCell(themeColor: self.themeColorsArray[indexPath.row], accesoryType: UITableViewCell.AccessoryType.none)
+        cell.configureCell(themeColor: ThemeColor.allCases[indexPath.row], accesoryType: UITableViewCell.AccessoryType.none)
         
         return cell
     }

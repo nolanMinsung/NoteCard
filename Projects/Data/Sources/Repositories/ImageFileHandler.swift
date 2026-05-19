@@ -221,7 +221,7 @@ private extension NSItemProvider {
 
 public extension NSItemProvider {
     
-    public func loadImageOnly() async throws -> UIImage {
+    func loadImageOnly() async throws -> UIImage {
         guard self.canLoadObject(ofClass: UIImage.self) else {
             throw ImageFileError.loadingDataFromNSProviderFaild
         }

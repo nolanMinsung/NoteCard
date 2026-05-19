@@ -19,12 +19,12 @@ public protocol NoteCardError: LocalizedError {
 
 public extension NoteCardError {
     
-    public var title: String? {
+    var title: String? {
         return "오류"
     }
     
     // LocalizedError 프로토콜의 errorDescription을 기본 구현으로 사용
-    public var errorDescription: String? {
+    var errorDescription: String? {
         return self.displayingMessage
     }
 }

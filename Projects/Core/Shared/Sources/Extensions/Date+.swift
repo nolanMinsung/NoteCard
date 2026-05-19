@@ -9,7 +9,7 @@ import Foundation
 
 public extension Date {
     
-    public func getCreationDateInString() -> String {
+    func getCreationDateInString() -> String {
         
 //        let dateFormat = UserDefaults.standard.string(forKey: KeysForUserDefaults.dateFormat.rawValue)!
         let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
@@ -42,7 +42,7 @@ public extension Date {
         
     }
     
-    public func getModificationDateString() -> String {
+    func getModificationDateString() -> String {
         let modificationDate = self
         let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
         let formatterForDate = DateFormatter()

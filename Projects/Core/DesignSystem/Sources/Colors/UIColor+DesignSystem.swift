@@ -10,7 +10,7 @@ import Shared
 
 public extension UIColor {
     
-    public static let homeViewBackground = UIColor { traitCollection in
+    static let homeViewBackground = UIColor { traitCollection in
         return (traitCollection.userInterfaceStyle == .dark) ? .black : .systemGray6
     }
     

@@ -9,7 +9,7 @@ import UIKit
 
 
 public extension UIWindow {
-    public static var current: UIWindow? {
+    static var current: UIWindow? {
         for scene in UIApplication.shared.connectedScenes {
             guard let windowScene = scene as? UIWindowScene else {
                 print("UIApplication.shared.connectedScenes is nil")
