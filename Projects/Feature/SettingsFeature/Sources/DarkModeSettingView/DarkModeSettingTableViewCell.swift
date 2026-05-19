@@ -1,0 +1,76 @@
+//
+//  ThemeColorPickingTableViewCell.swift
+//  CardMemo
+//
+//  Created by 김민성 on 2023/12/20.
+//
+
+import UIKit
+import Domain
+import DesignSystem
+import Shared
+
+final class DarkModeSettingTableViewCell: UITableViewCell {
+    
+    static var cellID: String {
+        return String(describing: self)
+    }
+    
+    let colorNames: [String] = ThemeColor.allCases.map { "\($0)" }
+    var userInterfaceStyle: UIUserInterfaceStyle = UIWindow.current!.traitCollection.userInterfaceStyle
+    
+    override var isSelected: Bool {
+        didSet {
+            switch isSelected {
+            case true:
+                self.accessoryType = .checkmark
+            case false:
+                self.accessoryType = .none
+            }
+        }
+    }
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: UITableViewCell.CellStyle.value1, reuseIdentifier: reuseIdentifier)
+        setupCellStyle()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupCellStyle() {
+        self.selectionStyle = .none
+    }
+    
+    func configureCell(userInterfaceStyle: UIUserInterfaceStyle, text: String? = "", textColor: UIColor = .label, secondaryText: String? = "", accesoryType: UITableViewCell.AccessoryType = .none) {
+        
+        self.userInterfaceStyle = userInterfaceStyle
+        var defaultContentConfig = self.defaultContentConfiguration()
+        defaultContentConfig.text = text
+        defaultContentConfig.secondaryText = secondaryText
+        defaultContentConfig.textProperties.color = textColor
+        
+        switch userInterfaceStyle {
+        case .light:
+            defaultContentConfig.image = UIImage(systemName: "circle")?.withTintColor(.label, 
+                                                                                      renderingMode: UIImage.RenderingMode.alwaysOriginal)
+            defaultContentConfig.text = L10n.Settings.lightMode
+        case .dark:
+            defaultContentConfig.image = UIImage(systemName: "circle.fill")?.withTintColor(.black,
+                                                                                      renderingMode: UIImage.RenderingMode.alwaysOriginal)
+            defaultContentConfig.text = L10n.Settings.darkMode
+        case .unspecified:
+            defaultContentConfig.image = UIImage(named: "darkModeSymbol", in: .module, with: nil)?.withTintColor(UIColor.label,
+                                                                                         renderingMode: UIImage.RenderingMode.alwaysOriginal)
+            defaultContentConfig.text = L10n.Settings.systemMode
+            
+        @unknown default:
+            return
+        }
+        
+        self.contentConfiguration = defaultContentConfig
+        self.accessoryType = .none
+        
+    }
+}
