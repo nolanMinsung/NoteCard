@@ -221,7 +221,7 @@ private extension PopupCardViewController {
         }
         Task {
             do {
-                try await environment.memoRepository.updateMemoContent(memo, newTitle: sender.text)
+                try await environment.memoRepository.updateMemoContent(memo, newTitle: sender.text, newMemoText: nil)
             } catch {
                 print(error.localizedDescription)
             }
@@ -319,7 +319,7 @@ extension PopupCardViewController: UITextViewDelegate {
         }
         Task {
             do {
-                try await environment.memoRepository.updateMemoContent(memo, newMemoText: textView.text)
+                try await environment.memoRepository.updateMemoContent(memo, newTitle: nil, newMemoText: textView.text)
             } catch {
                 print(error.localizedDescription)
             }
@@ -339,7 +339,7 @@ extension PopupCardViewController: UITextFieldDelegate {
         }
         Task {
             do {
-                try await environment.memoRepository.updateMemoContent(memo, newTitle: trimmedInput)
+                try await environment.memoRepository.updateMemoContent(memo, newTitle: trimmedInput, newMemoText: nil)
             } catch {
                 print(error.localizedDescription)
             }

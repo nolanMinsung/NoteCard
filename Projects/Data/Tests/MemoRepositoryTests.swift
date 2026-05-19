@@ -390,7 +390,7 @@ final class MemoRepositoryTests: XCTestCase {
 
     func test_메모를_생성하면_퍼블리셔로_생성_이벤트가_방출된다() async throws {
         // given: 업데이트 이벤트 구독
-        var received: [MemoRepositoryImpl.MemoUpdateType] = []
+        var received: [MemoUpdateType] = []
         let cancellable = sut.memoUpdatedPublisher.sink { received.append($0) }
         defer { cancellable.cancel() }
 

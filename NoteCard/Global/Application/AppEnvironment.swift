@@ -5,6 +5,7 @@
 
 import Foundation
 import Data
+import Domain
 import AnalyticsInterface
 import AnalyticsImpl
 
@@ -17,7 +18,7 @@ import AnalyticsImpl
 struct AppEnvironment {
 
     let coreDataStack: CoreDataStack
-    let memoRepository: MemoRepositoryImpl
+    let memoRepository: MemoRepository
     let categoryRepository: CategoryRepositoryImpl
     let imageRepository: ImageRepositoryImpl
     let analytics: Analytics
