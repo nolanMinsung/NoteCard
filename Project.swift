@@ -93,6 +93,7 @@ let project = Project(
             infoPlist: .file(path: "NoteCard/Info.plist"),
             sources: appSources,
             resources: appResources,
+            entitlements: .file(path: "NoteCard/NoteCard.entitlements"),
             dependencies: appDependencies,
             settings: .settings(
                 base: appTargetBaseSettings,
@@ -125,6 +126,7 @@ let project = Project(
             infoPlist: .file(path: "NoteCard/Info.plist"),
             sources: appSources,
             resources: appResources,
+            entitlements: .file(path: "NoteCard/NoteCard.entitlements"),
             dependencies: appDependencies,
             settings: .settings(
                 base: appTargetBaseSettings,
