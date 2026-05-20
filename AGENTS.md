@@ -76,7 +76,15 @@ Core Data는 가장 위험한 영역이다. 다음을 어기면 사용자 데이
 ## Naming gotchas
 
 - ObjC runtime의 `Category` typedef와 충돌하므로 도메인 모델 `Category`는 호출부에서 **`Domain.Category`로 명시**한다. 새 코드에도 동일 규칙.
-- Localization 호출은 `"key".localized()` 형태. 기본 bundle이 `SharedResources.bundle`이므로 다른 모듈에 자체 xcstrings를 두면 `bundle:` 인자를 명시 전달.
+
+## Localization
+
+- **사용자에게 노출되는 모든 문구·문자열은 반드시 localization을 적용한다.** UI 라벨, 알럿/토스트, 에러 메시지(`LocalizedError.errorDescription` 포함), accessibility label, placeholder까지 모두 해당. 한국어/영어 하드코딩 금지.
+- 키는 `Projects/Core/Shared/Sources/Localization/L10n.swift`에 type-safe하게 등록하고, 번역은 `Projects/Core/Shared/Resources/Localizable.xcstrings`에 영어·한국어 둘 다 추가. 신규 키 추가 시 두 언어 모두 채울 것.
+- 호출은 `L10n.<group>.<name>` 형태 권장 (compile-time safe). 직접 `"key".localized()`도 가능하지만 신규 키는 L10n에 등록한다.
+- 기본 lookup bundle은 `SharedResources.bundle`. 다른 모듈에 자체 xcstrings를 두는 특수한 경우만 `bundle:` 인자 명시.
+- L10n을 사용하는 Domain·Core 모듈은 `.module(.shared)`를 dependencies에 추가 (예: `SyncInterface`).
+- 사용자 친화적 톤: 기술 용어(Firebase, OAuth, credential, UUID 등) 직접 노출 금지. "왜 안 되는지" 대신 "다음에 어떻게 할 수 있는지"를 안내하는 문장으로.
 
 ## Code conventions
 
