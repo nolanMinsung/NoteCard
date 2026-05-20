@@ -21,6 +21,8 @@ public enum Module: String {
     case shared             = "Shared"
     case analyticsInterface = "AnalyticsInterface"
     case analyticsImpl      = "AnalyticsImpl"
+    case syncInterface      = "SyncInterface"
+    case syncImpl           = "SyncImpl"
     case homeFeature        = "HomeFeature"
     case memoFeature        = "MemoFeature"
     case settingsFeature    = "SettingsFeature"
@@ -29,7 +31,7 @@ public enum Module: String {
         switch self {
         case .domain: return .domain
         case .data:   return .data
-        case .designSystem, .shared, .analyticsInterface, .analyticsImpl:
+        case .designSystem, .shared, .analyticsInterface, .analyticsImpl, .syncInterface, .syncImpl:
             return .core
         case .homeFeature, .memoFeature, .settingsFeature:
             return .feature
