@@ -62,6 +62,8 @@ let appDependencies: [TargetDependency] = [
     .project(target: "Data", path: .relativeToRoot("Projects/Data")),
     .project(target: "AnalyticsInterface", path: .relativeToRoot("Projects/Core/AnalyticsInterface")),
     .project(target: "AnalyticsImpl", path: .relativeToRoot("Projects/Core/AnalyticsImpl")),
+    .project(target: "SyncInterface", path: .relativeToRoot("Projects/Core/SyncInterface")),
+    .project(target: "SyncImpl", path: .relativeToRoot("Projects/Core/SyncImpl")),
     .project(target: "SettingsFeature", path: .relativeToRoot("Projects/Feature/SettingsFeature")),
 ]
 

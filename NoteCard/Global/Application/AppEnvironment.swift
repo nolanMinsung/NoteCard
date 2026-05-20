@@ -8,6 +8,8 @@ import Data
 import Domain
 import AnalyticsInterface
 import AnalyticsImpl
+import SyncInterface
+import SyncImpl
 
 /// 앱 전체에서 공유되는 의존성 묶음.
 ///
@@ -22,6 +24,7 @@ struct AppEnvironment {
     let categoryRepository: CategoryRepository
     let imageRepository: ImageRepository
     let analytics: Analytics
+    let authService: AuthService
 
     private let dataLayer: UserScopedDataLayer
 
@@ -47,6 +50,9 @@ struct AppEnvironment {
         self.categoryRepository = CategoryRepositoryImpl(stack: coreDataStack)
         self.imageRepository = ImageRepositoryImpl(stack: coreDataStack, memoRepository: memoRepository)
         self.analytics = Self.setUpAnalytics()
+        // FirebaseApp.configure()는 setUpAnalytics 안에서 (plist가 있을 때만) 호출됨.
+        // SyncBootstrap이 FirebaseApp.app() 존재 여부를 보고 Firebase/No-op 구현을 고른다.
+        self.authService = SyncBootstrap.makeAuthService()
     }
 
     /// Crashlytics를 켜고(가능하면) Amplitude 기반 `Analytics`를 만든다.
