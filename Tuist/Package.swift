@@ -9,6 +9,9 @@ let packageSettings = PackageSettings(
         "Wisp": .staticFramework,
         "FirebaseCrashlytics": .staticFramework,
         "FirebaseAnalytics": .staticFramework,
+        "FirebaseAuth": .staticFramework,
+        "FirebaseFirestore": .staticFramework,
+        "FirebaseStorage": .staticFramework,
         "AmplitudeSwift": .staticFramework,
     ]
 )
