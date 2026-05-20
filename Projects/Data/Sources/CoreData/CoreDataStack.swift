@@ -14,13 +14,21 @@ import Foundation
 public final class CoreDataStack: ObservableObject {
 
     private let inMemory: Bool
+    private let storeURL: URL?
 
-    /// - Parameter inMemory: `true`이면 디스크 대신 휘발성 저장소를 사용한다.
-    ///   store type 자체는 SQLite를 유지하되 파일 경로만 `/dev/null`로 두어,
-    ///   predicate·정렬 동작이 프로덕션과 100% 동일하면서 디스크에는 아무것도
-    ///   남기지 않는다. 단위 테스트에서 격리된 빈 저장소를 매번 새로 만들 때 사용.
-    public init(inMemory: Bool = false) {
+    /// - Parameters:
+    ///   - inMemory: `true`이면 디스크 대신 휘발성 저장소를 사용한다.
+    ///     store type 자체는 SQLite를 유지하되 파일 경로만 `/dev/null`로 두어,
+    ///     predicate·정렬 동작이 프로덕션과 100% 동일하면서 디스크에는 아무것도
+    ///     남기지 않는다. 단위 테스트에서 격리된 빈 저장소를 매번 새로 만들 때 사용.
+    ///   - storeURL: SQLite 파일을 둘 위치. `nil`이면 `NSPersistentContainer`의
+    ///     기본 위치(`Library/Application Support/`)에 컨테이너 이름으로 저장된다.
+    ///     사용자별 store 분리(같은 모델로 여러 stack 인스턴스를 다른 파일에 운용)
+    ///     용도. 부모 디렉터리는 호출자가 미리 존재하도록 보장해야 한다 — Core Data는
+    ///     디렉터리를 자동 생성하지 않는다. `inMemory`가 `true`이면 무시된다.
+    public init(inMemory: Bool = false, storeURL: URL? = nil) {
         self.inMemory = inMemory
+        self.storeURL = storeURL
     }
 
     // MARK: - Core Data stack
@@ -43,6 +51,10 @@ public final class CoreDataStack: ObservableObject {
         if inMemory {
             container.persistentStoreDescriptions = [
                 NSPersistentStoreDescription(url: URL(fileURLWithPath: "/dev/null"))
+            ]
+        } else if let storeURL {
+            container.persistentStoreDescriptions = [
+                NSPersistentStoreDescription(url: storeURL)
             ]
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
