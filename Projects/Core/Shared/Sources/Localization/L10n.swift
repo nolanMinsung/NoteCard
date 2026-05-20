@@ -126,6 +126,15 @@ public enum L10n {
         public static let format12h = "settings.format12h".localized()
     }
 
+    public enum Sync {
+        public enum Auth {
+            public static let cancelled = "sync.auth.cancelled".localized()
+            public static let invalidCredential = "sync.auth.invalidCredential".localized()
+            public static let unavailable = "sync.auth.unavailable".localized()
+            public static let unknown = "sync.auth.unknown".localized()
+        }
+    }
+
     public enum ThemeColor {
         public static let blackWhite = "themeColor.blackWhite".localized()
         public static let brown = "themeColor.brown".localized()
