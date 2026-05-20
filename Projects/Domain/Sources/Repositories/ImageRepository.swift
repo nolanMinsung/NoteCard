@@ -5,12 +5,16 @@
 //  Created by 김민성 on 9/10/25.
 //
 
+import Combine
 import PhotosUI
 import Shared
 import UIKit
 
 // MARK: - Repository Protocol
-public protocol ImageRepository {
+public protocol ImageRepository: Sendable {
+
+    var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> { get }
+
     func createImage(
         from pickerResult: PHPickerResult,
         for memo: Memo,
