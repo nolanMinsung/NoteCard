@@ -85,6 +85,7 @@ Core Data는 가장 위험한 영역이다. 다음을 어기면 사용자 데이
 - protocol conformance를 가진 extension(`extension X: SomeProtocol`)에도 `public` 모디파이어 금지. 멤버에 개별 `public`을 붙일 것.
 - `public class` 안의 `override` 메서드도 `public` 명시 (Swift 규칙).
 - ViewController 등 App 타겟 내부 코드는 internal로 충분 (cross-module 노출 불필요).
+- 주석은 최소화한다. 코드로 자명한 내용은 주석을 달지 않으며, 길고 장황한 주석은 금지. 꼭 필요한 "왜"(비자명한 제약·함정·의도)만 짧게 남긴다. 주석은 소스가 바뀌면 stale해지기 쉬우므로, 소스를 변경할 때 관련 주석도 함께 확인해 최신화한다.
 
 ## Commit / PR conventions
 
