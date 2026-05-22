@@ -23,8 +23,19 @@ struct AppEnvironment {
     let imageRepository: ImageRepository
     let analytics: Analytics
 
+    private let dataLayer: UserScopedDataLayer
+
     init() {
-        let coreDataStack = CoreDataStack()
+        // 인증 인프라는 별도 브랜치라 현재는 익명 사용자만 존재한다.
+        let userIDProvider = AnonymousUserIDProvider()
+
+        // 데이터 레이어가 익명 store를 열기 전에 레거시 데이터를 이전한다 (1회, 멱등).
+        LegacyStoreMigrator.migrateIfNeeded(anonymousStoreURL: UserScopedDataLayer.anonymousStoreURL())
+
+        let dataLayer = UserScopedDataLayer(userIDProvider: userIDProvider)
+        self.dataLayer = dataLayer
+
+        let coreDataStack = dataLayer.currentStack
         self.coreDataStack = coreDataStack
         let memoRepository = MemoRepositoryImpl(stack: coreDataStack)
         self.memoRepository = memoRepository
