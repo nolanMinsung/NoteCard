@@ -39,7 +39,12 @@ public enum LegacyStoreMigrator {
                 type: .sqlite
             )
             userDefaults.set(true, forKey: migrationFlagKey)
+            // destroy로 store를 정상 해제한 뒤, 잔여 파일(.sqlite/-wal/-shm)을 명시적으로 삭제.
+            // destroyPersistentStore만으로는 파일이 남는 경우가 있어 직접 제거한다.
             try? coordinator.destroyPersistentStore(at: legacyURL, type: .sqlite, options: nil)
+            for suffix in ["", "-wal", "-shm"] {
+                try? FileManager.default.removeItem(atPath: legacyURL.path + suffix)
+            }
         } catch {
             // 실패 시 플래그를 세우지 않아 다음 실행에 재시도한다. 원본은 레거시 store에 그대로 남는다.
         }
