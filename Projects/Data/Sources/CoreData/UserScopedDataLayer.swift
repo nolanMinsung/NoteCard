@@ -45,6 +45,11 @@ public final class UserScopedDataLayer {
         stackSubject.eraseToAnyPublisher()
     }
 
+    /// 익명(미로그인) 사용자의 store 위치. 레거시 마이그레이션 목적지 등 외부에서 경로가 필요할 때.
+    public static func anonymousStoreURL() -> URL {
+        storeURL(for: nil, in: defaultStoreDirectory())
+    }
+
     // MARK: - Private
 
     private func attachUserIDListener() {
