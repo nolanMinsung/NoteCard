@@ -23,8 +23,24 @@ struct AppEnvironment {
     let imageRepository: ImageRepository
     let analytics: Analytics
 
+    private let dataLayer: UserScopedDataLayer
+
     init() {
-        let coreDataStack = CoreDataStack()
+        // 인증 인프라는 별도 브랜치라 현재는 익명 사용자만 존재한다.
+        let userIDProvider = AnonymousUserIDProvider()
+
+        // 데이터 레이어가 익명 store를 열기 전에 레거시 데이터를 이전한다 (1회, 멱등).
+        // 실패 시 Debug 빌드에선 즉시 trap, Release 빌드에선 no-op이 되어 다음 실행에 재시도된다.
+        // TODO: Crashlytics non-fatal로 prod 가시성 확보 — onError 클로저는 그 의존성 주입을 위한 자리.
+        LegacyStoreMigrator.migrateIfNeeded(
+            anonymousStoreURL: UserScopedDataLayer.anonymousStoreURL(),
+            onError: { error in assertionFailure("LegacyStoreMigrator 실패: \(error)") }
+        )
+
+        let dataLayer = UserScopedDataLayer(userIDProvider: userIDProvider)
+        self.dataLayer = dataLayer
+
+        let coreDataStack = dataLayer.currentStack
         self.coreDataStack = coreDataStack
         let memoRepository = MemoRepositoryImpl(stack: coreDataStack)
         self.memoRepository = memoRepository
