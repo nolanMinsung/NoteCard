@@ -8,6 +8,7 @@ let project = Project.module(
     resources: nil,
     dependencies: [
         .module(.syncInterface),
+        .module(.domain),
         .external(name: "FirebaseAuth"),
     ]
 )
