@@ -15,7 +15,8 @@ public enum LegacyStoreMigrator {
     public static func migrateIfNeeded(
         legacyStoreURL: URL? = nil,
         anonymousStoreURL: URL,
-        userDefaults: UserDefaults = .standard
+        userDefaults: UserDefaults = .standard,
+        onError: (Error) -> Void = { _ in }
     ) {
         guard !userDefaults.bool(forKey: migrationFlagKey) else { return }
 
@@ -46,7 +47,8 @@ public enum LegacyStoreMigrator {
                 try? FileManager.default.removeItem(atPath: legacyURL.path + suffix)
             }
         } catch {
-            // 실패 시 플래그를 세우지 않아 다음 실행에 재시도한다. 원본은 레거시 store에 그대로 남는다.
+            // 플래그 미설정 상태로 두어 다음 실행에 재시도. 원본은 레거시 store에 그대로 남는다.
+            onError(error)
         }
     }
 

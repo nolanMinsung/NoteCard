@@ -30,7 +30,12 @@ struct AppEnvironment {
         let userIDProvider = AnonymousUserIDProvider()
 
         // 데이터 레이어가 익명 store를 열기 전에 레거시 데이터를 이전한다 (1회, 멱등).
-        LegacyStoreMigrator.migrateIfNeeded(anonymousStoreURL: UserScopedDataLayer.anonymousStoreURL())
+        // 실패 시 Debug 빌드에선 즉시 trap, Release 빌드에선 no-op이 되어 다음 실행에 재시도된다.
+        // TODO: Crashlytics non-fatal로 prod 가시성 확보 — onError 클로저는 그 의존성 주입을 위한 자리.
+        LegacyStoreMigrator.migrateIfNeeded(
+            anonymousStoreURL: UserScopedDataLayer.anonymousStoreURL(),
+            onError: { error in assertionFailure("LegacyStoreMigrator 실패: \(error)") }
+        )
 
         let dataLayer = UserScopedDataLayer(userIDProvider: userIDProvider)
         self.dataLayer = dataLayer
