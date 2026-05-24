@@ -83,14 +83,14 @@ final class UserScopedDataLayerTests: XCTestCase {
         // given
         let provider = MockUserIDProvider(initial: "userA")
         let layer = UserScopedDataLayer(userIDProvider: provider, storeDirectory: tempDirectory)
-        let repoA = MemoRepositoryImpl(stack: layer.currentStack)
+        let repoA = MemoRepositoryImpl(dataLayer: layer)
         _ = try await repoA.createNewMemo()
         let inA = try await repoA.getAllMemos()
         XCTAssertEqual(inA.count, 1)
 
         // when: 다른 사용자로 전환
         provider.setUserID("userB")
-        let repoB = MemoRepositoryImpl(stack: layer.currentStack)
+        let repoB = MemoRepositoryImpl(dataLayer: layer)
 
         // then
         let inB = try await repoB.getAllMemos()

@@ -13,24 +13,36 @@ import PhotosUI
 import UIKit
 import UniformTypeIdentifiers
 
-public actor ImageRepositoryImpl: ImageRepository {
-    
-    private let context: NSManagedObjectContext
+public final class ImageRepositoryImpl: ImageRepository, @unchecked Sendable {
+
+    private let stackResolver: () -> CoreDataStack
     private let memoRepository: MemoRepositoryImpl
 
-    public init(stack: CoreDataStack, memoRepository: MemoRepositoryImpl) {
-        self.context = stack.backgroundContext
-        self.memoRepository = memoRepository
+    private var context: NSManagedObjectContext {
+        stackResolver().backgroundContext
     }
-    
+
     // MARK: - Subjects, Publisher
-    
-    nonisolated private let imageUpdatedSubject = PassthroughSubject<ImageUpdateType, Never>()
-    public nonisolated var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> {
+
+    private let imageUpdatedSubject = PassthroughSubject<ImageUpdateType, Never>()
+    public var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> {
         imageUpdatedSubject.eraseToAnyPublisher()
     }
-    private var cancellables = Set<AnyCancellable>()
-    
+
+    // MARK: - Init
+
+    public init(dataLayer: UserScopedDataLayer, memoRepository: MemoRepositoryImpl) {
+        self.stackResolver = { dataLayer.currentStack }
+        self.memoRepository = memoRepository
+    }
+
+    /// 단일 stack을 들고 사용자 변경에 반응하지 않는 테스트 편의 init.
+    internal init(stack: CoreDataStack, memoRepository: MemoRepositoryImpl) {
+        self.stackResolver = { stack }
+        self.memoRepository = memoRepository
+    }
+
+
     public func createImage(
         from pickerResult: PHPickerResult,
         for memo: Memo,
@@ -44,7 +56,7 @@ public actor ImageRepositoryImpl: ImageRepository {
         let thumbnailData = try ImageFileHandler.createThumbnailData(from: originalData)
         
         // MemoEntity 불러오기(후에 ImageEntity에서 생성자의 매개변수로 넣기 위함)
-        let memoEntity = try await memoRepository.fetchMemoEntity(id: memo.memoID)
+        let memoEntity = try memoRepository.fetchMemoEntity(id: memo.memoID)
         
         let createdMemoInfo =  try await context.perform { [unowned self] in
             // 코어데이터에 저장할 데이터
