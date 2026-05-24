@@ -27,26 +27,44 @@ public enum MemoEntityError: LocalizedError {
     
 }
 
-public actor MemoRepositoryImpl: MemoRepository {
-    
-    private let context: NSManagedObjectContext
+public final class MemoRepositoryImpl: MemoRepository, @unchecked Sendable {
 
-    public init(stack: CoreDataStack) {
-        self.context = stack.backgroundContext
+    private let stackResolver: () -> CoreDataStack
+
+    private var context: NSManagedObjectContext {
+        stackResolver().backgroundContext
     }
-    
+
+    // MARK: - Subjects, Publisher
+
+    private let memoUpdatedSubject = PassthroughSubject<MemoUpdateType, Never>()
+    public var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
+        memoUpdatedSubject.eraseToAnyPublisher()
+    }
+
+    // MARK: - Init
+
+    public init(dataLayer: UserScopedDataLayer) {
+        self.stackResolver = { dataLayer.currentStack }
+    }
+
+    /// 단일 stack을 들고 사용자 변경에 반응하지 않는 테스트 편의 init.
+    internal init(stack: CoreDataStack) {
+        self.stackResolver = { stack }
+    }
+
     @UserDefault<String>(key: .orderCriterion, defaultValue: OrderCriterion.modificationDate.rawValue)
     private var orderCriterion: String
-    
+
     @UserDefault<Bool>(key: .isOrderAscending, defaultValue: false)
     private var isOrderAscending: Bool
-    
+
     // MARK: - Predicates
-    
+
     private let isFavorite = NSPredicate(format: "isFavorite == true")
     private let notDeleted = NSPredicate(format: "isInTrash == false")
     private let deleted = NSPredicate(format: "isInTrash == true")
-    
+
     private func memoIDEquals(to id: UUID) -> NSPredicate {
         return NSPredicate(format: "memoID == %@", id as CVarArg)
     }
@@ -65,13 +83,6 @@ public actor MemoRepositoryImpl: MemoRepository {
         } else {
             return NSPredicate(format: "categories.@count == 0")
         }
-    }
-    
-    // MARK: - Subjects, Publisher
-    
-    nonisolated private let memoUpdatedSubject = PassthroughSubject<MemoUpdateType, Never>()
-    public nonisolated var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
-        memoUpdatedSubject.eraseToAnyPublisher()
     }
 }
 

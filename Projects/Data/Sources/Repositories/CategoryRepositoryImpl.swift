@@ -14,12 +14,21 @@ public protocol ComparableValue: Comparable {}
 extension String: ComparableValue {}
 extension Date: ComparableValue {}
 
-public actor CategoryRepositoryImpl: CategoryRepository {
-    
-    private let context: NSManagedObjectContext
+public final class CategoryRepositoryImpl: CategoryRepository, @unchecked Sendable {
 
-    public init(stack: CoreDataStack) {
-        self.context = stack.backgroundContext
+    private let stackResolver: () -> CoreDataStack
+
+    private var context: NSManagedObjectContext {
+        stackResolver().backgroundContext
+    }
+
+    public init(dataLayer: UserScopedDataLayer) {
+        self.stackResolver = { dataLayer.currentStack }
+    }
+
+    /// 단일 stack을 들고 사용자 변경에 반응하지 않는 테스트 편의 init.
+    internal init(stack: CoreDataStack) {
+        self.stackResolver = { stack }
     }
     
     private func categoryNameEqual(to name: String) -> NSPredicate {

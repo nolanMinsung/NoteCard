@@ -19,7 +19,6 @@ import SyncImpl
 /// Combine publisher 이벤트도 화면 간에 끊김 없이 전달된다.
 struct AppEnvironment {
 
-    let coreDataStack: CoreDataStack
     let memoRepository: MemoRepository
     let categoryRepository: CategoryRepository
     let imageRepository: ImageRepository
@@ -27,6 +26,9 @@ struct AppEnvironment {
     let authService: AuthService
 
     private let dataLayer: UserScopedDataLayer
+
+    /// 현재 사용자에 해당하는 Core Data stack. 사용자 변경 시점에 dataLayer가 새 stack으로 교체한다.
+    var coreDataStack: CoreDataStack { dataLayer.currentStack }
 
     init() {
         // FirebaseApp.configure()는 setUpAnalytics 안에서 (plist가 있을 때만) 호출됨.
@@ -50,12 +52,10 @@ struct AppEnvironment {
         let dataLayer = UserScopedDataLayer(userIDProvider: userIDProvider)
         self.dataLayer = dataLayer
 
-        let coreDataStack = dataLayer.currentStack
-        self.coreDataStack = coreDataStack
-        let memoRepository = MemoRepositoryImpl(stack: coreDataStack)
+        let memoRepository = MemoRepositoryImpl(dataLayer: dataLayer)
         self.memoRepository = memoRepository
-        self.categoryRepository = CategoryRepositoryImpl(stack: coreDataStack)
-        self.imageRepository = ImageRepositoryImpl(stack: coreDataStack, memoRepository: memoRepository)
+        self.categoryRepository = CategoryRepositoryImpl(dataLayer: dataLayer)
+        self.imageRepository = ImageRepositoryImpl(dataLayer: dataLayer, memoRepository: memoRepository)
     }
 
     /// Crashlytics를 켜고(가능하면) Amplitude 기반 `Analytics`를 만든다.
