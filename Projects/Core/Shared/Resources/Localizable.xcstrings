@@ -1718,6 +1718,74 @@
         }
       }
     },
+    "sync.auth.cancelled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign-in cancelled."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로그인이 취소되었어요."
+          }
+        }
+      }
+    },
+    "sync.auth.invalidCredential": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't verify your Apple sign-in. Please try again in a moment."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 로그인 정보를 확인할 수 없었어요. 잠시 후 다시 시도해주세요."
+          }
+        }
+      }
+    },
+    "sync.auth.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync isn't available right now. Please try again later."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금은 동기화 기능을 사용할 수 없어요. 잠시 후 다시 시도해주세요."
+          }
+        }
+      }
+    },
+    "sync.auth.unknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong while signing in. Please try again."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로그인 중 문제가 발생했어요. 잠시 후 다시 시도해주세요."
+          }
+        }
+      }
+    },
     "tabBar.home": {
       "extractionState": "manual",
       "localizations": {
