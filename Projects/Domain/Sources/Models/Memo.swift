@@ -8,7 +8,7 @@
 import Foundation
 import Shared
 
-public struct Memo: Hashable {
+public struct Memo: Hashable, Sendable {
     public let memoID: UUID
     public let creationDate: Date
     public var modificationDate: Date

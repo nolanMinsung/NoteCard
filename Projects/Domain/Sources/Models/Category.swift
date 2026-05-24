@@ -8,7 +8,7 @@
 import Foundation
 import Shared
 
-public struct Category: Hashable {
+public struct Category: Hashable, Sendable {
     public var name: String
     public let creationDate: Date
     public var modificationDate: Date
