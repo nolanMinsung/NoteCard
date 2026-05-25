@@ -15,6 +15,9 @@ public enum UserDefaultsKey: String {
     case orderCriterion
     case isOrderAscending
     case darkModeTheme
+    /// 동기화 안내(신규자 로그인 화면 or 기존자 What's new 모달)를 1회 표시한 뒤 set.
+    /// set 이후엔 어느 안내도 다시 띄우지 않음.
+    case didShowSyncIntroduction
 }
 
 
