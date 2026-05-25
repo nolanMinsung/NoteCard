@@ -26,6 +26,7 @@ public enum Module: String {
     case homeFeature        = "HomeFeature"
     case memoFeature        = "MemoFeature"
     case settingsFeature    = "SettingsFeature"
+    case loginFeature       = "LoginFeature"
 
     public var layer: Layer {
         switch self {
@@ -33,7 +34,7 @@ public enum Module: String {
         case .data:   return .data
         case .designSystem, .shared, .analyticsInterface, .analyticsImpl, .syncInterface, .syncImpl:
             return .core
-        case .homeFeature, .memoFeature, .settingsFeature:
+        case .homeFeature, .memoFeature, .settingsFeature, .loginFeature:
             return .feature
         }
     }
