@@ -49,6 +49,17 @@ def ensure_xcodeproj_generated
   sh("cd .. && tuist install && tuist generate --no-open")
 end
 
+# Locate the upload-symbols binary that SwiftPM checks out under DerivedData
+# when firebase-ios-sdk is resolved. build_app must have run first.
+def find_swiftpm_upload_symbols
+  glob = File.expand_path(
+    "~/Library/Developer/Xcode/DerivedData/**/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols"
+  )
+  binary = Dir.glob(glob).find { |p| File.executable?(p) }
+  UI.user_error!("upload-symbols not found under DerivedData. Run build_app first so SwiftPM resolves firebase-ios-sdk.") unless binary
+  binary
+end
+
 platform :ios do
   before_all do
     # On CI, create a temporary keychain for code signing.
@@ -148,6 +159,12 @@ platform :ios do
           "com.minsung.NoteCard" => "match AppStore com.minsung.NoteCard"
         }
       }
+    )
+
+    upload_symbols_to_crashlytics(
+      binary_path: find_swiftpm_upload_symbols,
+      dsym_path: "./build/NoteCard.app.dSYM.zip",
+      gsp_path: "./NoteCard/GoogleService-Info.plist"
     )
 
     upload_to_testflight(
