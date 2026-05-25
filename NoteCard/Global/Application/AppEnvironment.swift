@@ -49,7 +49,10 @@ struct AppEnvironment {
             onError: { error in assertionFailure("LegacyStoreMigrator 실패: \(error)") }
         )
 
-        let dataLayer = UserScopedDataLayer(userIDProvider: userIDProvider)
+        let dataLayer = UserScopedDataLayer(
+            userIDProvider: userIDProvider,
+            onMigrationError: { error in assertionFailure("AnonymousToUserMigrator 실패: \(error)") }
+        )
         self.dataLayer = dataLayer
 
         let memoRepository = MemoRepositoryImpl(dataLayer: dataLayer)
