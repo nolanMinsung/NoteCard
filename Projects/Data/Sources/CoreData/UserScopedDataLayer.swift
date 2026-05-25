@@ -23,13 +23,19 @@ public final class UserScopedDataLayer {
 
     private let userIDProvider: CurrentUserIDProvider
     private let storeDirectory: URL
+    private let onMigrationError: (Error) -> Void
     private let stackSubject: CurrentValueSubject<CoreDataStack, Never>
     private var cancellable: AnyCancellable?
 
-    public init(userIDProvider: CurrentUserIDProvider, storeDirectory: URL? = nil) {
+    public init(
+        userIDProvider: CurrentUserIDProvider,
+        storeDirectory: URL? = nil,
+        onMigrationError: @escaping (Error) -> Void = { _ in }
+    ) {
         self.userIDProvider = userIDProvider
         let directory = storeDirectory ?? Self.defaultStoreDirectory()
         self.storeDirectory = directory
+        self.onMigrationError = onMigrationError
         let initialStack = Self.makeStack(for: userIDProvider.currentUserID, in: directory)
         self.stackSubject = CurrentValueSubject(initialStack)
         attachUserIDListener()
@@ -59,6 +65,14 @@ public final class UserScopedDataLayer {
             .dropFirst()
             .sink { [weak self] userID in
                 guard let self else { return }
+                // 로그인 직후라면 익명 데이터를 사용자 store로 흡수 (target이 비어 있을 때만).
+                if let userID {
+                    AnonymousToUserMigrator.migrateIfNeeded(
+                        anonymousStoreURL: Self.storeURL(for: nil, in: self.storeDirectory),
+                        userStoreURL: Self.storeURL(for: userID, in: self.storeDirectory),
+                        onError: self.onMigrationError
+                    )
+                }
                 let newStack = Self.makeStack(for: userID, in: self.storeDirectory)
                 self.stackSubject.send(newStack)
             }
