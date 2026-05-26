@@ -77,6 +77,22 @@ class HomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         environment.analytics.log(.screenView(.home))
+        presentSyncIntroductionIfNeeded()
+    }
+
+    /// 동기화 안내를 한 번도 본 적 없는 사용자에게 sheet 모달로 1회 표시.
+    /// 키 set은 *표시 직전*에 수행해 viewDidAppear 재호출(모달 닫힘 직후) 시 무한루프 방지.
+    private func presentSyncIntroductionIfNeeded() {
+        let key = UserDefaultsKey.didShowSyncIntroduction.rawValue
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        UserDefaults.standard.set(true, forKey: key)
+
+        let introVC = SyncIntroductionViewController()
+        if let sheet = introVC.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+        }
+        present(introVC, animated: true)
     }
 
     override func viewDidLoad() {
