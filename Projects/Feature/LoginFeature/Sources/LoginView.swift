@@ -4,6 +4,7 @@
 //
 
 import AuthenticationServices
+import DesignSystem
 import Shared
 import UIKit
 
@@ -27,9 +28,8 @@ final class LoginView: UIView {
         return label
     }()
 
-    lazy var signInButton: ASAuthorizationAppleIDButton = {
-        let style: ASAuthorizationAppleIDButton.Style = traitCollection.userInterfaceStyle == .dark ? .white : .black
-        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: style)
+    let signInButton: ASAuthorizationAppleIDButton = {
+        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .black)
         button.cornerRadius = 12
         return button
     }()
@@ -85,7 +85,7 @@ final class LoginView: UIView {
     }
 
     private func setupUI() {
-        backgroundColor = .systemBackground
+        backgroundColor = .loginBackground
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(topStack)
