@@ -2125,6 +2125,57 @@
           }
         }
       }
+    },
+    "sync.introduction.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync is now available"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동기화 기능이 추가됐어요"
+          }
+        }
+      }
+    },
+    "sync.introduction.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in with Apple to sync your memos across your devices. You can start from Settings → Account."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple로 로그인하면 메모를 다른 기기와 동기화할 수 있어요. 설정 → 계정에서 시작하세요."
+          }
+        }
+      }
+    },
+    "sync.introduction.dismiss": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Got it"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확인"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
