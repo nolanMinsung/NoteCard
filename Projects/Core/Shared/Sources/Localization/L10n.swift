@@ -135,6 +135,14 @@ public enum L10n {
         }
     }
 
+    public enum Login {
+        public static let promptDescription = "login.promptDescription".localized()
+        public static let skipButton = "login.skipButton".localized()
+        public static let skipConfirmationTitle = "login.skipConfirmationTitle".localized()
+        public static let skipConfirmationMessage = "login.skipConfirmationMessage".localized()
+        public static let skipConfirmationProceed = "login.skipConfirmationProceed".localized()
+    }
+
     public enum ThemeColor {
         public static let blackWhite = "themeColor.blackWhite".localized()
         public static let brown = "themeColor.brown".localized()

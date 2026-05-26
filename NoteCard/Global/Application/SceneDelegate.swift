@@ -9,6 +9,7 @@ import UIKit
 import Data
 import Domain
 import DesignSystem
+import LoginFeature
 import Shared
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -21,30 +22,76 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
+
         self.window = UIWindow(windowScene: windowScene)
         self.window?.makeKeyAndVisible()
         self.window?.tintColor = UIColor.currentTheme
-        
+        self.window?.backgroundColor = .clear
+
+        // 다크모드 설정값 window에 반영하기.
+        applyDarkModeSetting()
+
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("AppDelegate를 찾을 수 없습니다.")
         }
-        let mainTabBarCon = MainTabBarController(environment: appDelegate.environment)
+
+        // 신규 사용자(익명 데이터 없음 + 아직 안내를 본 적 없음)에게만 로그인 화면을 띄움.
+        // 그 외(기존 사용자 / 이미 안내 본 사람)는 홈 화면으로 직행.
+        if shouldShowLoginScreen(environment: appDelegate.environment) {
+            self.window?.rootViewController = makeLoginViewController(environment: appDelegate.environment)
+        } else {
+            self.window?.rootViewController = makeMainTabBarController(environment: appDelegate.environment)
+        }
+    }
+
+    // MARK: - Root view construction
+
+    private func makeMainTabBarController(environment: AppEnvironment) -> MainTabBarController {
+        let mainTabBarCon = MainTabBarController(environment: environment)
         if #available(iOS 18.0, *) {
             mainTabBarCon.mode = .tabSidebar
         }
-        self.window?.rootViewController = mainTabBarCon
-        self.window?.backgroundColor = .clear
-        
-        // 다크모드 설정값 window에 반영하기.
-        
-        // 설정에서 다크모드 세팅 UserDefault 값에 해당하는 문자열
+        mainTabBarCon.selectedIndex = 0
+        return mainTabBarCon
+    }
+
+    private func makeLoginViewController(environment: AppEnvironment) -> LoginViewController {
+        LoginViewController(authService: environment.authService) { [weak self] outcome in
+            UserDefaults.standard.set(true, forKey: UserDefaultsKey.didShowSyncIntroduction.rawValue)
+            switch outcome {
+            case .signedIn, .skipped:
+                self?.transitionToMainTabBar(environment: environment)
+            }
+        }
+    }
+
+    private func transitionToMainTabBar(environment: AppEnvironment) {
+        guard let window = self.window else { return }
+        let target = makeMainTabBarController(environment: environment)
+        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve) {
+            window.rootViewController = target
+        }
+    }
+
+    private func shouldShowLoginScreen(environment: AppEnvironment) -> Bool {
+        // 안내(로그인 화면 또는 What's new 모달)를 한 번 본 사람은 다시 띄우지 않음.
+        if UserDefaults.standard.bool(forKey: UserDefaultsKey.didShowSyncIntroduction.rawValue) {
+            return false
+        }
+        // 익명 store에 메모/카테고리 흔적이 있다 = 기존 사용자 = 홈으로 진입 후 What's new 모달 대상.
+        if AnonymousDataInspector.hasUserData(in: environment.coreDataStack) {
+            return false
+        }
+        return true
+    }
+
+    private func applyDarkModeSetting() {
         guard let darkModeSettingRawValue = UserDefaults.standard.string(
             forKey: UserDefaultsKeys.darkModeTheme.rawValue
         ) else {
             fatalError("다크모드 설정값이 초기화되지 않았습니다.")
         }
-        
+
         let darKModeValue = DarkModeTheme(rawValue: darkModeSettingRawValue)
         switch darKModeValue {
         case .light:
@@ -54,9 +101,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         default:
             window?.overrideUserInterfaceStyle = UIUserInterfaceStyle.unspecified
         }
-        
-        // 초기 화면은 홈 화면으로 설정.
-        mainTabBarCon.selectedIndex = 0
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
