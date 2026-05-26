@@ -2176,6 +2176,97 @@
           }
         }
       }
+    },
+    "account.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Account" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "계정" } }
+      }
+    },
+    "account.signInPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sign in with Apple to sync your memos across your devices." } },
+        "ko": { "stringUnit": { "state": "translated", "value": "Apple로 로그인하면 메모를 다른 기기와 동기화할 수 있어요." } }
+      }
+    },
+    "account.syncStatusLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sync status" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "동기화 상태" } }
+      }
+    },
+    "account.syncStatusComingSoon": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Coming soon" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "준비 중" } }
+      }
+    },
+    "account.lastSyncedLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Last synced" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "최근 동기화" } }
+      }
+    },
+    "account.lastSyncedNever": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "—" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "—" } }
+      }
+    },
+    "account.signOut": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sign out" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "로그아웃" } }
+      }
+    },
+    "account.signOutConfirmTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sign out?" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "로그아웃하시겠어요?" } }
+      }
+    },
+    "account.signOutConfirmMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "This device stops syncing. Your memos remain safe in your account." } },
+        "ko": { "stringUnit": { "state": "translated", "value": "이 기기에서 동기화가 멈춰요. 계정의 메모는 계속 안전하게 보관돼요." } }
+      }
+    },
+    "account.deleteAccount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete account" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "계정 삭제" } }
+      }
+    },
+    "account.deleteAccountConfirmTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete your account?" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "계정을 삭제하시겠어요?" } }
+      }
+    },
+    "account.deleteAccountConfirmMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "This cannot be undone. Your account and all synced data will be permanently deleted." } },
+        "ko": { "stringUnit": { "state": "translated", "value": "이 작업은 되돌릴 수 없어요. 계정과 모든 동기화 데이터가 영구 삭제돼요." } }
+      }
+    },
+    "account.deleteAccountProceed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "삭제" } }
+      }
     }
   },
   "version": "1.0"
