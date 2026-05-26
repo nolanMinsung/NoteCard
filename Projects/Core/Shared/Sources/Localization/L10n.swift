@@ -149,6 +149,22 @@ public enum L10n {
         public static let skipConfirmationProceed = "login.skipConfirmationProceed".localized()
     }
 
+    public enum Account {
+        public static let title = "account.title".localized()
+        public static let signInPrompt = "account.signInPrompt".localized()
+        public static let syncStatusLabel = "account.syncStatusLabel".localized()
+        public static let syncStatusComingSoon = "account.syncStatusComingSoon".localized()
+        public static let lastSyncedLabel = "account.lastSyncedLabel".localized()
+        public static let lastSyncedNever = "account.lastSyncedNever".localized()
+        public static let signOut = "account.signOut".localized()
+        public static let signOutConfirmTitle = "account.signOutConfirmTitle".localized()
+        public static let signOutConfirmMessage = "account.signOutConfirmMessage".localized()
+        public static let deleteAccount = "account.deleteAccount".localized()
+        public static let deleteAccountConfirmTitle = "account.deleteAccountConfirmTitle".localized()
+        public static let deleteAccountConfirmMessage = "account.deleteAccountConfirmMessage".localized()
+        public static let deleteAccountProceed = "account.deleteAccountProceed".localized()
+    }
+
     public enum ThemeColor {
         public static let blackWhite = "themeColor.blackWhite".localized()
         public static let brown = "themeColor.brown".localized()
