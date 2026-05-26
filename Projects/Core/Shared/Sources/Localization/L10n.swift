@@ -133,6 +133,12 @@ public enum L10n {
             public static let unavailable = "sync.auth.unavailable".localized()
             public static let unknown = "sync.auth.unknown".localized()
         }
+
+        public enum Introduction {
+            public static let title = "sync.introduction.title".localized()
+            public static let body = "sync.introduction.body".localized()
+            public static let dismiss = "sync.introduction.dismiss".localized()
+        }
     }
 
     public enum Login {
