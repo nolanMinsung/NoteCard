@@ -5,6 +5,7 @@
 //  Created by 김민성 on 8/28/25.
 //
 
+import Combine
 import Foundation
 import CoreData
 import Domain
@@ -21,6 +22,15 @@ public final class CategoryRepositoryImpl: CategoryRepository, @unchecked Sendab
     private var context: NSManagedObjectContext {
         stackResolver().backgroundContext
     }
+
+    // MARK: - Subjects, Publisher
+
+    private let categoryUpdatedSubject = PassthroughSubject<CategoryUpdateType, Never>()
+    public var categoryUpdatedPublisher: AnyPublisher<CategoryUpdateType, Never> {
+        categoryUpdatedSubject.eraseToAnyPublisher()
+    }
+
+    // MARK: - Init
 
     public init(dataLayer: UserScopedDataLayer) {
         self.stackResolver = { dataLayer.currentStack }
@@ -89,6 +99,7 @@ public extension CategoryRepositoryImpl {
             newCategory.name = name
             try self.context.save()
         }
+        categoryUpdatedSubject.send(.create)
     }
     
     func getAllCategories(inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] {
@@ -136,14 +147,16 @@ public extension CategoryRepositoryImpl {
             categoryEntity.name = newName
             try context.save()
         }
+        categoryUpdatedSubject.send(.update(content: .name(categoryIDs: [category.id])))
     }
-    
+
     func deleteCategory(_ category: Domain.Category) async throws {
         try await context.perform { [unowned self] in
             let categoryEntity = try fetchCategoryEntity(id: category.id)
             context.delete(categoryEntity)
             try context.save()
         }
+        categoryUpdatedSubject.send(.delete)
     }
     
     func memoCount(of category: Domain.Category) async throws -> Int {
@@ -158,6 +171,7 @@ public extension CategoryRepositoryImpl {
             let categoryEntity = try fetchCategoryEntity(id: category.id)
             categoryEntity.modificationDate = .now
         }
+        categoryUpdatedSubject.send(.update(content: .modificationDate(categoryIDs: [category.id])))
     }
     
 }

@@ -5,11 +5,14 @@
 //  Created by 김민성 on 8/28/25.
 //
 
+import Combine
 import Foundation
 import Shared
 
 public protocol CategoryRepository: Sendable {
-    
+
+    var categoryUpdatedPublisher: AnyPublisher<CategoryUpdateType, Never> { get }
+
     func create(name: String) async throws
     
     func getAllCategories(
