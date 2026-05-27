@@ -55,6 +55,7 @@ final class MappingTests: XCTestCase {
             // given
             let memoEntity = MemoEntity(context: context)
             let categoryEntity = CategoryEntity(context: context)
+            categoryEntity.categoryID = UUID()
             categoryEntity.name = "업무"
             memoEntity.addToCategories(categoryEntity)
 
@@ -111,6 +112,7 @@ final class MappingTests: XCTestCase {
         context.performAndWait {
             // given
             let entity = CategoryEntity(context: context)
+            entity.categoryID = UUID()
             entity.name = "개인"
 
             // when
