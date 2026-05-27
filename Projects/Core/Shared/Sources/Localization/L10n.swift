@@ -134,6 +134,14 @@ public enum L10n {
             public static let unknown = "sync.auth.unknown".localized()
         }
 
+        public enum Error {
+            public static let network = "sync.error.network".localized()
+            public static let permissionDenied = "sync.error.permissionDenied".localized()
+            public static let quotaExceeded = "sync.error.quotaExceeded".localized()
+            public static let unauthenticated = "sync.error.unauthenticated".localized()
+            public static let unknown = "sync.error.unknown".localized()
+        }
+
         public enum Introduction {
             public static let title = "sync.introduction.title".localized()
             public static let body = "sync.introduction.body".localized()

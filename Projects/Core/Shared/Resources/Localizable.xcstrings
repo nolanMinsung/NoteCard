@@ -1786,6 +1786,91 @@
         }
       }
     },
+    "sync.error.network": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You appear to be offline. Sync will resume when the network is back."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "네트워크에 연결되어 있지 않아요. 연결이 복구되면 동기화가 다시 진행돼요."
+          }
+        }
+      }
+    },
+    "sync.error.permissionDenied": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync was blocked. Please sign out and sign back in."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동기화가 거부되었어요. 로그아웃 후 다시 로그인해 주세요."
+          }
+        }
+      }
+    },
+    "sync.error.quotaExceeded": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The sync service is over capacity. Please try again later."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동기화 사용량이 초과되었어요. 잠시 후 다시 시도해주세요."
+          }
+        }
+      }
+    },
+    "sync.error.unauthenticated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your session has expired. Please sign in again."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로그인 세션이 만료되었어요. 다시 로그인해 주세요."
+          }
+        }
+      }
+    },
+    "sync.error.unknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync ran into a problem. Please try again later."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동기화 중 문제가 발생했어요. 잠시 후 다시 시도해주세요."
+          }
+        }
+      }
+    },
     "tabBar.home": {
       "extractionState": "manual",
       "localizations": {
