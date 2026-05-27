@@ -54,8 +54,9 @@ final class MappingTests: XCTestCase {
         context.performAndWait {
             // given
             let memoEntity = MemoEntity(context: context)
+            let categoryID = UUID()
             let categoryEntity = CategoryEntity(context: context)
-            categoryEntity.categoryID = UUID()
+            categoryEntity.categoryID = categoryID
             categoryEntity.name = "업무"
             memoEntity.addToCategories(categoryEntity)
 
@@ -63,6 +64,7 @@ final class MappingTests: XCTestCase {
             let memo = memoEntity.toDomain()
 
             // then
+            XCTAssertEqual(memo.categories.map(\.id), [categoryID])
             XCTAssertEqual(memo.categories.map(\.name), ["업무"])
         }
     }
