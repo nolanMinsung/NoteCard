@@ -10,6 +10,7 @@ let project = Project.module(
         .module(.syncInterface),
         .module(.domain),
         .external(name: "FirebaseAuth"),
+        .external(name: "FirebaseFirestore"),
     ],
     hasTests: true
 )
