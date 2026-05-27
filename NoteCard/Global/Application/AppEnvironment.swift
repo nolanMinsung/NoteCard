@@ -55,6 +55,13 @@ struct AppEnvironment {
         )
         self.dataLayer = dataLayer
 
+        // v3 모델로 마이그레이션된 store에서 categoryID가 nil인 row를 채움 (1회, 멱등).
+        // Core Data lightweight migration이 row별 다른 UUID를 부여 못 해 코드로 backfill.
+        CategoryUUIDBackfiller.backfill(
+            in: dataLayer.currentStack,
+            onError: { error in assertionFailure("CategoryUUIDBackfiller 실패: \(error)") }
+        )
+
         let memoRepository = MemoRepositoryImpl(dataLayer: dataLayer)
         self.memoRepository = memoRepository
         self.categoryRepository = CategoryRepositoryImpl(dataLayer: dataLayer)
