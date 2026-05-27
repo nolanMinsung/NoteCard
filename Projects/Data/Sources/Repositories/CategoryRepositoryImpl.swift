@@ -64,20 +64,20 @@ public extension CategoryRepositoryImpl {
 
 public extension CategoryRepositoryImpl {
     
-    private func fetchCategoryEntity(name: String) throws -> CategoryEntity {
+    private func fetchCategoryEntity(id: UUID) throws -> CategoryEntity {
         let request = CategoryEntity.fetchRequest()
-        request.predicate = categoryNameEqual(to: name)
+        request.predicate = NSPredicate(format: "categoryID == %@", id as CVarArg)
         let foundCategory = try self.context.fetch(request)
         switch foundCategory.count {
         case 0:
-            throw CoreDataError.categoryNotFound(name: name)
+            throw CoreDataError.categoryNotFound(id: id)
         case 1:
             return foundCategory.first!
         default:
             throw CoreDataError.duplicateCategoryDetected
         }
     }
-    
+
     func create(name: String) async throws {
         let allCategoryNames = try await getAllCategories(inOrderOf: .modificationDate, isAscending: false).map(\.name)
         guard !allCategoryNames.contains(name) else {
@@ -85,6 +85,7 @@ public extension CategoryRepositoryImpl {
         }
         try await context.perform { [unowned self] in
             let newCategory = CategoryEntity(context: self.context)
+            newCategory.categoryID = UUID()
             newCategory.name = name
             try self.context.save()
         }
@@ -131,7 +132,7 @@ public extension CategoryRepositoryImpl {
             throw CoreDataError.duplicateCategoryDetected
         }
         try await context.perform { [unowned self] in
-            let categoryEntity = try fetchCategoryEntity(name: category.name)
+            let categoryEntity = try fetchCategoryEntity(id: category.id)
             categoryEntity.name = newName
             try context.save()
         }
@@ -139,7 +140,7 @@ public extension CategoryRepositoryImpl {
     
     func deleteCategory(_ category: Domain.Category) async throws {
         try await context.perform { [unowned self] in
-            let categoryEntity = try fetchCategoryEntity(name: category.name)
+            let categoryEntity = try fetchCategoryEntity(id: category.id)
             context.delete(categoryEntity)
             try context.save()
         }
@@ -147,14 +148,14 @@ public extension CategoryRepositoryImpl {
     
     func memoCount(of category: Domain.Category) async throws -> Int {
         try await context.perform { [unowned self] in
-            let categoryEntity = try fetchCategoryEntity(name: category.name)
+            let categoryEntity = try fetchCategoryEntity(id: category.id)
             return categoryEntity.memoSet.count
         }
     }
     
     func updateModificationDate(of category: Domain.Category) async throws {
         try await context.perform { [unowned self] in
-            let categoryEntity = try fetchCategoryEntity(name: category.name)
+            let categoryEntity = try fetchCategoryEntity(id: category.id)
             categoryEntity.modificationDate = .now
         }
     }

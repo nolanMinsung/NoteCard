@@ -54,7 +54,9 @@ final class MappingTests: XCTestCase {
         context.performAndWait {
             // given
             let memoEntity = MemoEntity(context: context)
+            let categoryID = UUID()
             let categoryEntity = CategoryEntity(context: context)
+            categoryEntity.categoryID = categoryID
             categoryEntity.name = "업무"
             memoEntity.addToCategories(categoryEntity)
 
@@ -62,6 +64,7 @@ final class MappingTests: XCTestCase {
             let memo = memoEntity.toDomain()
 
             // then
+            XCTAssertEqual(memo.categories.map(\.id), [categoryID])
             XCTAssertEqual(memo.categories.map(\.name), ["업무"])
         }
     }
@@ -111,6 +114,7 @@ final class MappingTests: XCTestCase {
         context.performAndWait {
             // given
             let entity = CategoryEntity(context: context)
+            entity.categoryID = UUID()
             entity.name = "개인"
 
             // when
@@ -158,28 +162,31 @@ final class MappingTests: XCTestCase {
 
     // MARK: - Category → CategoryEntity
 
-    func test_같은_이름의_엔티티가_없으면_새_CategoryEntity를_만든다() {
+    func test_같은_id의_엔티티가_없으면_새_CategoryEntity를_만든다() {
         context.performAndWait {
-            // given: 컨텍스트에 같은 이름의 엔티티가 없음
-            let category = Domain.Category(name: "신규", creationDate: .now, modificationDate: .now)
+            // given: 컨텍스트에 같은 id의 엔티티가 없음
+            let category = Domain.Category(id: UUID(), name: "신규", creationDate: .now, modificationDate: .now)
 
             // when
             let entity = category.toEntity(in: context)
 
             // then
             XCTAssertEqual(entity.name, "신규")
+            XCTAssertEqual(entity.categoryID, category.id)
         }
     }
 
-    func test_같은_이름의_엔티티가_있으면_기존_것을_재사용한다() {
+    func test_같은_id의_엔티티가_있으면_기존_것을_재사용한다() {
         context.performAndWait {
-            // given: 이미 "업무" CategoryEntity가 컨텍스트에 존재
+            // given: 이미 같은 id의 CategoryEntity가 컨텍스트에 존재
+            let sharedID = UUID()
             let existing = CategoryEntity(context: context)
+            existing.categoryID = sharedID
             existing.name = "업무"
             try? context.save()
 
-            // when: 같은 이름의 Domain 모델을 엔티티로 변환하면
-            let category = Domain.Category(name: "업무", creationDate: .now, modificationDate: .now)
+            // when: 같은 id의 Domain 모델을 엔티티로 변환하면
+            let category = Domain.Category(id: sharedID, name: "업무", creationDate: .now, modificationDate: .now)
             let entity = category.toEntity(in: context)
 
             // then: 새로 만들지 않고 기존 엔티티를 그대로 돌려준다

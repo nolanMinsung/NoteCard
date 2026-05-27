@@ -18,6 +18,8 @@ public extension CategoryEntity {
         return NSFetchRequest<CategoryEntity>(entityName: "CategoryEntity")
     }
 
+    /// v3에서 추가된 안정 식별자. v2 store에는 없으므로 optional로 유지하고 앱 시작 시 `CategoryUUIDBackfiller`로 채움.
+    @NSManaged var categoryID: UUID?
     @NSManaged var creationDate: Date
     @NSManaged var modificationDate: Date
     @NSManaged var name: String

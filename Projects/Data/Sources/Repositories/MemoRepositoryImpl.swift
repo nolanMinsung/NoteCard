@@ -79,7 +79,7 @@ public final class MemoRepositoryImpl: MemoRepository, @unchecked Sendable {
     /// `category` 인자가 `nil`인 경우, 카테고리가 없는 데이터를 가져옴.
     private func memoHasCategory(_ category: Domain.Category?) -> NSPredicate {
         if let category {
-            return NSPredicate(format: "ANY categories.name == %@", category.name as CVarArg)
+            return NSPredicate(format: "ANY categories.categoryID == %@", category.id as CVarArg)
         } else {
             return NSPredicate(format: "categories.@count == 0")
         }
