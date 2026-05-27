@@ -21,7 +21,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
+
+        // 동기화 lifecycle 시작. 인증 상태 구독을 걸어두고, 사용자 변경 시 status가 자동 전이.
+        // 현재 start()는 빠르게 끝나므로 fire-and-forget으로 충분.
+        Task { [environment] in
+            await environment.syncService.start()
+        }
+
         // 앱 내의 설정값들 초기화 (다크모드 제외) -> 다크모드는 window 를 바꿔야 해서, window 설정하는 SceneDelegate에서...
         
         // 현재는 날짜 표시 형식을 직접 UserDefault에 저장하지 않고, locale을 기반으로 자동으로 변경되도록 설정.
