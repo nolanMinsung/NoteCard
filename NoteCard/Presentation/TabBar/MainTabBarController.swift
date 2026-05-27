@@ -101,6 +101,7 @@ class MainTabBarController: UITabBarController {
             memoRepository: environment.memoRepository,
             categoryRepository: environment.categoryRepository,
             analytics: environment.analytics,
+            authService: environment.authService,
             makeTrashViewController: { [environment] in
                 MemoViewController(memoVCType: .trash, environment: environment)
             }

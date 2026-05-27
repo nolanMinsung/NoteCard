@@ -10,6 +10,7 @@ import UIKit
 import Domain
 import DesignSystem
 import Shared
+import SyncInterface
 import Combine
 
 public final class SettingsViewController: UITableViewController {
@@ -17,17 +18,20 @@ public final class SettingsViewController: UITableViewController {
     private let memoRepository: MemoRepository
     private let categoryRepository: CategoryRepository
     private let analytics: Analytics
+    private let authService: AuthService
     private let makeTrashViewController: () -> UIViewController
 
     public init(
         memoRepository: MemoRepository,
         categoryRepository: CategoryRepository,
         analytics: Analytics,
+        authService: AuthService,
         makeTrashViewController: @escaping () -> UIViewController
     ) {
         self.memoRepository = memoRepository
         self.categoryRepository = categoryRepository
         self.analytics = analytics
+        self.authService = authService
         self.makeTrashViewController = makeTrashViewController
         super.init(nibName: nil, bundle: nil)
     }
@@ -37,7 +41,10 @@ public final class SettingsViewController: UITableViewController {
     }
 
     var settingTitles: [[String]] = [
-        
+
+        //account
+        [L10n.Account.title],
+
         //design
         //표시 순서는 각 컬렉션뷰에서 선택
         [L10n.Settings.themeColor,
@@ -47,14 +54,14 @@ public final class SettingsViewController: UITableViewController {
         ],
         //표시 순서 대신, 표시 안의 하위 항목으로 앱 잠금 시 표시 방법? 이런 걸 써도 좋을 듯. (앱 잠금 시 제목만 보일 건지, 아니면 수정 날짜만 보일 건지...등)
         //그리고 표시 안의 하위 항목으로 다른 것들 도 표시할 수 있으니...
-        
+
         //data
         //"메모 검색" 기능은 추후 아예 탭으로 빼 버릴 수도 있음.
         [L10n.Settings.totalMemos, L10n.Settings.totalCategories, L10n.MemoView.trash, L10n.Settings.emptyTrash],
-        
+
         //contact
         [L10n.Settings.version]
-        
+
     ]
     
     let settingsTableView: UITableView = {
@@ -98,7 +105,7 @@ public final class SettingsViewController: UITableViewController {
     }
     
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        self.tableView.reloadRows(at: [IndexPath(row: 3, section: 0)], with: UITableView.RowAnimation.none)
+        self.tableView.reloadRows(at: [IndexPath(row: 3, section: 2)], with: UITableView.RowAnimation.none)
     }
     
     private func setupUI() {
@@ -182,6 +189,14 @@ extension SettingsViewController {
         
         switch indexPath {
         case IndexPath(row: 0, section: 0):
+            cell.configureCell(
+                image: UIImage(systemName: "person.crop.circle"),
+                text: self.settingTitles[indexPath.section][indexPath.row],
+                secondaryText: "",
+                accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
+            )
+
+        case IndexPath(row: 0, section: 1):
             guard let currentTheme = UserDefaults.standard.string(forKey: UserDefaultsKeys.themeColor.rawValue) else { fatalError() }
             var secondaryText: String = ""
             
@@ -216,7 +231,7 @@ extension SettingsViewController {
                                accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
             )
             
-        case IndexPath(row: 1, section: 0):
+        case IndexPath(row: 1, section: 1):
             let isTimeFormat24 = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isTimeFormat24.rawValue)
             cell.configureCell(image: UIImage(systemName: "clock"), 
                                text: self.settingTitles[indexPath.section][indexPath.row],
@@ -224,7 +239,7 @@ extension SettingsViewController {
                                accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
             )
             
-        case IndexPath(row: 2, section: 0):
+        case IndexPath(row: 2, section: 1):
             guard let userDefaultCriterion = UserDefaults.standard.string(forKey: UserDefaultsKeys.orderCriterion.rawValue) else { fatalError() }
             let userDefautlAscendingValue = UserDefaults.standard.bool(forKey: UserDefaultsKeys.isOrderAscending.rawValue)
             let currentState1: String
@@ -252,7 +267,7 @@ extension SettingsViewController {
                                accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
             )
             
-        case IndexPath(row: 3, section: 0):
+        case IndexPath(row: 3, section: 1):
             guard let darkModeTheme =
                     UserDefaults.standard.string(forKey: UserDefaultsKeys.darkModeTheme.rawValue) else { fatalError()}
             switch darkModeTheme {
@@ -284,7 +299,7 @@ extension SettingsViewController {
             }
             
             
-        case IndexPath(row: 0, section: 1):
+        case IndexPath(row: 0, section: 2):
             let totalNumberOfMemo = self.totalMemoCount
             
             cell.configureCell(image: UIImage(systemName: "rectangle.portrait.on.rectangle.portrait"),
@@ -294,7 +309,7 @@ extension SettingsViewController {
             )
             cell.selectionStyle = .none
             
-        case IndexPath(row: 1, section: 1):
+        case IndexPath(row: 1, section: 2):
             let totalNumberOfCategory = self.totalCategoryCount
             cell.configureCell(image: UIImage(systemName: "circlebadge.2"),
                                text: self.settingTitles[indexPath.section][indexPath.row],
@@ -303,7 +318,7 @@ extension SettingsViewController {
             )
             cell.selectionStyle = .none
             
-        case IndexPath(row: 2, section: 1):
+        case IndexPath(row: 2, section: 2):
             let numberOfMemoesInTrash = self.trashMemoCount
             cell.configureCell(image: UIImage(systemName: "trash")?.withTintColor(.systemGray).withRenderingMode(UIImage.RenderingMode.alwaysOriginal),
                                text: self.settingTitles[indexPath.section][indexPath.row],
@@ -311,7 +326,7 @@ extension SettingsViewController {
                                accesoryType: UITableViewCell.AccessoryType.disclosureIndicator
             )
             
-        case IndexPath(row: 3, section: 1):
+        case IndexPath(row: 3, section: 2):
             let numberOfMemoesInTrash = self.trashMemoCount
             
             cell.configureCell(text: self.settingTitles[indexPath.section][indexPath.row],
@@ -319,7 +334,7 @@ extension SettingsViewController {
                                accesoryType: UITableViewCell.AccessoryType.none
             )
             
-        case IndexPath(row: 0, section: 2):
+        case IndexPath(row: 0, section: 3):
             
             guard let currentAppName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String else { fatalError() }
             guard let currentAppVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else { fatalError() }
@@ -345,7 +360,7 @@ extension SettingsViewController {
     }
     
     public override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == 1 {
+        if section == 2 {
             return L10n.Settings.trashRetentionMessage
         } else {
             return nil
@@ -358,7 +373,7 @@ extension SettingsViewController {
 extension SettingsViewController {
     
     public override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        guard indexPath.section == 1, indexPath.row == 3 else { return indexPath }
+        guard indexPath.section == 2, indexPath.row == 3 else { return indexPath }
         guard let cell = self.settingsTableView.cellForRow(at: indexPath) as? SettingsTableViewCell else { fatalError() }
         let numberOfMemoesInTrash = self.trashMemoCount
         if numberOfMemoesInTrash == 0 {
@@ -374,17 +389,19 @@ extension SettingsViewController {
         
         switch indexPath {
         case IndexPath(row: 0, section: 0):
+            targetVC = AccountDetailViewController(authService: authService)
+        case IndexPath(row: 0, section: 1):
             targetVC = ThemeColorPickingViewController()
-        case IndexPath(row: 1, section: 0):
+        case IndexPath(row: 1, section: 1):
             targetVC = TimeFormatSettingViewController()
-        case IndexPath(row: 2, section: 0):
+        case IndexPath(row: 2, section: 1):
             targetVC = OrderSettingViewController()
-        case IndexPath(row: 3, section: 0):
+        case IndexPath(row: 3, section: 1):
             targetVC = DarkModeSettingViewController()
             
-        case IndexPath(row: 2, section: 1):
+        case IndexPath(row: 2, section: 2):
             targetVC = makeTrashViewController()
-        case IndexPath(row: 3, section: 1):
+        case IndexPath(row: 3, section: 2):
             showDeleteAllAlert(indexPath: indexPath)
             
         default:
