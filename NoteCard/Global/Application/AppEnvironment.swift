@@ -24,6 +24,7 @@ struct AppEnvironment {
     let imageRepository: ImageRepository
     let analytics: Analytics
     let authService: AuthService
+    let syncService: SyncService
 
     private let dataLayer: UserScopedDataLayer
 
@@ -66,6 +67,10 @@ struct AppEnvironment {
         self.memoRepository = memoRepository
         self.categoryRepository = CategoryRepositoryImpl(dataLayer: dataLayer)
         self.imageRepository = ImageRepositoryImpl(dataLayer: dataLayer, memoRepository: memoRepository)
+
+        // FirebaseApp 설정이 있으면 Firestore 기반 동기화, 아니면 No-op fallback.
+        // 인스턴스만 보관하고 실제 lifecycle 시작(start())은 AppDelegate에서 명시 호출.
+        self.syncService = SyncBootstrap.makeSyncService(authService: authService)
     }
 
     /// Crashlytics를 켜고(가능하면) Amplitude 기반 `Analytics`를 만든다.
