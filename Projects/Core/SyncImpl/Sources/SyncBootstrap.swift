@@ -26,4 +26,17 @@ public enum SyncBootstrap {
     public static func makeNoOpAuthService() -> AuthService {
         NoOpAuthService()
     }
+
+    /// FirebaseApp 설정이 완료돼 있으면 Firestore 기반 `SyncService`를, 아니면 No-op 구현을 반환.
+    public static func makeSyncService(authService: AuthService) -> SyncService {
+        guard FirebaseApp.app() != nil else {
+            return NoOpSyncService()
+        }
+        return FirestoreSyncService(authService: authService)
+    }
+
+    /// 명시적으로 No-op 구현을 만들고 싶을 때 (테스트·프리뷰 등).
+    public static func makeNoOpSyncService() -> SyncService {
+        NoOpSyncService()
+    }
 }
