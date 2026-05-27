@@ -1,3 +1,4 @@
+import Combine
 import XCTest
 import Domain
 @testable import Data
@@ -194,6 +195,66 @@ final class CategoryRepositoryTests: XCTestCase {
 
         // then
         XCTAssertEqual(count, 0)
+    }
+
+    // MARK: - 이벤트 퍼블리셔
+
+    func test_카테고리를_생성하면_퍼블리셔로_생성_이벤트가_방출된다() async throws {
+        // given
+        var received: [CategoryUpdateType] = []
+        let cancellable = sut.categoryUpdatedPublisher.sink { received.append($0) }
+        defer { cancellable.cancel() }
+
+        // when
+        try await sut.create(name: "업무")
+
+        // then
+        XCTAssertEqual(received, [.create])
+    }
+
+    func test_카테고리_이름을_변경하면_퍼블리셔로_업데이트_이벤트가_방출된다() async throws {
+        // given
+        try await sut.create(name: "업무")
+        let work = try await category(named: "업무")
+        var received: [CategoryUpdateType] = []
+        let cancellable = sut.categoryUpdatedPublisher.sink { received.append($0) }
+        defer { cancellable.cancel() }
+
+        // when
+        try await sut.changeCategoryName(work, newName: "회사")
+
+        // then
+        XCTAssertEqual(received, [.update(content: .name(categoryIDs: [work.id]))])
+    }
+
+    func test_카테고리를_삭제하면_퍼블리셔로_삭제_이벤트가_방출된다() async throws {
+        // given
+        try await sut.create(name: "업무")
+        let work = try await category(named: "업무")
+        var received: [CategoryUpdateType] = []
+        let cancellable = sut.categoryUpdatedPublisher.sink { received.append($0) }
+        defer { cancellable.cancel() }
+
+        // when
+        try await sut.deleteCategory(work)
+
+        // then
+        XCTAssertEqual(received, [.delete])
+    }
+
+    func test_수정일_갱신시_퍼블리셔로_업데이트_이벤트가_방출된다() async throws {
+        // given
+        try await sut.create(name: "업무")
+        let work = try await category(named: "업무")
+        var received: [CategoryUpdateType] = []
+        let cancellable = sut.categoryUpdatedPublisher.sink { received.append($0) }
+        defer { cancellable.cancel() }
+
+        // when
+        try await sut.updateModificationDate(of: work)
+
+        // then
+        XCTAssertEqual(received, [.update(content: .modificationDate(categoryIDs: [work.id]))])
     }
 
     // MARK: - 헬퍼
