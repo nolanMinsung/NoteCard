@@ -170,6 +170,7 @@ public extension CategoryRepositoryImpl {
         try await context.perform { [unowned self] in
             let categoryEntity = try fetchCategoryEntity(id: category.id)
             categoryEntity.modificationDate = .now
+            try context.save()
         }
         categoryUpdatedSubject.send(.update(content: .modificationDate(categoryIDs: [category.id])))
     }
