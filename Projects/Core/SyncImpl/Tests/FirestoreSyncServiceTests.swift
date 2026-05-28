@@ -1,26 +1,35 @@
 import Combine
 import XCTest
+import Domain
 import SyncInterface
 @testable import SyncImpl
 
-/// `FirestoreSyncService`의 status 전이를 검증한다. Firestore 네트워크에는 접근하지 않으며
-/// `AuthService` 인증 상태 변경에 따른 lifecycle만 다룬다.
+/// `FirestoreSyncService`의 status 전이와 메모 push 결합을 검증한다.
+/// Firestore 네트워크에는 접근하지 않으며, 원격 쓰기는 `MockMemoRemoteWriter`로 대체한다.
 final class FirestoreSyncServiceTests: XCTestCase {
 
     private var auth: MockAuthService!
+    private var memoRepository: MockMemoRepository!
+    private var writer: MockMemoRemoteWriter!
     private var sut: FirestoreSyncService!
 
     override func setUp() {
         super.setUp()
         auth = MockAuthService()
-        sut = FirestoreSyncService(authService: auth)
+        memoRepository = MockMemoRepository()
+        writer = MockMemoRemoteWriter()
+        sut = FirestoreSyncService(authService: auth, memoRepository: memoRepository, memoWriter: writer)
     }
 
     override func tearDown() {
         sut = nil
+        writer = nil
+        memoRepository = nil
         auth = nil
         super.tearDown()
     }
+
+    // MARK: - status 전이
 
     func test_초기_status는_disconnected이다() {
         XCTAssertEqual(sut.currentStatus, .disconnected)
@@ -94,7 +103,7 @@ final class FirestoreSyncServiceTests: XCTestCase {
         auth.emit(.sample)
         await sut.start()
 
-        // when: 한 번 더 호출해도 추가 구독이 생기지 않는다 — emit 시 한 번만 전이
+        // when: 한 번 더 호출해도 추가 구독이 생기지 않는다
         await sut.start()
 
         // then
@@ -118,31 +127,153 @@ final class FirestoreSyncServiceTests: XCTestCase {
         XCTAssertTrue(received.contains(.upToDate))
         XCTAssertEqual(received.last, .disconnected)
     }
+
+    // MARK: - 메모 push 결합
+
+    func test_업데이트_이벤트가_오면_해당_메모를_upsert한다() async {
+        // given
+        auth.emit(.sample)
+        await sut.start()
+        let id = UUID()
+        memoRepository.stubMemo = Self.makeMemo(id: id)
+        let exp = expectation(description: "upsert 호출")
+        writer.onUpsert = { _ in exp.fulfill() }
+
+        // when
+        memoRepository.emit(.update(content: .titleText(memoIDs: [id])))
+
+        // then
+        await fulfillment(of: [exp], timeout: 1.0)
+        XCTAssertEqual(writer.upsertedMemoIDs, [id])
+        XCTAssertEqual(writer.lastUserID, "test-uid")
+    }
+
+    func test_삭제_이벤트가_오면_해당_메모를_delete한다() async {
+        // given
+        auth.emit(.sample)
+        await sut.start()
+        let id = UUID()
+        let exp = expectation(description: "delete 호출")
+        writer.onDelete = { _ in exp.fulfill() }
+
+        // when
+        memoRepository.emit(.delete(memoIDs: [id]))
+
+        // then
+        await fulfillment(of: [exp], timeout: 1.0)
+        XCTAssertEqual(writer.deletedMemoIDs, [id])
+        XCTAssertTrue(writer.upsertedMemoIDs.isEmpty)
+    }
+
+    func test_로그아웃_상태에서는_push하지_않는다() async {
+        // given: 인증되지 않은 상태
+        await sut.start()
+
+        // when: 메모 이벤트가 와도
+        memoRepository.emit(.update(content: .titleText(memoIDs: [UUID()])))
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        // then: userID가 없어 push하지 않는다
+        XCTAssertTrue(writer.upsertedMemoIDs.isEmpty)
+        XCTAssertTrue(writer.deletedMemoIDs.isEmpty)
+    }
+
+    // MARK: - 헬퍼
+
+    private static func makeMemo(id: UUID) -> Memo {
+        Memo(
+            memoID: id,
+            creationDate: .now,
+            modificationDate: .now,
+            deletedDate: nil,
+            isFavorite: false,
+            isInTrash: false,
+            memoText: "",
+            memoTitle: "",
+            categories: [],
+            images: []
+        )
+    }
 }
 
-// MARK: - Mock
+// MARK: - Mocks
 
 private final class MockAuthService: AuthService, @unchecked Sendable {
 
     private let subject = CurrentValueSubject<AuthUser?, Never>(nil)
 
     var currentUser: AuthUser? { subject.value }
+    var authStatePublisher: AnyPublisher<AuthUser?, Never> { subject.eraseToAnyPublisher() }
 
-    var authStatePublisher: AnyPublisher<AuthUser?, Never> {
-        subject.eraseToAnyPublisher()
-    }
-
-    func signInWithApple() async throws -> AuthUser {
-        fatalError("not used in tests")
-    }
-
+    func signInWithApple() async throws -> AuthUser { fatalError("not used in tests") }
     func signOut() async throws {}
-
     func deleteAccount() async throws {}
 
-    func emit(_ user: AuthUser?) {
-        subject.send(user)
+    func emit(_ user: AuthUser?) { subject.send(user) }
+}
+
+private final class MockMemoRemoteWriter: MemoRemoteWriting, @unchecked Sendable {
+
+    private(set) var upsertedMemoIDs: [UUID] = []
+    private(set) var deletedMemoIDs: [UUID] = []
+    private(set) var lastUserID: String?
+    var onUpsert: ((UUID) -> Void)?
+    var onDelete: ((UUID) -> Void)?
+
+    func upsert(_ memo: Memo, userID: String) async throws {
+        upsertedMemoIDs.append(memo.memoID)
+        lastUserID = userID
+        onUpsert?(memo.memoID)
     }
+
+    func delete(memoID: UUID, userID: String) async throws {
+        deletedMemoIDs.append(memoID)
+        lastUserID = userID
+        onDelete?(memoID)
+    }
+}
+
+/// `memoUpdatedPublisher`와 `getMemoIncludingTrash`만 실제로 동작하는 최소 구현.
+/// 나머지 메서드는 본 테스트에서 호출되지 않으므로 미구현.
+private final class MockMemoRepository: MemoRepository, @unchecked Sendable {
+
+    private let subject = PassthroughSubject<MemoUpdateType, Never>()
+    var stubMemo: Memo?
+
+    var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> { subject.eraseToAnyPublisher() }
+
+    func emit(_ event: MemoUpdateType) { subject.send(event) }
+
+    struct StubMemoNotFound: Error {}
+
+    func getMemoIncludingTrash(id: UUID) async throws -> Memo {
+        guard let stubMemo else { throw StubMemoNotFound() }
+        return stubMemo
+    }
+
+    // 이하 본 테스트에서 미사용
+    func createNewMemo() async throws -> Memo { fatalError("not used") }
+    func getMemo(id: UUID) async throws -> Memo { fatalError("not used") }
+    func getAllMemos() async throws -> [Memo] { fatalError("not used") }
+    func getAllMemos(inCategory category: Domain.Category?) async throws -> [Memo] { fatalError("not used") }
+    func getAllMemosInTrash() async throws -> [Memo] { fatalError("not used") }
+    func searchMemo(searchText: String, inCategory category: Domain.Category?) async throws -> [Memo] { fatalError("not used") }
+    func getFavoriteMemos() async throws -> [Memo] { fatalError("not used") }
+    func moveToTrash(_ memo: Memo) async throws { fatalError("not used") }
+    func moveToTrash(_ memos: [Memo]) async throws { fatalError("not used") }
+    func deleteMemo(_ memo: Memo) async throws { fatalError("not used") }
+    func deleteMemos(_ memos: [Memo]) async throws { fatalError("not used") }
+    func restore(_ memo: Memo) async throws { fatalError("not used") }
+    func restore(_ memos: [Memo]) async throws { fatalError("not used") }
+    func replaceCategories(to: Memo, newCategories: Set<Domain.Category>) async throws { fatalError("not used") }
+    func replaceCategories(to: [Memo], newCategories: Set<Domain.Category>) async throws { fatalError("not used") }
+    func addCategories(to: Memo, newCategories: Set<Domain.Category>) async throws { fatalError("not used") }
+    func addCategories(to: [Memo], newCategories: Set<Domain.Category>) async throws { fatalError("not used") }
+    func removeCategories(to: Memo, newCategories: Set<Domain.Category>) async throws { fatalError("not used") }
+    func removeCategories(to: [Memo], newCategories: Set<Domain.Category>) async throws { fatalError("not used") }
+    func setFavorite(_ memo: Memo, to value: Bool) async throws { fatalError("not used") }
+    func setFavorite(_ memos: [Memo], to value: Bool) async throws { fatalError("not used") }
+    func updateMemoContent(_ memo: Memo, newTitle: String?, newMemoText: String?) async throws { fatalError("not used") }
 }
 
 private extension AuthUser {
