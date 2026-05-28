@@ -145,6 +145,22 @@ public extension MemoRepositoryImpl {
             try fetchMemoEntity(id: id).toDomain()
         }
     }
+
+    func getMemoIncludingTrash(id: UUID) async throws -> Memo {
+        try await context.perform { [unowned self] in
+            let request = MemoEntity.fetchRequest()
+            request.predicate = memoIDEquals(to: id)
+            let found = try self.context.fetch(request)
+            switch found.count {
+            case 0:
+                throw MemoEntityError.memoNotFound(id: id)
+            case 1:
+                return found.first!.toDomain()
+            default:
+                throw MemoEntityError.duplicateMemoDetected
+            }
+        }
+    }
     
     func getAllMemos() async throws -> [Memo]  {
         try await context.perform { [unowned self] in
