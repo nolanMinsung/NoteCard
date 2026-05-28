@@ -395,10 +395,10 @@ final class MemoRepositoryTests: XCTestCase {
         defer { cancellable.cancel() }
 
         // when
-        _ = try await sut.createNewMemo()
+        let created = try await sut.createNewMemo()
 
-        // then
-        XCTAssertEqual(received, [.create])
+        // then: 생성 이벤트에 방금 만든 메모의 ID가 실려야 한다
+        XCTAssertEqual(received, [.create(memoIDs: [created.memoID])])
     }
 
     // MARK: - 배열 일괄 처리
