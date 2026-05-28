@@ -96,7 +96,7 @@ public extension MemoRepositoryImpl {
             try self.context.save()
             return newMemoEntity.toDomain()
         }
-        memoUpdatedSubject.send(.create)
+        memoUpdatedSubject.send(.create(memoIDs: [createdMemo.memoID]))
         return createdMemo
     }
     
@@ -240,7 +240,7 @@ public extension MemoRepositoryImpl {
             memoEntityToTrash.removeFromCategories(memoEntityToTrash.categories)
             try self.context.save()
         }
-        memoUpdatedSubject.send((.trash))
+        memoUpdatedSubject.send(.trash(memoIDs: [memo.memoID]))
     }
     
     func moveToTrash(_ memos: [Memo]) async throws {
@@ -254,7 +254,7 @@ public extension MemoRepositoryImpl {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.trash)
+        memoUpdatedSubject.send(.trash(memoIDs: memos.map(\.memoID)))
     }
     
 }
@@ -277,7 +277,7 @@ public extension MemoRepositoryImpl {
             self.context.delete(memoEntityToDelete)
             try self.context.save()
         }
-        memoUpdatedSubject.send(.delete)
+        memoUpdatedSubject.send(.delete(memoIDs: [memo.memoID]))
     }
     
     func deleteMemos(_ memos: [Memo]) async throws {
@@ -296,7 +296,7 @@ public extension MemoRepositoryImpl {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.delete)
+        memoUpdatedSubject.send(.delete(memoIDs: memos.map(\.memoID)))
     }
     
 }
@@ -312,7 +312,7 @@ public extension MemoRepositoryImpl {
             memoEntityToRestore.deletedDate = nil
             try self.context.save()
         }
-        memoUpdatedSubject.send(.restore)
+        memoUpdatedSubject.send(.restore(memoIDs: [memo.memoID]))
     }
     
     func restore(_ memos: [Memo]) async throws {
@@ -324,7 +324,7 @@ public extension MemoRepositoryImpl {
             }
             try self.context.save()
         }
-        memoUpdatedSubject.send(.restore)
+        memoUpdatedSubject.send(.restore(memoIDs: memos.map(\.memoID)))
     }
     
 }

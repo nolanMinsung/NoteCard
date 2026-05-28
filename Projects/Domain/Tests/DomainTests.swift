@@ -22,3 +22,25 @@ final class DomainModelInitTests: XCTestCase {
         XCTAssertLessThan(a, b)
     }
 }
+
+final class MemoUpdateTypeTests: XCTestCase {
+
+    func test_memoIDs는_각_케이스의_대상_메모ID를_반환한다() {
+        let a = UUID()
+        let b = UUID()
+
+        XCTAssertEqual(MemoUpdateType.create(memoIDs: [a]).memoIDs, [a])
+        XCTAssertEqual(MemoUpdateType.trash(memoIDs: [a, b]).memoIDs, [a, b])
+        XCTAssertEqual(MemoUpdateType.delete(memoIDs: [a]).memoIDs, [a])
+        XCTAssertEqual(MemoUpdateType.restore(memoIDs: [b]).memoIDs, [b])
+    }
+
+    func test_update_케이스의_memoIDs는_연관된_attribute의_memoIDs를_반환한다() {
+        let a = UUID()
+        let b = UUID()
+
+        XCTAssertEqual(MemoUpdateType.update(content: .titleText(memoIDs: [a])).memoIDs, [a])
+        XCTAssertEqual(MemoUpdateType.update(content: .favorite(memoIDs: [a, b])).memoIDs, [a, b])
+        XCTAssertEqual(MemoUpdateType.update(content: .category(memoIDs: [b])).memoIDs, [b])
+    }
+}
