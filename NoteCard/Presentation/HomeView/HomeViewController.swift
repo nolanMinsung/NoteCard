@@ -54,10 +54,6 @@ class HomeViewController: UIViewController {
     private var diffableDataSource: DiffableDataSource!
     
     private var cancellables: Set<AnyCancellable> = []
-    private lazy var coreDataChangePublisher = NotificationCenter.default.publisher(
-        for: .NSManagedObjectContextDidSave,
-        object: environment.coreDataStack.backgroundContext
-    )
 
     private let environment: AppEnvironment
 
@@ -257,15 +253,6 @@ class HomeViewController: UIViewController {
     }
     
     private func bind() {
-//        coreDataChangePublisher.sink { [weak self] _ in
-//            guard let self else { return }
-//            Task {
-//                try await self.fetchData()
-//                self.applySnapshot()
-//            }
-//        }
-//        .store(in: &cancellables)
-        
         ThemeManager.shared.currentThemePublisher
             .sink { [weak self] color in
                 guard let self else { return }
@@ -278,12 +265,19 @@ class HomeViewController: UIViewController {
                     cell.setNeedsLayout()
                 }
             }.store(in: &cancellables)
-        
-        let coreDataChangeStream = coreDataChangePublisher.map { _ in return () }
-        let orderSettingChangeStream = OrderSettingManager.shared.orderSettingChangedPublisher
-        
-        coreDataChangeStream
-            .merge(with: orderSettingChangeStream)
+
+        // 홈은 메모·카테고리·이미지 세 도메인과 정렬 설정을 모두 표시하므로, 각 Repository publisher와
+        // 정렬 변경 스트림을 Void로 합쳐 구독한다. Repository publisher는 stack 교체(로그인)에도 끊기지
+        // 않아, 사용자별 store로 바뀐 뒤에도 변경이 반영된다. 연속 변경은 debounce로 한 번에 묶는다.
+        let changeStreams: [AnyPublisher<Void, Never>] = [
+            environment.memoRepository.memoUpdatedPublisher.map { _ in () }.eraseToAnyPublisher(),
+            environment.categoryRepository.categoryUpdatedPublisher.map { _ in () }.eraseToAnyPublisher(),
+            environment.imageRepository.imageUpdatedPublisher.map { _ in () }.eraseToAnyPublisher(),
+            OrderSettingManager.shared.orderSettingChangedPublisher.map { _ in () }.eraseToAnyPublisher(),
+        ]
+
+        Publishers.MergeMany(changeStreams)
+            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self else { return }
                 Task {
