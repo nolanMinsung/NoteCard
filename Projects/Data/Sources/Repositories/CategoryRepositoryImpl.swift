@@ -103,6 +103,12 @@ public extension CategoryRepositoryImpl {
         categoryUpdatedSubject.send(.create(categoryIDs: [newID]))
     }
     
+    func getCategory(id: UUID) async throws -> Domain.Category {
+        try await context.perform { [unowned self] in
+            try fetchCategoryEntity(id: id).toDomain()
+        }
+    }
+
     func getAllCategories(inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] {
         try await context.perform { [unowned self] in
             let request = CategoryEntity.fetchRequest()
