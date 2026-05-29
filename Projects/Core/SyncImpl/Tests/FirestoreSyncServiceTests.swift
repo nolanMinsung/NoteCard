@@ -1,6 +1,7 @@
 import Combine
 import XCTest
 import Domain
+import Shared
 import SyncInterface
 @testable import SyncImpl
 
@@ -11,6 +12,8 @@ final class FirestoreSyncServiceTests: XCTestCase {
     private var auth: MockAuthService!
     private var memoRepository: MockMemoRepository!
     private var writer: MockMemoRemoteWriter!
+    private var categoryRepository: MockCategoryRepository!
+    private var categoryWriter: MockCategoryRemoteWriter!
     private var sut: FirestoreSyncService!
 
     override func setUp() {
@@ -18,11 +21,21 @@ final class FirestoreSyncServiceTests: XCTestCase {
         auth = MockAuthService()
         memoRepository = MockMemoRepository()
         writer = MockMemoRemoteWriter()
-        sut = FirestoreSyncService(authService: auth, memoRepository: memoRepository, memoWriter: writer)
+        categoryRepository = MockCategoryRepository()
+        categoryWriter = MockCategoryRemoteWriter()
+        sut = FirestoreSyncService(
+            authService: auth,
+            memoRepository: memoRepository,
+            memoWriter: writer,
+            categoryRepository: categoryRepository,
+            categoryWriter: categoryWriter
+        )
     }
 
     override func tearDown() {
         sut = nil
+        categoryWriter = nil
+        categoryRepository = nil
         writer = nil
         memoRepository = nil
         auth = nil
@@ -221,7 +234,98 @@ final class FirestoreSyncServiceTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    // MARK: - 카테고리 push 결합
+
+    func test_카테고리_생성_이벤트가_오면_해당_카테고리를_upsert한다() async {
+        // given
+        auth.emit(.sample)
+        await sut.start()
+        let id = UUID()
+        categoryRepository.stubCategory = Self.makeCategory(id: id)
+        let exp = expectation(description: "upsert 호출")
+        categoryWriter.onUpsert = { _ in exp.fulfill() }
+
+        // when
+        categoryRepository.emit(.create(categoryIDs: [id]))
+
+        // then
+        await fulfillment(of: [exp], timeout: 1.0)
+        XCTAssertEqual(categoryWriter.upsertedCategoryIDs, [id])
+        XCTAssertEqual(categoryWriter.lastUserID, "test-uid")
+    }
+
+    func test_카테고리_이름변경_이벤트가_오면_해당_카테고리를_upsert한다() async {
+        // given
+        auth.emit(.sample)
+        await sut.start()
+        let id = UUID()
+        categoryRepository.stubCategory = Self.makeCategory(id: id)
+        let exp = expectation(description: "upsert 호출")
+        categoryWriter.onUpsert = { _ in exp.fulfill() }
+
+        // when
+        categoryRepository.emit(.update(content: .name(categoryIDs: [id])))
+
+        // then
+        await fulfillment(of: [exp], timeout: 1.0)
+        XCTAssertEqual(categoryWriter.upsertedCategoryIDs, [id])
+    }
+
+    func test_카테고리_삭제_이벤트가_오면_해당_카테고리를_delete한다() async {
+        // given
+        auth.emit(.sample)
+        await sut.start()
+        let id = UUID()
+        let exp = expectation(description: "delete 호출")
+        categoryWriter.onDelete = { _ in exp.fulfill() }
+
+        // when
+        categoryRepository.emit(.delete(categoryIDs: [id]))
+
+        // then
+        await fulfillment(of: [exp], timeout: 1.0)
+        XCTAssertEqual(categoryWriter.deletedCategoryIDs, [id])
+        XCTAssertTrue(categoryWriter.upsertedCategoryIDs.isEmpty)
+    }
+
+    func test_로그아웃_상태에서는_카테고리를_push하지_않는다() async {
+        // given: 인증되지 않은 상태
+        await sut.start()
+
+        // when: 카테고리 이벤트가 와도
+        categoryRepository.emit(.create(categoryIDs: [UUID()]))
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        // then: userID가 없어 push하지 않는다
+        XCTAssertTrue(categoryWriter.upsertedCategoryIDs.isEmpty)
+        XCTAssertTrue(categoryWriter.deletedCategoryIDs.isEmpty)
+    }
+
+    func test_카테고리_push_실패시_error로_전이된다() async {
+        // given
+        auth.emit(.sample)
+        await sut.start()
+        categoryRepository.stubCategory = Self.makeCategory(id: UUID())
+        categoryWriter.upsertError = NSError(domain: "Test", code: 1)
+
+        let exp = expectation(description: "error")
+        let cancellable = sut.statusPublisher.sink { status in
+            if case .error = status { exp.fulfill() }
+        }
+        defer { cancellable.cancel() }
+
+        // when
+        categoryRepository.emit(.create(categoryIDs: [UUID()]))
+
+        // then
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
+
     // MARK: - 헬퍼
+
+    private static func makeCategory(id: UUID) -> Domain.Category {
+        Domain.Category(id: id, name: "", creationDate: .now, modificationDate: .now)
+    }
 
     private static func makeMemo(id: UUID) -> Memo {
         Memo(
@@ -319,6 +423,58 @@ private final class MockMemoRepository: MemoRepository, @unchecked Sendable {
     func setFavorite(_ memo: Memo, to value: Bool) async throws { fatalError("not used") }
     func setFavorite(_ memos: [Memo], to value: Bool) async throws { fatalError("not used") }
     func updateMemoContent(_ memo: Memo, newTitle: String?, newMemoText: String?) async throws { fatalError("not used") }
+}
+
+private final class MockCategoryRemoteWriter: CategoryRemoteWriting, @unchecked Sendable {
+
+    private(set) var upsertedCategoryIDs: [UUID] = []
+    private(set) var deletedCategoryIDs: [UUID] = []
+    private(set) var lastUserID: String?
+    var onUpsert: ((UUID) -> Void)?
+    var onDelete: ((UUID) -> Void)?
+    var upsertError: Error?
+
+    func upsert(_ category: Domain.Category, userID: String) async throws {
+        upsertedCategoryIDs.append(category.id)
+        lastUserID = userID
+        if let upsertError { throw upsertError }
+        onUpsert?(category.id)
+    }
+
+    func delete(categoryID: UUID, userID: String) async throws {
+        deletedCategoryIDs.append(categoryID)
+        lastUserID = userID
+        onDelete?(categoryID)
+    }
+}
+
+/// `categoryUpdatedPublisher`와 `getCategory(id:)`만 실제로 동작하는 최소 구현.
+/// 나머지 메서드는 본 테스트에서 호출되지 않으므로 미구현.
+private final class MockCategoryRepository: CategoryRepository, @unchecked Sendable {
+
+    private let subject = PassthroughSubject<CategoryUpdateType, Never>()
+    var stubCategory: Domain.Category?
+
+    var categoryUpdatedPublisher: AnyPublisher<CategoryUpdateType, Never> { subject.eraseToAnyPublisher() }
+
+    func emit(_ event: CategoryUpdateType) { subject.send(event) }
+
+    struct StubCategoryNotFound: Error {}
+
+    func getCategory(id: UUID) async throws -> Domain.Category {
+        guard let stubCategory else { throw StubCategoryNotFound() }
+        return stubCategory
+    }
+
+    // 이하 본 테스트에서 미사용
+    func create(name: String) async throws { fatalError("not used") }
+    func getAllCategories(inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] { fatalError("not used") }
+    func getAllCategories(ofMemo memo: Memo, inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] { fatalError("not used") }
+    func searchCategory(_ searchText: String, inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] { fatalError("not used") }
+    func changeCategoryName(_ category: Domain.Category, newName: String) async throws { fatalError("not used") }
+    func deleteCategory(_ category: Domain.Category) async throws { fatalError("not used") }
+    func memoCount(of category: Domain.Category) async throws -> Int { fatalError("not used") }
+    func updateModificationDate(of category: Domain.Category) async throws { fatalError("not used") }
 }
 
 private extension AuthUser {
