@@ -73,6 +73,45 @@ final class MemoRepositoryTests: XCTestCase {
         }
     }
 
+    func test_getMemo는_휴지통_메모를_가져오지_못한다() async throws {
+        // given: 휴지통으로 보낸 메모
+        let memo = try await sut.createNewMemo()
+        try await sut.moveToTrash(memo)
+
+        // when / then: getMemo는 notDeleted 조건이라 에러를 던진다
+        do {
+            _ = try await sut.getMemo(id: memo.memoID)
+            XCTFail("휴지통 메모는 getMemo로 가져올 수 없어야 한다")
+        } catch {
+            // 에러 발생 — 통과
+        }
+    }
+
+    func test_getMemoIncludingTrash는_휴지통_메모도_가져온다() async throws {
+        // given: 휴지통으로 보낸 메모
+        let memo = try await sut.createNewMemo()
+        try await sut.moveToTrash(memo)
+
+        // when
+        let fetched = try await sut.getMemoIncludingTrash(id: memo.memoID)
+
+        // then
+        XCTAssertEqual(fetched.memoID, memo.memoID)
+        XCTAssertTrue(fetched.isInTrash)
+    }
+
+    func test_getMemoIncludingTrash는_살아있는_메모도_가져온다() async throws {
+        // given
+        let memo = try await sut.createNewMemo()
+
+        // when
+        let fetched = try await sut.getMemoIncludingTrash(id: memo.memoID)
+
+        // then
+        XCTAssertEqual(fetched.memoID, memo.memoID)
+        XCTAssertFalse(fetched.isInTrash)
+    }
+
     func test_전체_조회시_휴지통_메모는_제외된다() async throws {
         // given: 일반 메모 1개와 휴지통으로 보낸 메모 1개
         let kept = try await sut.createNewMemo()

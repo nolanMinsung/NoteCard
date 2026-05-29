@@ -3,6 +3,7 @@
 //  NoteCard
 //
 
+import Domain
 import Foundation
 import FirebaseCore
 import SyncInterface
@@ -28,11 +29,18 @@ public enum SyncBootstrap {
     }
 
     /// FirebaseApp 설정이 완료돼 있으면 Firestore 기반 `SyncService`를, 아니면 No-op 구현을 반환.
-    public static func makeSyncService(authService: AuthService) -> SyncService {
+    public static func makeSyncService(
+        authService: AuthService,
+        memoRepository: MemoRepository
+    ) -> SyncService {
         guard FirebaseApp.app() != nil else {
             return NoOpSyncService()
         }
-        return FirestoreSyncService(authService: authService)
+        return FirestoreSyncService(
+            authService: authService,
+            memoRepository: memoRepository,
+            memoWriter: FirestoreMemoWriter()
+        )
     }
 
     /// 명시적으로 No-op 구현을 만들고 싶을 때 (테스트·프리뷰 등).

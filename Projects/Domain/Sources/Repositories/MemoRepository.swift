@@ -16,6 +16,7 @@ public protocol MemoRepository: Sendable {
     func createNewMemo() async throws -> Memo
 
     func getMemo(id: UUID) async throws -> Memo
+    func getMemoIncludingTrash(id: UUID) async throws -> Memo
     func getAllMemos() async throws -> [Memo]
     func getAllMemos(inCategory category: Category?) async throws -> [Memo]
     func getAllMemosInTrash() async throws -> [Memo]
