@@ -78,6 +78,17 @@ public final class CoreDataStack: ObservableObject {
     
     public private(set) lazy var backgroundContext = persistentContainer.newBackgroundContext()
 
+    /// persistent store를 coordinator에서 제거해 열린 파일 핸들을 닫는다.
+    ///
+    /// 익명 store를 삭제하기 전에 호출해, 파일을 연 채로 unlink되어 sqlite 무결성이 깨지는
+    /// 상황(`vnode unlinked while in use`)을 방지한다. 호출 후 이 stack은 더 이상 사용하지 않는다.
+    public func close() {
+        let coordinator = persistentContainer.persistentStoreCoordinator
+        for store in coordinator.persistentStores {
+            try? coordinator.remove(store)
+        }
+    }
+
     // MARK: - Core Data Saving support
 
     public func saveContext () {

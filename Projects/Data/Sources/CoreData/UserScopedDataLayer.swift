@@ -65,16 +65,29 @@ public final class UserScopedDataLayer {
             .dropFirst()
             .sink { [weak self] userID in
                 guard let self else { return }
+                let previousStack = self.stackSubject.value
+                let anonymousStoreURL = Self.storeURL(for: nil, in: self.storeDirectory)
+
                 // 로그인 직후라면 익명 데이터를 사용자 store로 흡수 (target이 비어 있을 때만).
+                // 복사는 익명 store를 연 기존 stack이 살아 있어도 안전(읽기)하다.
+                var didAbsorbAnonymous = false
                 if let userID {
-                    AnonymousToUserMigrator.migrateIfNeeded(
-                        anonymousStoreURL: Self.storeURL(for: nil, in: self.storeDirectory),
+                    didAbsorbAnonymous = AnonymousToUserMigrator.copyIfNeeded(
+                        anonymousStoreURL: anonymousStoreURL,
                         userStoreURL: Self.storeURL(for: userID, in: self.storeDirectory),
                         onError: self.onMigrationError
                     )
                 }
+
                 let newStack = Self.makeStack(for: userID, in: self.storeDirectory)
                 self.stackSubject.send(newStack)
+
+                // 익명 store 파일을 삭제하기 전에, 그것을 연 이전 stack을 먼저 닫는다.
+                // (새 stack으로 교체한 *뒤*라 외부는 이미 새 stack을 참조하므로, 이전 stack을 닫아도 안전.)
+                if didAbsorbAnonymous {
+                    previousStack.close()
+                    AnonymousToUserMigrator.cleanUpAnonymousStore(at: anonymousStoreURL)
+                }
             }
     }
 
