@@ -40,4 +40,31 @@ public extension FirestoreMemo {
         self.deletedDate = memo.deletedDate
         self.categoryIDs = memo.categories.map(\.id.uuidString).sorted()
     }
+
+    /// 메모가 참조하는 카테고리들의 UUID. 호출자가 로컬 `Category` 본문을 resolve하는 데 사용.
+    /// 파싱 불가한 문자열은 제외한다.
+    var categoryUUIDs: [UUID] {
+        categoryIDs.compactMap(UUID.init(uuidString:))
+    }
+
+    /// 서버 DTO를 로컬 `Memo`로 되돌린다.
+    ///
+    /// 카테고리 본문은 별도 컬렉션이라 `categoryUUIDs`로 호출자가 resolve한 `Category` 집합을 주입한다.
+    /// 이미지는 메모 sub-collection으로 별도 동기화되므로 빈 집합으로 둔다(이후 이미지 동기화에서 채움).
+    /// `memoID`가 UUID로 파싱되지 않으면(손상된 문서) `nil`을 반환한다.
+    func toDomain(categories: Set<Domain.Category>) -> Memo? {
+        guard let id = UUID(uuidString: memoID) else { return nil }
+        return Memo(
+            memoID: id,
+            creationDate: creationDate,
+            modificationDate: modificationDate,
+            deletedDate: deletedDate,
+            isFavorite: isFavorite,
+            isInTrash: isInTrash,
+            memoText: memoText,
+            memoTitle: memoTitle,
+            categories: categories,
+            images: []
+        )
+    }
 }

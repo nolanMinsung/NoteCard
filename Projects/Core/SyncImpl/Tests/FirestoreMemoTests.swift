@@ -94,6 +94,77 @@ final class FirestoreMemoTests: XCTestCase {
         XCTAssertEqual(decoded, original)
     }
 
+    // MARK: - DTO → Domain (역변환)
+
+    func test_toDomain은_주입된_카테고리와_함께_모든_필드를_복원한다() throws {
+        // given
+        let memoID = UUID()
+        let creation = Date(timeIntervalSince1970: 1_000_000)
+        let modification = Date(timeIntervalSince1970: 1_000_500)
+        let deleted = Date(timeIntervalSince1970: 1_000_900)
+        let dto = FirestoreMemo(makeMemo(
+            id: memoID, title: "제목", text: "본문",
+            isFavorite: true, isInTrash: true,
+            creation: creation, modification: modification, deleted: deleted
+        ))
+        let categories: Set<Domain.Category> = [
+            Domain.Category(id: UUID(), name: "업무", creationDate: .now, modificationDate: .now)
+        ]
+
+        // when
+        let memo = try XCTUnwrap(dto.toDomain(categories: categories))
+
+        // then
+        XCTAssertEqual(memo.memoID, memoID)
+        XCTAssertEqual(memo.memoTitle, "제목")
+        XCTAssertEqual(memo.memoText, "본문")
+        XCTAssertTrue(memo.isFavorite)
+        XCTAssertTrue(memo.isInTrash)
+        XCTAssertEqual(memo.creationDate, creation)
+        XCTAssertEqual(memo.modificationDate, modification)
+        XCTAssertEqual(memo.deletedDate, deleted)
+        XCTAssertEqual(memo.categories, categories)
+        XCTAssertTrue(memo.images.isEmpty, "이미지는 별도 동기화이므로 비어 있어야 한다")
+    }
+
+    func test_memoID가_UUID가_아니면_toDomain은_nil을_반환한다() {
+        let dto = FirestoreMemo(
+            memoID: "not-a-uuid",
+            memoTitle: "", memoText: "",
+            isFavorite: false, isInTrash: false,
+            creationDate: .now, modificationDate: .now, deletedDate: nil,
+            categoryIDs: []
+        )
+        XCTAssertNil(dto.toDomain(categories: []))
+    }
+
+    func test_categoryUUIDs는_파싱가능한_ID만_UUID로_돌려준다() {
+        let valid = UUID()
+        let dto = FirestoreMemo(
+            memoID: UUID().uuidString,
+            memoTitle: "", memoText: "",
+            isFavorite: false, isInTrash: false,
+            creationDate: .now, modificationDate: .now, deletedDate: nil,
+            categoryIDs: [valid.uuidString, "broken"]
+        )
+        XCTAssertEqual(dto.categoryUUIDs, [valid])
+    }
+
+    func test_Memo_to_DTO_to_Memo_라운드트립이_원본과_같다() throws {
+        // given: 카테고리를 가진 메모
+        let categories: Set<Domain.Category> = [
+            Domain.Category(id: UUID(), name: "A", creationDate: .now, modificationDate: .now),
+            Domain.Category(id: UUID(), name: "B", creationDate: .now, modificationDate: .now),
+        ]
+        let original = makeMemo(title: "왕복", text: "검증", isFavorite: true, categories: categories)
+
+        // when: Memo → DTO → 같은 카테고리 주입해 복원
+        let restored = try XCTUnwrap(FirestoreMemo(original).toDomain(categories: categories))
+
+        // then: 이미지를 제외한 모든 필드가 원본과 동일
+        XCTAssertEqual(restored, original)
+    }
+
     // MARK: - 헬퍼
 
     private func makeMemo(
