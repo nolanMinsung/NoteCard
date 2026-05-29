@@ -114,6 +114,7 @@ public final class FirestoreSyncService: SyncService, @unchecked Sendable {
     }
 
     private func performMemoSync(action: MemoSyncAction, userID: String) async {
+        statusSubject.send(.syncing)
         do {
             switch action {
             case .upsert(let memoIDs):
@@ -126,8 +127,9 @@ public final class FirestoreSyncService: SyncService, @unchecked Sendable {
                     try await memoWriter.delete(memoID: memoID, userID: userID)
                 }
             }
+            statusSubject.send(.upToDate)
         } catch {
-            // 에러 매핑과 .error status 전이는 후속 단계에서 결합. 현재는 best-effort push.
+            statusSubject.send(.error(FirestoreErrorMapper.syncError(from: error)))
         }
     }
 }

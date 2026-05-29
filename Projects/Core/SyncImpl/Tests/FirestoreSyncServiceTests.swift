@@ -178,6 +178,49 @@ final class FirestoreSyncServiceTests: XCTestCase {
         XCTAssertTrue(writer.deletedMemoIDs.isEmpty)
     }
 
+    // MARK: - status 전이 (push)
+
+    func test_push_성공시_syncing을_거쳐_upToDate로_전이된다() async {
+        // given
+        auth.emit(.sample)
+        await sut.start()
+        memoRepository.stubMemo = Self.makeMemo(id: UUID())
+
+        var sawSyncing = false
+        let exp = expectation(description: "syncing → upToDate")
+        let cancellable = sut.statusPublisher.sink { status in
+            if status == .syncing { sawSyncing = true }
+            if status == .upToDate && sawSyncing { exp.fulfill() }
+        }
+        defer { cancellable.cancel() }
+
+        // when
+        memoRepository.emit(.update(content: .titleText(memoIDs: [UUID()])))
+
+        // then
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
+
+    func test_push_실패시_error로_전이된다() async {
+        // given
+        auth.emit(.sample)
+        await sut.start()
+        memoRepository.stubMemo = Self.makeMemo(id: UUID())
+        writer.upsertError = NSError(domain: "Test", code: 1)
+
+        let exp = expectation(description: "error")
+        let cancellable = sut.statusPublisher.sink { status in
+            if case .error = status { exp.fulfill() }
+        }
+        defer { cancellable.cancel() }
+
+        // when
+        memoRepository.emit(.update(content: .titleText(memoIDs: [UUID()])))
+
+        // then
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
+
     // MARK: - 헬퍼
 
     private static func makeMemo(id: UUID) -> Memo {
@@ -219,10 +262,12 @@ private final class MockMemoRemoteWriter: MemoRemoteWriting, @unchecked Sendable
     private(set) var lastUserID: String?
     var onUpsert: ((UUID) -> Void)?
     var onDelete: ((UUID) -> Void)?
+    var upsertError: Error?
 
     func upsert(_ memo: Memo, userID: String) async throws {
         upsertedMemoIDs.append(memo.memoID)
         lastUserID = userID
+        if let upsertError { throw upsertError }
         onUpsert?(memo.memoID)
     }
 
