@@ -93,13 +93,14 @@ public extension CategoryRepositoryImpl {
         guard !allCategoryNames.contains(name) else {
             throw CoreDataError.duplicateCategoryDetected
         }
+        let newID = UUID()
         try await context.perform { [unowned self] in
             let newCategory = CategoryEntity(context: self.context)
-            newCategory.categoryID = UUID()
+            newCategory.categoryID = newID
             newCategory.name = name
             try self.context.save()
         }
-        categoryUpdatedSubject.send(.create)
+        categoryUpdatedSubject.send(.create(categoryIDs: [newID]))
     }
     
     func getAllCategories(inOrderOf orderCriterion: CategoryProperties, isAscending: Bool) async throws -> [Domain.Category] {
@@ -156,7 +157,7 @@ public extension CategoryRepositoryImpl {
             context.delete(categoryEntity)
             try context.save()
         }
-        categoryUpdatedSubject.send(.delete)
+        categoryUpdatedSubject.send(.delete(categoryIDs: [category.id]))
     }
     
     func memoCount(of category: Domain.Category) async throws -> Int {

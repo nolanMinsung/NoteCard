@@ -44,3 +44,16 @@ final class MemoUpdateTypeTests: XCTestCase {
         XCTAssertEqual(MemoUpdateType.update(content: .category(memoIDs: [b])).memoIDs, [b])
     }
 }
+
+final class CategoryUpdateTypeTests: XCTestCase {
+
+    func test_categoryIDs는_각_케이스의_대상_카테고리ID를_반환한다() {
+        let a = UUID()
+        let b = UUID()
+
+        XCTAssertEqual(CategoryUpdateType.create(categoryIDs: [a]).categoryIDs, [a])
+        XCTAssertEqual(CategoryUpdateType.delete(categoryIDs: [a, b]).categoryIDs, [a, b])
+        XCTAssertEqual(CategoryUpdateType.update(content: .name(categoryIDs: [a])).categoryIDs, [a])
+        XCTAssertEqual(CategoryUpdateType.update(content: .modificationDate(categoryIDs: [b])).categoryIDs, [b])
+    }
+}

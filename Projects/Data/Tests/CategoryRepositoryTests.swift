@@ -208,8 +208,9 @@ final class CategoryRepositoryTests: XCTestCase {
         // when
         try await sut.create(name: "업무")
 
-        // then
-        XCTAssertEqual(received, [.create])
+        // then: 생성 이벤트에 방금 만든 카테고리의 ID가 실려야 한다
+        let created = try await category(named: "업무")
+        XCTAssertEqual(received, [.create(categoryIDs: [created.id])])
     }
 
     func test_카테고리_이름을_변경하면_퍼블리셔로_업데이트_이벤트가_방출된다() async throws {
@@ -239,7 +240,7 @@ final class CategoryRepositoryTests: XCTestCase {
         try await sut.deleteCategory(work)
 
         // then
-        XCTAssertEqual(received, [.delete])
+        XCTAssertEqual(received, [.delete(categoryIDs: [work.id])])
     }
 
     func test_수정일_갱신시_퍼블리셔로_업데이트_이벤트가_방출된다() async throws {
