@@ -79,6 +79,24 @@ final class UserScopedDataLayerTests: XCTestCase {
         XCTAssertTrue(layer.currentStack === initialStack)
     }
 
+    func test_로그인하면_익명_데이터가_사용자_store로_흡수되고_익명_store는_정리된다() async throws {
+        // given: 익명 상태에서 메모 1개 생성
+        let provider = MockUserIDProvider(initial: nil)
+        let layer = UserScopedDataLayer(userIDProvider: provider, storeDirectory: tempDirectory)
+        let anonRepo = MemoRepositoryImpl(dataLayer: layer)
+        _ = try await anonRepo.createNewMemo()
+        let anonURL = tempDirectory.appendingPathComponent("anonymous.sqlite")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: anonURL.path))
+
+        // when: 로그인
+        provider.setUserID("userA")
+
+        // then: 익명 메모가 사용자 store로 흡수되고, 익명 store 파일은 정리된다
+        let userMemos = try await MemoRepositoryImpl(dataLayer: layer).getAllMemos()
+        XCTAssertEqual(userMemos.count, 1, "익명 메모가 사용자 store로 흡수돼야 한다.")
+        XCTAssertFalse(FileManager.default.fileExists(atPath: anonURL.path), "익명 store는 정리돼야 한다.")
+    }
+
     func test_서로_다른_사용자의_stack은_데이터가_격리된다() async throws {
         // given
         let provider = MockUserIDProvider(initial: "userA")
