@@ -31,7 +31,8 @@ public enum SyncBootstrap {
     /// FirebaseApp 설정이 완료돼 있으면 Firestore 기반 `SyncService`를, 아니면 No-op 구현을 반환.
     public static func makeSyncService(
         authService: AuthService,
-        memoRepository: MemoRepository
+        memoRepository: MemoRepository,
+        categoryRepository: CategoryRepository
     ) -> SyncService {
         guard FirebaseApp.app() != nil else {
             return NoOpSyncService()
@@ -39,7 +40,9 @@ public enum SyncBootstrap {
         return FirestoreSyncService(
             authService: authService,
             memoRepository: memoRepository,
-            memoWriter: FirestoreMemoWriter()
+            memoWriter: FirestoreMemoWriter(),
+            categoryRepository: categoryRepository,
+            categoryWriter: FirestoreCategoryWriter()
         )
     }
 

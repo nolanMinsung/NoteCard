@@ -14,7 +14,9 @@ public protocol CategoryRepository: Sendable {
     var categoryUpdatedPublisher: AnyPublisher<CategoryUpdateType, Never> { get }
 
     func create(name: String) async throws
-    
+
+    func getCategory(id: UUID) async throws -> Category
+
     func getAllCategories(
         inOrderOf orderCriterion: CategoryProperties,
         isAscending: Bool

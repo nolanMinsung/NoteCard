@@ -10,7 +10,7 @@ import SyncInterface
 
 /// Firestore 기반 `SyncService` 구현.
 ///
-/// status 노출과 인증 상태 lifecycle에 더해, 메모 변경 이벤트를 받아 Firestore로 단방향 push한다.
+/// status 노출과 인증 상태 lifecycle에 더해, 메모·카테고리 변경 이벤트를 받아 Firestore로 단방향 push한다.
 /// 인증된 사용자가 있으면 `.upToDate`, 없으면 `.disconnected`로 status를 자동 전이.
 /// (pull(listener)·디바운스·에러 status 전이는 후속 단계에서 결합.)
 public final class FirestoreSyncService: SyncService, @unchecked Sendable {
@@ -21,24 +21,37 @@ public final class FirestoreSyncService: SyncService, @unchecked Sendable {
         case delete(memoIDs: [UUID])
     }
 
+    /// 카테고리 변경 이벤트를 Firestore 작업으로 환산한 결과.
+    enum CategorySyncAction: Equatable {
+        case upsert(categoryIDs: [UUID])
+        case delete(categoryIDs: [UUID])
+    }
+
     private let authService: AuthService
     private let memoRepository: MemoRepository
     private let memoWriter: MemoRemoteWriting
+    private let categoryRepository: CategoryRepository
+    private let categoryWriter: CategoryRemoteWriting
 
     private let statusSubject = CurrentValueSubject<SyncStatus, Never>(.disconnected)
     private let stateLock = NSLock()
     /// `stateLock`으로 보호되는 mutable state. 직접 접근 금지.
     private var _authCancellable: AnyCancellable?
     private var _memoCancellable: AnyCancellable?
+    private var _categoryCancellable: AnyCancellable?
 
     init(
         authService: AuthService,
         memoRepository: MemoRepository,
-        memoWriter: MemoRemoteWriting
+        memoWriter: MemoRemoteWriting,
+        categoryRepository: CategoryRepository,
+        categoryWriter: CategoryRemoteWriting
     ) {
         self.authService = authService
         self.memoRepository = memoRepository
         self.memoWriter = memoWriter
+        self.categoryRepository = categoryRepository
+        self.categoryWriter = categoryWriter
     }
 
     public var currentStatus: SyncStatus { statusSubject.value }
@@ -71,6 +84,16 @@ public final class FirestoreSyncService: SyncService, @unchecked Sendable {
         }
     }
 
+    /// 카테고리 변경 이벤트를 Firestore 작업으로 환산한다.
+    static func syncAction(for event: CategoryUpdateType) -> CategorySyncAction {
+        switch event {
+        case .delete(let categoryIDs):
+            return .delete(categoryIDs: categoryIDs)
+        case .create, .update:
+            return .upsert(categoryIDs: event.categoryIDs)
+        }
+    }
+
     // MARK: - Lock 격리 (async-context에서 NSLock 직접 사용 회피)
 
     /// `stateLock` 구간을 동기 메서드로 격리한다.
@@ -87,6 +110,10 @@ public final class FirestoreSyncService: SyncService, @unchecked Sendable {
             .sink { [weak self] event in
                 self?.handleMemoEvent(event)
             }
+        _categoryCancellable = categoryRepository.categoryUpdatedPublisher
+            .sink { [weak self] event in
+                self?.handleCategoryEvent(event)
+            }
         return true
     }
 
@@ -94,9 +121,10 @@ public final class FirestoreSyncService: SyncService, @unchecked Sendable {
     private func cancelSubscriptions() -> [AnyCancellable] {
         stateLock.lock()
         defer { stateLock.unlock() }
-        let previous = [_authCancellable, _memoCancellable].compactMap { $0 }
+        let previous = [_authCancellable, _memoCancellable, _categoryCancellable].compactMap { $0 }
         _authCancellable = nil
         _memoCancellable = nil
+        _categoryCancellable = nil
         return previous
     }
 
@@ -125,6 +153,33 @@ public final class FirestoreSyncService: SyncService, @unchecked Sendable {
             case .delete(let memoIDs):
                 for memoID in memoIDs {
                     try await memoWriter.delete(memoID: memoID, userID: userID)
+                }
+            }
+            statusSubject.send(.upToDate)
+        } catch {
+            statusSubject.send(.error(FirestoreErrorMapper.syncError(from: error)))
+        }
+    }
+
+    private func handleCategoryEvent(_ event: CategoryUpdateType) {
+        guard let userID = authService.currentUser?.id else { return }
+        Task { [weak self] in
+            await self?.performCategorySync(action: Self.syncAction(for: event), userID: userID)
+        }
+    }
+
+    private func performCategorySync(action: CategorySyncAction, userID: String) async {
+        statusSubject.send(.syncing)
+        do {
+            switch action {
+            case .upsert(let categoryIDs):
+                for categoryID in categoryIDs {
+                    let category = try await categoryRepository.getCategory(id: categoryID)
+                    try await categoryWriter.upsert(category, userID: userID)
+                }
+            case .delete(let categoryIDs):
+                for categoryID in categoryIDs {
+                    try await categoryWriter.delete(categoryID: categoryID, userID: userID)
                 }
             }
             statusSubject.send(.upToDate)
