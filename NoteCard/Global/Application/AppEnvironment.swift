@@ -65,10 +65,10 @@ struct AppEnvironment {
 
         let memoRepository = MemoRepositoryImpl(dataLayer: dataLayer)
         self.memoRepository = memoRepository
-        // SPIKE: 옵션 B 검증 — 카테고리는 Router로 감싸 인증 상태에 따라 Core Data ↔ Firestore 전환.
-        // UI는 Router를 보고, SyncService에는 underlying Core Data impl을 넘겨 이중쓰기를 피한다.
+        // 카테고리는 인증 상태에 따라 Core Data ↔ Firestore 전환 (Firebase 미설정 환경에선 Core Data만).
+        // UI는 결과 Repository를 보고, SyncService에는 underlying Core Data impl을 넘겨 이중쓰기를 피한다.
         let categoryRepositoryCoreData = CategoryRepositoryImpl(dataLayer: dataLayer)
-        self.categoryRepository = CategoryRepositoryRouter(
+        self.categoryRepository = SyncBootstrap.makeCategoryRepository(
             authService: authService,
             anonymousImpl: categoryRepositoryCoreData
         )
