@@ -50,4 +50,16 @@ public enum SyncBootstrap {
     public static func makeNoOpSyncService() -> SyncService {
         NoOpSyncService()
     }
+
+    /// FirebaseApp 설정이 완료돼 있으면 인증 상태에 따라 Core Data ↔ Firestore를 스위칭하는 라우터를,
+    /// 아니면 익명 impl을 그대로 반환. (Firebase 미설정 환경에서 `.firestore()` fatalError 회피)
+    public static func makeCategoryRepository(
+        authService: AuthService,
+        anonymousImpl: CategoryRepository
+    ) -> CategoryRepository {
+        guard FirebaseApp.app() != nil else {
+            return anonymousImpl
+        }
+        return CategoryRepositoryRouter(authService: authService, anonymousImpl: anonymousImpl)
+    }
 }

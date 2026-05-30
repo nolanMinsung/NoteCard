@@ -65,8 +65,13 @@ struct AppEnvironment {
 
         let memoRepository = MemoRepositoryImpl(dataLayer: dataLayer)
         self.memoRepository = memoRepository
-        let categoryRepository = CategoryRepositoryImpl(dataLayer: dataLayer)
-        self.categoryRepository = categoryRepository
+        // 카테고리는 인증 상태에 따라 Core Data ↔ Firestore 전환 (Firebase 미설정 환경에선 Core Data만).
+        // UI는 결과 Repository를 보고, SyncService에는 underlying Core Data impl을 넘겨 이중쓰기를 피한다.
+        let categoryRepositoryCoreData = CategoryRepositoryImpl(dataLayer: dataLayer)
+        self.categoryRepository = SyncBootstrap.makeCategoryRepository(
+            authService: authService,
+            anonymousImpl: categoryRepositoryCoreData
+        )
         self.imageRepository = ImageRepositoryImpl(dataLayer: dataLayer, memoRepository: memoRepository)
 
         // FirebaseApp 설정이 있으면 Firestore 기반 동기화, 아니면 No-op fallback.
@@ -74,7 +79,7 @@ struct AppEnvironment {
         self.syncService = SyncBootstrap.makeSyncService(
             authService: authService,
             memoRepository: memoRepository,
-            categoryRepository: categoryRepository
+            categoryRepository: categoryRepositoryCoreData
         )
     }
 
