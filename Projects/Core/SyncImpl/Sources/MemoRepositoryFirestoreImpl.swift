@@ -395,16 +395,17 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
 
     // MARK: - Helpers
 
-    /// Memo → FirestoreMemo 페이로드로 직렬화해 `setData`. setData는 doc 존재 여부와 무관하게 작성.
+    /// Memo → FirestoreMemo 페이로드로 직렬화해 `setData(merge: true)`. merge면 doc 미존재 시 upsert,
+    /// 다른 기기가 추가한 필드는 보존하고, `FieldValue.delete()` 같은 sentinel도 그대로 동작.
     private func write(_ memo: Memo) async throws {
         var payload = try Firestore.Encoder().encode(FirestoreMemo(memo))
         payload["serverUpdatedAt"] = FieldValue.serverTimestamp()
         if memo.deletedDate == nil {
             // FirestoreMemo.deletedDate가 Optional이라 nil이면 인코더가 키를 생략 →
-            // 휴지통에서 복원된 메모도 서버 기존 값이 보존되지 않도록 명시적 제거.
+            // merge가 서버 기존 값을 보존하므로, 휴지통에서 복원된 메모는 명시적 제거 sentinel로 비워준다.
             payload["deletedDate"] = FieldValue.delete()
         }
-        try await collection.document(memo.memoID.uuidString).setData(payload)
+        try await collection.document(memo.memoID.uuidString).setData(payload, merge: true)
     }
 
     /// 단일 DTO를 Memo로 해석 (categoryResolver로 카테고리 본문 채움).
