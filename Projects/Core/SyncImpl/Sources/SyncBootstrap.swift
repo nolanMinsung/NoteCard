@@ -62,4 +62,21 @@ public enum SyncBootstrap {
         }
         return CategoryRepositoryRouter(authService: authService, anonymousImpl: anonymousImpl)
     }
+
+    /// 메모용 동일 패턴. `categoryResolver`는 보통 `makeCategoryRepository`의 결과(라우터)를 그대로 전달해
+    /// 인증 상태에 맞춰 카테고리도 따라 전환되게 한다.
+    public static func makeMemoRepository(
+        authService: AuthService,
+        anonymousImpl: MemoRepository,
+        categoryResolver: CategoryRepository
+    ) -> MemoRepository {
+        guard FirebaseApp.app() != nil else {
+            return anonymousImpl
+        }
+        return MemoRepositoryRouter(
+            authService: authService,
+            anonymousImpl: anonymousImpl,
+            categoryResolver: categoryResolver
+        )
+    }
 }

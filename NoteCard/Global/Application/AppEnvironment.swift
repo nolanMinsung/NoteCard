@@ -63,22 +63,27 @@ struct AppEnvironment {
             onError: { error in assertionFailure("CategoryUUIDBackfiller 실패: \(error)") }
         )
 
-        let memoRepository = MemoRepositoryImpl(dataLayer: dataLayer)
-        self.memoRepository = memoRepository
-        // 카테고리는 인증 상태에 따라 Core Data ↔ Firestore 전환 (Firebase 미설정 환경에선 Core Data만).
-        // UI는 결과 Repository를 보고, SyncService에는 underlying Core Data impl을 넘겨 이중쓰기를 피한다.
+        // 카테고리·메모는 인증 상태에 따라 Core Data ↔ Firestore 전환 (Firebase 미설정 환경에선 Core Data만).
+        // UI는 결과 Repository를 보고, SyncService·ImageRepository에는 underlying Core Data impl을 넘겨 이중쓰기 / 의존 단순화.
+        let memoRepositoryCoreData = MemoRepositoryImpl(dataLayer: dataLayer)
         let categoryRepositoryCoreData = CategoryRepositoryImpl(dataLayer: dataLayer)
-        self.categoryRepository = SyncBootstrap.makeCategoryRepository(
+        let categoryRepository = SyncBootstrap.makeCategoryRepository(
             authService: authService,
             anonymousImpl: categoryRepositoryCoreData
         )
-        self.imageRepository = ImageRepositoryImpl(dataLayer: dataLayer, memoRepository: memoRepository)
+        self.categoryRepository = categoryRepository
+        self.memoRepository = SyncBootstrap.makeMemoRepository(
+            authService: authService,
+            anonymousImpl: memoRepositoryCoreData,
+            categoryResolver: categoryRepository
+        )
+        self.imageRepository = ImageRepositoryImpl(dataLayer: dataLayer, memoRepository: memoRepositoryCoreData)
 
         // FirebaseApp 설정이 있으면 Firestore 기반 동기화, 아니면 No-op fallback.
         // 인스턴스만 보관하고 실제 lifecycle 시작(start())은 AppDelegate에서 명시 호출.
         self.syncService = SyncBootstrap.makeSyncService(
             authService: authService,
-            memoRepository: memoRepository,
+            memoRepository: memoRepositoryCoreData,
             categoryRepository: categoryRepositoryCoreData
         )
     }
