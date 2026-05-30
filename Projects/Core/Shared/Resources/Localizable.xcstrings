@@ -783,6 +783,23 @@
         }
       }
     },
+    "memoDetail.deletingImagesFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting %1$d of %2$d images"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이미지 %1$d / %2$d 삭제 중"
+          }
+        }
+      }
+    },
     "memoDetail.memoIsEmpty": {
       "extractionState": "manual",
       "localizations": {
@@ -796,6 +813,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "메모 내용이 없습니다."
+          }
+        }
+      }
+    },
+    "memoDetail.uploadingImagesFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploading %1$d of %2$d images"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이미지 %1$d / %2$d 업로드 중"
           }
         }
       }

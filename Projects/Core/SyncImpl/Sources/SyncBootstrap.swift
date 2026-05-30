@@ -63,12 +63,13 @@ public enum SyncBootstrap {
         return CategoryRepositoryRouter(authService: authService, anonymousImpl: anonymousImpl)
     }
 
-    /// 메모용 동일 패턴. `categoryResolver`는 보통 `makeCategoryRepository`의 결과(라우터)를 그대로 전달해
-    /// 인증 상태에 맞춰 카테고리도 따라 전환되게 한다.
+    /// 메모용 동일 패턴. `categoryResolver`·`imageResolver`는 보통 각각 `makeCategoryRepository` /
+    /// `makeImageRepository`의 결과(라우터)를 그대로 전달해 인증 상태에 맞춰 함께 전환되게 한다.
     public static func makeMemoRepository(
         authService: AuthService,
         anonymousImpl: MemoRepository,
-        categoryResolver: CategoryRepository
+        categoryResolver: CategoryRepository,
+        imageResolver: ImageRepository
     ) -> MemoRepository {
         guard FirebaseApp.app() != nil else {
             return anonymousImpl
@@ -76,7 +77,25 @@ public enum SyncBootstrap {
         return MemoRepositoryRouter(
             authService: authService,
             anonymousImpl: anonymousImpl,
-            categoryResolver: categoryResolver
+            categoryResolver: categoryResolver,
+            imageResolver: imageResolver
+        )
+    }
+
+    /// 이미지용 동일 패턴. `anonymousMemoRepository`는 로그인 시 익명 이미지 enumeration을 위해 필요
+    /// (이미지가 메모 sub-collection으로 묶이는 구조라 메모 목록부터 알아야 함).
+    public static func makeImageRepository(
+        authService: AuthService,
+        anonymousImpl: ImageRepository,
+        anonymousMemoRepository: MemoRepository
+    ) -> ImageRepository {
+        guard FirebaseApp.app() != nil else {
+            return anonymousImpl
+        }
+        return ImageRepositoryRouter(
+            authService: authService,
+            anonymousImpl: anonymousImpl,
+            anonymousMemoRepository: anonymousMemoRepository
         )
     }
 }

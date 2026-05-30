@@ -49,6 +49,57 @@ class MemoDetailViewController: UIViewController {
     private let cancelBarButtonItem = UIBarButtonItem()
     private let completeBarButtonItem = UIBarButtonItem()
     private let imageBarButtonItem = UIBarButtonItem()
+
+    private var isSaving = false
+    private lazy var savingIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.hidesWhenStopped = true
+        return view
+    }()
+    private let savingProgressLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    private var savingTotalAdds = 0
+    private var savingTotalDeletes = 0
+    private var savingCompletedAdds = 0
+    private var savingCompletedDeletes = 0
+    private lazy var savingOverlayView: UIView = {
+        let overlay = UIView()
+        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .white
+        indicator.startAnimating()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        overlay.addSubview(indicator)
+        overlay.addSubview(savingProgressLabel)
+        NSLayoutConstraint.activate([
+            indicator.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
+            indicator.centerYAnchor.constraint(equalTo: overlay.centerYAnchor, constant: -16),
+            savingProgressLabel.topAnchor.constraint(equalTo: indicator.bottomAnchor, constant: 12),
+            savingProgressLabel.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
+            savingProgressLabel.leadingAnchor.constraint(greaterThanOrEqualTo: overlay.leadingAnchor, constant: 24),
+            savingProgressLabel.trailingAnchor.constraint(lessThanOrEqualTo: overlay.trailingAnchor, constant: -24)
+        ])
+        return overlay
+    }()
+
+    private func refreshSavingProgressLabel() {
+        var lines: [String] = []
+        if savingTotalAdds > 0 {
+            lines.append(String(format: L10n.MemoDetail.uploadingImagesFormat, savingCompletedAdds, savingTotalAdds))
+        }
+        if savingTotalDeletes > 0 {
+            lines.append(String(format: L10n.MemoDetail.deletingImagesFormat, savingCompletedDeletes, savingTotalDeletes))
+        }
+        savingProgressLabel.text = lines.joined(separator: "\n")
+    }
     
     init(type: MemoDetailType, environment: AppEnvironment) {
         self.detailType = type
@@ -135,6 +186,21 @@ private extension MemoDetailViewController {
         cancelBarButtonItem.primaryAction = cancelAction
         
         let completeAction = UIAction(title: L10n.Common.done) { _ in
+            guard !self.isSaving else { return }
+            self.isSaving = true
+            self.cancelBarButtonItem.isEnabled = false
+            self.completeBarButtonItem.isEnabled = false
+            self.imageBarButtonItem.isEnabled = false
+            self.savingIndicator.startAnimating()
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.savingIndicator)
+            self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+            self.view.addSubview(self.savingOverlayView)
+            NSLayoutConstraint.activate([
+                self.savingOverlayView.topAnchor.constraint(equalTo: self.view.topAnchor),
+                self.savingOverlayView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+                self.savingOverlayView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                self.savingOverlayView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
+            ])
             Task {
                 do {
                     try await self.updateMemoContent()
@@ -322,22 +388,26 @@ private extension MemoDetailViewController {
             throw CoreDataError.objectNotFound
         }
         let imageRepository = environment.imageRepository
+        let totalAdds = editableImageModels.reduce(into: 0) { count, item in
+            if case .pendingAddition = item { count += 1 }
+        }
+        let totalDeletes = editableImageModels.reduce(into: 0) { count, item in
+            if case .pendingDeletion = item { count += 1 }
+        }
+        await MainActor.run {
+            self.savingTotalAdds = totalAdds
+            self.savingTotalDeletes = totalDeletes
+            self.savingCompletedAdds = 0
+            self.savingCompletedDeletes = 0
+            self.refreshSavingProgressLabel()
+        }
         try await withThrowingTaskGroup(of: Void.self) { group in
             for (index, item) in editableImageModels.enumerated() {
                 group.addTask {
                     switch item {
                     case .existing(model: let model):
-                        /**
-                         `model`은 `ImageUIModel` 타입
-                         `model`을 바탕으로 `ImageEntity`를 불러온 후 이 레코드의 `index`를 `item.offset`으로 업데이트
-                         */
                         try await imageRepository.updateImageIndex(model.info, newIndex: index)
                     case .pendingAddition(model: let model):
-                        /**
-                         `model`은 `ImageUITemporaryModel` 타입
-                         `model`을 바탕으로 새 이미지 파일과 `ImageEntity`를 생성한 후에 각각 `FileManager`, `CoreData`에 저장.
-                         저장 시 index 정보는 `item.offset`
-                         */
                         let _ = try await imageRepository.createImage(
                             from: model.pickerResult,
                             for: memo,
@@ -346,16 +416,20 @@ private extension MemoDetailViewController {
                             orderIndex: index,
                             isTemporary: false
                         )
+                        await MainActor.run {
+                            self.savingCompletedAdds += 1
+                            self.refreshSavingProgressLabel()
+                        }
                     case .pendingDeletion(model: let model):
-                        /**
-                         `model`은 `ImageUIModel` 타입
-                         model을 바탕으로 `ImageEntity`를 불러온 후 이 이 레코드의 데이터 및 이미지 파일 삭제
-                         */
                         try await imageRepository.deleteImage(model.info)
+                        await MainActor.run {
+                            self.savingCompletedDeletes += 1
+                            self.refreshSavingProgressLabel()
+                        }
                     }
                 }
-                try await group.waitForAll()
             }
+            try await group.waitForAll()
         }
     }
     

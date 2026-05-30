@@ -13,7 +13,7 @@ import SyncInterface
 /// 인증 상태에 맞춰 활성 `MemoRepository`를 갈아끼우는 래퍼.
 ///
 /// - 비로그인: `anonymousImpl` (Core Data)에 위임.
-/// - 로그인: 해당 uid로 `MemoRepositoryFirestoreImpl` 생성, 카테고리 해석은 `categoryResolver`(보통 카테고리 Router)에 위임.
+/// - 로그인: 해당 uid로 `MemoRepositoryFirestoreImpl` 생성, 카테고리·이미지 해석은 각 resolver Router에 위임.
 /// - 전환 시 활성 impl의 `memoUpdatedPublisher`를 내부 subject로 forward해 외부 구독자에게 투명.
 /// - 로그인 시 익명 메모(휴지통 포함)를 Firestore로 1회 마이그레이션 (`UserDefaults` 마커로 기기+사용자별 보장).
 public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
@@ -21,6 +21,7 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
     private let authService: AuthService
     private let anonymousImpl: MemoRepository
     private let categoryResolver: CategoryRepository
+    private let imageResolver: ImageRepository
     private let firestore: Firestore
 
     private let lock = NSLock()
@@ -38,11 +39,13 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
         authService: AuthService,
         anonymousImpl: MemoRepository,
         categoryResolver: CategoryRepository,
+        imageResolver: ImageRepository,
         firestore: Firestore = .firestore()
     ) {
         self.authService = authService
         self.anonymousImpl = anonymousImpl
         self.categoryResolver = categoryResolver
+        self.imageResolver = imageResolver
         self.firestore = firestore
         self._activeImpl = anonymousImpl
         attachForwarding(from: anonymousImpl)
@@ -56,6 +59,7 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
             let impl = MemoRepositoryFirestoreImpl(
                 userID: userID,
                 categoryResolver: categoryResolver,
+                imageResolver: imageResolver,
                 firestore: firestore
             )
             lock.lock()
