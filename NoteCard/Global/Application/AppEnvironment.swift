@@ -25,10 +25,7 @@ struct AppEnvironment {
     let analytics: Analytics
     let authService: AuthService
 
-    private let dataLayer: UserScopedDataLayer
-
-    /// 현재 사용자에 해당하는 Core Data stack. 사용자 변경 시점에 dataLayer가 새 stack으로 교체한다.
-    var coreDataStack: CoreDataStack { dataLayer.currentStack }
+    let coreDataStack: CoreDataStack
 
     init() {
         // FirebaseApp.configure()는 setUpAnalytics 안에서 (plist가 있을 때만) 호출됨.
@@ -37,34 +34,25 @@ struct AppEnvironment {
         let authService = SyncBootstrap.makeAuthService()
         self.authService = authService
 
-        // AuthService의 인증 상태를 CurrentUserIDProvider 형태로 어댑팅.
-        // 로그인/로그아웃에 따라 UserScopedDataLayer가 사용자별 stack으로 자동 교체한다.
-        let userIDProvider = AuthServiceUserIDProvider(authService: authService)
-
-        // 데이터 레이어가 익명 store를 열기 전에 레거시 데이터를 이전한다 (1회, 멱등).
-        // 실패 시 Debug 빌드에선 즉시 trap, Release 빌드에선 no-op이 되어 다음 실행에 재시도된다.
-        // TODO: Crashlytics non-fatal로 prod 가시성 확보 — onError 클로저는 그 의존성 주입을 위한 자리.
+        let anonymousStoreURL = Self.makeAnonymousStoreURL()
         LegacyStoreMigrator.migrateIfNeeded(
-            anonymousStoreURL: UserScopedDataLayer.anonymousStoreURL(),
+            anonymousStoreURL: anonymousStoreURL,
             onError: { error in assertionFailure("LegacyStoreMigrator 실패: \(error)") }
         )
 
-        let dataLayer = UserScopedDataLayer(
-            userIDProvider: userIDProvider,
-            onMigrationError: { error in assertionFailure("AnonymousToUserMigrator 실패: \(error)") }
-        )
-        self.dataLayer = dataLayer
+        let coreDataStack = CoreDataStack(storeURL: anonymousStoreURL)
+        self.coreDataStack = coreDataStack
 
         // v3 모델로 마이그레이션된 store에서 categoryID가 nil인 row를 채움 (1회, 멱등).
         // Core Data lightweight migration이 row별 다른 UUID를 부여 못 해 코드로 backfill.
         CategoryUUIDBackfiller.backfill(
-            in: dataLayer.currentStack,
+            in: coreDataStack,
             onError: { error in assertionFailure("CategoryUUIDBackfiller 실패: \(error)") }
         )
 
-        let memoRepositoryCoreData = MemoRepositoryImpl(dataLayer: dataLayer)
-        let categoryRepositoryCoreData = CategoryRepositoryImpl(dataLayer: dataLayer)
-        let imageRepositoryCoreData = ImageRepositoryImpl(dataLayer: dataLayer, memoRepository: memoRepositoryCoreData)
+        let memoRepositoryCoreData = MemoRepositoryImpl(stack: coreDataStack)
+        let categoryRepositoryCoreData = CategoryRepositoryImpl(stack: coreDataStack)
+        let imageRepositoryCoreData = ImageRepositoryImpl(stack: coreDataStack, memoRepository: memoRepositoryCoreData)
         let categoryRepository = SyncBootstrap.makeCategoryRepository(
             authService: authService,
             anonymousImpl: categoryRepositoryCoreData
@@ -89,6 +77,18 @@ struct AppEnvironment {
     /// Firebase 설정 파일(`GoogleService-Info.plist`)이나 Amplitude API Key가
     /// 빌드에 포함돼 있지 않으면 해당 기능만 조용히 비활성된다 — 키 없이도
     /// 앱은 정상 동작한다.
+    private static func makeAnonymousStoreURL() -> URL {
+        do {
+            let appSupport = try FileManager.default.url(
+                for: .applicationSupportDirectory, in: .userDomainMask,
+                appropriateFor: nil, create: true
+            )
+            return appSupport.appendingPathComponent("anonymous.sqlite")
+        } catch {
+            fatalError("AppEnvironment: Application Support 디렉터리 접근 실패: \(error)")
+        }
+    }
+
     private static func setUpAnalytics() -> Analytics {
         if Bundle.main.url(forResource: "GoogleService-Info", withExtension: "plist") != nil {
             AnalyticsBootstrap.startCrashReporting()
