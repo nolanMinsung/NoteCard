@@ -31,13 +31,7 @@ public final class ImageRepositoryImpl: ImageRepository, @unchecked Sendable {
 
     // MARK: - Init
 
-    public init(dataLayer: UserScopedDataLayer, memoRepository: MemoRepositoryImpl) {
-        self.stackResolver = { dataLayer.currentStack }
-        self.memoRepository = memoRepository
-    }
-
-    /// 단일 stack을 들고 사용자 변경에 반응하지 않는 테스트 편의 init.
-    internal init(stack: CoreDataStack, memoRepository: MemoRepositoryImpl) {
+    public init(stack: CoreDataStack, memoRepository: MemoRepositoryImpl) {
         self.stackResolver = { stack }
         self.memoRepository = memoRepository
     }

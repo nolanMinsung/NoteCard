@@ -32,12 +32,7 @@ public final class CategoryRepositoryImpl: CategoryRepository, @unchecked Sendab
 
     // MARK: - Init
 
-    public init(dataLayer: UserScopedDataLayer) {
-        self.stackResolver = { dataLayer.currentStack }
-    }
-
-    /// 단일 stack을 들고 사용자 변경에 반응하지 않는 테스트 편의 init.
-    internal init(stack: CoreDataStack) {
+    public init(stack: CoreDataStack) {
         self.stackResolver = { stack }
     }
     
