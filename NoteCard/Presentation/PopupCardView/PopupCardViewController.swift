@@ -115,11 +115,11 @@ class PopupCardViewController: UIViewController {
             }
             .store(in: &cancellables)
 
+        let initialIsInTrash = memo.isInTrash
         environment.memoRepository.memoUpdatedPublisher
             .filter({ [weak self] updateType in
                 guard let self else { return false }
-                guard case .update(let updatedAttribute) = updateType else { return false }
-                return updatedAttribute.memoIDs.contains(self.memo.memoID)
+                return updateType.memoIDs.contains(self.memo.memoID)
             })
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in
@@ -127,6 +127,12 @@ class PopupCardViewController: UIViewController {
                 Task {
                     do {
                         let updatedMemo = try await self.environment.memoRepository.getMemo(id: self.memo.memoID)
+                        // 다른 기기에서 휴지통 → 복원으로 모드가 뒤집힌 경우. UI를 그 자리에서
+                        // 재구성하기 복잡해서 그냥 닫는다 (사용자는 해당 메모를 새 위치에서 다시 열 수 있음).
+                        guard updatedMemo.isInTrash == initialIsInTrash else {
+                            self.dismiss(animated: true)
+                            return
+                        }
                         self.memo = updatedMemo
                         self.categories = try await self.fetchCategories()
 
