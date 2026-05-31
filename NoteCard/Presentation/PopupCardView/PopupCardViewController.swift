@@ -147,6 +147,26 @@ class PopupCardViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
+
+        environment.categoryRepository.categoryUpdatedPublisher
+            .filter { [weak self] updateType in
+                guard let self else { return false }
+                let memoCategoryIDs = Set(self.memo.categories.map(\.id))
+                return updateType.categoryIDs.contains(where: memoCategoryIDs.contains)
+            }
+            .debounce(for: 0.3, scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Task {
+                    do {
+                        self.categories = try await self.fetchCategories()
+                        self.rootView.categoryCollectionView.reloadData()
+                    } catch {
+                        print("PopupCard 카테고리 갱신 실패: \(error)")
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
     
     override func viewDidAppear(_ animated: Bool) {
