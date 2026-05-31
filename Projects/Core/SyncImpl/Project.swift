@@ -9,8 +9,10 @@ let project = Project.module(
     dependencies: [
         .module(.syncInterface),
         .module(.domain),
+        .module(.data),
         .external(name: "FirebaseAuth"),
         .external(name: "FirebaseFirestore"),
+        .external(name: "FirebaseStorage"),
     ],
     hasTests: true
 )

@@ -25,6 +25,7 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     private let firestore: Firestore
     private let userID: String
     private let categoryResolver: CategoryRepository
+    private let imageResolver: ImageRepository
 
     private let memoUpdatedSubject = PassthroughSubject<MemoUpdateType, Never>()
     public var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
@@ -36,9 +37,15 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     private var snapshotDTOByID: [UUID: FirestoreMemo] = [:]
     private var listenerRegistration: ListenerRegistration?
 
-    public init(userID: String, categoryResolver: CategoryRepository, firestore: Firestore = .firestore()) {
+    public init(
+        userID: String,
+        categoryResolver: CategoryRepository,
+        imageResolver: ImageRepository,
+        firestore: Firestore = .firestore()
+    ) {
         self.userID = userID
         self.categoryResolver = categoryResolver
+        self.imageResolver = imageResolver
         self.firestore = firestore
         startListening()
     }
@@ -408,36 +415,36 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
         try await collection.document(memo.memoID.uuidString).setData(payload, merge: true)
     }
 
-    /// 단일 DTO를 Memo로 해석 (categoryResolver로 카테고리 본문 채움).
+    /// 단일 DTO를 Memo로 해석 — 카테고리 본문 + 이미지 목록을 함께 채움.
+    /// 이미지는 sub-collection 쿼리(SDK 자동 캐시)라 매번 네트워크 호출은 아님.
     private func resolve(_ dto: FirestoreMemo) async throws -> Memo {
         let categories = await resolveCategories(for: dto)
-        guard let memo = dto.toDomain(categories: categories) else {
+        guard var memo = dto.toDomain(categories: categories) else {
             throw FirestoreRepositoryError.notFound
+        }
+        if let images = try? await imageResolver.getAllImageInfo(for: memo) {
+            memo.images = Set(images)
         }
         return memo
     }
 
-    /// 여러 DTO를 Memo로 해석. 카테고리는 한 번씩만 lookup하도록 캐시.
+    /// 여러 DTO를 Memo로 해석 — `TaskGroup`으로 병렬 처리해 cold cache에서도 첫 로드 latency 최소화.
+    /// 카테고리·이미지 해석이 dto별로 독립이고, categoryResolver(메모리 스냅샷)·imageResolver(SDK 캐시 쿼리)
+    /// 둘 다 thread-safe라 안전.
     private func resolveAll(_ dtos: [FirestoreMemo]) async throws -> [Memo] {
-        var categoryCache: [UUID: Domain.Category] = [:]
-        var memos: [Memo] = []
-        memos.reserveCapacity(dtos.count)
-        for dto in dtos {
-            var categories: Set<Domain.Category> = []
-            for uuid in dto.categoryUUIDs {
-                if let cached = categoryCache[uuid] {
-                    categories.insert(cached)
-                } else if let resolved = try? await categoryResolver.getCategory(id: uuid) {
-                    categoryCache[uuid] = resolved
-                    categories.insert(resolved)
+        try await withThrowingTaskGroup(of: Memo?.self) { group in
+            for dto in dtos {
+                group.addTask { [self] in
+                    try? await self.resolve(dto)
                 }
-                // 해석 실패 시 그 카테고리는 누락된 채로 두고 진행 (도메인 모델에 nil 허용 안 함).
             }
-            if let memo = dto.toDomain(categories: categories) {
-                memos.append(memo)
+            var memos: [Memo] = []
+            memos.reserveCapacity(dtos.count)
+            for try await memo in group {
+                if let memo { memos.append(memo) }
             }
+            return memos
         }
-        return memos
     }
 
     private func resolveCategories(for dto: FirestoreMemo) async -> Set<Domain.Category> {
