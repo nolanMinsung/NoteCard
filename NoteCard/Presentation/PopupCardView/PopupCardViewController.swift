@@ -105,13 +105,16 @@ class PopupCardViewController: UIViewController {
                     do {
                         self.imageUIModels = try await self.makeImageUIModels()
                         self.rootView.imageCollectionView.reloadData()
+                    } catch RepositoryError.notFound {
+                        // 디바운스 중 메모가 삭제되면 더 이상 표시할 게 없으므로 닫기.
+                        self.dismiss(animated: true)
                     } catch {
-                        assertionFailure("변경된 메모의 이미지 데이터를 업데이트 하던 도중 오류 발생")
+                        print("PopupCard 이미지 업데이트 실패: \(error)")
                     }
                 }
             }
             .store(in: &cancellables)
-        
+
         environment.memoRepository.memoUpdatedPublisher
             .filter({ [weak self] updateType in
                 guard let self else { return false }
@@ -126,13 +129,14 @@ class PopupCardViewController: UIViewController {
                         let updatedMemo = try await self.environment.memoRepository.getMemo(id: self.memo.memoID)
                         self.memo = updatedMemo
                         self.categories = try await self.fetchCategories()
-                        
+
                         self.rootView.categoryCollectionView.reloadData()
                         self.rootView.titleTextField.text = updatedMemo.memoTitle
                         self.rootView.memoTextView.text = updatedMemo.memoText
-                        print("popupCard의 콘텐츠 업데이트됨")
+                    } catch RepositoryError.notFound {
+                        self.dismiss(animated: true)
                     } catch {
-                        assertionFailure("변경된 메모 데이터를 업데이트 하는 도중 에러 발생")
+                        print("PopupCard 메모 업데이트 실패: \(error)")
                     }
                 }
             }

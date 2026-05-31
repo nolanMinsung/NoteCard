@@ -103,7 +103,8 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
                         trashedIDs.append(id)
                     } else if previous.isInTrash && !dto.isInTrash {
                         restoredIDs.append(id)
-                    } else {
+                    } else if previous != dto {
+                        // Firestore listener는 로컬 write에 캐시·서버 두 번 발화 — 동일 페이로드면 emit 안 함.
                         updatedIDs.append(id)
                     }
                 } else {
@@ -146,14 +147,14 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
 
     public func getMemo(id: UUID) async throws -> Memo {
         guard let dto = cachedDTO(id: id), !dto.isInTrash else {
-            throw FirestoreRepositoryError.notFound
+            throw RepositoryError.notFound
         }
         return try await resolve(dto)
     }
 
     public func getMemoIncludingTrash(id: UUID) async throws -> Memo {
         guard let dto = cachedDTO(id: id) else {
-            throw FirestoreRepositoryError.notFound
+            throw RepositoryError.notFound
         }
         return try await resolve(dto)
     }
@@ -420,7 +421,7 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     private func resolve(_ dto: FirestoreMemo) async throws -> Memo {
         let categories = await resolveCategories(for: dto)
         guard var memo = dto.toDomain(categories: categories) else {
-            throw FirestoreRepositoryError.notFound
+            throw RepositoryError.notFound
         }
         if let images = try? await imageResolver.getAllImageInfo(for: memo) {
             memo.images = Set(images)

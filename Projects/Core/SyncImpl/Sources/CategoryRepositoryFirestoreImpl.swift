@@ -82,8 +82,12 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
                 snapshotByID[domain.id] = domain
                 createdIDs.append(domain.id)
             case .modified:
+                let previous = snapshotByID[domain.id]
                 snapshotByID[domain.id] = domain
-                modifiedIDs.append(domain.id)
+                if previous != domain {
+                    // Firestore listener는 로컬 write에 캐시·서버 두 번 발화 — 동일 페이로드면 emit 안 함.
+                    modifiedIDs.append(domain.id)
+                }
             case .removed:
                 snapshotByID.removeValue(forKey: domain.id)
                 deletedIDs.append(domain.id)
@@ -107,7 +111,7 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
 
     public func getCategory(id: UUID) async throws -> Domain.Category {
         if let cached = cachedCategory(id: id) { return cached }
-        throw FirestoreRepositoryError.notFound
+        throw RepositoryError.notFound
     }
 
     public func getAllCategories(
@@ -150,7 +154,7 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
         // 같은 이름 중복 방지 (Core Data 구현과 정책 맞춤).
         let existingNames = snapshotNames()
         guard !existingNames.contains(name) else {
-            throw FirestoreRepositoryError.duplicateName
+            throw RepositoryError.duplicateName
         }
         let now = Date()
         let category = Domain.Category(id: UUID(), name: name, creationDate: now, modificationDate: now)
@@ -163,7 +167,7 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
     public func changeCategoryName(_ category: Domain.Category, newName: String) async throws {
         let existingNames = snapshotNames()
         guard !existingNames.contains(newName) else {
-            throw FirestoreRepositoryError.duplicateName
+            throw RepositoryError.duplicateName
         }
         try await collection.document(category.id.uuidString).updateData([
             "name": newName,
@@ -239,8 +243,3 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
     }
 }
 
-/// 스파이크 전용 에러. 정식 채택 시 도메인 에러 모델과 통합.
-public enum FirestoreRepositoryError: Error {
-    case notFound
-    case duplicateName
-}
