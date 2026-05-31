@@ -105,18 +105,21 @@ class PopupCardViewController: UIViewController {
                     do {
                         self.imageUIModels = try await self.makeImageUIModels()
                         self.rootView.imageCollectionView.reloadData()
+                    } catch RepositoryError.notFound {
+                        // 디바운스 중 메모가 삭제되면 더 이상 표시할 게 없으므로 닫기.
+                        self.dismiss(animated: true)
                     } catch {
-                        assertionFailure("변경된 메모의 이미지 데이터를 업데이트 하던 도중 오류 발생")
+                        print("PopupCard 이미지 업데이트 실패: \(error)")
                     }
                 }
             }
             .store(in: &cancellables)
-        
+
+        let initialIsInTrash = memo.isInTrash
         environment.memoRepository.memoUpdatedPublisher
             .filter({ [weak self] updateType in
                 guard let self else { return false }
-                guard case .update(let updatedAttribute) = updateType else { return false }
-                return updatedAttribute.memoIDs.contains(self.memo.memoID)
+                return updateType.memoIDs.contains(self.memo.memoID)
             })
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in
@@ -124,15 +127,42 @@ class PopupCardViewController: UIViewController {
                 Task {
                     do {
                         let updatedMemo = try await self.environment.memoRepository.getMemo(id: self.memo.memoID)
+                        // 다른 기기에서 휴지통 → 복원으로 모드가 뒤집힌 경우. UI를 그 자리에서
+                        // 재구성하기 복잡해서 그냥 닫는다 (사용자는 해당 메모를 새 위치에서 다시 열 수 있음).
+                        guard updatedMemo.isInTrash == initialIsInTrash else {
+                            self.dismiss(animated: true)
+                            return
+                        }
                         self.memo = updatedMemo
                         self.categories = try await self.fetchCategories()
-                        
+
                         self.rootView.categoryCollectionView.reloadData()
                         self.rootView.titleTextField.text = updatedMemo.memoTitle
                         self.rootView.memoTextView.text = updatedMemo.memoText
-                        print("popupCard의 콘텐츠 업데이트됨")
+                    } catch RepositoryError.notFound {
+                        self.dismiss(animated: true)
                     } catch {
-                        assertionFailure("변경된 메모 데이터를 업데이트 하는 도중 에러 발생")
+                        print("PopupCard 메모 업데이트 실패: \(error)")
+                    }
+                }
+            }
+            .store(in: &cancellables)
+
+        environment.categoryRepository.categoryUpdatedPublisher
+            .filter { [weak self] updateType in
+                guard let self else { return false }
+                let memoCategoryIDs = Set(self.memo.categories.map(\.id))
+                return updateType.categoryIDs.contains(where: memoCategoryIDs.contains)
+            }
+            .debounce(for: 0.3, scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Task {
+                    do {
+                        self.categories = try await self.fetchCategories()
+                        self.rootView.categoryCollectionView.reloadData()
+                    } catch {
+                        print("PopupCard 카테고리 갱신 실패: \(error)")
                     }
                 }
             }
