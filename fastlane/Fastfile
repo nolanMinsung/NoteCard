@@ -49,6 +49,14 @@ def ensure_xcodeproj_generated
   sh("cd .. && tuist install && tuist generate --no-open")
 end
 
+# Locate the upload-symbols binary that Tuist resolves into Tuist/.build/checkouts
+# when firebase-ios-sdk is fetched. `tuist install` must have run first.
+def find_swiftpm_upload_symbols
+  path = File.expand_path("../Tuist/.build/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols", __dir__)
+  UI.user_error!("upload-symbols not found at #{path}. Run `tuist install` first so Tuist resolves firebase-ios-sdk.") unless File.executable?(path)
+  path
+end
+
 platform :ios do
   before_all do
     # On CI, create a temporary keychain for code signing.
@@ -148,6 +156,12 @@ platform :ios do
           "com.minsung.NoteCard" => "match AppStore com.minsung.NoteCard"
         }
       }
+    )
+
+    upload_symbols_to_crashlytics(
+      binary_path: find_swiftpm_upload_symbols,
+      dsym_path: "./build/NoteCard.app.dSYM.zip",
+      gsp_path: "./NoteCard/GoogleService-Info.plist"
     )
 
     upload_to_testflight(
