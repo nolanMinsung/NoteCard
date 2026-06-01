@@ -158,4 +158,8 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
     public func deleteImage(_ imageInfo: MemoImageInfo) async throws {
         try await current.deleteImage(imageInfo)
     }
+
+    public func observeImageChanges(for memoID: UUID) -> AnyCancellable {
+        current.observeImageChanges(for: memoID)
+    }
 }

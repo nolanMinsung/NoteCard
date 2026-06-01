@@ -155,6 +155,38 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
         }.compactMap { $0.toDomain() }
     }
 
+    // MARK: - Listener (per-memo)
+
+    public func observeImageChanges(for memoID: UUID) -> AnyCancellable {
+        let registration = imageCollection(for: memoID).addSnapshotListener { [weak self] snapshot, error in
+            guard let self else { return }
+            if let error {
+                print("[ImageRepoFirestore] listener error for memo \(memoID): \(error)")
+                return
+            }
+            guard let snapshot else { return }
+            self.emitImageChanges(snapshot, memoID: memoID)
+        }
+        return AnyCancellable {
+            registration.remove()
+        }
+    }
+
+    private func emitImageChanges(_ snapshot: QuerySnapshot, memoID: UUID) {
+        var hasAdds = false, hasMods = false, hasRems = false
+        for change in snapshot.documentChanges {
+            switch change.type {
+            case .added: hasAdds = true
+            case .modified: hasMods = true
+            case .removed: hasRems = true
+            }
+        }
+        // UI는 종류 무관하게 재조회하므로 변경 종류별로 한 번씩 coarse emit.
+        if hasAdds { imageUpdatedSubject.send(.create(memoID: memoID)) }
+        if hasMods { imageUpdatedSubject.send(.update(memoID: memoID)) }
+        if hasRems { imageUpdatedSubject.send(.delete(memoID: memoID)) }
+    }
+
     // MARK: - Update
 
     public func updateImageIndex(_ image: MemoImageInfo, newIndex: Int) async throws {
