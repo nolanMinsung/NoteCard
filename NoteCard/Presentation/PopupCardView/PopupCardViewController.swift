@@ -88,6 +88,11 @@ class PopupCardViewController: UIViewController {
             memoTextViewTapGesture.isEnabled = false
         }
         
+        // PopupCard 표시 중에만 해당 메모의 image sub-collection listener attach.
+        // cancellables 라이프사이클에 묶여 dismiss 시 자동 detach.
+        environment.imageRepository.observeImageChanges(for: memo.memoID)
+            .store(in: &cancellables)
+
         environment.imageRepository.imageUpdatedPublisher
             .filter { [weak self] updateType in
                 guard let self else { return false }

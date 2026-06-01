@@ -29,4 +29,8 @@ public protocol ImageRepository: Sendable {
     func getAllImageInfo(for memo: Memo) async throws -> [MemoImageInfo]
     func updateImageIndex(_ image: MemoImageInfo, newIndex: Int) async throws
     func deleteImage(_ imageInfo: MemoImageInfo) async throws
+
+    /// 메모의 이미지 변경을 구독. 반환된 cancellable의 cancel 시점에 listener detach.
+    /// 활성 구간 동안 발생한 이벤트는 `imageUpdatedPublisher` 로 emit.
+    func observeImageChanges(for memoID: UUID) -> AnyCancellable
 }
