@@ -4,6 +4,7 @@
 //
 
 import Combine
+import Data
 import Domain
 import FirebaseFirestore
 import Foundation
@@ -129,6 +130,9 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
             case .removed:
                 snapshotDTOByID.removeValue(forKey: id)
                 deletedIDs.append(id)
+                if let url = try? ImageFileHandler.getDirectory(for: id) {
+                    try? FileManager.default.removeItem(at: url)
+                }
             }
         }
         snapshotLock.unlock()
@@ -270,16 +274,34 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     // MARK: - Hard delete
 
     public func deleteMemo(_ memo: Memo) async throws {
+        try await deleteImages(of: memo)
         try await collection.document(memo.memoID.uuidString).delete()
-        // NOTE: 로컬 이미지 파일 정리는 본 PR 범위 밖 (이미지 Repository가 Firebase Storage로 옮길 때 함께).
     }
 
     public func deleteMemos(_ memos: [Memo]) async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for memo in memos {
+                group.addTask { try await self.deleteImages(of: memo) }
+            }
+            try await group.waitForAll()
+        }
         let batch = firestore.batch()
         for memo in memos {
             batch.deleteDocument(collection.document(memo.memoID.uuidString))
         }
         try await batch.commit()
+    }
+
+    /// Firestore parent doc 삭제는 sub-collection 을 자동 정리하지 않으므로 명시 순회.
+    private func deleteImages(of memo: Memo) async throws {
+        let images = (try? await imageResolver.getAllImageInfo(for: memo)) ?? []
+        guard !images.isEmpty else { return }
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for image in images {
+                group.addTask { try? await self.imageResolver.deleteImage(image) }
+            }
+            try await group.waitForAll()
+        }
     }
 
     // MARK: - Restore

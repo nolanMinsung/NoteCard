@@ -173,18 +173,36 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
     }
 
     private func emitImageChanges(_ snapshot: QuerySnapshot, memoID: UUID) {
-        var hasAdds = false, hasMods = false, hasRems = false
+        var hasAddedImages = false
+        var hasModifiedImages = false
+        var hasRemovedImages = false
         for change in snapshot.documentChanges {
             switch change.type {
-            case .added: hasAdds = true
-            case .modified: hasMods = true
-            case .removed: hasRems = true
+            case .added:
+                hasAddedImages = true
+            case .modified:
+                hasModifiedImages = true
+            case .removed:
+                hasRemovedImages = true
+                if let dto = try? change.document.data(as: FirestoreMemoImage.self),
+                   let info = dto.toDomain() {
+                    deleteLocalImageFiles(for: info)
+                }
             }
         }
         // UI는 종류 무관하게 재조회하므로 변경 종류별로 한 번씩 coarse emit.
-        if hasAdds { imageUpdatedSubject.send(.create(memoID: memoID)) }
-        if hasMods { imageUpdatedSubject.send(.update(memoID: memoID)) }
-        if hasRems { imageUpdatedSubject.send(.delete(memoID: memoID)) }
+        if hasAddedImages { imageUpdatedSubject.send(.create(memoID: memoID)) }
+        if hasModifiedImages { imageUpdatedSubject.send(.update(memoID: memoID)) }
+        if hasRemovedImages { imageUpdatedSubject.send(.delete(memoID: memoID)) }
+    }
+
+    private func deleteLocalImageFiles(for info: MemoImageInfo) {
+        if let originalURL = try? ImageFileHandler.getFileURL(for: info, thumbnail: false) {
+            try? ImageFileHandler.delete(at: originalURL)
+        }
+        if let thumbnailURL = try? ImageFileHandler.getFileURL(for: info, thumbnail: true) {
+            try? ImageFileHandler.delete(at: thumbnailURL)
+        }
     }
 
     // MARK: - Update
