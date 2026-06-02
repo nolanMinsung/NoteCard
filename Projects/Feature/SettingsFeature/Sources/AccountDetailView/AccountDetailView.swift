@@ -30,11 +30,22 @@ final class AccountDetailView: UIView {
         return label
     }()
 
-    let signInButton: ASAuthorizationAppleIDButton = {
-        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .black)
+    /// 다크모드 전환 시 인스턴스가 교체되므로 var. 라이트모드에서는 .black, 다크모드에서는 .white 스타일.
+    /// 호출 측은 `onSignInButtonRecreated` 콜백으로 새 인스턴스에 target/action 을 다시 부착해야 함.
+    private(set) lazy var signInButton: ASAuthorizationAppleIDButton = createSignInButton(for: traitCollection)
+
+    /// 다크모드 전환으로 signInButton 이 재생성되면 호출됨. View 외부 (VC) 가 새 인스턴스에 action 재부착.
+    var onSignInButtonRecreated: ((ASAuthorizationAppleIDButton) -> Void)?
+
+    private func createSignInButton(for traitCollection: UITraitCollection) -> ASAuthorizationAppleIDButton {
+        let style: ASAuthorizationAppleIDButton.Style =
+            (traitCollection.userInterfaceStyle == .dark) ? .white : .black
+        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: style)
         button.cornerRadius = 12
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
         return button
-    }()
+    }
 
     // MARK: - Signed-in state
 
@@ -139,8 +150,6 @@ final class AccountDetailView: UIView {
             signedOutContainer.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),
             signedOutContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 40),
 
-            signInButton.heightAnchor.constraint(equalToConstant: 50),
-
             signedInContainer.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
             signedInContainer.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),
             signedInContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 40),
@@ -148,6 +157,29 @@ final class AccountDetailView: UIView {
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
+    }
+
+    // MARK: - Trait change
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle else { return }
+        replaceSignInButton()
+    }
+
+    private func replaceSignInButton() {
+        let newButton = createSignInButton(for: traitCollection)
+        let oldButton = signInButton
+        let index = signedOutContainer.arrangedSubviews.firstIndex(of: oldButton)
+        signedOutContainer.removeArrangedSubview(oldButton)
+        oldButton.removeFromSuperview()
+        if let index {
+            signedOutContainer.insertArrangedSubview(newButton, at: index)
+        } else {
+            signedOutContainer.addArrangedSubview(newButton)
+        }
+        signInButton = newButton
+        onSignInButtonRecreated?(newButton)
     }
 
     // MARK: - Helpers
