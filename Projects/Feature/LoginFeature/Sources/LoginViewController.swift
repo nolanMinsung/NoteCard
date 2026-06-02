@@ -100,9 +100,6 @@ public final class LoginViewController: UIViewController {
             rootView.errorLabel.text = L10n.Sync.Auth.unavailable
         case .invalidCredential:
             rootView.errorLabel.text = L10n.Sync.Auth.invalidCredential
-        case .requiresRecentLogin:
-            // 로그인 진입점에서는 발생하지 않는 케이스 (delete 흐름 전용). 방어적으로 unknown 메시지.
-            rootView.errorLabel.text = L10n.Sync.Auth.unknown
         case .unknown:
             rootView.errorLabel.text = L10n.Sync.Auth.unknown
         }

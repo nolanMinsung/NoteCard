@@ -79,8 +79,6 @@ public final class FirebaseAuthService: NSObject, AuthService, @unchecked Sendab
         }
         do {
             try await user.delete()
-        } catch let error as NSError where error.code == AuthErrorCode.requiresRecentLogin.rawValue {
-            throw AuthError.requiresRecentLogin
         } catch {
             throw AuthError.unknown(error)
         }

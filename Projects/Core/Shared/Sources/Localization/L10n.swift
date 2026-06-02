@@ -134,7 +134,6 @@ public enum L10n {
             public static let invalidCredential = "sync.auth.invalidCredential".localized()
             public static let unavailable = "sync.auth.unavailable".localized()
             public static let unknown = "sync.auth.unknown".localized()
-            public static let requiresRecentLogin = "sync.auth.requiresRecentLogin".localized()
         }
 
         public enum AccountDeletion {

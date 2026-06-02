@@ -9,9 +9,9 @@ import SyncInterface
 
 /// Repository 추상화를 통해 데이터 정리를 수행하는 `AccountDeletionService` 구현.
 ///
-/// 순서: reauth → 데이터 삭제 → Auth user 삭제. reauth 를 가장 먼저 두는 이유는
-/// (1) 사용자가 Apple 시트를 취소했을 때 아무것도 지워지지 않은 깨끗한 상태로 종료되고
-/// (2) reauth 후 token 이 신선하므로 마지막 `user.delete()` 가 `requiresRecentLogin` 없이 통과하기 때문.
+/// 순서: reauth → 데이터 삭제 → Auth user 삭제. reauth 를 가장 먼저 두는 이유는 사용자가
+/// Apple 시트를 취소했을 때 아무것도 지워지지 않은 깨끗한 상태로 종료되고, reauth 후 token 이
+/// 신선해 마지막 `user.delete()` 가 안전하게 통과하기 때문.
 ///
 /// 데이터 삭제는 기존 Repository 메서드를 그대로 사용 — 호출 시점 활성 impl (보통 Firestore)
 /// 의 `deleteMemo` / `deleteImage` / `deleteCategory` 가 각각의 클라우드 / Storage 부수효과를 책임진다.
