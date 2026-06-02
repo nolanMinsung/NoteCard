@@ -150,9 +150,11 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
     }
 
     public func memoCount(of category: Domain.Category) async throws -> Int {
-        // Memo Repository가 Firestore로 가면 그때 count_query/denormalized count 결정.
-        // 스파이크에선 0 반환 (UI는 표시만 0으로 뜸).
-        0
+        let memos = firestore.collection("users").document(userID).collection("memos")
+        let snapshot = try await memos
+            .whereField("categoryIDs", arrayContains: category.id.uuidString)
+            .getDocuments(source: .cache)
+        return snapshot.count
     }
 
     // MARK: - Write
