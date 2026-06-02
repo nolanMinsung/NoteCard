@@ -1820,6 +1820,91 @@
         }
       }
     },
+    "sync.auth.requiresRecentLogin": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For security, please sign in again to delete your account."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "보안을 위해 계정 삭제 전에 다시 로그인이 필요해요."
+          }
+        }
+      }
+    },
+    "sync.accountDeletion.inProgress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting your account and data…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계정과 데이터를 삭제하는 중이에요…"
+          }
+        }
+      }
+    },
+    "sync.accountDeletion.dataCleanupFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't fully delete your data. Please check your connection and try again."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "데이터를 전부 삭제하지 못했어요. 네트워크 상태를 확인하고 다시 시도해주세요."
+          }
+        }
+      }
+    },
+    "sync.accountDeletion.reauthRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please sign in again to confirm account deletion."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계정 삭제를 확인하려면 다시 로그인해주세요."
+          }
+        }
+      }
+    },
+    "sync.accountDeletion.invalidatedRemotely": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your account is no longer available. You have been signed out."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 계정에 더 이상 접근할 수 없어요. 로그아웃되었어요."
+          }
+        }
+      }
+    },
     "sync.error.network": {
       "extractionState": "manual",
       "localizations": {

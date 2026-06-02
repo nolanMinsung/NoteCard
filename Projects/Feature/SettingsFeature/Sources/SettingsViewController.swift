@@ -19,6 +19,7 @@ public final class SettingsViewController: UITableViewController {
     private let categoryRepository: CategoryRepository
     private let analytics: Analytics
     private let authService: AuthService
+    private let accountDeletionService: AccountDeletionService
     private let makeTrashViewController: () -> UIViewController
 
     public init(
@@ -26,12 +27,14 @@ public final class SettingsViewController: UITableViewController {
         categoryRepository: CategoryRepository,
         analytics: Analytics,
         authService: AuthService,
+        accountDeletionService: AccountDeletionService,
         makeTrashViewController: @escaping () -> UIViewController
     ) {
         self.memoRepository = memoRepository
         self.categoryRepository = categoryRepository
         self.analytics = analytics
         self.authService = authService
+        self.accountDeletionService = accountDeletionService
         self.makeTrashViewController = makeTrashViewController
         super.init(nibName: nil, bundle: nil)
     }
@@ -389,7 +392,10 @@ extension SettingsViewController {
         
         switch indexPath {
         case IndexPath(row: 0, section: 0):
-            targetVC = AccountDetailViewController(authService: authService)
+            targetVC = AccountDetailViewController(
+                authService: authService,
+                accountDeletionService: accountDeletionService
+            )
         case IndexPath(row: 0, section: 1):
             targetVC = ThemeColorPickingViewController()
         case IndexPath(row: 1, section: 1):

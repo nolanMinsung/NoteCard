@@ -29,6 +29,7 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
     private var _firestoreImpl: MemoRepositoryFirestoreImpl?
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
+    private var _listenerErrorCancellable: AnyCancellable?
 
     private let updatedSubject = PassthroughSubject<MemoUpdateType, Never>()
     public var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
@@ -67,16 +68,38 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
             _activeImpl = impl
             lock.unlock()
             attachForwarding(from: impl)
+            attachListenerErrorHandling(from: impl)
             triggerMigrationIfNeeded(to: impl, userID: userID)
         } else {
             lock.lock()
             _firestoreImpl = nil
             _activeImpl = anonymousImpl
+            _listenerErrorCancellable?.cancel()
+            _listenerErrorCancellable = nil
             lock.unlock()
             attachForwarding(from: anonymousImpl)
         }
         // 백엔드 전환을 UI에 알려 재조회 유도.
         updatedSubject.send(.update(content: .titleText(memoIDs: [])))
+    }
+
+    /// Firestore listener 가 permission denied 등으로 발화하면 — 보통 다른 기기에서 본 계정이
+    /// 삭제됐다는 신호 — 강제 로그아웃해서 익명 모드로 전환.
+    private func attachListenerErrorHandling(from impl: MemoRepositoryFirestoreImpl) {
+        let newCancellable = impl.listenerErrorPublisher.sink { [weak self] error in
+            guard let self else { return }
+            let nsError = error as NSError
+            guard nsError.domain == FirestoreErrorDomain,
+                  nsError.code == FirestoreErrorCode.permissionDenied.rawValue
+            else { return }
+            Task { [authService = self.authService] in
+                try? await authService.signOut()
+            }
+        }
+        lock.lock()
+        _listenerErrorCancellable?.cancel()
+        _listenerErrorCancellable = newCancellable
+        lock.unlock()
     }
 
     /// 익명 메모(휴지통 포함)를 새 Firestore impl로 이관. UserDefaults 마커로 기기+사용자별 1회.

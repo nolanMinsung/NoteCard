@@ -48,14 +48,16 @@ public enum AuthError: LocalizedError {
     case cancelled
     case invalidCredential
     case missingFirebase
+    case requiresRecentLogin
     case unknown(Error)
 
     public var errorDescription: String? {
         switch self {
-        case .cancelled:         return L10n.Sync.Auth.cancelled
-        case .invalidCredential: return L10n.Sync.Auth.invalidCredential
-        case .missingFirebase:   return L10n.Sync.Auth.unavailable
-        case .unknown:           return L10n.Sync.Auth.unknown
+        case .cancelled:           return L10n.Sync.Auth.cancelled
+        case .invalidCredential:   return L10n.Sync.Auth.invalidCredential
+        case .missingFirebase:     return L10n.Sync.Auth.unavailable
+        case .requiresRecentLogin: return L10n.Sync.Auth.requiresRecentLogin
+        case .unknown:             return L10n.Sync.Auth.unknown
         }
     }
 }

@@ -73,7 +73,13 @@ public final class FirebaseAuthService: NSObject, AuthService, @unchecked Sendab
         guard let user = Auth.auth().currentUser else {
             throw AuthError.invalidCredential
         }
-        try await user.delete()
+        do {
+            try await user.delete()
+        } catch let error as NSError where error.code == AuthErrorCode.requiresRecentLogin.rawValue {
+            throw AuthError.requiresRecentLogin
+        } catch {
+            throw AuthError.unknown(error)
+        }
     }
 
     // MARK: - Private

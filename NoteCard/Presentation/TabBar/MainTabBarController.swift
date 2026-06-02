@@ -102,6 +102,7 @@ class MainTabBarController: UITabBarController {
             categoryRepository: environment.categoryRepository,
             analytics: environment.analytics,
             authService: environment.authService,
+            accountDeletionService: environment.accountDeletionService,
             makeTrashViewController: { [environment] in
                 MemoViewController(memoVCType: .trash, environment: environment)
             }

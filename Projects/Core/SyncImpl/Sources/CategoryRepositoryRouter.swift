@@ -33,6 +33,7 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
     private var _firestoreImpl: CategoryRepositoryFirestoreImpl?
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
+    private var _listenerErrorCancellable: AnyCancellable?
 
     private let updatedSubject = PassthroughSubject<CategoryUpdateType, Never>()
     public var categoryUpdatedPublisher: AnyPublisher<CategoryUpdateType, Never> {
@@ -64,6 +65,7 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
             _activeImpl = impl
             lock.unlock()
             attachForwarding(from: impl)
+            attachListenerErrorHandling(from: impl)
             // 익명 → Firestore 1회 마이그레이션 (백그라운드)
             triggerMigrationIfNeeded(to: impl, userID: userID)
         } else {
@@ -71,12 +73,33 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
             lock.lock()
             _firestoreImpl = nil
             _activeImpl = anonymousImpl
+            _listenerErrorCancellable?.cancel()
+            _listenerErrorCancellable = nil
             lock.unlock()
             attachForwarding(from: anonymousImpl)
         }
         // 백엔드가 바뀌었음을 UI에 알려 재조회 유도.
         // (Core Data impl은 자발적 emit이 없고, Firestore listener도 첫 스냅샷 도착이 비동기라 둘 다 보조)
         updatedSubject.send(.update(content: .name(categoryIDs: [])))
+    }
+
+    /// Firestore listener 가 permission denied 등으로 발화하면 — 다른 기기에서 본 계정이 삭제됐다는
+    /// 신호일 가능성 — 강제 signOut 으로 익명 모드 복귀.
+    private func attachListenerErrorHandling(from impl: CategoryRepositoryFirestoreImpl) {
+        let newCancellable = impl.listenerErrorPublisher.sink { [weak self] error in
+            guard let self else { return }
+            let nsError = error as NSError
+            guard nsError.domain == FirestoreErrorDomain,
+                  nsError.code == FirestoreErrorCode.permissionDenied.rawValue
+            else { return }
+            Task { [authService = self.authService] in
+                try? await authService.signOut()
+            }
+        }
+        lock.lock()
+        _listenerErrorCancellable?.cancel()
+        _listenerErrorCancellable = newCancellable
+        lock.unlock()
     }
 
     /// 익명 카테고리를 새 Firestore impl로 이관한다. UserDefaults 마커로 기기+사용자별 1회만 수행.
