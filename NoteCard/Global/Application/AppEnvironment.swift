@@ -24,6 +24,8 @@ struct AppEnvironment {
     let imageRepository: ImageRepository
     let analytics: Analytics
     let authService: AuthService
+    let accountSentinelService: AccountSentinelService
+    let accountDeletionService: AccountDeletionService
 
     let coreDataStack: CoreDataStack
 
@@ -64,11 +66,21 @@ struct AppEnvironment {
             anonymousMemoRepository: memoRepositoryCoreData
         )
         self.imageRepository = imageRepository
-        self.memoRepository = SyncBootstrap.makeMemoRepository(
+        let memoRepository = SyncBootstrap.makeMemoRepository(
             authService: authService,
             anonymousImpl: memoRepositoryCoreData,
             categoryResolver: categoryRepository,
             imageResolver: imageRepository
+        )
+        self.memoRepository = memoRepository
+        let accountSentinelService = SyncBootstrap.makeAccountSentinelService(authService: authService)
+        self.accountSentinelService = accountSentinelService
+        self.accountDeletionService = SyncBootstrap.makeAccountDeletionService(
+            authService: authService,
+            accountSentinelService: accountSentinelService,
+            memoRepository: memoRepository,
+            categoryRepository: categoryRepository,
+            imageRepository: imageRepository
         )
     }
 

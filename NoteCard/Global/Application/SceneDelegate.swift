@@ -5,6 +5,7 @@
 //  Created by 김민성 on 2023/11/02.
 //
 
+import Combine
 import UIKit
 import Data
 import Domain
@@ -15,6 +16,7 @@ import Shared
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    private var cancellables = Set<AnyCancellable>()
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -42,6 +44,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         } else {
             self.window?.rootViewController = makeMainTabBarController(environment: appDelegate.environment)
         }
+
+        observeForceSignOut(environment: appDelegate.environment)
+    }
+
+    /// sign-out 이벤트 (user → nil) 가 발생하면 modal · navigation 상태를 초기화한 채 홈 탭에서
+    /// 시작하도록 rootViewController 를 통째로 교체.
+    /// dropFirst 로 구독 시점의 현재 값은 건너뛰고, filter 로 sign-in 이벤트는 무시 (LoginVC 가 처리).
+    private func observeForceSignOut(environment: AppEnvironment) {
+        environment.authService.authStatePublisher
+            .dropFirst()
+            .filter { $0 == nil }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.transitionToMainTabBar(environment: environment)
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Root view construction
