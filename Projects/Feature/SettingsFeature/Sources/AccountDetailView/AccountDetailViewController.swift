@@ -201,9 +201,6 @@ public final class AccountDetailViewController: UIViewController {
             showAlert(title: L10n.Sync.Auth.unavailable)
         case .invalidCredential:
             showAlert(title: L10n.Sync.Auth.invalidCredential)
-        case .requiresRecentLogin:
-            // 로그인 진입점에선 발생하지 않는 케이스 (delete 흐름 전용). 방어적으로 unknown 메시지.
-            showAlert(title: L10n.Sync.Auth.unknown)
         case .unknown:
             showAlert(title: L10n.Sync.Auth.unknown)
         }
