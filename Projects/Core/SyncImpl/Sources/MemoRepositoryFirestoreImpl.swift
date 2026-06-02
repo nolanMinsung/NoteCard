@@ -32,6 +32,13 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
         memoUpdatedSubject.eraseToAnyPublisher()
     }
 
+    /// listener 발화 시 도착한 에러를 그대로 emit. Router 가 받아 permission denied 등 세션 무효화
+    /// 신호를 처리하는 데 사용.
+    private let listenerErrorSubject = PassthroughSubject<Error, Never>()
+    public var listenerErrorPublisher: AnyPublisher<Error, Never> {
+        listenerErrorSubject.eraseToAnyPublisher()
+    }
+
     /// listener가 채우는 in-memory DTO 스냅샷. 카테고리는 read 시점에 해석.
     private let snapshotLock = NSLock()
     private var snapshotDTOByID: [UUID: FirestoreMemo] = [:]
@@ -65,6 +72,7 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
             guard let self else { return }
             if let error {
                 print("[MemoRepoFirestore] listener error: \(error)")
+                self.listenerErrorSubject.send(error)
                 return
             }
             guard let snapshot else { return }
