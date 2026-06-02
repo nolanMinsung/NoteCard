@@ -44,6 +44,14 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     private var snapshotDTOByID: [UUID: FirestoreMemo] = [:]
     private var listenerRegistration: ListenerRegistration?
 
+    /// 사용자가 설정 화면에서 고른 정렬 기준. Core Data impl 과 동일한 UserDefaults 키를 공유해
+    /// 두 backend 동작이 일치하도록 함.
+    @UserDefault<String>(key: .orderCriterion, defaultValue: OrderCriterion.modificationDate.rawValue)
+    private var orderCriterion: String
+
+    @UserDefault<Bool>(key: .isOrderAscending, defaultValue: false)
+    private var isOrderAscending: Bool
+
     public init(
         userID: String,
         categoryResolver: CategoryRepository,
@@ -170,7 +178,7 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     public func getAllMemos() async throws -> [Memo] {
         let dtos = allSnapshotDTOs().filter { !$0.isInTrash }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     public func getAllMemos(inCategory category: Domain.Category?) async throws -> [Memo] {
@@ -183,13 +191,13 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
             }
         }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     public func getAllMemosInTrash() async throws -> [Memo] {
         let dtos = allSnapshotDTOs().filter { $0.isInTrash }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     public func searchMemo(searchText: String, inCategory category: Domain.Category?) async throws -> [Memo] {
@@ -203,13 +211,13 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
             return hit
         }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     public func getFavoriteMemos() async throws -> [Memo] {
         let dtos = allSnapshotDTOs().filter { $0.isFavorite && !$0.isInTrash }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     // MARK: - Create
@@ -466,7 +474,20 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
         return categories
     }
 
-    private static func sortByModificationDateDesc(_ memos: [Memo]) -> [Memo] {
-        memos.sorted { $0.modificationDate > $1.modificationDate }
+    /// 사용자 설정 (UserDefaults) 의 orderCriterion / isOrderAscending 을 반영해 정렬.
+    /// Core Data impl 의 NSSortDescriptor(key:ascending:) 와 동일한 결과를 내도록 맞춤.
+    private func sortByPreference(_ memos: [Memo]) -> [Memo] {
+        let criterion = OrderCriterion(rawValue: orderCriterion) ?? .modificationDate
+        let ascending = isOrderAscending
+        switch criterion {
+        case .modificationDate:
+            return memos.sorted {
+                ascending ? $0.modificationDate < $1.modificationDate : $0.modificationDate > $1.modificationDate
+            }
+        case .creationDate:
+            return memos.sorted {
+                ascending ? $0.creationDate < $1.creationDate : $0.creationDate > $1.creationDate
+            }
+        }
     }
 }
