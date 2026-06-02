@@ -23,6 +23,7 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
     private let categoryResolver: CategoryRepository
     private let imageResolver: ImageRepository
     private let firestore: Firestore
+    private let cleanupCoordinator: AnonymousMigrationCleanupCoordinator
 
     private let lock = NSLock()
     private var _activeImpl: MemoRepository
@@ -41,12 +42,14 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
         anonymousImpl: MemoRepository,
         categoryResolver: CategoryRepository,
         imageResolver: ImageRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator,
         firestore: Firestore = .firestore()
     ) {
         self.authService = authService
         self.anonymousImpl = anonymousImpl
         self.categoryResolver = categoryResolver
         self.imageResolver = imageResolver
+        self.cleanupCoordinator = cleanupCoordinator
         self.firestore = firestore
         self._activeImpl = anonymousImpl
         attachForwarding(from: anonymousImpl)
@@ -105,7 +108,11 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
     /// 익명 메모(휴지통 포함)를 새 Firestore impl로 이관. UserDefaults 마커로 기기+사용자별 1회.
     private func triggerMigrationIfNeeded(to firestoreImpl: MemoRepositoryFirestoreImpl, userID: String) {
         let markerKey = "sync.anonymousToFirestoreMemoMigration.\(userID)"
-        guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
+        let coordinator = cleanupCoordinator
+        if UserDefaults.standard.bool(forKey: markerKey) {
+            Task { await coordinator.reportMigrationCompleted(userID: userID) }
+            return
+        }
         let source = anonymousImpl
         Task { [weak firestoreImpl] in
             guard let firestoreImpl else { return }
@@ -117,6 +124,7 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
                     try await firestoreImpl.importMemos(all)
                 }
                 UserDefaults.standard.set(true, forKey: markerKey)
+                await coordinator.reportMigrationCompleted(userID: userID)
             } catch {
                 print("[MemoRepositoryRouter] migration error: \(error)")
             }
