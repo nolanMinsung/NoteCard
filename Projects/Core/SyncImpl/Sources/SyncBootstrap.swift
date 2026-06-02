@@ -75,4 +75,36 @@ public enum SyncBootstrap {
             anonymousMemoRepository: anonymousMemoRepository
         )
     }
+
+    /// FirebaseApp 설정이 완료돼 있으면 데이터 정리 + Auth user 삭제를 함께 수행하는 서비스를,
+    /// 아니면 호출 시 missingFirebase 를 던지는 No-op 을 반환.
+    public static func makeAccountDeletionService(
+        authService: AuthService,
+        accountSentinelService: AccountSentinelService,
+        memoRepository: MemoRepository,
+        categoryRepository: CategoryRepository,
+        imageRepository: ImageRepository
+    ) -> AccountDeletionService {
+        guard FirebaseApp.app() != nil else {
+            return NoOpAccountDeletionService()
+        }
+        return FirebaseAccountDeletionService(
+            authService: authService,
+            accountSentinelService: accountSentinelService,
+            memoRepository: memoRepository,
+            categoryRepository: categoryRepository,
+            imageRepository: imageRepository
+        )
+    }
+
+    /// 계정의 sentinel doc 을 관리하는 서비스. 사인인 시 자동 생성·감시, cross-device 계정 삭제를
+    /// .removed 이벤트로 즉시 감지해 강제 signOut.
+    public static func makeAccountSentinelService(
+        authService: AuthService
+    ) -> AccountSentinelService {
+        guard FirebaseApp.app() != nil else {
+            return NoOpAccountSentinelService()
+        }
+        return FirebaseAccountSentinelService(authService: authService)
+    }
 }
