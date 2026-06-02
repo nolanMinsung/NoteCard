@@ -66,6 +66,7 @@ let appDependencies: [TargetDependency] = [
     .project(target: "SyncImpl", path: .relativeToRoot("Projects/Core/SyncImpl")),
     .project(target: "SettingsFeature", path: .relativeToRoot("Projects/Feature/SettingsFeature")),
     .project(target: "LoginFeature", path: .relativeToRoot("Projects/Feature/LoginFeature")),
+    .project(target: "AccountDeletionFeature", path: .relativeToRoot("Projects/Feature/AccountDeletionFeature")),
 ]
 
 let project = Project(

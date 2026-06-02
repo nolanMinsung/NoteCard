@@ -2,10 +2,8 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.feature(
-    .settingsFeature,
-    resources: ["Resources/**"],
+    .accountDeletionFeature,
     additionalDependencies: [
         .module(.syncInterface),
-        .module(.accountDeletionFeature),
     ]
 )

@@ -3,6 +3,7 @@
 //  NoteCard
 //
 
+import AccountDeletionFeature
 import Combine
 import Shared
 import SyncInterface
@@ -13,12 +14,14 @@ import UIKit
 public final class AccountDetailViewController: UIViewController {
 
     private let authService: AuthService
+    private let accountDeletionService: AccountDeletionService
     private var cancellable: AnyCancellable?
 
     private lazy var rootView = self.view as! AccountDetailView
 
-    public init(authService: AuthService) {
+    public init(authService: AuthService, accountDeletionService: AccountDeletionService) {
         self.authService = authService
+        self.accountDeletionService = accountDeletionService
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -93,16 +96,8 @@ public final class AccountDetailViewController: UIViewController {
     }
 
     @objc private func deleteAccountTapped() {
-        let alert = UIAlertController(
-            title: L10n.Account.deleteAccountConfirmTitle,
-            message: L10n.Account.deleteAccountConfirmMessage,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel))
-        alert.addAction(UIAlertAction(title: L10n.Account.deleteAccountProceed, style: .destructive) { [weak self] _ in
-            self?.performDeleteAccount()
-        })
-        present(alert, animated: true)
+        let deletionVC = AccountDeletionViewController(accountDeletionService: accountDeletionService)
+        present(deletionVC, animated: true)
     }
 
     private func performSignOut() {
@@ -113,22 +108,6 @@ public final class AccountDetailViewController: UIViewController {
             do {
                 try await self.authService.signOut()
                 // authStatePublisher가 nil emit → 미로그인 상태로 자동 전환
-            } catch {
-                await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
-            }
-        }
-    }
-
-    private func performDeleteAccount() {
-        setLoading(true)
-        Task { [weak self] in
-            guard let self else { return }
-            defer { Task { @MainActor in self.setLoading(false) } }
-            do {
-                try await self.authService.deleteAccount()
-                // authStatePublisher가 nil emit → 미로그인 상태로 자동 전환
-            } catch let error as AuthError {
-                await MainActor.run { self.showAlert(title: error.errorDescription ?? L10n.Sync.Auth.unknown) }
             } catch {
                 await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
             }
@@ -152,6 +131,9 @@ public final class AccountDetailViewController: UIViewController {
             showAlert(title: L10n.Sync.Auth.unavailable)
         case .invalidCredential:
             showAlert(title: L10n.Sync.Auth.invalidCredential)
+        case .requiresRecentLogin:
+            // 로그인 진입점에선 발생하지 않는 케이스 (delete 흐름 전용). 방어적으로 unknown 메시지.
+            showAlert(title: L10n.Sync.Auth.unknown)
         case .unknown:
             showAlert(title: L10n.Sync.Auth.unknown)
         }
