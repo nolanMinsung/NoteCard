@@ -52,7 +52,8 @@ class HomeViewController: UIViewController {
     private var favoriteMemos: [Memo] = []
     private var allMemos: [Memo] = []
     private var diffableDataSource: DiffableDataSource!
-    
+
+    private var initialLoadCompleted = false
     private var cancellables: Set<AnyCancellable> = []
 
     private let environment: AppEnvironment
@@ -96,9 +97,20 @@ class HomeViewController: UIViewController {
 
         setupNaviBar()
         setupDiffableDataSource()
+        if environment.authService.currentUser != nil {
+            homeView.loadingIndicator.startAnimating()
+            Task { [weak self] in
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                self?.completeInitialLoad()
+            }
+        } else {
+            initialLoadCompleted = true
+        }
+
         Task {
             try await fetchData()
             applySnapshot()
+            completeInitialLoadIfDataArrived()
         }
         setupDelegates()
         bind()
@@ -283,9 +295,24 @@ class HomeViewController: UIViewController {
                 Task {
                     try await self.fetchData()
                     self.applySnapshot()
+                    self.completeInitialLoadIfDataArrived()
                 }
             }
             .store(in: &cancellables)
+    }
+
+    private func completeInitialLoadIfDataArrived() {
+        guard !initialLoadCompleted else { return }
+        let hasData = !allMemos.isEmpty || !categories.isEmpty || !favoriteMemos.isEmpty
+        if hasData {
+            completeInitialLoad()
+        }
+    }
+
+    private func completeInitialLoad() {
+        guard !initialLoadCompleted else { return }
+        initialLoadCompleted = true
+        homeView.loadingIndicator.stopAnimating()
     }
     
     @objc private func onHeaderButtonTapped(_ sender: UIButton) {
