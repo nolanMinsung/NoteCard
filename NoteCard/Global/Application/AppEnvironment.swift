@@ -26,6 +26,7 @@ struct AppEnvironment {
     let authService: AuthService
     let accountSentinelService: AccountSentinelService
     let accountDeletionService: AccountDeletionService
+    let syncStatusService: SyncStatusService
 
     let coreDataStack: CoreDataStack
 
@@ -81,6 +82,11 @@ struct AppEnvironment {
             memoRepository: memoRepository,
             categoryRepository: categoryRepository,
             imageRepository: imageRepository
+        )
+        self.syncStatusService = SyncBootstrap.makeSyncStatusService(
+            authService: authService,
+            memoRepository: memoRepository,
+            categoryRepository: categoryRepository
         )
     }
 

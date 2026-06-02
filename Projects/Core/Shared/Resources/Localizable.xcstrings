@@ -2409,6 +2409,27 @@
         "ko": { "stringUnit": { "state": "translated", "value": "준비 중" } }
       }
     },
+    "account.syncStatusUnknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "—" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "—" } }
+      }
+    },
+    "account.syncStatusSyncing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Syncing…" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "동기화 중…" } }
+      }
+    },
+    "account.syncStatusSynced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Synced" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "동기화됨" } }
+      }
+    },
     "account.lastSyncedLabel": {
       "extractionState": "manual",
       "localizations": {

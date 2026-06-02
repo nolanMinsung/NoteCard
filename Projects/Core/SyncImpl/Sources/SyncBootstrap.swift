@@ -107,4 +107,20 @@ public enum SyncBootstrap {
         }
         return FirebaseAccountSentinelService(authService: authService)
     }
+
+    /// 동기화 상태 / 마지막 sync 시점을 UI 가 구독할 수 있게 표면화하는 서비스.
+    public static func makeSyncStatusService(
+        authService: AuthService,
+        memoRepository: MemoRepository,
+        categoryRepository: CategoryRepository
+    ) -> SyncStatusService {
+        guard FirebaseApp.app() != nil else {
+            return NoOpSyncStatusService()
+        }
+        return FirebaseSyncStatusService(
+            authService: authService,
+            memoRepository: memoRepository,
+            categoryRepository: categoryRepository
+        )
+    }
 }
