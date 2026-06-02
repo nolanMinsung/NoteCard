@@ -27,6 +27,7 @@ struct AppEnvironment {
     let accountSentinelService: AccountSentinelService
     let accountDeletionService: AccountDeletionService
     let syncStatusService: SyncStatusService
+    let migrationCleanupCoordinator: AnonymousMigrationCleanupCoordinator
 
     let coreDataStack: CoreDataStack
 
@@ -56,22 +57,27 @@ struct AppEnvironment {
         let memoRepositoryCoreData = MemoRepositoryImpl(stack: coreDataStack)
         let categoryRepositoryCoreData = CategoryRepositoryImpl(stack: coreDataStack)
         let imageRepositoryCoreData = ImageRepositoryImpl(stack: coreDataStack, memoRepository: memoRepositoryCoreData)
+        let migrationCleanupCoordinator = AnonymousMigrationCleanupCoordinator(coreDataStack: coreDataStack)
+        self.migrationCleanupCoordinator = migrationCleanupCoordinator
         let categoryRepository = SyncBootstrap.makeCategoryRepository(
             authService: authService,
-            anonymousImpl: categoryRepositoryCoreData
+            anonymousImpl: categoryRepositoryCoreData,
+            cleanupCoordinator: migrationCleanupCoordinator
         )
         self.categoryRepository = categoryRepository
         let imageRepository = SyncBootstrap.makeImageRepository(
             authService: authService,
             anonymousImpl: imageRepositoryCoreData,
-            anonymousMemoRepository: memoRepositoryCoreData
+            anonymousMemoRepository: memoRepositoryCoreData,
+            cleanupCoordinator: migrationCleanupCoordinator
         )
         self.imageRepository = imageRepository
         let memoRepository = SyncBootstrap.makeMemoRepository(
             authService: authService,
             anonymousImpl: memoRepositoryCoreData,
             categoryResolver: categoryRepository,
-            imageResolver: imageRepository
+            imageResolver: imageRepository,
+            cleanupCoordinator: migrationCleanupCoordinator
         )
         self.memoRepository = memoRepository
         let accountSentinelService = SyncBootstrap.makeAccountSentinelService(authService: authService)

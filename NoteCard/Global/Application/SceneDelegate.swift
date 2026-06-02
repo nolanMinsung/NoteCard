@@ -45,19 +45,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window?.rootViewController = makeMainTabBarController(environment: appDelegate.environment)
         }
 
-        observeForceSignOut(environment: appDelegate.environment)
+        observeAuthStateChanges(environment: appDelegate.environment)
     }
 
-    /// sign-out 이벤트 (user → nil) 가 발생하면 modal · navigation 상태를 초기화한 채 홈 탭에서
-    /// 시작하도록 rootViewController 를 통째로 교체.
-    /// dropFirst 로 구독 시점의 현재 값은 건너뛰고, filter 로 sign-in 이벤트는 무시 (LoginVC 가 처리).
-    private func observeForceSignOut(environment: AppEnvironment) {
+    /// auth 상태 전이 시 rootViewController 를 새 MainTabBar 로 교체해 modal · navigation 상태 reset.
+    /// 사인인은 LoginVC 가 자체 transition 하므로 rootVC 가 LoginVC 가 아닌 경로만 처리.
+    /// 사인아웃은 force signOut (sentinel / token 만료 등) 까지 커버.
+    private func observeAuthStateChanges(environment: AppEnvironment) {
         environment.authService.authStatePublisher
             .dropFirst()
-            .filter { $0 == nil }
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.transitionToMainTabBar(environment: environment)
+            .sink { [weak self] user in
+                guard let self else { return }
+                if user == nil {
+                    self.transitionToMainTabBar(environment: environment)
+                } else if !(self.window?.rootViewController is LoginViewController) {
+                    self.transitionToMainTabBar(environment: environment)
+                }
             }
             .store(in: &cancellables)
     }

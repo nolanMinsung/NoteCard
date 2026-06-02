@@ -32,12 +32,17 @@ public enum SyncBootstrap {
     /// 아니면 익명 impl을 그대로 반환. (Firebase 미설정 환경에서 `.firestore()` fatalError 회피)
     public static func makeCategoryRepository(
         authService: AuthService,
-        anonymousImpl: CategoryRepository
+        anonymousImpl: CategoryRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator
     ) -> CategoryRepository {
         guard FirebaseApp.app() != nil else {
             return anonymousImpl
         }
-        return CategoryRepositoryRouter(authService: authService, anonymousImpl: anonymousImpl)
+        return CategoryRepositoryRouter(
+            authService: authService,
+            anonymousImpl: anonymousImpl,
+            cleanupCoordinator: cleanupCoordinator
+        )
     }
 
     /// 메모용 동일 패턴. `categoryResolver`·`imageResolver`는 보통 각각 `makeCategoryRepository` /
@@ -46,7 +51,8 @@ public enum SyncBootstrap {
         authService: AuthService,
         anonymousImpl: MemoRepository,
         categoryResolver: CategoryRepository,
-        imageResolver: ImageRepository
+        imageResolver: ImageRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator
     ) -> MemoRepository {
         guard FirebaseApp.app() != nil else {
             return anonymousImpl
@@ -55,7 +61,8 @@ public enum SyncBootstrap {
             authService: authService,
             anonymousImpl: anonymousImpl,
             categoryResolver: categoryResolver,
-            imageResolver: imageResolver
+            imageResolver: imageResolver,
+            cleanupCoordinator: cleanupCoordinator
         )
     }
 
@@ -64,7 +71,8 @@ public enum SyncBootstrap {
     public static func makeImageRepository(
         authService: AuthService,
         anonymousImpl: ImageRepository,
-        anonymousMemoRepository: MemoRepository
+        anonymousMemoRepository: MemoRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator
     ) -> ImageRepository {
         guard FirebaseApp.app() != nil else {
             return anonymousImpl
@@ -72,7 +80,8 @@ public enum SyncBootstrap {
         return ImageRepositoryRouter(
             authService: authService,
             anonymousImpl: anonymousImpl,
-            anonymousMemoRepository: anonymousMemoRepository
+            anonymousMemoRepository: anonymousMemoRepository,
+            cleanupCoordinator: cleanupCoordinator
         )
     }
 

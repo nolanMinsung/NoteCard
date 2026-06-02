@@ -27,6 +27,7 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
     private let authService: AuthService
     private let anonymousImpl: CategoryRepository
     private let firestore: Firestore
+    private let cleanupCoordinator: AnonymousMigrationCleanupCoordinator
 
     private let lock = NSLock()
     private var _activeImpl: CategoryRepository
@@ -43,10 +44,12 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
     public init(
         authService: AuthService,
         anonymousImpl: CategoryRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator,
         firestore: Firestore = .firestore()
     ) {
         self.authService = authService
         self.anonymousImpl = anonymousImpl
+        self.cleanupCoordinator = cleanupCoordinator
         self.firestore = firestore
         self._activeImpl = anonymousImpl
         attachForwarding(from: anonymousImpl)
@@ -106,7 +109,11 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
     /// (재호출 시 stale 로컬이 newer Firestore를 덮어쓰는 데이터 손실 방지)
     private func triggerMigrationIfNeeded(to firestoreImpl: CategoryRepositoryFirestoreImpl, userID: String) {
         let markerKey = "sync.anonymousToFirestoreCategoryMigration.\(userID)"
-        guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
+        let coordinator = cleanupCoordinator
+        if UserDefaults.standard.bool(forKey: markerKey) {
+            Task { await coordinator.reportMigrationCompleted(userID: userID) }
+            return
+        }
         let source = anonymousImpl
         Task { [weak firestoreImpl] in
             guard let firestoreImpl else { return }
@@ -116,6 +123,7 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
                     try await firestoreImpl.importCategories(anonymous)
                 }
                 UserDefaults.standard.set(true, forKey: markerKey)
+                await coordinator.reportMigrationCompleted(userID: userID)
             } catch {
                 // 스파이크에선 로그만. 정식 채택 시 status로 surface.
                 print("[CategoryRepositoryRouter] migration error: \(error)")
