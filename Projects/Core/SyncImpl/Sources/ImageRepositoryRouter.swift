@@ -27,6 +27,7 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
     private let anonymousMemoRepository: MemoRepository
     private let firestore: Firestore
     private let storage: Storage
+    private let cleanupCoordinator: AnonymousMigrationCleanupCoordinator
 
     private let lock = NSLock()
     private var _activeImpl: ImageRepository
@@ -43,12 +44,14 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
         authService: AuthService,
         anonymousImpl: ImageRepository,
         anonymousMemoRepository: MemoRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator,
         firestore: Firestore = .firestore(),
         storage: Storage = .storage()
     ) {
         self.authService = authService
         self.anonymousImpl = anonymousImpl
         self.anonymousMemoRepository = anonymousMemoRepository
+        self.cleanupCoordinator = cleanupCoordinator
         self.firestore = firestore
         self.storage = storage
         self._activeImpl = anonymousImpl
@@ -79,7 +82,11 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
     /// 익명 이미지를 새 Firestore impl로 이관. UserDefaults 마커로 기기+사용자별 1회.
     private func triggerMigrationIfNeeded(to firestoreImpl: ImageRepositoryFirestoreImpl, userID: String) {
         let markerKey = "sync.anonymousToFirestoreImageMigration.\(userID)"
-        guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
+        let coordinator = cleanupCoordinator
+        if UserDefaults.standard.bool(forKey: markerKey) {
+            Task { await coordinator.reportMigrationCompleted(userID: userID) }
+            return
+        }
         let memoRepo = anonymousMemoRepository
         let imageRepo = anonymousImpl
         Task { [weak firestoreImpl] in
@@ -97,6 +104,7 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
                     try await firestoreImpl.importImages(collected)
                 }
                 UserDefaults.standard.set(true, forKey: markerKey)
+                await coordinator.reportMigrationCompleted(userID: userID)
             } catch {
                 print("[ImageRepositoryRouter] migration error: \(error)")
             }
@@ -157,5 +165,9 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
 
     public func deleteImage(_ imageInfo: MemoImageInfo) async throws {
         try await current.deleteImage(imageInfo)
+    }
+
+    public func observeImageChanges(for memoID: UUID) -> AnyCancellable {
+        current.observeImageChanges(for: memoID)
     }
 }

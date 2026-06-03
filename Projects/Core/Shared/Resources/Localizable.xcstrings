@@ -817,19 +817,19 @@
         }
       }
     },
-    "memoDetail.uploadingImagesFormat": {
+    "memoDetail.savingImagesFormat": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Uploading %1$d of %2$d images"
+            "value": "Saving %1$d of %2$d images"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이미지 %1$d / %2$d 업로드 중"
+            "value": "이미지 %1$d / %2$d 저장 중"
           }
         }
       }
@@ -1820,6 +1820,74 @@
         }
       }
     },
+    "sync.accountDeletion.inProgress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting your account and data…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계정과 데이터를 삭제하는 중이에요…"
+          }
+        }
+      }
+    },
+    "sync.accountDeletion.dataCleanupFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't fully delete your data. Please check your connection and try again."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "데이터를 전부 삭제하지 못했어요. 네트워크 상태를 확인하고 다시 시도해주세요."
+          }
+        }
+      }
+    },
+    "sync.accountDeletion.reauthRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please sign in again to confirm account deletion."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계정 삭제를 확인하려면 다시 로그인해주세요."
+          }
+        }
+      }
+    },
+    "sync.accountDeletion.invalidatedRemotely": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your account is no longer available. You have been signed out."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 계정에 더 이상 접근할 수 없어요. 로그아웃되었어요."
+          }
+        }
+      }
+    },
     "sync.error.network": {
       "extractionState": "manual",
       "localizations": {
@@ -2268,13 +2336,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sign in with Apple to sync your memos across your devices. You can start from Settings → Account."
+            "value": "Sign in with your Apple ID to view your memos on other devices.\nYou can start from Settings → Account."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apple로 로그인하면 메모를 다른 기기와 동기화할 수 있어요. 설정 → 계정에서 시작하세요."
+            "value": "Apple ID로 로그인하면 이 기기의 메모를 다른 기기에서도 볼 수 있어요.\n'설정' 탭의 계정 페이지에서 시작할 수 있어요."
           }
         }
       }
@@ -2306,8 +2374,8 @@
     "account.signInPrompt": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Sign in with Apple to sync your memos across your devices." } },
-        "ko": { "stringUnit": { "state": "translated", "value": "Apple로 로그인하면 메모를 다른 기기와 동기화할 수 있어요." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Sign in with your Apple ID to view your memos on other devices.\nInitial setup may take a moment." } },
+        "ko": { "stringUnit": { "state": "translated", "value": "Apple ID로 로그인하면 이 기기의 메모를 다른 기기에서도 볼 수 있어요.\n처음에는 초기 설정에 시간이 조금 걸릴 수도 있어요." } }
       }
     },
     "account.syncStatusLabel": {
@@ -2322,6 +2390,27 @@
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Coming soon" } },
         "ko": { "stringUnit": { "state": "translated", "value": "준비 중" } }
+      }
+    },
+    "account.syncStatusUnknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "—" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "—" } }
+      }
+    },
+    "account.syncStatusSyncing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Syncing…" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "동기화 중…" } }
+      }
+    },
+    "account.syncStatusSynced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Synced" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "동기화됨" } }
       }
     },
     "account.lastSyncedLabel": {
@@ -2355,8 +2444,8 @@
     "account.signOutConfirmMessage": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "This device stops syncing. Your memos remain safe in your account." } },
-        "ko": { "stringUnit": { "state": "translated", "value": "이 기기에서 동기화가 멈춰요. 계정의 메모는 계속 안전하게 보관돼요." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Signing out switches to local mode, showing only memos that aren't synced.\nSign back in to see your synced memos again." } },
+        "ko": { "stringUnit": { "state": "translated", "value": "로그아웃하면 동기화되지 않은 메모만 보이는 '로컬 모드'로 전환돼요.\n다시 로그인하면 동기화된 메모들을 볼 수 있어요." } }
       }
     },
     "account.deleteAccount": {
@@ -2376,8 +2465,8 @@
     "account.deleteAccountConfirmMessage": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "This cannot be undone. Your account and all synced data will be permanently deleted." } },
-        "ko": { "stringUnit": { "state": "translated", "value": "이 작업은 되돌릴 수 없어요. 계정과 모든 동기화 데이터가 영구 삭제돼요." } }
+        "en": { "stringUnit": { "state": "translated", "value": "This cannot be undone. Your account and all synced data will be permanently deleted.\nYou'll be asked to sign in with Apple again for security." } },
+        "ko": { "stringUnit": { "state": "translated", "value": "이 작업은 되돌릴 수 없어요. 계정과 모든 동기화 데이터가 영구 삭제돼요.\n보안을 위해 Apple ID로 다시 로그인을 요청해요." } }
       }
     },
     "account.deleteAccountProceed": {

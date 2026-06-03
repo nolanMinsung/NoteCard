@@ -155,6 +155,56 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
         }.compactMap { $0.toDomain() }
     }
 
+    // MARK: - Listener (per-memo)
+
+    public func observeImageChanges(for memoID: UUID) -> AnyCancellable {
+        let registration = imageCollection(for: memoID).addSnapshotListener { [weak self] snapshot, error in
+            guard let self else { return }
+            if let error {
+                print("[ImageRepoFirestore] listener error for memo \(memoID): \(error)")
+                return
+            }
+            guard let snapshot else { return }
+            self.emitImageChanges(snapshot, memoID: memoID)
+        }
+        return AnyCancellable {
+            registration.remove()
+        }
+    }
+
+    private func emitImageChanges(_ snapshot: QuerySnapshot, memoID: UUID) {
+        var hasAddedImages = false
+        var hasModifiedImages = false
+        var hasRemovedImages = false
+        for change in snapshot.documentChanges {
+            switch change.type {
+            case .added:
+                hasAddedImages = true
+            case .modified:
+                hasModifiedImages = true
+            case .removed:
+                hasRemovedImages = true
+                if let dto = try? change.document.data(as: FirestoreMemoImage.self),
+                   let info = dto.toDomain() {
+                    deleteLocalImageFiles(for: info)
+                }
+            }
+        }
+        // UI는 종류 무관하게 재조회하므로 변경 종류별로 한 번씩 coarse emit.
+        if hasAddedImages { imageUpdatedSubject.send(.create(memoID: memoID)) }
+        if hasModifiedImages { imageUpdatedSubject.send(.update(memoID: memoID)) }
+        if hasRemovedImages { imageUpdatedSubject.send(.delete(memoID: memoID)) }
+    }
+
+    private func deleteLocalImageFiles(for info: MemoImageInfo) {
+        if let originalURL = try? ImageFileHandler.getFileURL(for: info, thumbnail: false) {
+            try? ImageFileHandler.delete(at: originalURL)
+        }
+        if let thumbnailURL = try? ImageFileHandler.getFileURL(for: info, thumbnail: true) {
+            try? ImageFileHandler.delete(at: thumbnailURL)
+        }
+    }
+
     // MARK: - Update
 
     public func updateImageIndex(_ image: MemoImageInfo, newIndex: Int) async throws {

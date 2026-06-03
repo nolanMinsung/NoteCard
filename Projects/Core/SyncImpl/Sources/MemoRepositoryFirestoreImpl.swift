@@ -4,6 +4,7 @@
 //
 
 import Combine
+import Data
 import Domain
 import FirebaseFirestore
 import Foundation
@@ -32,10 +33,25 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
         memoUpdatedSubject.eraseToAnyPublisher()
     }
 
+    /// listener 발화 시 도착한 에러를 그대로 emit. Router 가 받아 permission denied 등 세션 무효화
+    /// 신호를 처리하는 데 사용.
+    private let listenerErrorSubject = PassthroughSubject<Error, Never>()
+    public var listenerErrorPublisher: AnyPublisher<Error, Never> {
+        listenerErrorSubject.eraseToAnyPublisher()
+    }
+
     /// listener가 채우는 in-memory DTO 스냅샷. 카테고리는 read 시점에 해석.
     private let snapshotLock = NSLock()
     private var snapshotDTOByID: [UUID: FirestoreMemo] = [:]
     private var listenerRegistration: ListenerRegistration?
+
+    /// 사용자가 설정 화면에서 고른 정렬 기준. Core Data impl 과 동일한 UserDefaults 키를 공유해
+    /// 두 backend 동작이 일치하도록 함.
+    @UserDefault<String>(key: .orderCriterion, defaultValue: OrderCriterion.modificationDate.rawValue)
+    private var orderCriterion: String
+
+    @UserDefault<Bool>(key: .isOrderAscending, defaultValue: false)
+    private var isOrderAscending: Bool
 
     public init(
         userID: String,
@@ -65,6 +81,7 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
             guard let self else { return }
             if let error {
                 print("[MemoRepoFirestore] listener error: \(error)")
+                self.listenerErrorSubject.send(error)
                 return
             }
             guard let snapshot else { return }
@@ -113,6 +130,9 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
             case .removed:
                 snapshotDTOByID.removeValue(forKey: id)
                 deletedIDs.append(id)
+                if let url = try? ImageFileHandler.getDirectory(for: id) {
+                    try? FileManager.default.removeItem(at: url)
+                }
             }
         }
         snapshotLock.unlock()
@@ -162,7 +182,7 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     public func getAllMemos() async throws -> [Memo] {
         let dtos = allSnapshotDTOs().filter { !$0.isInTrash }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     public func getAllMemos(inCategory category: Domain.Category?) async throws -> [Memo] {
@@ -175,13 +195,13 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
             }
         }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     public func getAllMemosInTrash() async throws -> [Memo] {
         let dtos = allSnapshotDTOs().filter { $0.isInTrash }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     public func searchMemo(searchText: String, inCategory category: Domain.Category?) async throws -> [Memo] {
@@ -195,13 +215,13 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
             return hit
         }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     public func getFavoriteMemos() async throws -> [Memo] {
         let dtos = allSnapshotDTOs().filter { $0.isFavorite && !$0.isInTrash }
         let memos = try await resolveAll(dtos)
-        return Self.sortByModificationDateDesc(memos)
+        return sortByPreference(memos)
     }
 
     // MARK: - Create
@@ -254,16 +274,34 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     // MARK: - Hard delete
 
     public func deleteMemo(_ memo: Memo) async throws {
+        try await deleteImages(of: memo)
         try await collection.document(memo.memoID.uuidString).delete()
-        // NOTE: 로컬 이미지 파일 정리는 본 PR 범위 밖 (이미지 Repository가 Firebase Storage로 옮길 때 함께).
     }
 
     public func deleteMemos(_ memos: [Memo]) async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for memo in memos {
+                group.addTask { try await self.deleteImages(of: memo) }
+            }
+            try await group.waitForAll()
+        }
         let batch = firestore.batch()
         for memo in memos {
             batch.deleteDocument(collection.document(memo.memoID.uuidString))
         }
         try await batch.commit()
+    }
+
+    /// Firestore parent doc 삭제는 sub-collection 을 자동 정리하지 않으므로 명시 순회.
+    private func deleteImages(of memo: Memo) async throws {
+        let images = (try? await imageResolver.getAllImageInfo(for: memo)) ?? []
+        guard !images.isEmpty else { return }
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for image in images {
+                group.addTask { try? await self.imageResolver.deleteImage(image) }
+            }
+            try await group.waitForAll()
+        }
     }
 
     // MARK: - Restore
@@ -458,7 +496,20 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
         return categories
     }
 
-    private static func sortByModificationDateDesc(_ memos: [Memo]) -> [Memo] {
-        memos.sorted { $0.modificationDate > $1.modificationDate }
+    /// 사용자 설정 (UserDefaults) 의 orderCriterion / isOrderAscending 을 반영해 정렬.
+    /// Core Data impl 의 NSSortDescriptor(key:ascending:) 와 동일한 결과를 내도록 맞춤.
+    private func sortByPreference(_ memos: [Memo]) -> [Memo] {
+        let criterion = OrderCriterion(rawValue: orderCriterion) ?? .modificationDate
+        let ascending = isOrderAscending
+        switch criterion {
+        case .modificationDate:
+            return memos.sorted {
+                ascending ? $0.modificationDate < $1.modificationDate : $0.modificationDate > $1.modificationDate
+            }
+        case .creationDate:
+            return memos.sorted {
+                ascending ? $0.creationDate < $1.creationDate : $0.creationDate > $1.creationDate
+            }
+        }
     }
 }

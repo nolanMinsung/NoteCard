@@ -27,12 +27,14 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
     private let authService: AuthService
     private let anonymousImpl: CategoryRepository
     private let firestore: Firestore
+    private let cleanupCoordinator: AnonymousMigrationCleanupCoordinator
 
     private let lock = NSLock()
     private var _activeImpl: CategoryRepository
     private var _firestoreImpl: CategoryRepositoryFirestoreImpl?
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
+    private var _listenerErrorCancellable: AnyCancellable?
 
     private let updatedSubject = PassthroughSubject<CategoryUpdateType, Never>()
     public var categoryUpdatedPublisher: AnyPublisher<CategoryUpdateType, Never> {
@@ -42,10 +44,12 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
     public init(
         authService: AuthService,
         anonymousImpl: CategoryRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator,
         firestore: Firestore = .firestore()
     ) {
         self.authService = authService
         self.anonymousImpl = anonymousImpl
+        self.cleanupCoordinator = cleanupCoordinator
         self.firestore = firestore
         self._activeImpl = anonymousImpl
         attachForwarding(from: anonymousImpl)
@@ -64,6 +68,7 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
             _activeImpl = impl
             lock.unlock()
             attachForwarding(from: impl)
+            attachListenerErrorHandling(from: impl)
             // 익명 → Firestore 1회 마이그레이션 (백그라운드)
             triggerMigrationIfNeeded(to: impl, userID: userID)
         } else {
@@ -71,6 +76,8 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
             lock.lock()
             _firestoreImpl = nil
             _activeImpl = anonymousImpl
+            _listenerErrorCancellable?.cancel()
+            _listenerErrorCancellable = nil
             lock.unlock()
             attachForwarding(from: anonymousImpl)
         }
@@ -79,11 +86,34 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
         updatedSubject.send(.update(content: .name(categoryIDs: [])))
     }
 
+    /// Firestore listener 가 permission denied 등으로 발화하면 — 다른 기기에서 본 계정이 삭제됐다는
+    /// 신호일 가능성 — 강제 signOut 으로 익명 모드 복귀.
+    private func attachListenerErrorHandling(from impl: CategoryRepositoryFirestoreImpl) {
+        let newCancellable = impl.listenerErrorPublisher.sink { [weak self] error in
+            guard let self else { return }
+            let nsError = error as NSError
+            guard nsError.domain == FirestoreErrorDomain,
+                  nsError.code == FirestoreErrorCode.permissionDenied.rawValue
+            else { return }
+            Task { [authService = self.authService] in
+                try? await authService.signOut()
+            }
+        }
+        lock.lock()
+        _listenerErrorCancellable?.cancel()
+        _listenerErrorCancellable = newCancellable
+        lock.unlock()
+    }
+
     /// 익명 카테고리를 새 Firestore impl로 이관한다. UserDefaults 마커로 기기+사용자별 1회만 수행.
     /// (재호출 시 stale 로컬이 newer Firestore를 덮어쓰는 데이터 손실 방지)
     private func triggerMigrationIfNeeded(to firestoreImpl: CategoryRepositoryFirestoreImpl, userID: String) {
         let markerKey = "sync.anonymousToFirestoreCategoryMigration.\(userID)"
-        guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
+        let coordinator = cleanupCoordinator
+        if UserDefaults.standard.bool(forKey: markerKey) {
+            Task { await coordinator.reportMigrationCompleted(userID: userID) }
+            return
+        }
         let source = anonymousImpl
         Task { [weak firestoreImpl] in
             guard let firestoreImpl else { return }
@@ -93,6 +123,7 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
                     try await firestoreImpl.importCategories(anonymous)
                 }
                 UserDefaults.standard.set(true, forKey: markerKey)
+                await coordinator.reportMigrationCompleted(userID: userID)
             } catch {
                 // 스파이크에선 로그만. 정식 채택 시 status로 surface.
                 print("[CategoryRepositoryRouter] migration error: \(error)")

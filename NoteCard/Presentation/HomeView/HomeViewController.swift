@@ -52,7 +52,9 @@ class HomeViewController: UIViewController {
     private var favoriteMemos: [Memo] = []
     private var allMemos: [Memo] = []
     private var diffableDataSource: DiffableDataSource!
-    
+
+    private var initialLoadCompleted = false
+    private var awaitingMigrationCleanup = false
     private var cancellables: Set<AnyCancellable> = []
 
     private let environment: AppEnvironment
@@ -96,9 +98,39 @@ class HomeViewController: UIViewController {
 
         setupNaviBar()
         setupDiffableDataSource()
+        if let userID = environment.authService.currentUser?.id {
+            let cleanupMarker = "sync.anonymousMigrationCleanup.\(userID)"
+            awaitingMigrationCleanup = !UserDefaults.standard.bool(forKey: cleanupMarker)
+            homeView.loadingIndicator.startAnimating()
+
+            if awaitingMigrationCleanup {
+                environment.migrationCleanupCoordinator.cleanupCompletedPublisher
+                    .filter { $0 == userID }
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] _ in
+                        self?.awaitingMigrationCleanup = false
+                        self?.completeInitialLoad()
+                    }
+                    .store(in: &cancellables)
+                // 첫 마이그레이션은 이미지 다수 업로드 등으로 분 단위 가능. 안전망 60초.
+                Task { [weak self] in
+                    try? await Task.sleep(nanoseconds: 60_000_000_000)
+                    self?.completeInitialLoad()
+                }
+            } else {
+                Task { [weak self] in
+                    try? await Task.sleep(nanoseconds: 3_000_000_000)
+                    self?.completeInitialLoad()
+                }
+            }
+        } else {
+            initialLoadCompleted = true
+        }
+
         Task {
             try await fetchData()
             applySnapshot()
+            completeInitialLoadIfDataArrived()
         }
         setupDelegates()
         bind()
@@ -283,9 +315,26 @@ class HomeViewController: UIViewController {
                 Task {
                     try await self.fetchData()
                     self.applySnapshot()
+                    self.completeInitialLoadIfDataArrived()
                 }
             }
             .store(in: &cancellables)
+    }
+
+    private func completeInitialLoadIfDataArrived() {
+        guard !initialLoadCompleted else { return }
+        // 첫 사인인 진행 중엔 cleanup 신호로만 종료. 데이터 일부 도착으로 조기 중단 X.
+        guard !awaitingMigrationCleanup else { return }
+        let hasData = !allMemos.isEmpty || !categories.isEmpty || !favoriteMemos.isEmpty
+        if hasData {
+            completeInitialLoad()
+        }
+    }
+
+    private func completeInitialLoad() {
+        guard !initialLoadCompleted else { return }
+        initialLoadCompleted = true
+        homeView.loadingIndicator.stopAnimating()
     }
     
     @objc private func onHeaderButtonTapped(_ sender: UIButton) {

@@ -29,6 +29,10 @@ public final class FirebaseAuthService: NSObject, AuthService, @unchecked Sendab
 
     public override init() {
         super.init()
+        // Firebase listener 첫 fire 가 비동기라 init 직후 currentUser 가 nil. 캐시 사용자를 미리 시드.
+        if let user = Auth.auth().currentUser {
+            authStateSubject.send(Self.toAuthUser(user))
+        }
         attachAuthStateListener()
     }
 
@@ -73,7 +77,11 @@ public final class FirebaseAuthService: NSObject, AuthService, @unchecked Sendab
         guard let user = Auth.auth().currentUser else {
             throw AuthError.invalidCredential
         }
-        try await user.delete()
+        do {
+            try await user.delete()
+        } catch {
+            throw AuthError.unknown(error)
+        }
     }
 
     // MARK: - Private
@@ -81,7 +89,9 @@ public final class FirebaseAuthService: NSObject, AuthService, @unchecked Sendab
     private func attachAuthStateListener() {
         stateHandle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
             guard let self else { return }
-            self.authStateSubject.send(user.map(Self.toAuthUser))
+            let newValue = user.map(Self.toAuthUser)
+            guard self.authStateSubject.value != newValue else { return }
+            self.authStateSubject.send(newValue)
         }
     }
 

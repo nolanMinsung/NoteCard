@@ -88,6 +88,11 @@ class PopupCardViewController: UIViewController {
             memoTextViewTapGesture.isEnabled = false
         }
         
+        // PopupCard 표시 중에만 해당 메모의 image sub-collection listener attach.
+        // cancellables 라이프사이클에 묶여 dismiss 시 자동 detach.
+        environment.imageRepository.observeImageChanges(for: memo.memoID)
+            .store(in: &cancellables)
+
         environment.imageRepository.imageUpdatedPublisher
             .filter { [weak self] updateType in
                 guard let self else { return false }
@@ -512,16 +517,19 @@ extension PopupCardViewController {
         let cancelAction = UIAlertAction(title: L10n.Common.cancel, style: .cancel)
         let deleteAction = UIAlertAction(title: L10n.Common.delete, style: .destructive) { [weak self] action in
             guard let self else { return }
+            let memo = self.memo
+            let env = self.environment
+            let isInTrash = memo.isInTrash
+            self.dismiss(animated: true)
             Task {
                 do {
-                    if self.memo.isInTrash {
-                        try await self.environment.memoRepository.deleteMemo(self.memo)
-                        self.environment.analytics.log(.memoDeleted(count: 1))
+                    if isInTrash {
+                        try await env.memoRepository.deleteMemo(memo)
+                        env.analytics.log(.memoDeleted(count: 1))
                     } else {
-                        try await self.environment.memoRepository.moveToTrash(self.memo)
-                        self.environment.analytics.log(.memoMovedToTrash(count: 1))
+                        try await env.memoRepository.moveToTrash(memo)
+                        env.analytics.log(.memoMovedToTrash(count: 1))
                     }
-                    self.dismiss(animated: true)
                 } catch {
                     print(error.localizedDescription)
                 }

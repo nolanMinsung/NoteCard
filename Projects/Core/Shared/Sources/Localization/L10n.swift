@@ -92,7 +92,7 @@ public enum L10n {
         public static let addMemo = "memoDetail.addMemo".localized()
         public static let imageLimitExceeded = "memoDetail.imageLimitExceeded".localized()
         public static let imageLimitMessage = "memoDetail.imageLimitMessage".localized()
-        public static let uploadingImagesFormat = "memoDetail.uploadingImagesFormat".localized()
+        public static let savingImagesFormat = "memoDetail.savingImagesFormat".localized()
         public static let deletingImagesFormat = "memoDetail.deletingImagesFormat".localized()
     }
 
@@ -136,6 +136,13 @@ public enum L10n {
             public static let unknown = "sync.auth.unknown".localized()
         }
 
+        public enum AccountDeletion {
+            public static let inProgress = "sync.accountDeletion.inProgress".localized()
+            public static let dataCleanupFailed = "sync.accountDeletion.dataCleanupFailed".localized()
+            public static let reauthRequired = "sync.accountDeletion.reauthRequired".localized()
+            public static let invalidatedRemotely = "sync.accountDeletion.invalidatedRemotely".localized()
+        }
+
         public enum Error {
             public static let network = "sync.error.network".localized()
             public static let permissionDenied = "sync.error.permissionDenied".localized()
@@ -164,6 +171,9 @@ public enum L10n {
         public static let signInPrompt = "account.signInPrompt".localized()
         public static let syncStatusLabel = "account.syncStatusLabel".localized()
         public static let syncStatusComingSoon = "account.syncStatusComingSoon".localized()
+        public static let syncStatusUnknown = "account.syncStatusUnknown".localized()
+        public static let syncStatusSyncing = "account.syncStatusSyncing".localized()
+        public static let syncStatusSynced = "account.syncStatusSynced".localized()
         public static let lastSyncedLabel = "account.lastSyncedLabel".localized()
         public static let lastSyncedNever = "account.lastSyncedNever".localized()
         public static let signOut = "account.signOut".localized()

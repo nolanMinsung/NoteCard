@@ -145,6 +145,12 @@ public final class ImageRepositoryImpl: ImageRepository, @unchecked Sendable {
         imageUpdatedSubject.send(.update(memoID: image.memoID))
     }
     
+    // 익명(Core Data) 모드는 cross-device 동기화 대상이 아니라 외부 변경 push 자체가 없음.
+    // 로컬 write는 기존 메서드들이 즉시 publisher emit하므로 추가 listener 없이 no-op cancellable 반환.
+    public func observeImageChanges(for memoID: UUID) -> AnyCancellable {
+        AnyCancellable {}
+    }
+
     // 이미지를 영구적으로 삭제.
     // 모든 이미지 데이터를 안전하게 삭제하기 위해서 FileManager 에 있는 이미지 및 썸네일 파일을 먼저 지우고,
     // 그 다음에 CoreData의 DB에서 ImageEntity 삭제

@@ -23,12 +23,14 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
     private let categoryResolver: CategoryRepository
     private let imageResolver: ImageRepository
     private let firestore: Firestore
+    private let cleanupCoordinator: AnonymousMigrationCleanupCoordinator
 
     private let lock = NSLock()
     private var _activeImpl: MemoRepository
     private var _firestoreImpl: MemoRepositoryFirestoreImpl?
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
+    private var _listenerErrorCancellable: AnyCancellable?
 
     private let updatedSubject = PassthroughSubject<MemoUpdateType, Never>()
     public var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
@@ -40,12 +42,14 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
         anonymousImpl: MemoRepository,
         categoryResolver: CategoryRepository,
         imageResolver: ImageRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator,
         firestore: Firestore = .firestore()
     ) {
         self.authService = authService
         self.anonymousImpl = anonymousImpl
         self.categoryResolver = categoryResolver
         self.imageResolver = imageResolver
+        self.cleanupCoordinator = cleanupCoordinator
         self.firestore = firestore
         self._activeImpl = anonymousImpl
         attachForwarding(from: anonymousImpl)
@@ -67,11 +71,14 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
             _activeImpl = impl
             lock.unlock()
             attachForwarding(from: impl)
+            attachListenerErrorHandling(from: impl)
             triggerMigrationIfNeeded(to: impl, userID: userID)
         } else {
             lock.lock()
             _firestoreImpl = nil
             _activeImpl = anonymousImpl
+            _listenerErrorCancellable?.cancel()
+            _listenerErrorCancellable = nil
             lock.unlock()
             attachForwarding(from: anonymousImpl)
         }
@@ -79,10 +86,33 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
         updatedSubject.send(.update(content: .titleText(memoIDs: [])))
     }
 
+    /// Firestore listener 가 permission denied 등으로 발화하면 — 보통 다른 기기에서 본 계정이
+    /// 삭제됐다는 신호 — 강제 로그아웃해서 익명 모드로 전환.
+    private func attachListenerErrorHandling(from impl: MemoRepositoryFirestoreImpl) {
+        let newCancellable = impl.listenerErrorPublisher.sink { [weak self] error in
+            guard let self else { return }
+            let nsError = error as NSError
+            guard nsError.domain == FirestoreErrorDomain,
+                  nsError.code == FirestoreErrorCode.permissionDenied.rawValue
+            else { return }
+            Task { [authService = self.authService] in
+                try? await authService.signOut()
+            }
+        }
+        lock.lock()
+        _listenerErrorCancellable?.cancel()
+        _listenerErrorCancellable = newCancellable
+        lock.unlock()
+    }
+
     /// 익명 메모(휴지통 포함)를 새 Firestore impl로 이관. UserDefaults 마커로 기기+사용자별 1회.
     private func triggerMigrationIfNeeded(to firestoreImpl: MemoRepositoryFirestoreImpl, userID: String) {
         let markerKey = "sync.anonymousToFirestoreMemoMigration.\(userID)"
-        guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
+        let coordinator = cleanupCoordinator
+        if UserDefaults.standard.bool(forKey: markerKey) {
+            Task { await coordinator.reportMigrationCompleted(userID: userID) }
+            return
+        }
         let source = anonymousImpl
         Task { [weak firestoreImpl] in
             guard let firestoreImpl else { return }
@@ -94,6 +124,7 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
                     try await firestoreImpl.importMemos(all)
                 }
                 UserDefaults.standard.set(true, forKey: markerKey)
+                await coordinator.reportMigrationCompleted(userID: userID)
             } catch {
                 print("[MemoRepositoryRouter] migration error: \(error)")
             }

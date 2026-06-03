@@ -3,6 +3,8 @@
 //  NoteCard
 //
 
+import AccountDeletionFeature
+import AuthenticationServices
 import Combine
 import Shared
 import SyncInterface
@@ -13,13 +15,33 @@ import UIKit
 public final class AccountDetailViewController: UIViewController {
 
     private let authService: AuthService
-    private var cancellable: AnyCancellable?
+    private let accountDeletionService: AccountDeletionService
+    private let syncStatusService: SyncStatusService
+    private var cancellables = Set<AnyCancellable>()
+    private var lastSyncedAt: Date?
+    private var lastSyncedRefreshTimer: Timer?
+
+    private static let relativeFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter
+    }()
 
     private lazy var rootView = self.view as! AccountDetailView
 
-    public init(authService: AuthService) {
+    public init(
+        authService: AuthService,
+        accountDeletionService: AccountDeletionService,
+        syncStatusService: SyncStatusService
+    ) {
         self.authService = authService
+        self.accountDeletionService = accountDeletionService
+        self.syncStatusService = syncStatusService
         super.init(nibName: nil, bundle: nil)
+    }
+
+    deinit {
+        lastSyncedRefreshTimer?.invalidate()
     }
 
     @available(*, unavailable)
@@ -34,19 +56,66 @@ public final class AccountDetailViewController: UIViewController {
         title = L10n.Account.title
         navigationItem.largeTitleDisplayMode = .never
 
-        rootView.signInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
+        attachSignInButtonTarget(rootView.signInButton)
+        rootView.onSignInButtonRecreated = { [weak self] button in
+            // 다크모드 토글로 인스턴스가 교체되면 새 인스턴스에 action 재부착.
+            self?.attachSignInButtonTarget(button)
+        }
         rootView.signOutButton.addTarget(self, action: #selector(signOutTapped), for: .touchUpInside)
         rootView.deleteAccountButton.addTarget(self, action: #selector(deleteAccountTapped), for: .touchUpInside)
 
         // 인증 상태 변경에 따라 화면 상태 토글.
-        cancellable = authService.authStatePublisher
+        authService.authStatePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
                 self?.render(user: user)
             }
+            .store(in: &cancellables)
+
+        // 동기화 상태 / 최근 동기화 라벨 binding.
+        syncStatusService.statusPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                self?.renderSyncStatus(status)
+            }
+            .store(in: &cancellables)
+
+        syncStatusService.lastSyncedAtPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] date in
+                self?.lastSyncedAt = date
+                self?.renderLastSyncedRelativeText()
+            }
+            .store(in: &cancellables)
+
+        // RelativeDateTimeFormatter 결과 ("방금 전" → "1분 전" → ...) 를 시간이 흐름에 따라 갱신.
+        // viewWillAppear / viewWillDisappear 와 별개로 30초 tick. 화면이 가려져 있어도 무해.
+        lastSyncedRefreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+            self?.renderLastSyncedRelativeText()
+        }
     }
 
     // MARK: - State render
+
+    private func renderSyncStatus(_ status: SyncStatus) {
+        let text: String
+        switch status {
+        case .unknown: text = L10n.Account.syncStatusUnknown
+        case .syncing: text = L10n.Account.syncStatusSyncing
+        case .synced:  text = L10n.Account.syncStatusSynced
+        }
+        rootView.updateRow(rootView.syncStatusRow, value: text)
+    }
+
+    private func renderLastSyncedRelativeText() {
+        let text: String
+        if let date = lastSyncedAt {
+            text = Self.relativeFormatter.localizedString(for: date, relativeTo: Date())
+        } else {
+            text = L10n.Account.lastSyncedNever
+        }
+        rootView.updateRow(rootView.lastSyncedRow, value: text)
+    }
 
     private func render(user: AuthUser?) {
         if let user {
@@ -62,6 +131,10 @@ public final class AccountDetailViewController: UIViewController {
     }
 
     // MARK: - Actions
+
+    private func attachSignInButtonTarget(_ button: ASAuthorizationAppleIDButton) {
+        button.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
+    }
 
     @objc private func signInTapped() {
         setLoading(true)
@@ -93,16 +166,8 @@ public final class AccountDetailViewController: UIViewController {
     }
 
     @objc private func deleteAccountTapped() {
-        let alert = UIAlertController(
-            title: L10n.Account.deleteAccountConfirmTitle,
-            message: L10n.Account.deleteAccountConfirmMessage,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel))
-        alert.addAction(UIAlertAction(title: L10n.Account.deleteAccountProceed, style: .destructive) { [weak self] _ in
-            self?.performDeleteAccount()
-        })
-        present(alert, animated: true)
+        let deletionVC = AccountDeletionViewController(accountDeletionService: accountDeletionService)
+        present(deletionVC, animated: true)
     }
 
     private func performSignOut() {
@@ -113,22 +178,6 @@ public final class AccountDetailViewController: UIViewController {
             do {
                 try await self.authService.signOut()
                 // authStatePublisher가 nil emit → 미로그인 상태로 자동 전환
-            } catch {
-                await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
-            }
-        }
-    }
-
-    private func performDeleteAccount() {
-        setLoading(true)
-        Task { [weak self] in
-            guard let self else { return }
-            defer { Task { @MainActor in self.setLoading(false) } }
-            do {
-                try await self.authService.deleteAccount()
-                // authStatePublisher가 nil emit → 미로그인 상태로 자동 전환
-            } catch let error as AuthError {
-                await MainActor.run { self.showAlert(title: error.errorDescription ?? L10n.Sync.Auth.unknown) }
             } catch {
                 await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
             }

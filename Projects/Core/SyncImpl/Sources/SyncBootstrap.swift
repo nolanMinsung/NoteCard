@@ -32,12 +32,17 @@ public enum SyncBootstrap {
     /// 아니면 익명 impl을 그대로 반환. (Firebase 미설정 환경에서 `.firestore()` fatalError 회피)
     public static func makeCategoryRepository(
         authService: AuthService,
-        anonymousImpl: CategoryRepository
+        anonymousImpl: CategoryRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator
     ) -> CategoryRepository {
         guard FirebaseApp.app() != nil else {
             return anonymousImpl
         }
-        return CategoryRepositoryRouter(authService: authService, anonymousImpl: anonymousImpl)
+        return CategoryRepositoryRouter(
+            authService: authService,
+            anonymousImpl: anonymousImpl,
+            cleanupCoordinator: cleanupCoordinator
+        )
     }
 
     /// 메모용 동일 패턴. `categoryResolver`·`imageResolver`는 보통 각각 `makeCategoryRepository` /
@@ -46,7 +51,8 @@ public enum SyncBootstrap {
         authService: AuthService,
         anonymousImpl: MemoRepository,
         categoryResolver: CategoryRepository,
-        imageResolver: ImageRepository
+        imageResolver: ImageRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator
     ) -> MemoRepository {
         guard FirebaseApp.app() != nil else {
             return anonymousImpl
@@ -55,7 +61,8 @@ public enum SyncBootstrap {
             authService: authService,
             anonymousImpl: anonymousImpl,
             categoryResolver: categoryResolver,
-            imageResolver: imageResolver
+            imageResolver: imageResolver,
+            cleanupCoordinator: cleanupCoordinator
         )
     }
 
@@ -64,7 +71,8 @@ public enum SyncBootstrap {
     public static func makeImageRepository(
         authService: AuthService,
         anonymousImpl: ImageRepository,
-        anonymousMemoRepository: MemoRepository
+        anonymousMemoRepository: MemoRepository,
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator
     ) -> ImageRepository {
         guard FirebaseApp.app() != nil else {
             return anonymousImpl
@@ -72,7 +80,56 @@ public enum SyncBootstrap {
         return ImageRepositoryRouter(
             authService: authService,
             anonymousImpl: anonymousImpl,
-            anonymousMemoRepository: anonymousMemoRepository
+            anonymousMemoRepository: anonymousMemoRepository,
+            cleanupCoordinator: cleanupCoordinator
+        )
+    }
+
+    /// FirebaseApp 설정이 완료돼 있으면 데이터 정리 + Auth user 삭제를 함께 수행하는 서비스를,
+    /// 아니면 호출 시 missingFirebase 를 던지는 No-op 을 반환.
+    public static func makeAccountDeletionService(
+        authService: AuthService,
+        accountSentinelService: AccountSentinelService,
+        memoRepository: MemoRepository,
+        categoryRepository: CategoryRepository,
+        imageRepository: ImageRepository
+    ) -> AccountDeletionService {
+        guard FirebaseApp.app() != nil else {
+            return NoOpAccountDeletionService()
+        }
+        return FirebaseAccountDeletionService(
+            authService: authService,
+            accountSentinelService: accountSentinelService,
+            memoRepository: memoRepository,
+            categoryRepository: categoryRepository,
+            imageRepository: imageRepository
+        )
+    }
+
+    /// 계정의 sentinel doc 을 관리하는 서비스. 사인인 시 자동 생성·감시, cross-device 계정 삭제를
+    /// .removed 이벤트로 즉시 감지해 강제 signOut.
+    public static func makeAccountSentinelService(
+        authService: AuthService
+    ) -> AccountSentinelService {
+        guard FirebaseApp.app() != nil else {
+            return NoOpAccountSentinelService()
+        }
+        return FirebaseAccountSentinelService(authService: authService)
+    }
+
+    /// 동기화 상태 / 마지막 sync 시점을 UI 가 구독할 수 있게 표면화하는 서비스.
+    public static func makeSyncStatusService(
+        authService: AuthService,
+        memoRepository: MemoRepository,
+        categoryRepository: CategoryRepository
+    ) -> SyncStatusService {
+        guard FirebaseApp.app() != nil else {
+            return NoOpSyncStatusService()
+        }
+        return FirebaseSyncStatusService(
+            authService: authService,
+            memoRepository: memoRepository,
+            categoryRepository: categoryRepository
         )
     }
 }

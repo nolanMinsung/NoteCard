@@ -31,6 +31,13 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
         categoryUpdatedSubject.eraseToAnyPublisher()
     }
 
+    /// listener 발화 시 도착한 에러를 그대로 emit. Router 가 받아 permission denied 등 세션 무효화
+    /// 신호를 처리하는 데 사용.
+    private let listenerErrorSubject = PassthroughSubject<Error, Never>()
+    public var listenerErrorPublisher: AnyPublisher<Error, Never> {
+        listenerErrorSubject.eraseToAnyPublisher()
+    }
+
     /// listener가 채우는 in-memory 스냅샷. 읽기/쓰기 모두 `snapshotLock`으로 보호.
     private let snapshotLock = NSLock()
     private var snapshotByID: [UUID: Domain.Category] = [:]
@@ -56,8 +63,8 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
         listenerRegistration = collection.addSnapshotListener { [weak self] snapshot, error in
             guard let self else { return }
             if let error {
-                // 스파이크에선 디버그 로그로만. 정식 채택 시 status로 surface.
                 print("[CategoryRepoFirestore] listener error: \(error)")
+                self.listenerErrorSubject.send(error)
                 return
             }
             guard let snapshot else { return }
@@ -143,9 +150,11 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
     }
 
     public func memoCount(of category: Domain.Category) async throws -> Int {
-        // Memo Repository가 Firestore로 가면 그때 count_query/denormalized count 결정.
-        // 스파이크에선 0 반환 (UI는 표시만 0으로 뜸).
-        0
+        let memos = firestore.collection("users").document(userID).collection("memos")
+        let snapshot = try await memos
+            .whereField("categoryIDs", arrayContains: category.id.uuidString)
+            .getDocuments(source: .cache)
+        return snapshot.count
     }
 
     // MARK: - Write
