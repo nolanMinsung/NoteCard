@@ -93,7 +93,7 @@ class MemoDetailViewController: UIViewController {
     private func refreshSavingProgressLabel() {
         var lines: [String] = []
         if savingTotalAdds > 0 {
-            lines.append(String(format: L10n.MemoDetail.uploadingImagesFormat, savingCompletedAdds, savingTotalAdds))
+            lines.append(String(format: L10n.MemoDetail.savingImagesFormat, savingCompletedAdds, savingTotalAdds))
         }
         if savingTotalDeletes > 0 {
             lines.append(String(format: L10n.MemoDetail.deletingImagesFormat, savingCompletedDeletes, savingTotalDeletes))

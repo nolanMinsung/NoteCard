@@ -92,7 +92,7 @@ public enum L10n {
         public static let addMemo = "memoDetail.addMemo".localized()
         public static let imageLimitExceeded = "memoDetail.imageLimitExceeded".localized()
         public static let imageLimitMessage = "memoDetail.imageLimitMessage".localized()
-        public static let uploadingImagesFormat = "memoDetail.uploadingImagesFormat".localized()
+        public static let savingImagesFormat = "memoDetail.savingImagesFormat".localized()
         public static let deletingImagesFormat = "memoDetail.deletingImagesFormat".localized()
     }
 

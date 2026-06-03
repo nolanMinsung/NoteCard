@@ -817,19 +817,19 @@
         }
       }
     },
-    "memoDetail.uploadingImagesFormat": {
+    "memoDetail.savingImagesFormat": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Uploading %1$d of %2$d images"
+            "value": "Saving %1$d of %2$d images"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이미지 %1$d / %2$d 업로드 중"
+            "value": "이미지 %1$d / %2$d 저장 중"
           }
         }
       }
