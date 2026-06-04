@@ -78,7 +78,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func makeLoginViewController(environment: AppEnvironment) -> LoginViewController {
-        LoginViewController(authService: environment.authService) { [weak self] outcome in
+        LoginViewController(
+            authService: environment.authService,
+            readinessCoordinator: environment.firstSignInReadinessCoordinator
+        ) { [weak self] outcome in
             UserDefaults.standard.set(true, forKey: UserDefaultsKey.didShowSyncIntroduction.rawValue)
             switch outcome {
             case .signedIn, .skipped:

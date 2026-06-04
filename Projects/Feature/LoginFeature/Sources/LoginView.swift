@@ -56,6 +56,16 @@ final class LoginView: UIView {
         return view
     }()
 
+    let phaseLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13)
+        label.textColor = .secondaryLabel
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private lazy var topStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [titleLabel, promptLabel])
         stack.axis = .vertical
@@ -91,6 +101,7 @@ final class LoginView: UIView {
         addSubview(topStack)
         addSubview(buttonStack)
         addSubview(activityIndicator)
+        addSubview(phaseLabel)
     }
 
     private func setupConstraints() {
@@ -108,6 +119,10 @@ final class LoginView: UIView {
 
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 12),
+
+            phaseLabel.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 8),
+            phaseLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
+            phaseLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24)
         ])
     }
 }
