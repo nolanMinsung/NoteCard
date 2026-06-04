@@ -28,6 +28,7 @@ struct AppEnvironment {
     let accountDeletionService: AccountDeletionService
     let syncStatusService: SyncStatusService
     let migrationCleanupCoordinator: AnonymousMigrationCleanupCoordinator
+    let firstSignInReadinessCoordinator: FirstSignInReadinessCoordinator
 
     let coreDataStack: CoreDataStack
 
@@ -91,6 +92,11 @@ struct AppEnvironment {
         )
         self.syncStatusService = SyncBootstrap.makeSyncStatusService(
             authService: authService,
+            memoRepository: memoRepository,
+            categoryRepository: categoryRepository
+        )
+        self.firstSignInReadinessCoordinator = SyncBootstrap.makeFirstSignInReadinessCoordinator(
+            cleanupCoordinator: migrationCleanupCoordinator,
             memoRepository: memoRepository,
             categoryRepository: categoryRepository
         )

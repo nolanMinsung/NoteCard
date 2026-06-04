@@ -132,4 +132,24 @@ public enum SyncBootstrap {
             categoryRepository: categoryRepository
         )
     }
+
+    /// 첫 사인인 후 home 진입 가능 시점까지 대기시키는 readiness gate. Firebase 미설정 시 즉시 통과.
+    /// memoRepository / categoryRepository 가 Router 구현이 아니면 (= 익명 단독) 게이트가 의미 없어 NoOp 반환.
+    public static func makeFirstSignInReadinessCoordinator(
+        cleanupCoordinator: AnonymousMigrationCleanupCoordinator,
+        memoRepository: MemoRepository,
+        categoryRepository: CategoryRepository
+    ) -> FirstSignInReadinessCoordinator {
+        guard FirebaseApp.app() != nil,
+              let memoRouter = memoRepository as? MemoRepositoryRouter,
+              let categoryRouter = categoryRepository as? CategoryRepositoryRouter
+        else {
+            return NoOpFirstSignInReadinessCoordinator()
+        }
+        return FirebaseFirstSignInReadinessCoordinator(
+            cleanupCoordinator: cleanupCoordinator,
+            memoRouter: memoRouter,
+            categoryRouter: categoryRouter
+        )
+    }
 }
