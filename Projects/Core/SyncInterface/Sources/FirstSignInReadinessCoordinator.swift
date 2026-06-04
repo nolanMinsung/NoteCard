@@ -30,5 +30,14 @@ public protocol FirstSignInReadinessCoordinator: Sendable {
     var phasePublisher: AnyPublisher<SignInPhase, Never> { get }
     func reportSigningIn()
     func awaitReady(userID: String, timeout: TimeInterval) async throws
+    func retryReady(userID: String, timeout: TimeInterval) async throws
     func reset()
+}
+
+public extension FirstSignInReadinessCoordinator {
+    /// 현재 사용자에 대해 동기화가 완료됐는지 검사. cleanup 마커 set 이면 완료로 간주.
+    /// AccountDetail 등 UI 가 재시도 버튼 노출 여부를 결정할 때 사용.
+    func isSyncCompleted(for userID: String) -> Bool {
+        UserDefaults.standard.bool(forKey: "sync.anonymousMigrationCleanup.\(userID)")
+    }
 }

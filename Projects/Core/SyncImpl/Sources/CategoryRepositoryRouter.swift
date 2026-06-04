@@ -126,6 +126,16 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
         lock.unlock()
     }
 
+    /// AccountDetail 재시도 버튼 등 외부에서 마이그레이션을 수동으로 다시 시작할 때 호출.
+    /// marker 이미 set 이면 short-circuit. 현재 활성 Firestore impl 이 없으면 no-op.
+    public func retryMigrationIfNeeded(userID: String) {
+        lock.lock()
+        let impl = _firestoreImpl
+        lock.unlock()
+        guard let impl else { return }
+        triggerMigrationIfNeeded(to: impl, userID: userID)
+    }
+
     /// 익명 카테고리를 새 Firestore impl로 이관한다. UserDefaults 마커로 기기+사용자별 1회만 수행.
     /// (재호출 시 stale 로컬이 newer Firestore를 덮어쓰는 데이터 손실 방지)
     private func triggerMigrationIfNeeded(to firestoreImpl: CategoryRepositoryFirestoreImpl, userID: String) {

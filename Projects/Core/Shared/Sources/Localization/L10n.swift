@@ -187,6 +187,9 @@ public enum L10n {
         public static let deleteAccountConfirmTitle = "account.deleteAccountConfirmTitle".localized()
         public static let deleteAccountConfirmMessage = "account.deleteAccountConfirmMessage".localized()
         public static let deleteAccountProceed = "account.deleteAccountProceed".localized()
+        public static let syncIncompleteMessage = "account.syncIncompleteMessage".localized()
+        public static let syncRetryButton = "account.syncRetryButton".localized()
+        public static let syncRetrySuccessMessage = "account.syncRetrySuccessMessage".localized()
     }
 
     public enum ThemeColor {

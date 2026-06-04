@@ -79,6 +79,16 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
         }
     }
 
+    /// AccountDetail 재시도 버튼 등 외부에서 마이그레이션을 수동으로 다시 시작할 때 호출.
+    /// marker 이미 set 이면 short-circuit. 현재 활성 Firestore impl 이 없으면 no-op.
+    public func retryMigrationIfNeeded(userID: String) {
+        lock.lock()
+        let impl = _firestoreImpl
+        lock.unlock()
+        guard let impl else { return }
+        triggerMigrationIfNeeded(to: impl, userID: userID)
+    }
+
     /// 익명 이미지 메타데이터를 Firestore 로 이관. UserDefaults 마커로 기기+사용자별 1회.
     /// 메타 업로드 완료 시점에 marker set + cleanupCoordinator 보고 (= readiness gate 통과 신호).
     /// 바이너리 업로드는 분리된 백그라운드 Task — readiness gate 와 무관.

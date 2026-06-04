@@ -20,4 +20,5 @@ public final class NoOpFirstSignInReadinessCoordinator: FirstSignInReadinessCoor
     public func reportSigningIn() {}
     public func reset() {}
     public func awaitReady(userID: String, timeout: TimeInterval) async throws {}
+    public func retryReady(userID: String, timeout: TimeInterval) async throws {}
 }

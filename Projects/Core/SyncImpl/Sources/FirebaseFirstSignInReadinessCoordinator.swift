@@ -12,6 +12,7 @@ public final class FirebaseFirstSignInReadinessCoordinator: FirstSignInReadiness
     private let cleanupCoordinator: AnonymousMigrationCleanupCoordinator
     private let memoRouter: MemoRepositoryRouter
     private let categoryRouter: CategoryRepositoryRouter
+    private let imageRouter: ImageRepositoryRouter
 
     private let phaseSubject = CurrentValueSubject<SignInPhase, Never>(.idle)
     public var phasePublisher: AnyPublisher<SignInPhase, Never> {
@@ -21,11 +22,13 @@ public final class FirebaseFirstSignInReadinessCoordinator: FirstSignInReadiness
     public init(
         cleanupCoordinator: AnonymousMigrationCleanupCoordinator,
         memoRouter: MemoRepositoryRouter,
-        categoryRouter: CategoryRepositoryRouter
+        categoryRouter: CategoryRepositoryRouter,
+        imageRouter: ImageRepositoryRouter
     ) {
         self.cleanupCoordinator = cleanupCoordinator
         self.memoRouter = memoRouter
         self.categoryRouter = categoryRouter
+        self.imageRouter = imageRouter
     }
 
     public func reportSigningIn() {
@@ -54,6 +57,13 @@ public final class FirebaseFirstSignInReadinessCoordinator: FirstSignInReadiness
         }
 
         phaseSubject.send(.ready)
+    }
+
+    public func retryReady(userID: String, timeout: TimeInterval) async throws {
+        memoRouter.retryMigrationIfNeeded(userID: userID)
+        categoryRouter.retryMigrationIfNeeded(userID: userID)
+        imageRouter.retryMigrationIfNeeded(userID: userID)
+        try await awaitReady(userID: userID, timeout: timeout)
     }
 
     private func waitForCleanup(userID: String, timeout: TimeInterval) async throws {

@@ -98,7 +98,8 @@ struct AppEnvironment {
         self.firstSignInReadinessCoordinator = SyncBootstrap.makeFirstSignInReadinessCoordinator(
             cleanupCoordinator: migrationCleanupCoordinator,
             memoRepository: memoRepository,
-            categoryRepository: categoryRepository
+            categoryRepository: categoryRepository,
+            imageRepository: imageRepository
         )
     }
 
