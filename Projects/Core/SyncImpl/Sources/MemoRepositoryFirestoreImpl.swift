@@ -40,6 +40,12 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
         listenerErrorSubject.eraseToAnyPublisher()
     }
 
+    /// listener 가 첫 비-캐시(server) snapshot 을 받으면 true 로 전이. readiness gate 신호.
+    private let initialServerSyncSubject = CurrentValueSubject<Bool, Never>(false)
+    public var initialServerSyncPublisher: AnyPublisher<Bool, Never> {
+        initialServerSyncSubject.eraseToAnyPublisher()
+    }
+
     /// listener가 채우는 in-memory DTO 스냅샷. 카테고리는 read 시점에 해석.
     private let snapshotLock = NSLock()
     private var snapshotDTOByID: [UUID: FirestoreMemo] = [:]
@@ -85,6 +91,9 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
                 return
             }
             guard let snapshot else { return }
+            if !snapshot.metadata.isFromCache, !self.initialServerSyncSubject.value {
+                self.initialServerSyncSubject.send(true)
+            }
             self.handleSnapshot(snapshot)
         }
     }

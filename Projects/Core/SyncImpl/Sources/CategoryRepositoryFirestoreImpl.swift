@@ -38,6 +38,12 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
         listenerErrorSubject.eraseToAnyPublisher()
     }
 
+    /// listener 가 첫 비-캐시(server) snapshot 을 받으면 true 로 전이. readiness gate 신호.
+    private let initialServerSyncSubject = CurrentValueSubject<Bool, Never>(false)
+    public var initialServerSyncPublisher: AnyPublisher<Bool, Never> {
+        initialServerSyncSubject.eraseToAnyPublisher()
+    }
+
     /// listener가 채우는 in-memory 스냅샷. 읽기/쓰기 모두 `snapshotLock`으로 보호.
     private let snapshotLock = NSLock()
     private var snapshotByID: [UUID: Domain.Category] = [:]
@@ -68,6 +74,9 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
                 return
             }
             guard let snapshot else { return }
+            if !snapshot.metadata.isFromCache, !self.initialServerSyncSubject.value {
+                self.initialServerSyncSubject.send(true)
+            }
             self.handleSnapshot(snapshot)
         }
     }
