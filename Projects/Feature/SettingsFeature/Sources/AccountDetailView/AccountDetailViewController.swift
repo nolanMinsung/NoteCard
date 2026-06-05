@@ -152,14 +152,18 @@ public final class AccountDetailViewController: UIViewController {
 
     @objc private func signInTapped() {
         setLoading(true)
+        readinessCoordinator.reportSigningIn()
         Task { [weak self] in
             guard let self else { return }
             defer { Task { @MainActor in self.setLoading(false) } }
             do {
-                _ = try await self.authService.signInWithApple()
-                // 성공 시 authStatePublisher가 새 user를 emit → render에서 자동 전환
+                let user = try await self.authService.signInWithApple()
+                try await self.readinessCoordinator.awaitReady(userID: user.id, timeout: self.readinessTimeout)
+                // 성공 시 authStatePublisher가 새 user를 emit → SceneDelegate.observeAuthStateChanges 가 home 으로 전환
             } catch let error as AuthError {
                 await MainActor.run { self.presentInline(error: error) }
+            } catch is SignInReadinessError {
+                await MainActor.run { self.showAlert(title: L10n.Login.syncTimeoutError) }
             } catch {
                 await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
             }
