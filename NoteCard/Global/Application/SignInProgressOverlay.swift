@@ -69,6 +69,7 @@ final class SignInProgressOverlay: UIView {
     }
 
     func update(phase: SignInPhase) {
+        let oldText = phaseLabel.text ?? "nil"
         switch phase {
         case .signingIn:
             phaseLabel.text = L10n.Login.phaseSigningIn
@@ -79,5 +80,6 @@ final class SignInProgressOverlay: UIView {
         case .idle, .ready:
             phaseLabel.text = nil
         }
+        print("[DEBUG-Overlay] update label '\(oldText)' → '\(phaseLabel.text ?? "nil")' @ \(String(format: "%.3f", CFAbsoluteTimeGetCurrent()))")
     }
 }

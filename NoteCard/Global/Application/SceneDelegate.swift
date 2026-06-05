@@ -63,6 +63,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func handle(phase: SignInPhase) {
+        print("[DEBUG-Overlay] main received phase=\(phase) @ \(String(format: "%.3f", CFAbsoluteTimeGetCurrent()))")
         switch phase {
         case .idle, .ready:
             hideSignInProgressOverlay()

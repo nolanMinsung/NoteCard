@@ -40,23 +40,30 @@ public final class FirebaseFirstSignInReadinessCoordinator: FirstSignInReadiness
     }
 
     public func awaitReady(userID: String, timeout: TimeInterval) async throws {
+        let t0 = CFAbsoluteTimeGetCurrent()
+        print("[DEBUG-Readiness] awaitReady start")
         phaseSubject.send(.uploading)
+        print("[DEBUG-Readiness] sent .uploading @ \(String(format: "%.1f", (CFAbsoluteTimeGetCurrent() - t0) * 1000))ms")
         do {
             try await waitForCleanup(userID: userID, timeout: timeout)
         } catch {
             phaseSubject.send(.idle)
             throw error
         }
+        print("[DEBUG-Readiness] cleanup done @ \(String(format: "%.1f", (CFAbsoluteTimeGetCurrent() - t0) * 1000))ms")
 
         phaseSubject.send(.downloading)
+        print("[DEBUG-Readiness] sent .downloading @ \(String(format: "%.1f", (CFAbsoluteTimeGetCurrent() - t0) * 1000))ms")
         do {
             try await waitForInitialSync(timeout: timeout)
         } catch {
             phaseSubject.send(.idle)
             throw error
         }
+        print("[DEBUG-Readiness] initialSync done @ \(String(format: "%.1f", (CFAbsoluteTimeGetCurrent() - t0) * 1000))ms")
 
         phaseSubject.send(.ready)
+        print("[DEBUG-Readiness] sent .ready @ \(String(format: "%.1f", (CFAbsoluteTimeGetCurrent() - t0) * 1000))ms")
     }
 
     public func retryReady(userID: String, timeout: TimeInterval) async throws {
