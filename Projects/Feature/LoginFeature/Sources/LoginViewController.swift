@@ -59,29 +59,6 @@ public final class LoginViewController: UIViewController {
         super.viewDidLoad()
         rootView.signInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
         rootView.skipButton.addTarget(self, action: #selector(skipTapped), for: .touchUpInside)
-        bindPhase()
-    }
-
-    private func bindPhase() {
-        readinessCoordinator.phasePublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] phase in
-                self?.renderPhase(phase)
-            }
-            .store(in: &cancellables)
-    }
-
-    private func renderPhase(_ phase: SignInPhase) {
-        switch phase {
-        case .idle, .ready:
-            rootView.phaseLabel.text = nil
-        case .signingIn:
-            rootView.phaseLabel.text = L10n.Login.phaseSigningIn
-        case .uploading:
-            rootView.phaseLabel.text = L10n.Login.phaseUploading
-        case .downloading:
-            rootView.phaseLabel.text = L10n.Login.phaseDownloading
-        }
     }
 
     // MARK: - Actions
@@ -168,10 +145,7 @@ public final class LoginViewController: UIViewController {
     private func setLoading(_ loading: Bool) {
         rootView.signInButton.isEnabled = !loading
         rootView.skipButton.isEnabled = !loading
-        if loading {
-            rootView.activityIndicator.startAnimating()
-        } else {
-            rootView.activityIndicator.stopAnimating()
+        if !loading {
             readinessCoordinator.reset()
         }
     }

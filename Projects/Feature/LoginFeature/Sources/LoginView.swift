@@ -50,21 +50,6 @@ final class LoginView: UIView {
         return label
     }()
 
-    let activityIndicator: UIActivityIndicatorView = {
-        let view = UIActivityIndicatorView(style: .medium)
-        view.hidesWhenStopped = true
-        return view
-    }()
-
-    let phaseLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 13)
-        label.textColor = .secondaryLabel
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
 
     private lazy var topStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [titleLabel, promptLabel])
@@ -96,12 +81,9 @@ final class LoginView: UIView {
 
     private func setupUI() {
         backgroundColor = .loginBackground
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(topStack)
         addSubview(buttonStack)
-        addSubview(activityIndicator)
-        addSubview(phaseLabel)
     }
 
     private func setupConstraints() {
@@ -115,14 +97,7 @@ final class LoginView: UIView {
             buttonStack.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),
             buttonStack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -40),
 
-            signInButton.heightAnchor.constraint(equalToConstant: 50),
-
-            activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
-            activityIndicator.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 12),
-
-            phaseLabel.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 8),
-            phaseLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
-            phaseLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24)
+            signInButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 }
