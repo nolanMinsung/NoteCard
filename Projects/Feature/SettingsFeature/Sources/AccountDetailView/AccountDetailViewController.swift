@@ -229,7 +229,12 @@ public final class AccountDetailViewController: UIViewController {
         rootView.signOutButton.isEnabled = !loading
         rootView.deleteAccountButton.isEnabled = !loading
         rootView.syncRetryButton.isEnabled = !loading
-        if loading { rootView.activityIndicator.startAnimating() } else { rootView.activityIndicator.stopAnimating() }
+        if loading {
+            rootView.activityIndicator.startAnimating()
+        } else {
+            rootView.activityIndicator.stopAnimating()
+            readinessCoordinator.reset()
+        }
     }
 
     private func presentInline(error: AuthError) {
