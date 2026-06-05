@@ -91,13 +91,6 @@ final class HomeView: UIView {
     
     let homeCollectionView: WispableCollectionView
 
-    let loadingIndicator: UIActivityIndicatorView = {
-        let view = UIActivityIndicatorView(style: .medium)
-        view.hidesWhenStopped = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     init() {
         let sectionProvider: UICollectionViewCompositionalLayoutSectionProvider = { sectionIndex, env in
             switch sectionIndex {
@@ -142,7 +135,6 @@ final class HomeView: UIView {
     
     private func setupViewHierarchy() {
         self.addSubview(homeCollectionView)
-        self.addSubview(loadingIndicator)
     }
 
     private func setupLayoutConstraints() {
@@ -150,10 +142,7 @@ final class HomeView: UIView {
             homeCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
             homeCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
             homeCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0),
-            homeCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0),
-
-            loadingIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            homeCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0)
         ])
     }
     
