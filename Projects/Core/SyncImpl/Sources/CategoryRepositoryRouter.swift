@@ -98,7 +98,9 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
     }
 
     private func attachInitialSyncForwarding(from impl: CategoryRepositoryFirestoreImpl) {
+        print("[DEBUG-CategoryRouter] attachInitialSyncForwarding")
         let newCancellable = impl.initialServerSyncPublisher.sink { [weak self] synced in
+            print("[DEBUG-CategoryRouter] forwarding initialSync=\(synced)")
             self?.initialServerSyncSubject.send(synced)
         }
         lock.lock()

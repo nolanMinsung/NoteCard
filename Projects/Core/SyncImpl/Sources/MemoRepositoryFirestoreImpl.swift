@@ -83,15 +83,21 @@ public final class MemoRepositoryFirestoreImpl: MemoRepository, @unchecked Senda
     // MARK: - Listener
 
     private func startListening() {
+        print("[DEBUG-MemoListener] startListening for uid=\(userID)")
         listenerRegistration = collection.addSnapshotListener { [weak self] snapshot, error in
             guard let self else { return }
             if let error {
-                print("[MemoRepoFirestore] listener error: \(error)")
+                print("[DEBUG-MemoListener] error: \(error)")
                 self.listenerErrorSubject.send(error)
                 return
             }
-            guard let snapshot else { return }
+            guard let snapshot else {
+                print("[DEBUG-MemoListener] nil snapshot")
+                return
+            }
+            print("[DEBUG-MemoListener] snapshot received: docCount=\(snapshot.documents.count), isFromCache=\(snapshot.metadata.isFromCache), pendingWrites=\(snapshot.metadata.hasPendingWrites)")
             if !snapshot.metadata.isFromCache, !self.initialServerSyncSubject.value {
+                print("[DEBUG-MemoListener] initialServerSync → true")
                 self.initialServerSyncSubject.send(true)
             }
             self.handleSnapshot(snapshot)
