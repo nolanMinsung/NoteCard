@@ -141,6 +141,13 @@ public enum L10n {
             public static let dataCleanupFailed = "sync.accountDeletion.dataCleanupFailed".localized()
             public static let reauthRequired = "sync.accountDeletion.reauthRequired".localized()
             public static let invalidatedRemotely = "sync.accountDeletion.invalidatedRemotely".localized()
+            public static let phaseReauthenticating = "sync.accountDeletion.phaseReauthenticating".localized()
+            public static let phaseDeletingData = "sync.accountDeletion.phaseDeletingData".localized()
+            public static let phaseRemovingAccount = "sync.accountDeletion.phaseRemovingAccount".localized()
+        }
+
+        public enum SignOut {
+            public static let phaseInProgress = "sync.signOut.phaseInProgress".localized()
         }
 
         public enum Error {

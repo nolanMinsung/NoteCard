@@ -105,6 +105,7 @@ class MainTabBarController: UITabBarController {
             accountDeletionService: environment.accountDeletionService,
             syncStatusService: environment.syncStatusService,
             readinessCoordinator: environment.firstSignInReadinessCoordinator,
+            signOutCoordinator: environment.signOutCoordinator,
             makeTrashViewController: { [environment] in
                 MemoViewController(memoVCType: .trash, environment: environment)
             }

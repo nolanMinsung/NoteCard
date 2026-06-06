@@ -29,6 +29,7 @@ struct AppEnvironment {
     let syncStatusService: SyncStatusService
     let migrationCleanupCoordinator: AnonymousMigrationCleanupCoordinator
     let firstSignInReadinessCoordinator: FirstSignInReadinessCoordinator
+    let signOutCoordinator: SignOutCoordinator
 
     let coreDataStack: CoreDataStack
 
@@ -101,6 +102,7 @@ struct AppEnvironment {
             categoryRepository: categoryRepository,
             imageRepository: imageRepository
         )
+        self.signOutCoordinator = SyncBootstrap.makeSignOutCoordinator(authService: authService)
     }
 
     /// Crashlytics를 켜고(가능하면) Amplitude 기반 `Analytics`를 만든다.

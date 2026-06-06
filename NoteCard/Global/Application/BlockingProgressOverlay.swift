@@ -1,16 +1,14 @@
 //
-//  SignInProgressOverlay.swift
+//  BlockingProgressOverlay.swift
 //  NoteCard
 //
 
-import Shared
-import SyncInterface
 import UIKit
 
-/// Window 레벨에서 전체 화면 터치를 가로채고 현재 sign-in phase 를 안내하는 overlay.
-/// rootViewController 교체 (LoginVC → MainTabBar / AccountDetail → MainTabBar) 와 무관하게
-/// window 에 직접 add 되어 sign-in 전체 흐름 동안 살아남음.
-final class SignInProgressOverlay: UIView {
+/// Window 레벨에서 전체 화면 터치를 가로채고 진행 상황 텍스트를 보여주는 overlay.
+/// rootViewController 교체와 무관하게 살아남도록 window 에 직접 add 됨.
+/// Sign-in / sign-out / 계정 삭제 같은 비동기 흐름이 끝날 때까지 사용자 인터랙션을 차단.
+final class BlockingProgressOverlay: UIView {
 
     private let backgroundView: UIView = {
         let view = UIView()
@@ -25,7 +23,7 @@ final class SignInProgressOverlay: UIView {
         return view
     }()
 
-    private let phaseLabel: UILabel = {
+    private let messageLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 15, weight: .medium)
         label.textColor = .label
@@ -49,7 +47,7 @@ final class SignInProgressOverlay: UIView {
 
         addSubview(backgroundView)
         addSubview(activityIndicator)
-        addSubview(phaseLabel)
+        addSubview(messageLabel)
 
         NSLayoutConstraint.activate([
             backgroundView.topAnchor.constraint(equalTo: topAnchor),
@@ -60,24 +58,15 @@ final class SignInProgressOverlay: UIView {
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -12),
 
-            phaseLabel.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 16),
-            phaseLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
-            phaseLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32)
+            messageLabel.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 16),
+            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
+            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32)
         ])
 
         activityIndicator.startAnimating()
     }
 
-    func update(phase: SignInPhase) {
-        switch phase {
-        case .signingIn:
-            phaseLabel.text = L10n.Login.phaseSigningIn
-        case .uploading:
-            phaseLabel.text = L10n.Login.phaseUploading
-        case .downloading:
-            phaseLabel.text = L10n.Login.phaseDownloading
-        case .idle, .ready:
-            phaseLabel.text = nil
-        }
+    func update(text: String?) {
+        messageLabel.text = text
     }
 }

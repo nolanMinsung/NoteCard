@@ -18,6 +18,7 @@ public final class AccountDetailViewController: UIViewController {
     private let accountDeletionService: AccountDeletionService
     private let syncStatusService: SyncStatusService
     private let readinessCoordinator: FirstSignInReadinessCoordinator
+    private let signOutCoordinator: SignOutCoordinator
     private let readinessTimeout: TimeInterval
     private var cancellables = Set<AnyCancellable>()
     private var lastSyncedAt: Date?
@@ -36,12 +37,14 @@ public final class AccountDetailViewController: UIViewController {
         accountDeletionService: AccountDeletionService,
         syncStatusService: SyncStatusService,
         readinessCoordinator: FirstSignInReadinessCoordinator,
+        signOutCoordinator: SignOutCoordinator,
         readinessTimeout: TimeInterval = 90
     ) {
         self.authService = authService
         self.accountDeletionService = accountDeletionService
         self.syncStatusService = syncStatusService
         self.readinessCoordinator = readinessCoordinator
+        self.signOutCoordinator = signOutCoordinator
         self.readinessTimeout = readinessTimeout
         super.init(nibName: nil, bundle: nil)
     }
@@ -214,7 +217,7 @@ public final class AccountDetailViewController: UIViewController {
             guard let self else { return }
             defer { Task { @MainActor in self.setLoading(false) } }
             do {
-                try await self.authService.signOut()
+                try await self.signOutCoordinator.performSignOut()
                 // authStatePublisher가 nil emit → 미로그인 상태로 자동 전환
             } catch {
                 await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
@@ -229,10 +232,7 @@ public final class AccountDetailViewController: UIViewController {
         rootView.signOutButton.isEnabled = !loading
         rootView.deleteAccountButton.isEnabled = !loading
         rootView.syncRetryButton.isEnabled = !loading
-        if loading {
-            rootView.activityIndicator.startAnimating()
-        } else {
-            rootView.activityIndicator.stopAnimating()
+        if !loading {
             readinessCoordinator.reset()
         }
     }

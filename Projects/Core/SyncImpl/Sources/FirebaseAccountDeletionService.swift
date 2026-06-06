@@ -3,6 +3,7 @@
 //  NoteCard
 //
 
+import Combine
 import Domain
 import Foundation
 import SyncInterface
@@ -23,6 +24,11 @@ public final class FirebaseAccountDeletionService: AccountDeletionService, @unch
     private let categoryRepository: CategoryRepository
     private let imageRepository: ImageRepository
 
+    private let phaseSubject = CurrentValueSubject<AccountDeletionPhase, Never>(.idle)
+    public var phasePublisher: AnyPublisher<AccountDeletionPhase, Never> {
+        phaseSubject.eraseToAnyPublisher()
+    }
+
     public init(
         authService: AuthService,
         accountSentinelService: AccountSentinelService,
@@ -38,18 +44,22 @@ public final class FirebaseAccountDeletionService: AccountDeletionService, @unch
     }
 
     public func deleteAccountAndAllData() async throws {
+        defer { phaseSubject.send(.idle) }
         // 1. 파괴적 작업 전에 reauth 먼저 — Apple sign-in 시트가 즉시 뜸. 사용자가 여기서 취소하면
         //    `AuthError.cancelled` 가 던져지고 데이터·계정 모두 그대로 보존.
+        phaseSubject.send(.reauthenticating)
         _ = try await authService.signInWithApple()
 
         // 2. sentinel doc 삭제 — 다른 기기의 listener 가 .removed 받자마자 signOut.
         //    본 기기 listener 는 service 내부에서 detach 되어 self-trigger 방지됨.
+        phaseSubject.send(.deletingCloudData)
         try await accountSentinelService.deleteSentinel()
 
         // 3. 데이터 삭제. token 신선해서 Firestore 접근 정상.
         try await deleteAllUserData()
 
         // 4. Auth user 삭제. 방금 reauth 했으므로 requiresRecentLogin 발생하지 않음.
+        phaseSubject.send(.removingAccount)
         try await authService.deleteAccount()
     }
 

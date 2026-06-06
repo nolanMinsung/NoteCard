@@ -1888,6 +1888,34 @@
         }
       }
     },
+    "sync.accountDeletion.phaseReauthenticating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Reauthenticating…" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "재로그인 중…" } }
+      }
+    },
+    "sync.accountDeletion.phaseDeletingData": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Deleting account data…" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "계정 데이터 삭제 중…" } }
+      }
+    },
+    "sync.accountDeletion.phaseRemovingAccount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Removing account…" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "계정 정리 중…" } }
+      }
+    },
+    "sync.signOut.phaseInProgress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Signing out…" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "로그아웃 중…" } }
+      }
+    },
     "sync.error.network": {
       "extractionState": "manual",
       "localizations": {
