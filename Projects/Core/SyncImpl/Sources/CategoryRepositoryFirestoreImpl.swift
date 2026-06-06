@@ -68,21 +68,15 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
     // MARK: - Listener
 
     private func startListening() {
-        print("[DEBUG-CategoryListener] startListening for uid=\(userID)")
         listenerRegistration = collection.addSnapshotListener { [weak self] snapshot, error in
             guard let self else { return }
             if let error {
-                print("[DEBUG-CategoryListener] error: \(error)")
+                print("[CategoryRepoFirestore] listener error: \(error)")
                 self.listenerErrorSubject.send(error)
                 return
             }
-            guard let snapshot else {
-                print("[DEBUG-CategoryListener] nil snapshot")
-                return
-            }
-            print("[DEBUG-CategoryListener] snapshot received: docCount=\(snapshot.documents.count), isFromCache=\(snapshot.metadata.isFromCache), pendingWrites=\(snapshot.metadata.hasPendingWrites)")
+            guard let snapshot else { return }
             if !self.initialServerSyncSubject.value {
-                print("[DEBUG-CategoryListener] initialServerSync → true (isFromCache=\(snapshot.metadata.isFromCache))")
                 self.initialServerSyncSubject.send(true)
             }
             self.handleSnapshot(snapshot)

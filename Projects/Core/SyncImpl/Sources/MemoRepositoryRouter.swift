@@ -98,9 +98,7 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
     }
 
     private func attachInitialSyncForwarding(from impl: MemoRepositoryFirestoreImpl) {
-        print("[DEBUG-MemoRouter] attachInitialSyncForwarding")
         let newCancellable = impl.initialServerSyncPublisher.sink { [weak self] synced in
-            print("[DEBUG-MemoRouter] forwarding initialSync=\(synced)")
             self?.initialServerSyncSubject.send(synced)
         }
         lock.lock()
