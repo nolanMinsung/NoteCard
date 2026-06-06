@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     private var cancellables = Set<AnyCancellable>()
-    private var signInProgressOverlay: SignInProgressOverlay?
+    private var blockingProgressOverlay: BlockingProgressOverlay?
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -51,29 +51,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         observeReadinessPhase(environment: appDelegate.environment)
     }
 
-    /// readiness gate phase 에 따라 window 위에 SignInProgressOverlay 를 show / hide.
+    /// readiness gate phase 에 따라 window 위에 BlockingProgressOverlay 를 show / hide.
     /// rootVC 교체와 무관하게 살아남아 sign-in 흐름 전체 동안 터치 차단 + 단계 표시.
     private func observeReadinessPhase(environment: AppEnvironment) {
         environment.firstSignInReadinessCoordinator.phasePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] phase in
-                self?.handle(phase: phase)
+                self?.handle(signInPhase: phase)
             }
             .store(in: &cancellables)
     }
 
-    private func handle(phase: SignInPhase) {
-        switch phase {
-        case .idle, .ready:
-            hideSignInProgressOverlay()
-        case .signingIn, .uploading, .downloading:
-            showSignInProgressOverlay(phase: phase)
+    private func handle(signInPhase phase: SignInPhase) {
+        if let text = Self.text(for: phase) {
+            showBlockingOverlay(text: text)
+        } else {
+            hideBlockingOverlay()
         }
     }
 
-    private func showSignInProgressOverlay(phase: SignInPhase) {
+    private static func text(for phase: SignInPhase) -> String? {
+        switch phase {
+        case .idle, .ready: return nil
+        case .signingIn: return L10n.Login.phaseSigningIn
+        case .uploading: return L10n.Login.phaseUploading
+        case .downloading: return L10n.Login.phaseDownloading
+        }
+    }
+
+    private func showBlockingOverlay(text: String) {
         guard let window = self.window else { return }
-        let overlay = signInProgressOverlay ?? SignInProgressOverlay()
+        let overlay = blockingProgressOverlay ?? BlockingProgressOverlay()
         if overlay.superview == nil {
             overlay.alpha = 0
             window.addSubview(overlay)
@@ -83,19 +91,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 overlay.trailingAnchor.constraint(equalTo: window.trailingAnchor),
                 overlay.bottomAnchor.constraint(equalTo: window.bottomAnchor)
             ])
-            signInProgressOverlay = overlay
+            blockingProgressOverlay = overlay
             UIView.animate(withDuration: 0.2) { overlay.alpha = 1 }
         }
-        overlay.update(phase: phase)
+        overlay.update(text: text)
     }
 
-    private func hideSignInProgressOverlay() {
-        guard let overlay = signInProgressOverlay, overlay.superview != nil else { return }
+    private func hideBlockingOverlay() {
+        guard let overlay = blockingProgressOverlay, overlay.superview != nil else { return }
         UIView.animate(withDuration: 0.2, animations: {
             overlay.alpha = 0
         }, completion: { [weak self] _ in
             overlay.removeFromSuperview()
-            self?.signInProgressOverlay = nil
+            self?.blockingProgressOverlay = nil
         })
     }
 
