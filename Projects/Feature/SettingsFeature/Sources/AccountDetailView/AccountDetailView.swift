@@ -127,13 +127,6 @@ final class AccountDetailView: UIView {
         return button
     }()
 
-    let activityIndicator: UIActivityIndicatorView = {
-        let view = UIActivityIndicatorView(style: .medium)
-        view.hidesWhenStopped = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -174,7 +167,6 @@ final class AccountDetailView: UIView {
 
         addSubview(signedOutContainer)
         addSubview(signedInContainer)
-        addSubview(activityIndicator)
     }
 
     private func setupConstraints() {
@@ -186,9 +178,6 @@ final class AccountDetailView: UIView {
             signedInContainer.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
             signedInContainer.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),
             signedInContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 40),
-
-            activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 
