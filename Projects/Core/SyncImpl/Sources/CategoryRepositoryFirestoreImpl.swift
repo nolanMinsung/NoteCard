@@ -38,7 +38,9 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
         listenerErrorSubject.eraseToAnyPublisher()
     }
 
-    /// listener 가 첫 비-캐시(server) snapshot 을 받으면 true 로 전이. readiness gate 신호.
+    /// listener 가 첫 snapshot 을 받으면 true 로 전이. readiness gate 신호.
+    /// cache / server 어느 source 든 인정 — re-sign-in 직후엔 SDK 가 cache 만 발화하고 server fetch 를 생략하는 경우가 있음.
+    /// cache emission 인 경우 home 은 stale 데이터로 빠르게 진입하고, 후속 server snapshot 도착 시 categoryUpdatedPublisher 가 fire 돼 자동 refetch 됨.
     private let initialServerSyncSubject = CurrentValueSubject<Bool, Never>(false)
     public var initialServerSyncPublisher: AnyPublisher<Bool, Never> {
         initialServerSyncSubject.eraseToAnyPublisher()
@@ -79,8 +81,8 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
                 return
             }
             print("[DEBUG-CategoryListener] snapshot received: docCount=\(snapshot.documents.count), isFromCache=\(snapshot.metadata.isFromCache), pendingWrites=\(snapshot.metadata.hasPendingWrites)")
-            if !snapshot.metadata.isFromCache, !self.initialServerSyncSubject.value {
-                print("[DEBUG-CategoryListener] initialServerSync → true")
+            if !self.initialServerSyncSubject.value {
+                print("[DEBUG-CategoryListener] initialServerSync → true (isFromCache=\(snapshot.metadata.isFromCache))")
                 self.initialServerSyncSubject.send(true)
             }
             self.handleSnapshot(snapshot)
