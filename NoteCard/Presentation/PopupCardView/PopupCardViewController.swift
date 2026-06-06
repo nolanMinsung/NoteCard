@@ -410,6 +410,7 @@ private extension PopupCardViewController {
 private extension PopupCardViewController {
 
     /// 메타만 받아 placeholder 즉시 노출 → 각 thumbnail 비동기 병렬 로드.
+    /// 로컬 캐시 hit 이면 sync 로 즉시 .loaded 로 표시 (스피너 거치지 않음).
     /// 메모 자체가 trash 등으로 사라진 경우 dismiss.
     func loadImageItems() async {
         let infos: [MemoImageInfo]
@@ -423,11 +424,18 @@ private extension PopupCardViewController {
             return
         }
 
-        popupImageItems = infos.map { PopupImageItem(info: $0, thumbnailState: .loading) }
+        popupImageItems = infos.map { info in
+            if let cached = ImageLoadingHelper.loadCachedImage(for: info, thumbnail: true) {
+                return PopupImageItem(info: info, thumbnailState: .loaded(cached))
+            }
+            return PopupImageItem(info: info, thumbnailState: .loading)
+        }
         rootView.imageCollectionView.reloadData()
 
-        for info in infos {
-            Task { await self.loadThumbnail(forImageID: info.id) }
+        for item in popupImageItems {
+            if case .loading = item.thumbnailState {
+                Task { await self.loadThumbnail(forImageID: item.info.id) }
+            }
         }
     }
 

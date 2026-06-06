@@ -42,6 +42,15 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         button.isHidden = true
         return button
     }()
+
+    private let placeholderIconView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(systemName: "photo")
+        view.tintColor = .white.withAlphaComponent(0.6)
+        view.contentMode = .scaleAspectFit
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     lazy var scrollViewCenterXConstraint = scrollView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 0)
     lazy var scrollViewCenterYConstraint = scrollView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 0)
@@ -69,7 +78,8 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         scrollView.setZoomScale(1.0, animated: false)
-        imageView.image = UIImage(systemName: "photo")
+        imageView.image = nil
+        placeholderIconView.isHidden = false
         activityIndicator.stopAnimating()
         retryButton.isHidden = true
         onRetry = nil
@@ -78,6 +88,7 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     private func configureHierarchy() {
         contentView.addSubview(scrollView)
         scrollView.addSubview(imageView)
+        contentView.addSubview(placeholderIconView)
         contentView.addSubview(activityIndicator)
         contentView.addSubview(retryButton)
     }
@@ -90,7 +101,6 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         
         imageView.contentMode = UIImageView.ContentMode.scaleAspectFit
         imageView.sizeToFit()
-        imageView.image = UIImage(systemName: "photo")
         imageView.backgroundColor = .clear
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -120,6 +130,11 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         imageViewHeightConstraint.isActive = true
 
         NSLayoutConstraint.activate([
+            placeholderIconView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            placeholderIconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            placeholderIconView.widthAnchor.constraint(equalToConstant: 48),
+            placeholderIconView.heightAnchor.constraint(equalToConstant: 48),
+
             activityIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             retryButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -159,15 +174,18 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         self.onRetry = onRetry
         switch state {
         case .loading:
-            imageView.image = UIImage(systemName: "photo")
+            imageView.image = nil
+            placeholderIconView.isHidden = false
             activityIndicator.startAnimating()
             retryButton.isHidden = true
         case .loaded(let image):
+            placeholderIconView.isHidden = true
             activityIndicator.stopAnimating()
             retryButton.isHidden = true
             applyImage(image)
         case .failed:
-            imageView.image = UIImage(systemName: "photo")
+            imageView.image = nil
+            placeholderIconView.isHidden = true
             activityIndicator.stopAnimating()
             retryButton.isHidden = false
         }

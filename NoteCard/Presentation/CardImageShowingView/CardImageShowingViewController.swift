@@ -25,12 +25,16 @@ class CardImageShowingViewController: UIViewController {
 
     private let rootView = CardImageShowingView()
 
-    /// Lazy: PopupCard 에서 메모 셀 탭 시 사용. 셀이 보이면 그 이미지의 원본 다운로드 시작.
+    /// Lazy: PopupCard 에서 메모 셀 탭 시 사용. 로컬 캐시 hit 이면 즉시 .loaded, 아니면 .loading.
     init(indexPath: IndexPath, imageInfos: [MemoImageInfo], imageRepository: ImageRepository) {
         self.initialIndexPath = indexPath
         self.source = .lazy(infos: imageInfos, repository: imageRepository)
         for info in imageInfos {
-            self.imageStates[info.id] = .loading
+            if let cached = ImageLoadingHelper.loadCachedImage(for: info, thumbnail: false) {
+                self.imageStates[info.id] = .loaded(cached)
+            } else {
+                self.imageStates[info.id] = .loading
+            }
         }
         super.init(nibName: nil, bundle: nil)
     }
@@ -62,6 +66,7 @@ class CardImageShowingViewController: UIViewController {
 
         if case .lazy(let infos, _) = source {
             for info in infos {
+                if case .loaded = imageStates[info.id] { continue }
                 Task { await self.loadImage(forImageID: info.id) }
             }
         }
