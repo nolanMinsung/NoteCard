@@ -106,6 +106,14 @@ public enum SyncBootstrap {
         )
     }
 
+    /// Sign-out 흐름의 phase 신호와 실제 signOut 호출을 하나로 묶은 코디네이터. Firebase 미설정 시 NoOp.
+    public static func makeSignOutCoordinator(authService: AuthService) -> SignOutCoordinator {
+        guard FirebaseApp.app() != nil else {
+            return NoOpSignOutCoordinator()
+        }
+        return FirebaseSignOutCoordinator(authService: authService)
+    }
+
     /// 계정의 sentinel doc 을 관리하는 서비스. 사인인 시 자동 생성·감시, cross-device 계정 삭제를
     /// .removed 이벤트로 즉시 감지해 강제 signOut.
     public static func makeAccountSentinelService(
