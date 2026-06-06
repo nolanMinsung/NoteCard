@@ -3,7 +3,15 @@
 //  NoteCard
 //
 
+import Combine
 import Foundation
+
+public enum AccountDeletionPhase: Equatable, Sendable {
+    case idle
+    case reauthenticating
+    case deletingCloudData
+    case removingAccount
+}
 
 /// 사용자가 계정 삭제를 요청했을 때 클라우드 데이터 정리와 Auth user 삭제를 함께 수행하는 오케스트레이터.
 ///
@@ -11,6 +19,9 @@ import Foundation
 /// 본 서비스는 reauth 로 token 을 갱신한 뒤 사용자의 모든 데이터 (메모 / 카테고리 / 이미지 + 바이너리) 를
 /// 삭제하고 마지막에 Auth user 를 삭제한다.
 public protocol AccountDeletionService: AnyObject, Sendable {
+
+    /// 현재 진행 단계. UI 가 차단 overlay 메시지 갱신 등에 활용. 흐름이 끝나면 .idle 로 복귀.
+    var phasePublisher: AnyPublisher<AccountDeletionPhase, Never> { get }
 
     /// 모든 클라우드 데이터 + Auth user 삭제. 호출 시 Apple sign-in 시트로 reauth 가 먼저 진행되며,
     /// 사용자가 시트를 취소하면 아무것도 삭제되지 않은 채 종료. 데이터 삭제 도중 실패 시엔 부분
