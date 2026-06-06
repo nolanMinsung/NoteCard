@@ -371,8 +371,8 @@ extension PopupCardView {
     
     private func setupImageCollectionView() {
         imageCollectionView.register(
-            MemoImageCollectionViewCell.self,
-            forCellWithReuseIdentifier: MemoImageCollectionViewCell.cellID
+            PopupImageCell.self,
+            forCellWithReuseIdentifier: PopupImageCell.cellID
         )
         imageCollectionView.isScrollEnabled = true
         imageCollectionView.backgroundColor = .clear
