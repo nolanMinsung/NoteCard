@@ -2313,6 +2313,74 @@
         }
       }
     },
+    "login.phaseSigningIn": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing in…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로그인 중…"
+          }
+        }
+      }
+    },
+    "login.phaseUploading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploading your data…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "데이터를 올리는 중…"
+          }
+        }
+      }
+    },
+    "login.phaseDownloading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Syncing from server…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "데이터를 받아오는 중…"
+          }
+        }
+      }
+    },
+    "login.syncTimeoutError": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync is taking longer than expected. Please try again."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동기화가 평소보다 오래 걸립니다. 다시 시도해 주세요."
+          }
+        }
+      }
+    },
     "sync.introduction.title": {
       "extractionState": "manual",
       "localizations": {
@@ -2474,6 +2542,27 @@
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Delete" } },
         "ko": { "stringUnit": { "state": "translated", "value": "삭제" } }
+      }
+    },
+    "account.syncIncompleteMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Initial sync did not finish. You can retry it now." } },
+        "ko": { "stringUnit": { "state": "translated", "value": "초기 동기화가 완료되지 않았습니다. 지금 다시 시도할 수 있어요." } }
+      }
+    },
+    "account.syncRetryButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Retry Sync" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "동기화 다시 시도" } }
+      }
+    },
+    "account.syncRetrySuccessMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sync completed." } },
+        "ko": { "stringUnit": { "state": "translated", "value": "동기화가 완료되었습니다." } }
       }
     }
   },

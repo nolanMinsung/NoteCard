@@ -17,6 +17,8 @@ public final class AccountDetailViewController: UIViewController {
     private let authService: AuthService
     private let accountDeletionService: AccountDeletionService
     private let syncStatusService: SyncStatusService
+    private let readinessCoordinator: FirstSignInReadinessCoordinator
+    private let readinessTimeout: TimeInterval
     private var cancellables = Set<AnyCancellable>()
     private var lastSyncedAt: Date?
     private var lastSyncedRefreshTimer: Timer?
@@ -32,11 +34,15 @@ public final class AccountDetailViewController: UIViewController {
     public init(
         authService: AuthService,
         accountDeletionService: AccountDeletionService,
-        syncStatusService: SyncStatusService
+        syncStatusService: SyncStatusService,
+        readinessCoordinator: FirstSignInReadinessCoordinator,
+        readinessTimeout: TimeInterval = 90
     ) {
         self.authService = authService
         self.accountDeletionService = accountDeletionService
         self.syncStatusService = syncStatusService
+        self.readinessCoordinator = readinessCoordinator
+        self.readinessTimeout = readinessTimeout
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -63,6 +69,7 @@ public final class AccountDetailViewController: UIViewController {
         }
         rootView.signOutButton.addTarget(self, action: #selector(signOutTapped), for: .touchUpInside)
         rootView.deleteAccountButton.addTarget(self, action: #selector(deleteAccountTapped), for: .touchUpInside)
+        rootView.syncRetryButton.addTarget(self, action: #selector(syncRetryTapped), for: .touchUpInside)
 
         // 인증 상태 변경에 따라 화면 상태 토글.
         authService.authStatePublisher
@@ -124,10 +131,17 @@ public final class AccountDetailViewController: UIViewController {
             rootView.displayNameLabel.text = user.displayName ?? user.email ?? L10n.Account.title
             rootView.emailLabel.text = user.email
             rootView.emailLabel.isHidden = (user.email == nil)
+            updateSyncRetryVisibility(userID: user.id)
         } else {
             rootView.signedOutContainer.isHidden = false
             rootView.signedInContainer.isHidden = true
+            rootView.syncRetryContainer.isHidden = true
         }
+    }
+
+    private func updateSyncRetryVisibility(userID: String) {
+        let incomplete = !readinessCoordinator.isSyncCompleted(for: userID)
+        rootView.syncRetryContainer.isHidden = !incomplete
     }
 
     // MARK: - Actions
@@ -138,14 +152,18 @@ public final class AccountDetailViewController: UIViewController {
 
     @objc private func signInTapped() {
         setLoading(true)
+        readinessCoordinator.reportSigningIn()
         Task { [weak self] in
             guard let self else { return }
             defer { Task { @MainActor in self.setLoading(false) } }
             do {
-                _ = try await self.authService.signInWithApple()
-                // 성공 시 authStatePublisher가 새 user를 emit → render에서 자동 전환
+                let user = try await self.authService.signInWithApple()
+                try await self.readinessCoordinator.awaitReady(userID: user.id, timeout: self.readinessTimeout)
+                // 성공 시 authStatePublisher가 새 user를 emit → SceneDelegate.observeAuthStateChanges 가 home 으로 전환
             } catch let error as AuthError {
                 await MainActor.run { self.presentInline(error: error) }
+            } catch is SignInReadinessError {
+                await MainActor.run { self.showAlert(title: L10n.Login.syncTimeoutError) }
             } catch {
                 await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
             }
@@ -170,6 +188,26 @@ public final class AccountDetailViewController: UIViewController {
         present(deletionVC, animated: true)
     }
 
+    @objc private func syncRetryTapped() {
+        guard let userID = authService.currentUser?.id else { return }
+        setLoading(true)
+        Task { [weak self] in
+            guard let self else { return }
+            defer { Task { @MainActor in self.setLoading(false) } }
+            do {
+                try await self.readinessCoordinator.retryReady(userID: userID, timeout: self.readinessTimeout)
+                await MainActor.run {
+                    self.rootView.syncRetryContainer.isHidden = true
+                    self.showAlert(title: L10n.Account.syncRetrySuccessMessage)
+                }
+            } catch is SignInReadinessError {
+                await MainActor.run { self.showAlert(title: L10n.Login.syncTimeoutError) }
+            } catch {
+                await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
+            }
+        }
+    }
+
     private func performSignOut() {
         setLoading(true)
         Task { [weak self] in
@@ -190,7 +228,13 @@ public final class AccountDetailViewController: UIViewController {
         rootView.signInButton.isEnabled = !loading
         rootView.signOutButton.isEnabled = !loading
         rootView.deleteAccountButton.isEnabled = !loading
-        if loading { rootView.activityIndicator.startAnimating() } else { rootView.activityIndicator.stopAnimating() }
+        rootView.syncRetryButton.isEnabled = !loading
+        if loading {
+            rootView.activityIndicator.startAnimating()
+        } else {
+            rootView.activityIndicator.stopAnimating()
+            readinessCoordinator.reset()
+        }
     }
 
     private func presentInline(error: AuthError) {

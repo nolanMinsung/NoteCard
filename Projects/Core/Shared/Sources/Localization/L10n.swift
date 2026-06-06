@@ -164,6 +164,10 @@ public enum L10n {
         public static let skipConfirmationTitle = "login.skipConfirmationTitle".localized()
         public static let skipConfirmationMessage = "login.skipConfirmationMessage".localized()
         public static let skipConfirmationProceed = "login.skipConfirmationProceed".localized()
+        public static let phaseSigningIn = "login.phaseSigningIn".localized()
+        public static let phaseUploading = "login.phaseUploading".localized()
+        public static let phaseDownloading = "login.phaseDownloading".localized()
+        public static let syncTimeoutError = "login.syncTimeoutError".localized()
     }
 
     public enum Account {
@@ -183,6 +187,9 @@ public enum L10n {
         public static let deleteAccountConfirmTitle = "account.deleteAccountConfirmTitle".localized()
         public static let deleteAccountConfirmMessage = "account.deleteAccountConfirmMessage".localized()
         public static let deleteAccountProceed = "account.deleteAccountProceed".localized()
+        public static let syncIncompleteMessage = "account.syncIncompleteMessage".localized()
+        public static let syncRetryButton = "account.syncRetryButton".localized()
+        public static let syncRetrySuccessMessage = "account.syncRetrySuccessMessage".localized()
     }
 
     public enum ThemeColor {

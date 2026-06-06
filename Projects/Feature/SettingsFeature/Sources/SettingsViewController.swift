@@ -21,6 +21,7 @@ public final class SettingsViewController: UITableViewController {
     private let authService: AuthService
     private let accountDeletionService: AccountDeletionService
     private let syncStatusService: SyncStatusService
+    private let readinessCoordinator: FirstSignInReadinessCoordinator
     private let makeTrashViewController: () -> UIViewController
 
     public init(
@@ -30,6 +31,7 @@ public final class SettingsViewController: UITableViewController {
         authService: AuthService,
         accountDeletionService: AccountDeletionService,
         syncStatusService: SyncStatusService,
+        readinessCoordinator: FirstSignInReadinessCoordinator,
         makeTrashViewController: @escaping () -> UIViewController
     ) {
         self.memoRepository = memoRepository
@@ -38,6 +40,7 @@ public final class SettingsViewController: UITableViewController {
         self.authService = authService
         self.accountDeletionService = accountDeletionService
         self.syncStatusService = syncStatusService
+        self.readinessCoordinator = readinessCoordinator
         self.makeTrashViewController = makeTrashViewController
         super.init(nibName: nil, bundle: nil)
     }
@@ -398,7 +401,8 @@ extension SettingsViewController {
             targetVC = AccountDetailViewController(
                 authService: authService,
                 accountDeletionService: accountDeletionService,
-                syncStatusService: syncStatusService
+                syncStatusService: syncStatusService,
+                readinessCoordinator: readinessCoordinator
             )
         case IndexPath(row: 0, section: 1):
             targetVC = ThemeColorPickingViewController()

@@ -31,10 +31,17 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
     private var _listenerErrorCancellable: AnyCancellable?
+    private var _initialSyncCancellable: AnyCancellable?
 
     private let updatedSubject = PassthroughSubject<MemoUpdateType, Never>()
     public var memoUpdatedPublisher: AnyPublisher<MemoUpdateType, Never> {
         updatedSubject.eraseToAnyPublisher()
+    }
+
+    private let initialServerSyncSubject = CurrentValueSubject<Bool, Never>(false)
+    /// 현재 활성 FirestoreImpl 의 초기 server snapshot 도착 여부. 사인아웃 시 false 로 리셋.
+    public var initialServerSyncPublisher: AnyPublisher<Bool, Never> {
+        initialServerSyncSubject.eraseToAnyPublisher()
     }
 
     public init(
@@ -72,6 +79,7 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
             lock.unlock()
             attachForwarding(from: impl)
             attachListenerErrorHandling(from: impl)
+            attachInitialSyncForwarding(from: impl)
             triggerMigrationIfNeeded(to: impl, userID: userID)
         } else {
             lock.lock()
@@ -79,11 +87,24 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
             _activeImpl = anonymousImpl
             _listenerErrorCancellable?.cancel()
             _listenerErrorCancellable = nil
+            _initialSyncCancellable?.cancel()
+            _initialSyncCancellable = nil
             lock.unlock()
             attachForwarding(from: anonymousImpl)
+            initialServerSyncSubject.send(false)
         }
         // 백엔드 전환을 UI에 알려 재조회 유도.
         updatedSubject.send(.update(content: .titleText(memoIDs: [])))
+    }
+
+    private func attachInitialSyncForwarding(from impl: MemoRepositoryFirestoreImpl) {
+        let newCancellable = impl.initialServerSyncPublisher.sink { [weak self] synced in
+            self?.initialServerSyncSubject.send(synced)
+        }
+        lock.lock()
+        _initialSyncCancellable?.cancel()
+        _initialSyncCancellable = newCancellable
+        lock.unlock()
     }
 
     /// Firestore listener 가 permission denied 등으로 발화하면 — 보통 다른 기기에서 본 계정이
@@ -103,6 +124,16 @@ public final class MemoRepositoryRouter: MemoRepository, @unchecked Sendable {
         _listenerErrorCancellable?.cancel()
         _listenerErrorCancellable = newCancellable
         lock.unlock()
+    }
+
+    /// AccountDetail 재시도 버튼 등 외부에서 마이그레이션을 수동으로 다시 시작할 때 호출.
+    /// marker 이미 set 이면 short-circuit. 현재 활성 Firestore impl 이 없으면 no-op.
+    public func retryMigrationIfNeeded(userID: String) {
+        lock.lock()
+        let impl = _firestoreImpl
+        lock.unlock()
+        guard let impl else { return }
+        triggerMigrationIfNeeded(to: impl, userID: userID)
     }
 
     /// 익명 메모(휴지통 포함)를 새 Firestore impl로 이관. UserDefaults 마커로 기기+사용자별 1회.

@@ -242,36 +242,40 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
 
     // MARK: - Migration
 
-    /// 외부 소스(익명 Core Data)에서 받은 이미지들을 Firestore + Storage로 import.
-    /// 로컬 파일이 있어야 업로드 가능 — 누락된 이미지는 스킵하고 계속.
-    /// 멱등: 같은 ID에 대해선 setData(merge:true)로 메타데이터 덮어쓰기, Storage는 동일 경로 putData로 덮어쓰기.
-    func importImages(_ images: [MemoImageInfo]) async throws {
+    /// 익명 Core Data 의 이미지 메타데이터만 Firestore 에 import. Storage 바이너리 업로드는 별도 단계.
+    /// 한 장 실패해도 다음 진행. setData(merge: true) 로 멱등.
+    func importImageMetadata(_ images: [MemoImageInfo]) async throws {
         for info in images {
             do {
-                try await migrateImage(info)
+                var payload = try Firestore.Encoder().encode(FirestoreMemoImage(info))
+                payload["serverUpdatedAt"] = FieldValue.serverTimestamp()
+                try await imageCollection(for: info.memoID).document(info.id.uuidString).setData(payload, merge: true)
             } catch {
-                // 한 장 실패해도 다음 진행 — 누락 이미지 등 흔한 케이스. 로그만 남김.
-                print("[ImageRepoFirestore] import skipped for \(info.id): \(error)")
+                print("[ImageRepoFirestore] meta import skipped for \(info.id): \(error)")
             }
         }
     }
 
-    private func migrateImage(_ info: MemoImageInfo) async throws {
-        let originalURL = try ImageFileHandler.getFileURL(for: info, thumbnail: false)
-        let thumbnailURL = try ImageFileHandler.getFileURL(for: info, thumbnail: true)
-        let originalData = try Data(contentsOf: originalURL)
-        let thumbnailData = try Data(contentsOf: thumbnailURL)
+    /// 익명 이미지의 원본 + 썸네일 바이너리를 Storage 로 업로드. 메타와 분리돼 사용자 readiness gate 와 무관하게
+    /// 백그라운드에서 진행. 한 장 실패해도 다음 진행. putData 가 동일 path 멱등 덮어쓰기.
+    func uploadImageBinaries(_ images: [MemoImageInfo]) async throws {
+        for info in images {
+            do {
+                let originalURL = try ImageFileHandler.getFileURL(for: info, thumbnail: false)
+                let thumbnailURL = try ImageFileHandler.getFileURL(for: info, thumbnail: true)
+                let originalData = try Data(contentsOf: originalURL)
+                let thumbnailData = try Data(contentsOf: thumbnailURL)
 
-        async let originalUpload: StorageMetadata = originalStorageRef(
-            memoID: info.memoID, imageID: info.id, fileExtension: info.fileExtension
-        ).putDataAsync(originalData)
-        async let thumbnailUpload: StorageMetadata = thumbnailStorageRef(
-            memoID: info.memoID, thumbnailID: info.thumbnailID
-        ).putDataAsync(thumbnailData)
-        _ = try await (originalUpload, thumbnailUpload)
-
-        var payload = try Firestore.Encoder().encode(FirestoreMemoImage(info))
-        payload["serverUpdatedAt"] = FieldValue.serverTimestamp()
-        try await imageCollection(for: info.memoID).document(info.id.uuidString).setData(payload, merge: true)
+                async let originalUpload: StorageMetadata = originalStorageRef(
+                    memoID: info.memoID, imageID: info.id, fileExtension: info.fileExtension
+                ).putDataAsync(originalData)
+                async let thumbnailUpload: StorageMetadata = thumbnailStorageRef(
+                    memoID: info.memoID, thumbnailID: info.thumbnailID
+                ).putDataAsync(thumbnailData)
+                _ = try await (originalUpload, thumbnailUpload)
+            } catch {
+                print("[ImageRepoFirestore] binary upload skipped for \(info.id): \(error)")
+            }
+        }
     }
 }

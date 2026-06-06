@@ -78,6 +78,34 @@ final class AccountDetailView: UIView {
     let syncStatusRow = AccountDetailView.makeInfoRow(title: L10n.Account.syncStatusLabel, value: L10n.Account.syncStatusComingSoon)
     let lastSyncedRow = AccountDetailView.makeInfoRow(title: L10n.Account.lastSyncedLabel, value: L10n.Account.lastSyncedNever)
 
+    let syncRetryMessageLabel: UILabel = {
+        let label = UILabel()
+        label.text = L10n.Account.syncIncompleteMessage
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .secondaryLabel
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }()
+
+    let syncRetryButton: UIButton = {
+        var config = UIButton.Configuration.tinted()
+        config.title = L10n.Account.syncRetryButton
+        config.cornerStyle = .large
+        config.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0)
+        let button = UIButton(configuration: config)
+        return button
+    }()
+
+    let syncRetryContainer: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 8
+        stack.alignment = .fill
+        stack.isHidden = true
+        return stack
+    }()
+
     let signOutButton: UIButton = {
         var config = UIButton.Configuration.tinted()
         config.title = L10n.Account.signOut
@@ -129,11 +157,16 @@ final class AccountDetailView: UIView {
         infoStack.spacing = 8
         infoStack.alignment = .fill
 
+        syncRetryContainer.addArrangedSubview(syncRetryMessageLabel)
+        syncRetryContainer.addArrangedSubview(syncRetryButton)
+
         signedInContainer.addArrangedSubview(identityStack)
         signedInContainer.addArrangedSubview(infoStack)
         signedInContainer.setCustomSpacing(28, after: identityStack)
+        signedInContainer.addArrangedSubview(syncRetryContainer)
+        signedInContainer.setCustomSpacing(20, after: infoStack)
         signedInContainer.addArrangedSubview(signOutButton)
-        signedInContainer.setCustomSpacing(32, after: infoStack)
+        signedInContainer.setCustomSpacing(32, after: syncRetryContainer)
         signedInContainer.addArrangedSubview(deleteAccountButton)
 
         signedOutContainer.addArrangedSubview(signInPromptLabel)

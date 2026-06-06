@@ -12,11 +12,13 @@ import Domain
 import DesignSystem
 import LoginFeature
 import Shared
+import SyncInterface
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     private var cancellables = Set<AnyCancellable>()
+    private var signInProgressOverlay: SignInProgressOverlay?
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -46,11 +48,62 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
 
         observeAuthStateChanges(environment: appDelegate.environment)
+        observeReadinessPhase(environment: appDelegate.environment)
+    }
+
+    /// readiness gate phase 에 따라 window 위에 SignInProgressOverlay 를 show / hide.
+    /// rootVC 교체와 무관하게 살아남아 sign-in 흐름 전체 동안 터치 차단 + 단계 표시.
+    private func observeReadinessPhase(environment: AppEnvironment) {
+        environment.firstSignInReadinessCoordinator.phasePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] phase in
+                self?.handle(phase: phase)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handle(phase: SignInPhase) {
+        switch phase {
+        case .idle, .ready:
+            hideSignInProgressOverlay()
+        case .signingIn, .uploading, .downloading:
+            showSignInProgressOverlay(phase: phase)
+        }
+    }
+
+    private func showSignInProgressOverlay(phase: SignInPhase) {
+        guard let window = self.window else { return }
+        let overlay = signInProgressOverlay ?? SignInProgressOverlay()
+        if overlay.superview == nil {
+            overlay.alpha = 0
+            window.addSubview(overlay)
+            NSLayoutConstraint.activate([
+                overlay.topAnchor.constraint(equalTo: window.topAnchor),
+                overlay.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+                overlay.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+                overlay.bottomAnchor.constraint(equalTo: window.bottomAnchor)
+            ])
+            signInProgressOverlay = overlay
+            UIView.animate(withDuration: 0.2) { overlay.alpha = 1 }
+        }
+        overlay.update(phase: phase)
+    }
+
+    private func hideSignInProgressOverlay() {
+        guard let overlay = signInProgressOverlay, overlay.superview != nil else { return }
+        UIView.animate(withDuration: 0.2, animations: {
+            overlay.alpha = 0
+        }, completion: { [weak self] _ in
+            overlay.removeFromSuperview()
+            self?.signInProgressOverlay = nil
+        })
     }
 
     /// auth 상태 전이 시 rootViewController 를 새 MainTabBar 로 교체해 modal · navigation 상태 reset.
     /// 사인인은 LoginVC 가 자체 transition 하므로 rootVC 가 LoginVC 가 아닌 경로만 처리.
     /// 사인아웃은 force signOut (sentinel / token 만료 등) 까지 커버.
+    /// AccountDetail 에서의 sign-in 처럼 LoginVC 가 아닌 경로는 readiness gate 완료까지 transition 을 지연.
+    /// 그래야 overlay 가 phase 라벨을 갱신하는 동안 UIView.transition 의 window snapshot 이 시각을 덮어쓰지 않음.
     private func observeAuthStateChanges(environment: AppEnvironment) {
         environment.authService.authStatePublisher
             .dropFirst()
@@ -60,10 +113,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 if user == nil {
                     self.transitionToMainTabBar(environment: environment)
                 } else if !(self.window?.rootViewController is LoginViewController) {
-                    self.transitionToMainTabBar(environment: environment)
+                    self.transitionAfterReadiness(environment: environment)
                 }
             }
             .store(in: &cancellables)
+    }
+
+    /// phase 가 .ready 또는 .idle 이 될 때까지 기다린 뒤 transition. 현재 phase 가 이미 .ready / .idle 이면 즉시.
+    /// readiness gate 가 동작 중인 동안은 overlay 가 살아남아 단계별 라벨 갱신을 사용자에게 보여줄 수 있음.
+    private func transitionAfterReadiness(environment: AppEnvironment) {
+        var cancellable: AnyCancellable?
+        cancellable = environment.firstSignInReadinessCoordinator.phasePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] phase in
+                guard phase == .ready || phase == .idle else { return }
+                cancellable?.cancel()
+                self?.transitionToMainTabBar(environment: environment)
+            }
     }
 
     // MARK: - Root view construction
@@ -78,7 +144,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func makeLoginViewController(environment: AppEnvironment) -> LoginViewController {
-        LoginViewController(authService: environment.authService) { [weak self] outcome in
+        LoginViewController(
+            authService: environment.authService,
+            readinessCoordinator: environment.firstSignInReadinessCoordinator
+        ) { [weak self] outcome in
             UserDefaults.standard.set(true, forKey: UserDefaultsKey.didShowSyncIntroduction.rawValue)
             switch outcome {
             case .signedIn, .skipped:

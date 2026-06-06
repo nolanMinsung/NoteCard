@@ -3,6 +3,7 @@
 //  NoteCard
 //
 
+import Combine
 import Shared
 import SyncInterface
 import UIKit
@@ -20,14 +21,25 @@ public final class LoginViewController: UIViewController {
     }
 
     private let authService: AuthService
+    private let readinessCoordinator: FirstSignInReadinessCoordinator
+    private let readinessTimeout: TimeInterval
     private let onCompletion: (Outcome) -> Void
+
+    private var cancellables = Set<AnyCancellable>()
 
     private lazy var rootView = self.view as! LoginView
 
     // MARK: - Init
 
-    public init(authService: AuthService, onCompletion: @escaping (Outcome) -> Void) {
+    public init(
+        authService: AuthService,
+        readinessCoordinator: FirstSignInReadinessCoordinator,
+        readinessTimeout: TimeInterval = 90,
+        onCompletion: @escaping (Outcome) -> Void
+    ) {
         self.authService = authService
+        self.readinessCoordinator = readinessCoordinator
+        self.readinessTimeout = readinessTimeout
         self.onCompletion = onCompletion
         super.init(nibName: nil, bundle: nil)
         // 첫 진입은 swipe-down으로 닫을 수 없게. skip 버튼이 명시적 대안.
@@ -54,10 +66,12 @@ public final class LoginViewController: UIViewController {
     @objc private func signInTapped() {
         rootView.errorLabel.text = nil
         setLoading(true)
+        readinessCoordinator.reportSigningIn()
         Task { [weak self] in
             guard let self else { return }
             do {
-                _ = try await self.authService.signInWithApple()
+                let user = try await self.authService.signInWithApple()
+                try await self.readinessCoordinator.awaitReady(userID: user.id, timeout: self.readinessTimeout)
                 await MainActor.run {
                     self.setLoading(false)
                     self.onCompletion(.signedIn)
@@ -66,6 +80,11 @@ public final class LoginViewController: UIViewController {
                 await MainActor.run {
                     self.setLoading(false)
                     self.present(error: error)
+                }
+            } catch is SignInReadinessError {
+                await MainActor.run {
+                    self.setLoading(false)
+                    self.rootView.errorLabel.text = L10n.Login.syncTimeoutError
                 }
             } catch {
                 await MainActor.run {
@@ -84,9 +103,27 @@ public final class LoginViewController: UIViewController {
         )
         alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel))
         alert.addAction(UIAlertAction(title: L10n.Login.skipConfirmationProceed, style: .default) { [weak self] _ in
-            self?.onCompletion(.skipped)
+            self?.proceedWithSkip()
         })
         present(alert, animated: true)
+    }
+
+    /// readiness gate 가 실패한 뒤 사용자가 skip 을 누른 경우, Firebase 측은 sign-in 된 상태가 잔존.
+    /// UI 와 인증 상태를 일치시키기 위해 sign-out 후 .skipped emit.
+    private func proceedWithSkip() {
+        if authService.currentUser == nil {
+            onCompletion(.skipped)
+            return
+        }
+        setLoading(true)
+        Task { [weak self] in
+            guard let self else { return }
+            try? await self.authService.signOut()
+            await MainActor.run {
+                self.setLoading(false)
+                self.onCompletion(.skipped)
+            }
+        }
     }
 
     // MARK: - Private
@@ -108,10 +145,8 @@ public final class LoginViewController: UIViewController {
     private func setLoading(_ loading: Bool) {
         rootView.signInButton.isEnabled = !loading
         rootView.skipButton.isEnabled = !loading
-        if loading {
-            rootView.activityIndicator.startAnimating()
-        } else {
-            rootView.activityIndicator.stopAnimating()
+        if !loading {
+            readinessCoordinator.reset()
         }
     }
 }

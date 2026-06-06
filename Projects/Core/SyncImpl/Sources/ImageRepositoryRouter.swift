@@ -79,11 +79,26 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
         }
     }
 
-    /// 익명 이미지를 새 Firestore impl로 이관. UserDefaults 마커로 기기+사용자별 1회.
+    /// AccountDetail 재시도 버튼 등 외부에서 마이그레이션을 수동으로 다시 시작할 때 호출.
+    /// marker 이미 set 이면 short-circuit. 현재 활성 Firestore impl 이 없으면 no-op.
+    public func retryMigrationIfNeeded(userID: String) {
+        lock.lock()
+        let impl = _firestoreImpl
+        lock.unlock()
+        guard let impl else { return }
+        triggerMigrationIfNeeded(to: impl, userID: userID)
+    }
+
+    /// 익명 이미지 메타데이터를 Firestore 로 이관. UserDefaults 마커로 기기+사용자별 1회.
+    /// 메타 업로드 완료 시점에 marker set + cleanupCoordinator 보고 (= readiness gate 통과 신호).
+    /// 바이너리 업로드는 분리된 백그라운드 Task — readiness gate 와 무관.
     private func triggerMigrationIfNeeded(to firestoreImpl: ImageRepositoryFirestoreImpl, userID: String) {
-        let markerKey = "sync.anonymousToFirestoreImageMigration.\(userID)"
+        let metaMarkerKey = Self.metaMarkerKey(for: userID)
+        let legacyMarkerKey = Self.legacyMarkerKey(for: userID)
         let coordinator = cleanupCoordinator
-        if UserDefaults.standard.bool(forKey: markerKey) {
+
+        // v2.5.0 에서 set 된 통합 marker 가 있으면 메타도 완료된 것으로 인정 (호환).
+        if UserDefaults.standard.bool(forKey: metaMarkerKey) || UserDefaults.standard.bool(forKey: legacyMarkerKey) {
             Task { await coordinator.reportMigrationCompleted(userID: userID) }
             return
         }
@@ -92,7 +107,6 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
         Task { [weak firestoreImpl] in
             guard let firestoreImpl else { return }
             do {
-                // 활성 메모 + 휴지통 메모 양쪽에서 이미지 수집
                 let active = try await memoRepo.getAllMemos()
                 let trashed = try await memoRepo.getAllMemosInTrash()
                 var collected: [MemoImageInfo] = []
@@ -101,14 +115,25 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
                     collected.append(contentsOf: images)
                 }
                 if !collected.isEmpty {
-                    try await firestoreImpl.importImages(collected)
+                    try await firestoreImpl.importImageMetadata(collected)
                 }
-                UserDefaults.standard.set(true, forKey: markerKey)
+                UserDefaults.standard.set(true, forKey: metaMarkerKey)
                 await coordinator.reportMigrationCompleted(userID: userID)
+                if !collected.isEmpty {
+                    try await firestoreImpl.uploadImageBinaries(collected)
+                }
             } catch {
                 print("[ImageRepositoryRouter] migration error: \(error)")
             }
         }
+    }
+
+    static func metaMarkerKey(for userID: String) -> String {
+        "sync.anonymousToFirestoreImageMetadataMigration.\(userID)"
+    }
+
+    static func legacyMarkerKey(for userID: String) -> String {
+        "sync.anonymousToFirestoreImageMigration.\(userID)"
     }
 
     private func attachForwarding(from impl: ImageRepository) {

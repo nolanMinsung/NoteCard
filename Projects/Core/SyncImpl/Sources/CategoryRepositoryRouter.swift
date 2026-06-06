@@ -35,10 +35,17 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
     private var _listenerErrorCancellable: AnyCancellable?
+    private var _initialSyncCancellable: AnyCancellable?
 
     private let updatedSubject = PassthroughSubject<CategoryUpdateType, Never>()
     public var categoryUpdatedPublisher: AnyPublisher<CategoryUpdateType, Never> {
         updatedSubject.eraseToAnyPublisher()
+    }
+
+    private let initialServerSyncSubject = CurrentValueSubject<Bool, Never>(false)
+    /// 현재 활성 FirestoreImpl 의 초기 server snapshot 도착 여부. 사인아웃 시 false 로 리셋.
+    public var initialServerSyncPublisher: AnyPublisher<Bool, Never> {
+        initialServerSyncSubject.eraseToAnyPublisher()
     }
 
     public init(
@@ -69,6 +76,7 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
             lock.unlock()
             attachForwarding(from: impl)
             attachListenerErrorHandling(from: impl)
+            attachInitialSyncForwarding(from: impl)
             // 익명 → Firestore 1회 마이그레이션 (백그라운드)
             triggerMigrationIfNeeded(to: impl, userID: userID)
         } else {
@@ -78,12 +86,25 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
             _activeImpl = anonymousImpl
             _listenerErrorCancellable?.cancel()
             _listenerErrorCancellable = nil
+            _initialSyncCancellable?.cancel()
+            _initialSyncCancellable = nil
             lock.unlock()
             attachForwarding(from: anonymousImpl)
+            initialServerSyncSubject.send(false)
         }
         // 백엔드가 바뀌었음을 UI에 알려 재조회 유도.
         // (Core Data impl은 자발적 emit이 없고, Firestore listener도 첫 스냅샷 도착이 비동기라 둘 다 보조)
         updatedSubject.send(.update(content: .name(categoryIDs: [])))
+    }
+
+    private func attachInitialSyncForwarding(from impl: CategoryRepositoryFirestoreImpl) {
+        let newCancellable = impl.initialServerSyncPublisher.sink { [weak self] synced in
+            self?.initialServerSyncSubject.send(synced)
+        }
+        lock.lock()
+        _initialSyncCancellable?.cancel()
+        _initialSyncCancellable = newCancellable
+        lock.unlock()
     }
 
     /// Firestore listener 가 permission denied 등으로 발화하면 — 다른 기기에서 본 계정이 삭제됐다는
@@ -103,6 +124,16 @@ public final class CategoryRepositoryRouter: CategoryRepository, @unchecked Send
         _listenerErrorCancellable?.cancel()
         _listenerErrorCancellable = newCancellable
         lock.unlock()
+    }
+
+    /// AccountDetail 재시도 버튼 등 외부에서 마이그레이션을 수동으로 다시 시작할 때 호출.
+    /// marker 이미 set 이면 short-circuit. 현재 활성 Firestore impl 이 없으면 no-op.
+    public func retryMigrationIfNeeded(userID: String) {
+        lock.lock()
+        let impl = _firestoreImpl
+        lock.unlock()
+        guard let impl else { return }
+        triggerMigrationIfNeeded(to: impl, userID: userID)
     }
 
     /// 익명 카테고리를 새 Firestore impl로 이관한다. UserDefaults 마커로 기기+사용자별 1회만 수행.

@@ -60,9 +60,11 @@ public final class AnonymousMigrationCleanupCoordinator: @unchecked Sendable {
     }
 
     private func allMigrationsCompleted(for userID: String) -> Bool {
-        ["Memo", "Category", "Image"].allSatisfy { domain in
-            UserDefaults.standard.bool(forKey: "sync.anonymousToFirestore\(domain)Migration.\(userID)")
-        }
+        let memoDone = UserDefaults.standard.bool(forKey: "sync.anonymousToFirestoreMemoMigration.\(userID)")
+        let categoryDone = UserDefaults.standard.bool(forKey: "sync.anonymousToFirestoreCategoryMigration.\(userID)")
+        let imageDone = UserDefaults.standard.bool(forKey: "sync.anonymousToFirestoreImageMetadataMigration.\(userID)")
+            || UserDefaults.standard.bool(forKey: "sync.anonymousToFirestoreImageMigration.\(userID)")
+        return memoDone && categoryDone && imageDone
     }
 
     private static func cleanupMarkerKey(for userID: String) -> String {
