@@ -12,15 +12,45 @@ import DesignSystem
 import Shared
 
 class CardImageShowingCollectionViewCell: UICollectionViewCell {
-    
+
     static var cellID: String {
         return String(describing: self)
     }
-    
+
     let doubleTapGesture = UITapGestureRecognizer()
-    
+
     private let imageView = UIImageView()
     private let scrollView = CardImageShowingScrollView()
+
+    private var onRetry: (() -> Void)?
+
+    private let activityIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .large)
+        view.color = .white
+        view.hidesWhenStopped = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private let retryButton: UIButton = {
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "arrow.clockwise")
+        config.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12)
+        let button = UIButton(configuration: config)
+        button.tintColor = .white
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
+        return button
+    }()
+
+    private let placeholderIconView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(systemName: "photo")
+        view.tintColor = .white.withAlphaComponent(0.6)
+        view.contentMode = .scaleAspectFit
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     lazy var scrollViewCenterXConstraint = scrollView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 0)
     lazy var scrollViewCenterYConstraint = scrollView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 0)
@@ -34,12 +64,13 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         setupUIProperties()
         configureHierarchy()
         setupConstraints()
         setupDelegates()
         setupGestures()
+        retryButton.addTarget(self, action: #selector(retryTapped), for: .touchUpInside)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -47,11 +78,19 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         scrollView.setZoomScale(1.0, animated: false)
+        imageView.image = nil
+        placeholderIconView.isHidden = false
+        activityIndicator.stopAnimating()
+        retryButton.isHidden = true
+        onRetry = nil
     }
-    
+
     private func configureHierarchy() {
         contentView.addSubview(scrollView)
         scrollView.addSubview(imageView)
+        contentView.addSubview(placeholderIconView)
+        contentView.addSubview(activityIndicator)
+        contentView.addSubview(retryButton)
     }
     
     private func setupUIProperties() {
@@ -62,7 +101,6 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         
         imageView.contentMode = UIImageView.ContentMode.scaleAspectFit
         imageView.sizeToFit()
-        imageView.image = UIImage(systemName: "photo")
         imageView.backgroundColor = .clear
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -85,11 +123,23 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         scrollViewCenterYConstraint.isActive = true
         scrollViewWidthConstraint.isActive = true
         scrollViewHeightConstraint.isActive = true
-        
+
         imageViewCenterXConstraint.isActive = true
         imageViewCenterYConstraint.isActive = true
         imageViewWidthConstraint.isActive = true
         imageViewHeightConstraint.isActive = true
+
+        NSLayoutConstraint.activate([
+            placeholderIconView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            placeholderIconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            placeholderIconView.widthAnchor.constraint(equalToConstant: 48),
+            placeholderIconView.heightAnchor.constraint(equalToConstant: 48),
+
+            activityIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            retryButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            retryButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
     }
     
     private func setupDelegates() {
@@ -120,25 +170,50 @@ class CardImageShowingCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configureCell(with image: UIImage) {
+    func configure(state: ImageLoadState, onRetry: @escaping () -> Void) {
+        self.onRetry = onRetry
+        switch state {
+        case .loading:
+            imageView.image = nil
+            placeholderIconView.isHidden = false
+            activityIndicator.startAnimating()
+            retryButton.isHidden = true
+        case .loaded(let image):
+            placeholderIconView.isHidden = true
+            activityIndicator.stopAnimating()
+            retryButton.isHidden = true
+            applyImage(image)
+        case .failed:
+            imageView.image = nil
+            placeholderIconView.isHidden = true
+            activityIndicator.stopAnimating()
+            retryButton.isHidden = false
+        }
+    }
+
+    private func applyImage(_ image: UIImage) {
         imageView.image = image
         let contentViewRatio = self.contentView.bounds.height / self.contentView.bounds.width
         let imageSizeRatio = image.size.height / image.size.width
-        
+
         if imageSizeRatio <= contentViewRatio {
             scrollViewWidthConstraint.constant = contentView.bounds.width
             imageViewWidthConstraint.constant = contentView.bounds.width
-            
+
             scrollViewHeightConstraint.constant = contentView.bounds.width * imageSizeRatio
             imageViewHeightConstraint.constant = contentView.bounds.width * imageSizeRatio
         } else {
             scrollViewHeightConstraint.constant = contentView.bounds.height
             imageViewHeightConstraint.constant = contentView.bounds.height
-            
+
             scrollViewWidthConstraint.constant = contentView.bounds.height / imageSizeRatio
             imageViewWidthConstraint.constant = contentView.bounds.height / imageSizeRatio
         }
         updateConstraints()
+    }
+
+    @objc private func retryTapped() {
+        onRetry?()
     }
 }
 

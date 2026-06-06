@@ -21,9 +21,9 @@ class PopupCardViewController: UIViewController {
     
     private var memo: Memo
     private var categories: [Domain.Category] = []
-    private var imageUIModels: [ImageUIModel] = [] {
+    private var popupImageItems: [PopupImageItem] = [] {
         didSet {
-            rootView.imageCollectionViewHeight.constant = imageUIModels.isEmpty ? 0 : 70
+            rootView.imageCollectionViewHeight.constant = popupImageItems.isEmpty ? 0 : 70
             rootView.setNeedsLayout()
         }
     }
@@ -59,17 +59,15 @@ class PopupCardViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         Task {
             do {
                 self.categories = try await self.fetchCategories()
-                self.imageUIModels = try await self.makeImageUIModels()
-                
                 self.rootView.categoryCollectionView.reloadData()
-                self.rootView.imageCollectionView.reloadData()
             } catch {
-                assertionFailure("메모의 카테고리 혹은 이미지를 가져오는 데 에러 발생!!!")
+                print("PopupCard 카테고리 fetch 실패: \(error)")
             }
+            await self.loadImageItems()
         }
         
         rootView.memoTextView.addGestureRecognizer(memoTextViewTapGesture)
@@ -107,15 +105,7 @@ class PopupCardViewController: UIViewController {
             .sink { [weak self] _ in
                 guard let self else { return }
                 Task {
-                    do {
-                        self.imageUIModels = try await self.makeImageUIModels()
-                        self.rootView.imageCollectionView.reloadData()
-                    } catch RepositoryError.notFound {
-                        // 디바운스 중 메모가 삭제되면 더 이상 표시할 게 없으므로 닫기.
-                        self.dismiss(animated: true)
-                    } catch {
-                        print("PopupCard 이미지 업데이트 실패: \(error)")
-                    }
+                    await self.loadImageItems()
                 }
             }
             .store(in: &cancellables)
@@ -225,14 +215,7 @@ private extension PopupCardViewController {
             image: UIImage(systemName: "pencil"),
             handler: { [weak self] action in
                 guard let self else { return }
-                
-                let memoEditingVC = MemoDetailViewController(
-                    type: .editing(memo: self.memo, images: self.imageUIModels),
-                    environment: self.environment
-                )
-                let naviCon = UINavigationController(rootViewController: memoEditingVC)
-                naviCon.modalPresentationStyle = .formSheet
-                self.present(naviCon, animated: true)
+                Task { await self.enterEditingMode() }
             }
         )
         
@@ -301,10 +284,10 @@ extension PopupCardViewController: UICollectionViewDataSource {
         if collectionView == self.rootView.categoryCollectionView {
             return categories.count
         } else {
-            return imageUIModels.count
+            return popupImageItems.count
         }
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == self.rootView.categoryCollectionView {
             guard let cell = self.rootView.categoryCollectionView.dequeueReusableCell(
@@ -319,10 +302,14 @@ extension PopupCardViewController: UICollectionViewDataSource {
             return cell
         } else {
             let cell = self.rootView.imageCollectionView.dequeueReusableCell(
-                withReuseIdentifier: MemoImageCollectionViewCell.cellID,
+                withReuseIdentifier: PopupImageCell.cellID,
                 for: indexPath
-            ) as! MemoImageCollectionViewCell
-            cell.configure(with: imageUIModels[indexPath.item])
+            ) as! PopupImageCell
+            let item = popupImageItems[indexPath.item]
+            let imageID = item.info.id
+            cell.configure(state: item.thumbnailState) { [weak self] in
+                Task { await self?.retryThumbnail(forImageID: imageID) }
+            }
             return cell
         }
     }
@@ -335,8 +322,12 @@ extension PopupCardViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.view.endEditing(true)
-        let images = imageUIModels.map(\.originalImage)
-        let cardImageShowingVC = CardImageShowingViewController(indexPath: indexPath, images: images)
+        let infos = popupImageItems.map(\.info)
+        let cardImageShowingVC = CardImageShowingViewController(
+            indexPath: indexPath,
+            imageInfos: infos,
+            imageRepository: environment.imageRepository
+        )
         cardImageShowingVC.modalPresentationStyle = .overFullScreen
         self.present(cardImageShowingVC, animated: true)
     }
@@ -415,67 +406,110 @@ private extension PopupCardViewController {
 }
 
 
-// MARK: - Fetching Image Model And Making UIModels
+// MARK: - 이미지 lazy 로딩
 private extension PopupCardViewController {
-    
-    private func makeImageUIModels() async throws -> [ImageUIModel] {
-        var imageUIModels: [ImageUIModel] = []
-        
-        let fetchedImageInfoList = try await environment.imageRepository.getAllImageInfo(for: memo)
-        let fetchedThumbnails = try await fetchThumbnailsConcurrently(for: fetchedImageInfoList)
-        let fetchedImages = try await fetchImagesConcurrently(for: fetchedImageInfoList)
-        
-        guard fetchedImageInfoList.count == fetchedImages.count,
-              fetchedImageInfoList.count == fetchedThumbnails.count
-        else {
-            throw ImageFileError.fileNotFound
+
+    /// 메타만 받아 placeholder 즉시 노출 → 각 thumbnail 비동기 병렬 로드.
+    /// 로컬 캐시 hit 이면 sync 로 즉시 .loaded 로 표시 (스피너 거치지 않음).
+    /// 메모 자체가 trash 등으로 사라진 경우 dismiss.
+    func loadImageItems() async {
+        let infos: [MemoImageInfo]
+        do {
+            infos = try await environment.imageRepository.getAllImageInfo(for: memo)
+        } catch RepositoryError.notFound {
+            self.dismiss(animated: true)
+            return
+        } catch {
+            print("PopupCard 이미지 메타 fetch 실패: \(error)")
+            return
         }
-        
-        for imageInfo in fetchedImageInfoList.enumerated() {
-            let imageUIModel = ImageUIModel(
-                from: imageInfo.element,
-                image: fetchedImages[imageInfo.offset],
-                thumbnail: fetchedThumbnails[imageInfo.offset]
+
+        popupImageItems = infos.map { info in
+            if let cached = ImageLoadingHelper.loadCachedImage(for: info, thumbnail: true) {
+                return PopupImageItem(info: info, thumbnailState: .loaded(cached))
+            }
+            return PopupImageItem(info: info, thumbnailState: .loading)
+        }
+        rootView.imageCollectionView.reloadData()
+
+        for item in popupImageItems {
+            if case .loading = item.thumbnailState {
+                Task { await self.loadThumbnail(forImageID: item.info.id) }
+            }
+        }
+    }
+
+    /// retry 버튼에서 호출. state 를 .loading 으로 되돌리고 다시 로드.
+    func retryThumbnail(forImageID imageID: UUID) async {
+        guard let index = popupImageItems.firstIndex(where: { $0.info.id == imageID }) else { return }
+        popupImageItems[index].thumbnailState = .loading
+        rootView.imageCollectionView.reloadItems(at: [IndexPath(item: index, section: 0)])
+        await loadThumbnail(forImageID: imageID)
+    }
+
+    /// 편집 진입 — MemoDetailVC 가 원본 + 썸네일 둘 다 필요한 ImageUIModel 을 요구하므로
+    /// 모든 이미지를 sync 로 받아서 변환 후 진입. 한 장이라도 실패하면 alert.
+    func enterEditingMode() async {
+        do {
+            let models = try await fetchAllImageUIModelsForEditing()
+            let memoEditingVC = MemoDetailViewController(
+                type: .editing(memo: memo, images: models),
+                environment: environment
             )
-            imageUIModels.append(imageUIModel)
+            let naviCon = UINavigationController(rootViewController: memoEditingVC)
+            naviCon.modalPresentationStyle = .formSheet
+            self.present(naviCon, animated: true)
+        } catch {
+            print("PopupCard 편집 진입 위한 이미지 로드 실패: \(error)")
+            let alert = UIAlertController(
+                title: L10n.PopupCard.editingPreloadFailedTitle,
+                message: L10n.PopupCard.editingPreloadFailedMessage,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: L10n.Common.ok, style: .default))
+            self.present(alert, animated: true)
         }
-        return imageUIModels
     }
-    
-    private func fetchThumbnailsConcurrently(for imageInfos: [MemoImageInfo]) async throws -> [UIImage] {
+
+    private func fetchAllImageUIModelsForEditing() async throws -> [ImageUIModel] {
+        let infos = popupImageItems.map(\.info)
         let imageRepository = environment.imageRepository
-        var thumbnailResults: [Int: UIImage] = [:]
-        try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
-            for (index, info) in imageInfos.enumerated() {
+        return try await withThrowingTaskGroup(of: (Int, ImageUIModel).self) { group in
+            for (index, info) in infos.enumerated() {
                 group.addTask {
+                    let original = try await imageRepository.getImage(from: info)
                     let thumbnail = try await imageRepository.getThumbnailImage(from: info)
-                    return (index, thumbnail)
+                    return (index, ImageUIModel(from: info, image: original, thumbnail: thumbnail))
                 }
             }
-            for try await (index, thumbnail) in group {
-                thumbnailResults[index] = thumbnail
+            var results: [Int: ImageUIModel] = [:]
+            for try await (index, model) in group {
+                results[index] = model
             }
+            return results.sorted { $0.key < $1.key }.map { $0.value }
         }
-        return thumbnailResults.sorted { $0.key < $1.key }.map { $0.value }
     }
-    
-    private func fetchImagesConcurrently(for imageInfos: [MemoImageInfo]) async throws -> [UIImage] {
+
+    /// 단일 thumbnail 로드. transient 실패에 대응해 자동 재시도 (exponential backoff).
+    /// 끝까지 실패 시 state = .failed → 셀에 재시도 버튼 노출.
+    func loadThumbnail(forImageID imageID: UUID) async {
+        guard let info = popupImageItems.first(where: { $0.info.id == imageID })?.info else { return }
         let imageRepository = environment.imageRepository
-        var imageResults: [Int: UIImage] = [:]
-        try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
-            for (index, info) in imageInfos.enumerated() {
-                group.addTask {
-                    let image = try await imageRepository.getImage(from: info)
-                    return (index, image)
-                }
-            }
-            for try await (index, image) in group {
-                imageResults[index] = image
-            }
+
+        let result = await ImageLoadingHelper.loadWithRetry {
+            try await imageRepository.getThumbnailImage(from: info)
         }
-        return imageResults.sorted { $0.key < $1.key }.map { $0.value }
+
+        guard let index = popupImageItems.firstIndex(where: { $0.info.id == imageID }) else { return }
+        switch result {
+        case .success(let image):
+            popupImageItems[index].thumbnailState = .loaded(image)
+        case .failure(let error):
+            print("PopupCard thumbnail 로드 실패 (\(imageID)): \(error)")
+            popupImageItems[index].thumbnailState = .failed
+        }
+        rootView.imageCollectionView.reloadItems(at: [IndexPath(item: index, section: 0)])
     }
-    
 }
 
 

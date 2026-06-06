@@ -57,6 +57,8 @@ public enum L10n {
         public static let deleteMemoTitle = "popupCard.deleteMemoTitle".localized()
         public static let deleteMemoConfirm = "popupCard.deleteMemoConfirm".localized()
         public static let noTitle = "popupCard.noTitle".localized()
+        public static let editingPreloadFailedTitle = "popupCard.editingPreloadFailedTitle".localized()
+        public static let editingPreloadFailedMessage = "popupCard.editingPreloadFailedMessage".localized()
     }
 
     public enum MemoView {
