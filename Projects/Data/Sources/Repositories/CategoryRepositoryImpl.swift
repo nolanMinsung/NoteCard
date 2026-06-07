@@ -79,15 +79,11 @@ public extension CategoryRepositoryImpl {
         case 1:
             return foundCategory.first!
         default:
-            throw CoreDataError.duplicateCategoryDetected
+            throw CoreDataError.duplicateCategoryIDDetected
         }
     }
 
     func create(name: String) async throws {
-        let allCategoryNames = try await getAllCategories(inOrderOf: .modificationDate, isAscending: false).map(\.name)
-        guard !allCategoryNames.contains(name) else {
-            throw CoreDataError.duplicateCategoryDetected
-        }
         let newID = UUID()
         try await context.perform { [unowned self] in
             let newCategory = CategoryEntity(context: self.context)
@@ -140,10 +136,6 @@ public extension CategoryRepositoryImpl {
     }
     
     func changeCategoryName(_ category: Domain.Category, newName: String) async throws {
-        let allCategoryNames = try await getAllCategories(inOrderOf: .modificationDate, isAscending: false).map(\.name)
-        guard !allCategoryNames.contains(newName) else {
-            throw CoreDataError.duplicateCategoryDetected
-        }
         try await context.perform { [unowned self] in
             let categoryEntity = try fetchCategoryEntity(id: category.id)
             categoryEntity.name = newName

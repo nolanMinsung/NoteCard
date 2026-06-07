@@ -100,16 +100,9 @@ class CreateCategoryViewController: UIViewController {
         
         Task {
             do {
-                // try categoryManager.createCategoryEntity(withName: text)
                 try await environment.categoryRepository.create(name: text.trimmingCharacters(in: .whitespacesAndNewlines))
                 onCategoryCreated?()
                 dismiss(animated: true)
-            } catch CoreDataError.duplicateCategoryDetected {
-                let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)
-                let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel)
-                alertCon.addAction(okAction)
-                self.present(alertCon, animated: true)
-                return
             } catch {
                 print(error.localizedDescription)
             }

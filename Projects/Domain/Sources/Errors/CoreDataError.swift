@@ -14,9 +14,9 @@ public enum CoreDataError: NoteCardError {
     case saveFailed(Error?)
     case objectNotFound
     case categoryNotFound(id: UUID)
-    case duplicateCategoryDetected
+    case duplicateCategoryIDDetected
     case duplicateImageDetected
-    
+
     public var displayingMessage: String {
         switch self {
         case .fetchFailed:
@@ -27,8 +27,8 @@ public enum CoreDataError: NoteCardError {
             return "요청한 데이터를 찾을 수 없습니다."
         case .categoryNotFound(let id):
             return "카테고리를 찾을 수 없습니다. UUID: \(id)"
-        case .duplicateCategoryDetected:
-            return "같은 이름의 카테고리가 2개 이상 발견되었습니다. 조치 필요."
+        case .duplicateCategoryIDDetected:
+            return "같은 ID의 카테고리가 2개 이상 발견되었습니다. 조치 필요."
         case .duplicateImageDetected:
             return "같은 이미지가 2개 이상 발견되었습니다. 조치 필요."
         }

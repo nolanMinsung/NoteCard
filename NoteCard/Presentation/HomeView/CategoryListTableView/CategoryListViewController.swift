@@ -296,16 +296,6 @@ extension CategoryListViewController {
                         self.applySnapshot(animatingDifferences: true, usingReloadData: false)
                     } catch {
                         print(error.localizedDescription)
-                        let duplicateAlertCon = UIAlertController(
-                            title: L10n.CategoryList.duplicateName,
-                            message: L10n.CategoryList.duplicateNameMessage,
-                            preferredStyle: UIAlertController.Style.actionSheet
-                        )
-                        let okAction = UIAlertAction(title: L10n.Common.ok, style: UIAlertAction.Style.cancel) { action in
-                            self.navigationController?.present(alertCon, animated: true)
-                        }
-                        duplicateAlertCon.addAction(okAction)
-                        self.present(duplicateAlertCon, animated: true)
                     }
                 }
             }

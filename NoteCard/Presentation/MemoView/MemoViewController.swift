@@ -641,12 +641,6 @@ extension MemoViewController: UITextFieldDelegate {
                 try await self.environment.categoryRepository.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
             } catch {
                 print(error.localizedDescription)
-                let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)
-                let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel) { action in
-                    self.categoryNameTextField.becomeFirstResponder()
-                }
-                alertCon.addAction(okAction)
-                self.present(alertCon, animated: true)
                 return
             }
             editButtonItem.isEnabled = true
