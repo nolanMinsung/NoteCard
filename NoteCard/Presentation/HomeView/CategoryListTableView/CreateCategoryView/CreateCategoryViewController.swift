@@ -96,7 +96,7 @@ class CreateCategoryViewController: UIViewController {
             return
         }
 
-        Task {
+        Task { @MainActor in
             do {
                 let existingNames = try await environment.categoryRepository
                     .getAllCategories(inOrderOf: .modificationDate, isAscending: false)
@@ -121,7 +121,7 @@ class CreateCategoryViewController: UIViewController {
         alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel))
         alert.addAction(UIAlertAction(title: L10n.CategoryList.createDuplicateNameProceed, style: .default) { [weak self] _ in
             guard let self else { return }
-            Task {
+            Task { @MainActor in
                 do {
                     try await self.createAndDismiss(name: name)
                 } catch {

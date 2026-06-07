@@ -289,7 +289,7 @@ extension CategoryListViewController {
             self.saveAction = UIAlertAction(title: L10n.Common.save, style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { return }
                 guard let newCategoryName = alertCon.textFields?[0].text else { return }
-                Task {
+                Task { @MainActor in
                     do {
                         let conflicting = try await self.environment.categoryRepository
                             .getAllCategories(inOrderOf: .modificationDate, isAscending: false)
@@ -379,7 +379,7 @@ extension CategoryListViewController {
         alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel))
         alert.addAction(UIAlertAction(title: L10n.CategoryList.renameDuplicateNameProceed, style: .destructive) { [weak self] _ in
             guard let self else { return }
-            Task {
+            Task { @MainActor in
                 do {
                     try await self.performRename(selected: selected, newName: newName, cell: cell)
                 } catch {

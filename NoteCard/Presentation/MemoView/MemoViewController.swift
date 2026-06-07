@@ -633,7 +633,7 @@ extension MemoViewController: UITextFieldDelegate {
             return
         }
 
-        Task {
+        Task { @MainActor in
             do {
                 let conflicting = try await environment.categoryRepository
                     .getAllCategories(inOrderOf: .modificationDate, isAscending: false)
@@ -673,7 +673,7 @@ extension MemoViewController: UITextFieldDelegate {
         })
         alert.addAction(UIAlertAction(title: L10n.CategoryList.renameDuplicateNameProceed, style: .destructive) { [weak self] _ in
             guard let self else { return }
-            Task {
+            Task { @MainActor in
                 do {
                     try await self.environment.categoryRepository.changeCategoryName(selected, newName: newName)
                 } catch {
