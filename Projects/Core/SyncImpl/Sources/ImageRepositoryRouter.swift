@@ -32,6 +32,7 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
     private let lock = NSLock()
     private var _activeImpl: ImageRepository
     private var _firestoreImpl: ImageRepositoryFirestoreImpl?
+    private var _progressStore: ImageUploadProgressStore?
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
 
@@ -63,8 +64,15 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
 
     private func handleAuthChange(user: AuthUser?) {
         if let userID = user?.id {
-            let impl = ImageRepositoryFirestoreImpl(userID: userID, firestore: firestore, storage: storage)
+            let progressStore = ImageUploadProgressStore(userID: userID)
+            let impl = ImageRepositoryFirestoreImpl(
+                userID: userID,
+                firestore: firestore,
+                storage: storage,
+                progressStore: progressStore
+            )
             lock.lock()
+            _progressStore = progressStore
             _firestoreImpl = impl
             _activeImpl = impl
             lock.unlock()
@@ -73,6 +81,7 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
         } else {
             lock.lock()
             _firestoreImpl = nil
+            _progressStore = nil
             _activeImpl = anonymousImpl
             lock.unlock()
             attachForwarding(from: anonymousImpl)
