@@ -242,7 +242,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         print(#function)
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-        
+
+        // 끊긴 이미지 바이너리 마이그레이션 업로드를 재개. sign-in 안 됐거나 진행 중이면 no-op.
+        (UIApplication.shared.delegate as? AppDelegate)?
+            .environment.pendingUploadResumeTrigger.resumePendingUploadsIfNeeded()
+
 //        guard let mainTabBarCon = self.window?.rootViewController as? MainTabBarController else { fatalError() }
 //        
 //        let blurAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1)

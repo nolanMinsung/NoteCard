@@ -30,6 +30,7 @@ struct AppEnvironment {
     let migrationCleanupCoordinator: AnonymousMigrationCleanupCoordinator
     let firstSignInReadinessCoordinator: FirstSignInReadinessCoordinator
     let signOutCoordinator: SignOutCoordinator
+    let pendingUploadResumeTrigger: PendingUploadResumeTrigger
 
     let coreDataStack: CoreDataStack
 
@@ -103,6 +104,9 @@ struct AppEnvironment {
             imageRepository: imageRepository
         )
         self.signOutCoordinator = SyncBootstrap.makeSignOutCoordinator(authService: authService)
+        self.pendingUploadResumeTrigger = SyncBootstrap.makePendingUploadResumeTrigger(
+            imageRepository: imageRepository
+        )
     }
 
     /// Crashlytics를 켜고(가능하면) Amplitude 기반 `Analytics`를 만든다.

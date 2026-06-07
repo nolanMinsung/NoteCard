@@ -20,7 +20,7 @@ import UIKit
 /// - 전환 시 활성 impl의 `imageUpdatedPublisher`를 내부 subject로 forward.
 /// - 로그인 시 익명 이미지(전 메모 + 휴지통)를 Storage + Firestore로 1회 마이그레이션.
 ///   메모 마이그레이션과 병렬로 진행되므로, 익명 enumeration은 `anonymousMemoRepository`를 직접 조회.
-public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
+public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTrigger, @unchecked Sendable {
 
     private let authService: AuthService
     private let anonymousImpl: ImageRepository
@@ -33,6 +33,8 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
     private var _activeImpl: ImageRepository
     private var _firestoreImpl: ImageRepositoryFirestoreImpl?
     private var _progressStore: ImageUploadProgressStore?
+    private var _currentUserID: String?
+    private var _isMigrationInFlight: Bool = false
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
 
@@ -75,6 +77,7 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
             _progressStore = progressStore
             _firestoreImpl = impl
             _activeImpl = impl
+            _currentUserID = userID
             lock.unlock()
             attachForwarding(from: impl)
             triggerMigrationIfNeeded(to: impl, userID: userID)
@@ -83,9 +86,21 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
             _firestoreImpl = nil
             _progressStore = nil
             _activeImpl = anonymousImpl
+            _currentUserID = nil
             lock.unlock()
             attachForwarding(from: anonymousImpl)
         }
+    }
+
+    /// 현재 sign-in 사용자가 있으면 미완료 이미지 바이너리 업로드를 재개. 진행 중이면 no-op.
+    /// `sceneDidBecomeActive` 등 app lifecycle 시점에서 호출.
+    public func resumePendingUploadsIfNeeded() {
+        lock.lock()
+        let impl = _firestoreImpl
+        let userID = _currentUserID
+        lock.unlock()
+        guard let impl, let userID else { return }
+        triggerMigrationIfNeeded(to: impl, userID: userID)
     }
 
     /// AccountDetail 재시도 버튼 등 외부에서 마이그레이션을 수동으로 다시 시작할 때 호출.
@@ -116,11 +131,21 @@ public final class ImageRepositoryRouter: ImageRepository, @unchecked Sendable {
 
         let memoRepo = anonymousMemoRepository
         let imageRepo = anonymousImpl
-        lock.lock()
-        let progressStore = _progressStore
-        lock.unlock()
 
-        Task { [weak firestoreImpl] in
+        let canProceed: Bool = lock.withLock {
+            guard !_isMigrationInFlight else { return false }
+            _isMigrationInFlight = true
+            return true
+        }
+        guard canProceed else { return }
+        let progressStore = lock.withLock { _progressStore }
+
+        Task { [weak firestoreImpl, weak self] in
+            defer {
+                if let self {
+                    self.lock.withLock { self._isMigrationInFlight = false }
+                }
+            }
             guard let firestoreImpl else { return }
             do {
                 let collected: [MemoImageInfo]
