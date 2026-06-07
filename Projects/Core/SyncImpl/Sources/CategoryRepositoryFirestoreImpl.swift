@@ -171,11 +171,6 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
     // MARK: - Write
 
     public func create(name: String) async throws {
-        // 같은 이름 중복 방지 (Core Data 구현과 정책 맞춤).
-        let existingNames = snapshotNames()
-        guard !existingNames.contains(name) else {
-            throw RepositoryError.duplicateName
-        }
         let now = Date()
         let category = Domain.Category(id: UUID(), name: name, creationDate: now, modificationDate: now)
         var payload = try Firestore.Encoder().encode(FirestoreCategory(category))
@@ -185,10 +180,6 @@ public final class CategoryRepositoryFirestoreImpl: CategoryRepository, @uncheck
     }
 
     public func changeCategoryName(_ category: Domain.Category, newName: String) async throws {
-        let existingNames = snapshotNames()
-        guard !existingNames.contains(newName) else {
-            throw RepositoryError.duplicateName
-        }
         try await collection.document(category.id.uuidString).updateData([
             "name": newName,
             "modificationDate": Timestamp(date: Date()),

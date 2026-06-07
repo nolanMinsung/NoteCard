@@ -12,6 +12,7 @@
 //  Created by 김민성 on 2023/10/02.
 //
 
+import Combine
 import UIKit
 import Data
 import Domain
@@ -43,6 +44,7 @@ class CategoryListViewController: UITableViewController {
     var categoryNameChangingTextField: UITextField!
     var saveAction: UIAlertAction!
 
+    private var cancellables: Set<AnyCancellable> = []
     private let environment: AppEnvironment
 
     init(environment: AppEnvironment) {
@@ -62,7 +64,31 @@ class CategoryListViewController: UITableViewController {
         setupNaviBar()
         setupButtonsAction()
         setupDelegates()
+        setupSubscriptions()
         applySnapshot(animatingDifferences: false, usingReloadData: true)
+    }
+
+    private func setupSubscriptions() {
+        let changeStreams: [AnyPublisher<Void, Never>] = [
+            environment.categoryRepository.categoryUpdatedPublisher.map { _ in () }.eraseToAnyPublisher(),
+            environment.memoRepository.memoUpdatedPublisher.map { _ in () }.eraseToAnyPublisher(),
+        ]
+        Publishers.MergeMany(changeStreams)
+            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.refreshFromCurrentSearch()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func refreshFromCurrentSearch() {
+        guard let searchText = searchController.searchBar.searchTextField.text else { return }
+        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            applySnapshot(animatingDifferences: true, usingReloadData: false)
+        } else {
+            applySnapshot(searchWith: searchText, animatingDifferences: true, usingReloadData: false)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -289,23 +315,18 @@ extension CategoryListViewController {
             self.saveAction = UIAlertAction(title: L10n.Common.save, style: UIAlertAction.Style.destructive) { [weak self] action in
                 guard let self else { return }
                 guard let newCategoryName = alertCon.textFields?[0].text else { return }
-                Task {
+                Task { @MainActor in
                     do {
-                        try await self.environment.categoryRepository.changeCategoryName(selectedCategory, newName: newCategoryName)
-                        swipedCell.categoryNameLabel.text = newCategoryName
-                        self.applySnapshot(animatingDifferences: true, usingReloadData: false)
+                        let conflicting = try await self.environment.categoryRepository
+                            .getAllCategories(inOrderOf: .modificationDate, isAscending: false)
+                            .contains { $0.name == newCategoryName && $0.id != selectedCategory.id }
+                        if conflicting {
+                            self.presentRenameDuplicateConfirm(selected: selectedCategory, newName: newCategoryName, cell: swipedCell)
+                        } else {
+                            try await self.performRename(selected: selectedCategory, newName: newCategoryName, cell: swipedCell)
+                        }
                     } catch {
                         print(error.localizedDescription)
-                        let duplicateAlertCon = UIAlertController(
-                            title: L10n.CategoryList.duplicateName,
-                            message: L10n.CategoryList.duplicateNameMessage,
-                            preferredStyle: UIAlertController.Style.actionSheet
-                        )
-                        let okAction = UIAlertAction(title: L10n.Common.ok, style: UIAlertAction.Style.cancel) { action in
-                            self.navigationController?.present(alertCon, animated: true)
-                        }
-                        duplicateAlertCon.addAction(okAction)
-                        self.present(duplicateAlertCon, animated: true)
                     }
                 }
             }
@@ -367,6 +388,43 @@ extension CategoryListViewController {
         
     }
     
+}
+
+extension CategoryListViewController {
+
+    private func presentRenameDuplicateConfirm(
+        selected: Domain.Category,
+        newName: String,
+        cell: CategoryListTableViewCell
+    ) {
+        let alert = UIAlertController(
+            title: L10n.CategoryList.renameDuplicateNameConfirm,
+            message: L10n.CategoryList.renameDuplicateNameConfirmMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel))
+        alert.addAction(UIAlertAction(title: L10n.CategoryList.renameDuplicateNameProceed, style: .destructive) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                do {
+                    try await self.performRename(selected: selected, newName: newName, cell: cell)
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        })
+        self.present(alert, animated: true)
+    }
+
+    private func performRename(
+        selected: Domain.Category,
+        newName: String,
+        cell: CategoryListTableViewCell
+    ) async throws {
+        try await environment.categoryRepository.changeCategoryName(selected, newName: newName)
+        cell.categoryNameLabel.text = newName
+        applySnapshot(animatingDifferences: true, usingReloadData: false)
+    }
 }
 
 extension CategoryListViewController: UISearchBarDelegate {

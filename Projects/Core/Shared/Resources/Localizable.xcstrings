@@ -52,36 +52,104 @@
         }
       }
     },
-    "categoryList.duplicateName": {
+    "categoryList.createDuplicateNameConfirm": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Duplicate Category Name"
+            "value": "A category with the same name already exists"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이름 중복"
+            "value": "같은 이름의 카테고리가 이미 있어요"
           }
         }
       }
     },
-    "categoryList.duplicateNameMessage": {
+    "categoryList.createDuplicateNameConfirmMessage": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "There is already a category with the same name.\nPlease enter a different name."
+            "value": "Create another category with the same name anyway?"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "같은 이름의 카테고리가 있습니다. 다른 이름을 입력해주세요."
+            "value": "그래도 새로 만들까요?"
+          }
+        }
+      }
+    },
+    "categoryList.createDuplicateNameProceed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "만들기"
+          }
+        }
+      }
+    },
+    "categoryList.renameDuplicateNameConfirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A category with the same name already exists"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "같은 이름의 카테고리가 이미 있어요"
+          }
+        }
+      }
+    },
+    "categoryList.renameDuplicateNameConfirmMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename to this name anyway?"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그래도 이 이름으로 바꿀까요?"
+          }
+        }
+      }
+    },
+    "categoryList.renameDuplicateNameProceed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "바꾸기"
           }
         }
       }

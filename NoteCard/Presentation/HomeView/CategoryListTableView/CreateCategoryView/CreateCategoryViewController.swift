@@ -87,33 +87,55 @@ class CreateCategoryViewController: UIViewController {
     @objc private func createCategoryDone() {
         self.categoryNameTextField.resignFirstResponder()
         guard let text = self.categoryNameTextField.text else { return }
-        print(text)
-        guard text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) != "" else {
-            
+        let trimmedName = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
             let alertCon = UIAlertController(title: L10n.CreateCategory.emptyCategoryName, message: L10n.CreateCategory.emptyCategoryNameMessage, preferredStyle: UIAlertController.Style.alert)
             let okAction = UIAlertAction(title: L10n.Common.ok, style: UIAlertAction.Style.cancel)
             alertCon.addAction(okAction)
             self.present(alertCon, animated: true)
-            
             return
         }
-        
-        Task {
+
+        Task { @MainActor in
             do {
-                // try categoryManager.createCategoryEntity(withName: text)
-                try await environment.categoryRepository.create(name: text.trimmingCharacters(in: .whitespacesAndNewlines))
-                onCategoryCreated?()
-                dismiss(animated: true)
-            } catch CoreDataError.duplicateCategoryDetected {
-                let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)
-                let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel)
-                alertCon.addAction(okAction)
-                self.present(alertCon, animated: true)
-                return
+                let existingNames = try await environment.categoryRepository
+                    .getAllCategories(inOrderOf: .modificationDate, isAscending: false)
+                    .map(\.name)
+                if existingNames.contains(trimmedName) {
+                    presentDuplicateNameConfirm(name: trimmedName)
+                } else {
+                    try await createAndDismiss(name: trimmedName)
+                }
             } catch {
                 print(error.localizedDescription)
             }
         }
+    }
+
+    private func presentDuplicateNameConfirm(name: String) {
+        let alert = UIAlertController(
+            title: L10n.CategoryList.createDuplicateNameConfirm,
+            message: L10n.CategoryList.createDuplicateNameConfirmMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel))
+        alert.addAction(UIAlertAction(title: L10n.CategoryList.createDuplicateNameProceed, style: .default) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                do {
+                    try await self.createAndDismiss(name: name)
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        })
+        self.present(alert, animated: true)
+    }
+
+    private func createAndDismiss(name: String) async throws {
+        try await environment.categoryRepository.create(name: name)
+        onCategoryCreated?()
+        dismiss(animated: true)
     }
     
     //category생성을 취소했을 때

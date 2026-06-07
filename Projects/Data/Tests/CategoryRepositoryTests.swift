@@ -38,29 +38,18 @@ final class CategoryRepositoryTests: XCTestCase {
         XCTAssertEqual(names, ["업무"])
     }
 
-    func test_중복된_이름으로_카테고리를_생성하면_에러를_던진다() async throws {
-        // given: 이미 존재하는 카테고리
-        try await sut.create(name: "업무")
-
-        // when / then: 같은 이름으로 다시 만들면 에러를 던진다
-        do {
-            try await sut.create(name: "업무")
-            XCTFail("중복된 이름의 카테고리 생성 시 에러를 던져야 한다")
-        } catch {
-            // 에러 발생 — 통과
-        }
-    }
-
-    func test_중복된_이름으로_생성을_시도해도_카테고리가_늘어나지_않는다() async throws {
+    func test_중복된_이름으로_카테고리를_생성하면_서로_다른_ID로_둘_다_저장된다() async throws {
         // given
         try await sut.create(name: "업무")
 
-        // when: 중복 생성을 시도하면 (에러 발생)
-        _ = try? await sut.create(name: "업무")
+        // when
+        try await sut.create(name: "업무")
 
-        // then: 카테고리는 여전히 1개뿐이다
-        let names = try await allCategoryNames()
-        XCTAssertEqual(names, ["업무"])
+        // then: 카테고리는 ID로 구분되므로 같은 이름 두 개가 공존한다
+        let all = try await sut.getAllCategories(inOrderOf: .modificationDate, isAscending: false)
+        XCTAssertEqual(all.count, 2)
+        XCTAssertTrue(all.allSatisfy { $0.name == "업무" })
+        XCTAssertNotEqual(all[0].id, all[1].id)
     }
 
     // MARK: - 조회
@@ -137,19 +126,18 @@ final class CategoryRepositoryTests: XCTestCase {
         XCTAssertEqual(names, ["회사"])
     }
 
-    func test_이미_존재하는_이름으로_변경하면_에러를_던진다() async throws {
-        // given: 두 개의 카테고리
+    func test_이미_존재하는_이름으로_변경해도_성공한다() async throws {
+        // given
         try await sut.create(name: "업무")
         try await sut.create(name: "개인")
         let personal = try await category(named: "개인")
 
-        // when / then: 이미 존재하는 이름으로 바꾸려 하면 에러를 던진다
-        do {
-            try await sut.changeCategoryName(personal, newName: "업무")
-            XCTFail("이미 존재하는 이름으로 변경 시 에러를 던져야 한다")
-        } catch {
-            // 에러 발생 — 통과
-        }
+        // when
+        try await sut.changeCategoryName(personal, newName: "업무")
+
+        // then: 같은 이름이 두 개 공존 (ID로 구분)
+        let names = try await allCategoryNames()
+        XCTAssertEqual(names.sorted(), ["업무", "업무"])
     }
 
     // MARK: - 삭제

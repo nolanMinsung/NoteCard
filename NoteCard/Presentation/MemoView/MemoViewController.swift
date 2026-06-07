@@ -629,31 +629,67 @@ extension MemoViewController: UITextFieldDelegate {
         let trimmedNewCategoryName = newCategoryName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard oldCategoryName != trimmedNewCategoryName else {
             textField.text = oldCategoryName
-            editButtonItem.isEnabled = true
-            plusBarButtonItem.isEnabled = true
-            navigationItem.setHidesBackButton(false, animated: true)
-            navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+            restoreBarItemsAfterCategoryEdit()
             return
         }
-        
-        Task {
+
+        Task { @MainActor in
             do {
-                try await self.environment.categoryRepository.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
+                let conflicting = try await environment.categoryRepository
+                    .getAllCategories(inOrderOf: .modificationDate, isAscending: false)
+                    .contains { $0.name == trimmedNewCategoryName && $0.id != selectedCategory.id }
+                if conflicting {
+                    presentRenameDuplicateConfirm(
+                        selected: selectedCategory,
+                        newName: trimmedNewCategoryName,
+                        textField: textField,
+                        oldName: oldCategoryName
+                    )
+                } else {
+                    try await environment.categoryRepository.changeCategoryName(selectedCategory, newName: trimmedNewCategoryName)
+                    restoreBarItemsAfterCategoryEdit()
+                }
             } catch {
                 print(error.localizedDescription)
-                let alertCon = UIAlertController(title: L10n.CategoryList.duplicateName, message: L10n.CategoryList.duplicateNameMessage, preferredStyle: UIAlertController.Style.actionSheet)
-                let okAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel) { action in
-                    self.categoryNameTextField.becomeFirstResponder()
-                }
-                alertCon.addAction(okAction)
-                self.present(alertCon, animated: true)
-                return
             }
-            editButtonItem.isEnabled = true
-            plusBarButtonItem.isEnabled = true
-            navigationItem.setHidesBackButton(false, animated: true)
-            navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         }
+    }
+
+    private func presentRenameDuplicateConfirm(
+        selected: Domain.Category,
+        newName: String,
+        textField: UITextField,
+        oldName: String
+    ) {
+        let alert = UIAlertController(
+            title: L10n.CategoryList.renameDuplicateNameConfirm,
+            message: L10n.CategoryList.renameDuplicateNameConfirmMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel) { [weak self] _ in
+            guard let self else { return }
+            textField.text = oldName
+            self.restoreBarItemsAfterCategoryEdit()
+        })
+        alert.addAction(UIAlertAction(title: L10n.CategoryList.renameDuplicateNameProceed, style: .destructive) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                do {
+                    try await self.environment.categoryRepository.changeCategoryName(selected, newName: newName)
+                } catch {
+                    print(error.localizedDescription)
+                }
+                self.restoreBarItemsAfterCategoryEdit()
+            }
+        })
+        self.present(alert, animated: true)
+    }
+
+    private func restoreBarItemsAfterCategoryEdit() {
+        editButtonItem.isEnabled = true
+        plusBarButtonItem.isEnabled = true
+        navigationItem.setHidesBackButton(false, animated: true)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     
