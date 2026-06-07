@@ -28,16 +28,25 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
     private let firestore: Firestore
     private let storage: Storage
     private let userID: String
+    /// 익명 → Firestore 마이그레이션의 바이너리 업로드 단계에서 한 장씩 완료 표시를 남기는 저장소.
+    /// nil 이면 skip 판정·기록 모두 생략 (마이그레이션 외 경로에선 주입할 필요 없음).
+    private let progressStore: ImageUploadProgressStore?
 
     private let imageUpdatedSubject = PassthroughSubject<ImageUpdateType, Never>()
     public var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> {
         imageUpdatedSubject.eraseToAnyPublisher()
     }
 
-    public init(userID: String, firestore: Firestore = .firestore(), storage: Storage = .storage()) {
+    init(
+        userID: String,
+        firestore: Firestore = .firestore(),
+        storage: Storage = .storage(),
+        progressStore: ImageUploadProgressStore? = nil
+    ) {
         self.userID = userID
         self.firestore = firestore
         self.storage = storage
+        self.progressStore = progressStore
     }
 
     // MARK: - Path helpers
@@ -242,6 +251,26 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
 
     // MARK: - Migration
 
+    /// 현재 사용자의 모든 메모 sub-collection 을 Firestore 에서 enumerate 해 이미지 메타를 모은다.
+    /// 메타 마이그가 이미 끝난 상태에서 재진입할 때 익명 Core Data 가 cleanup 됐을 수 있으므로,
+    /// 익명 enumerate 대신 Firestore 를 진실의 출처로 삼는다.
+    func enumerateAllImageInfosFromFirestore() async throws -> [MemoImageInfo] {
+        let memosCollection = firestore.collection("users").document(userID).collection("memos")
+        let memoSnapshot = try await memosCollection.getDocuments()
+        var collected: [MemoImageInfo] = []
+        for memoDoc in memoSnapshot.documents {
+            guard let memoID = UUID(uuidString: memoDoc.documentID) else { continue }
+            let images = try await imageCollection(for: memoID).order(by: "orderIndex").getDocuments()
+            for imgDoc in images.documents {
+                if let dto = try? imgDoc.data(as: FirestoreMemoImage.self),
+                   let info = dto.toDomain() {
+                    collected.append(info)
+                }
+            }
+        }
+        return collected
+    }
+
     /// 익명 Core Data 의 이미지 메타데이터만 Firestore 에 import. Storage 바이너리 업로드는 별도 단계.
     /// 한 장 실패해도 다음 진행. setData(merge: true) 로 멱등.
     func importImageMetadata(_ images: [MemoImageInfo]) async throws {
@@ -257,25 +286,42 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
     }
 
     /// 익명 이미지의 원본 + 썸네일 바이너리를 Storage 로 업로드. 메타와 분리돼 사용자 readiness gate 와 무관하게
-    /// 백그라운드에서 진행. 한 장 실패해도 다음 진행. putData 가 동일 path 멱등 덮어쓰기.
+    /// 백그라운드에서 진행. putData 가 동일 path 멱등 덮어쓰기.
+    ///
+    /// `progressStore` 가 주입돼 있으면 시작 전 이미 완료된 variant 는 skip 하고 성공한 variant 만 mark.
+    /// 같은 이미지의 원본·썸네일은 병렬 업로드 후 각각 mark — 한 쪽이 실패해도 다른 쪽 mark 가 남아
+    /// 다음 시도에서 실패한 쪽만 재시도된다.
     func uploadImageBinaries(_ images: [MemoImageInfo]) async throws {
         for info in images {
-            do {
-                let originalURL = try ImageFileHandler.getFileURL(for: info, thumbnail: false)
-                let thumbnailURL = try ImageFileHandler.getFileURL(for: info, thumbnail: true)
-                let originalData = try Data(contentsOf: originalURL)
-                let thumbnailData = try Data(contentsOf: thumbnailURL)
+            async let originalDone: Void = uploadVariantIfNeeded(.original, of: info)
+            async let thumbnailDone: Void = uploadVariantIfNeeded(.thumbnail, of: info)
+            _ = await (originalDone, thumbnailDone)
+        }
+    }
 
-                async let originalUpload: StorageMetadata = originalStorageRef(
-                    memoID: info.memoID, imageID: info.id, fileExtension: info.fileExtension
-                ).putDataAsync(originalData)
-                async let thumbnailUpload: StorageMetadata = thumbnailStorageRef(
-                    memoID: info.memoID, thumbnailID: info.thumbnailID
-                ).putDataAsync(thumbnailData)
-                _ = try await (originalUpload, thumbnailUpload)
-            } catch {
-                print("[ImageRepoFirestore] binary upload skipped for \(info.id): \(error)")
+    private func uploadVariantIfNeeded(_ variant: ImageUploadProgressStore.Variant, of info: MemoImageInfo) async {
+        if progressStore?.isUploaded(imageInfo: info, variant: variant) == true { return }
+        do {
+            switch variant {
+            case .original:
+                let url = try ImageFileHandler.getFileURL(for: info, thumbnail: false)
+                let data = try Data(contentsOf: url)
+                _ = try await originalStorageRef(
+                    memoID: info.memoID,
+                    imageID: info.id,
+                    fileExtension: info.fileExtension
+                ).putDataAsync(data)
+            case .thumbnail:
+                let url = try ImageFileHandler.getFileURL(for: info, thumbnail: true)
+                let data = try Data(contentsOf: url)
+                _ = try await thumbnailStorageRef(
+                    memoID: info.memoID,
+                    thumbnailID: info.thumbnailID
+                ).putDataAsync(data)
             }
+            progressStore?.markUploaded(imageInfo: info, variant: variant)
+        } catch {
+            print("[ImageRepoFirestore] binary upload skipped for \(info.id) \(variant.rawValue): \(error)")
         }
     }
 }
