@@ -125,12 +125,8 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
     private func triggerMigrationIfNeeded(to firestoreImpl: ImageRepositoryFirestoreImpl, userID: String) {
         let metaMarkerKey = Self.metaMarkerKey(for: userID)
         let legacyMarkerKey = Self.legacyMarkerKey(for: userID)
-        let coordinator = cleanupCoordinator
-        let metaDone = UserDefaults.standard.bool(forKey: metaMarkerKey)
+        let isImageMetaDataMigrated = UserDefaults.standard.bool(forKey: metaMarkerKey)
             || UserDefaults.standard.bool(forKey: legacyMarkerKey)
-
-        let memoRepo = anonymousMemoRepository
-        let imageRepo = anonymousImpl
 
         let canProceed: Bool = lock.withLock {
             guard !_isMigrationInFlight else { return false }
@@ -140,7 +136,13 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
         guard canProceed else { return }
         let progressStore = lock.withLock { _progressStore }
 
-        Task { [weak firestoreImpl, weak self] in
+        Task { [
+            cleanupCoordinator,
+            anonymousMemoRepository,
+            anonymousImpl,
+            weak firestoreImpl,
+            weak self
+        ] in
             defer {
                 if let self {
                     self.lock.withLock { self._isMigrationInFlight = false }
@@ -148,32 +150,32 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
             }
             guard let firestoreImpl else { return }
             do {
-                let collected: [MemoImageInfo]
-                if metaDone {
+                let imageInfosToUpload: [MemoImageInfo]
+                if isImageMetaDataMigrated {
                     // 익명 Core Data 가 cleanup 됐을 수 있으므로 Firestore 가 진실의 출처.
-                    collected = try await firestoreImpl.enumerateAllImageInfosFromFirestore()
-                    await coordinator.reportMigrationCompleted(userID: userID)
-                    if let progressStore, progressStore.isAllUploaded(amongst: collected) {
+                    imageInfosToUpload = try await firestoreImpl.enumerateAllImageInfosFromFirestore()
+                    await cleanupCoordinator.reportMigrationCompleted(userID: userID)
+                    if let progressStore, progressStore.isAllUploaded(amongst: imageInfosToUpload) {
                         return // 바이너리까지 다 끝남 — 진짜 short-circuit
                     }
                 } else {
-                    let active = try await memoRepo.getAllMemos()
-                    let trashed = try await memoRepo.getAllMemosInTrash()
-                    var items: [MemoImageInfo] = []
-                    for memo in active + trashed {
-                        let images = try await imageRepo.getAllImageInfo(for: memo)
-                        items.append(contentsOf: images)
+                    let activeMemos = try await anonymousMemoRepository.getAllMemos()
+                    let trashedMemos = try await anonymousMemoRepository.getAllMemosInTrash()
+                    var collectedImageInfos: [MemoImageInfo] = []
+                    for memo in activeMemos + trashedMemos {
+                        let imageInfosOfMemo = try await anonymousImpl.getAllImageInfo(for: memo)
+                        collectedImageInfos.append(contentsOf: imageInfosOfMemo)
                     }
-                    if !items.isEmpty {
-                        try await firestoreImpl.importImageMetadata(items)
+                    if !collectedImageInfos.isEmpty {
+                        try await firestoreImpl.importImageMetadata(collectedImageInfos)
                     }
                     UserDefaults.standard.set(true, forKey: metaMarkerKey)
-                    await coordinator.reportMigrationCompleted(userID: userID)
-                    collected = items
+                    await cleanupCoordinator.reportMigrationCompleted(userID: userID)
+                    imageInfosToUpload = collectedImageInfos
                 }
 
-                if !collected.isEmpty {
-                    try await firestoreImpl.uploadImageBinaries(collected)
+                if !imageInfosToUpload.isEmpty {
+                    try await firestoreImpl.uploadImageBinaries(imageInfosToUpload)
                 }
             } catch {
                 print("[ImageRepositoryRouter] migration error: \(error)")

@@ -307,13 +307,16 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
                 let url = try ImageFileHandler.getFileURL(for: info, thumbnail: false)
                 let data = try Data(contentsOf: url)
                 _ = try await originalStorageRef(
-                    memoID: info.memoID, imageID: info.id, fileExtension: info.fileExtension
+                    memoID: info.memoID,
+                    imageID: info.id,
+                    fileExtension: info.fileExtension
                 ).putDataAsync(data)
             case .thumbnail:
                 let url = try ImageFileHandler.getFileURL(for: info, thumbnail: true)
                 let data = try Data(contentsOf: url)
                 _ = try await thumbnailStorageRef(
-                    memoID: info.memoID, thumbnailID: info.thumbnailID
+                    memoID: info.memoID,
+                    thumbnailID: info.thumbnailID
                 ).putDataAsync(data)
             }
             progressStore?.markUploaded(imageInfo: info, variant: variant)
