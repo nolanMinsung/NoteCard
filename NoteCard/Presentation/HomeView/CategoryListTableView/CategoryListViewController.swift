@@ -291,9 +291,14 @@ extension CategoryListViewController {
                 guard let newCategoryName = alertCon.textFields?[0].text else { return }
                 Task {
                     do {
-                        try await self.environment.categoryRepository.changeCategoryName(selectedCategory, newName: newCategoryName)
-                        swipedCell.categoryNameLabel.text = newCategoryName
-                        self.applySnapshot(animatingDifferences: true, usingReloadData: false)
+                        let conflicting = try await self.environment.categoryRepository
+                            .getAllCategories(inOrderOf: .modificationDate, isAscending: false)
+                            .contains { $0.name == newCategoryName && $0.id != selectedCategory.id }
+                        if conflicting {
+                            self.presentRenameDuplicateConfirm(selected: selectedCategory, newName: newCategoryName, cell: swipedCell)
+                        } else {
+                            try await self.performRename(selected: selectedCategory, newName: newCategoryName, cell: swipedCell)
+                        }
                     } catch {
                         print(error.localizedDescription)
                     }
@@ -357,6 +362,43 @@ extension CategoryListViewController {
         
     }
     
+}
+
+extension CategoryListViewController {
+
+    private func presentRenameDuplicateConfirm(
+        selected: Domain.Category,
+        newName: String,
+        cell: CategoryListTableViewCell
+    ) {
+        let alert = UIAlertController(
+            title: L10n.CategoryList.renameDuplicateNameConfirm,
+            message: L10n.CategoryList.renameDuplicateNameConfirmMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Common.cancel, style: .cancel))
+        alert.addAction(UIAlertAction(title: L10n.CategoryList.renameDuplicateNameProceed, style: .destructive) { [weak self] _ in
+            guard let self else { return }
+            Task {
+                do {
+                    try await self.performRename(selected: selected, newName: newName, cell: cell)
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        })
+        self.present(alert, animated: true)
+    }
+
+    private func performRename(
+        selected: Domain.Category,
+        newName: String,
+        cell: CategoryListTableViewCell
+    ) async throws {
+        try await environment.categoryRepository.changeCategoryName(selected, newName: newName)
+        cell.categoryNameLabel.text = newName
+        applySnapshot(animatingDifferences: true, usingReloadData: false)
+    }
 }
 
 extension CategoryListViewController: UISearchBarDelegate {
