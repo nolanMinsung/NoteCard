@@ -12,6 +12,7 @@
 //  Created by 김민성 on 2023/10/02.
 //
 
+import Combine
 import UIKit
 import Data
 import Domain
@@ -43,6 +44,7 @@ class CategoryListViewController: UITableViewController {
     var categoryNameChangingTextField: UITextField!
     var saveAction: UIAlertAction!
 
+    private var cancellables: Set<AnyCancellable> = []
     private let environment: AppEnvironment
 
     init(environment: AppEnvironment) {
@@ -62,7 +64,31 @@ class CategoryListViewController: UITableViewController {
         setupNaviBar()
         setupButtonsAction()
         setupDelegates()
+        setupSubscriptions()
         applySnapshot(animatingDifferences: false, usingReloadData: true)
+    }
+
+    private func setupSubscriptions() {
+        let changeStreams: [AnyPublisher<Void, Never>] = [
+            environment.categoryRepository.categoryUpdatedPublisher.map { _ in () }.eraseToAnyPublisher(),
+            environment.memoRepository.memoUpdatedPublisher.map { _ in () }.eraseToAnyPublisher(),
+        ]
+        Publishers.MergeMany(changeStreams)
+            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.refreshFromCurrentSearch()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func refreshFromCurrentSearch() {
+        guard let searchText = searchController.searchBar.searchTextField.text else { return }
+        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            applySnapshot(animatingDifferences: true, usingReloadData: false)
+        } else {
+            applySnapshot(searchWith: searchText, animatingDifferences: true, usingReloadData: false)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
