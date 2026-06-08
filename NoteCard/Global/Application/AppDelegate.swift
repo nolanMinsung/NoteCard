@@ -79,7 +79,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             .store(in: &cancellables)
 
+        emitDailyAnonymousStatsIfNeeded(environment: environment)
+
         return true
+    }
+
+    /// 익명 사용자의 데이터 규모 분포를 보기 위해 하루에 최대 1 회 anonymous_data_stats 를
+    /// emit. 마지막 emit 이 같은 날(사용자 캘린더 기준) 이면 skip. sign-in 된 사용자는 sign-in
+    /// 경로에서 이미 1 회 emit 되므로 여기선 발화하지 않음.
+    private func emitDailyAnonymousStatsIfNeeded(environment: AppEnvironment) {
+        guard environment.authService.currentUser == nil else { return }
+        let lastKey = "analytics.lastAnonymousStatsEmittedAt"
+        let now = Date()
+        if let last = UserDefaults.standard.object(forKey: lastKey) as? Date,
+           Calendar.current.isDate(last, inSameDayAs: now) {
+            return
+        }
+        let counts = environment.anonymousDataCountsProvider()
+        environment.analytics.log(.anonymousDataStats(
+            memoCount: counts.memoCount,
+            trashedMemoCount: counts.trashedMemoCount,
+            categoryCount: counts.categoryCount,
+            imageCount: counts.imageCount
+        ))
+        UserDefaults.standard.set(now, forKey: lastKey)
     }
     
     // MARK: UISceneSession Lifecycle
