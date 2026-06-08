@@ -2605,6 +2605,20 @@
         "ko": { "stringUnit": { "state": "translated", "value": "—" } }
       }
     },
+    "account.imageUploadLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Initial image upload" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "초기 이미지 업로드" } }
+      }
+    },
+    "account.imageUploadProgressFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%1$d of %2$d" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%1$d장 / %2$d장" } }
+      }
+    },
     "account.signOut": {
       "extractionState": "manual",
       "localizations": {

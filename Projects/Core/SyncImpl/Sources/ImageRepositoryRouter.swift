@@ -20,7 +20,7 @@ import UIKit
 /// - 전환 시 활성 impl의 `imageUpdatedPublisher`를 내부 subject로 forward.
 /// - 로그인 시 익명 이미지(전 메모 + 휴지통)를 Storage + Firestore로 1회 마이그레이션.
 ///   메모 마이그레이션과 병렬로 진행되므로, 익명 enumeration은 `anonymousMemoRepository`를 직접 조회.
-public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTrigger, @unchecked Sendable {
+public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTrigger, UploadProgressObservable, @unchecked Sendable {
 
     private let authService: AuthService
     private let anonymousImpl: ImageRepository
@@ -37,10 +37,16 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
     private var _isMigrationInFlight: Bool = false
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
+    private var _progressForwardCancellable: AnyCancellable?
 
     private let updatedSubject = PassthroughSubject<ImageUpdateType, Never>()
     public var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> {
         updatedSubject.eraseToAnyPublisher()
+    }
+
+    private let imageUploadProgressSubject = CurrentValueSubject<UploadProgressSnapshot?, Never>(nil)
+    public var imageUploadProgressPublisher: AnyPublisher<UploadProgressSnapshot?, Never> {
+        imageUploadProgressSubject.eraseToAnyPublisher()
     }
 
     public init(
@@ -73,22 +79,31 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
                 storage: storage,
                 progressStore: progressStore
             )
-            lock.lock()
-            _progressStore = progressStore
-            _firestoreImpl = impl
-            _activeImpl = impl
-            _currentUserID = userID
-            lock.unlock()
+            let progressForwardCancellable = progressStore.progressPublisher
+                .sink { [imageUploadProgressSubject] snapshot in
+                    imageUploadProgressSubject.send(snapshot)
+                }
+            lock.withLock {
+                _progressStore = progressStore
+                _firestoreImpl = impl
+                _activeImpl = impl
+                _currentUserID = userID
+                _progressForwardCancellable?.cancel()
+                _progressForwardCancellable = progressForwardCancellable
+            }
             attachForwarding(from: impl)
             triggerMigrationIfNeeded(to: impl, userID: userID)
         } else {
-            lock.lock()
-            _firestoreImpl = nil
-            _progressStore = nil
-            _activeImpl = anonymousImpl
-            _currentUserID = nil
-            lock.unlock()
+            lock.withLock {
+                _firestoreImpl = nil
+                _progressStore = nil
+                _activeImpl = anonymousImpl
+                _currentUserID = nil
+                _progressForwardCancellable?.cancel()
+                _progressForwardCancellable = nil
+            }
             attachForwarding(from: anonymousImpl)
+            imageUploadProgressSubject.send(nil)
         }
     }
 
@@ -118,10 +133,10 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
     /// 바이너리 업로드는 분리된 백그라운드 Task — readiness gate 와 무관.
     ///
     /// 재진입 동작:
-    /// - 메타 미완 → 메타 업로드 + 바이너리 업로드 둘 다 진행.
-    /// - 메타 완료, 바이너리 미완 → 메타 skip, Firestore 에서 이미지 enumerate 후 바이너리만 재개
-    ///   (per-image progress store 가 이미 완료된 variant 는 skip).
-    /// - 메타 + 바이너리 모두 완료 → short-circuit (cleanup 보고만).
+    /// - 메타 미완 → 익명 enumerate 결과로 target 영속화 + 메타 업로드 + 바이너리 업로드 진행.
+    /// - 메타 완료, 영속화된 target 있음 → 그 target 으로 바이너리 단계만 재개 (Firestore 에서
+    ///   다시 enumerate 하지 않음 — sign-in 이후 새로 만든 이미지가 분모에 섞이는 걸 막기 위해).
+    /// - 메타 완료, 영속화된 target 없음 → 마이그레이션 이미 끝났다는 의미 → short-circuit.
     private func triggerMigrationIfNeeded(to firestoreImpl: ImageRepositoryFirestoreImpl, userID: String) {
         let metaMarkerKey = Self.metaMarkerKey(for: userID)
         let legacyMarkerKey = Self.legacyMarkerKey(for: userID)
@@ -152,12 +167,14 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
             do {
                 let imageInfosToUpload: [MemoImageInfo]
                 if isImageMetaDataMigrated {
-                    // 익명 Core Data 가 cleanup 됐을 수 있으므로 Firestore 가 진실의 출처.
-                    imageInfosToUpload = try await firestoreImpl.enumerateAllImageInfosFromFirestore()
-                    await cleanupCoordinator.reportMigrationCompleted(userID: userID)
-                    if let progressStore, progressStore.isAllUploaded(amongst: imageInfosToUpload) {
-                        return // 바이너리까지 다 끝남 — 진짜 short-circuit
+                    let storedTarget = progressStore?.currentTarget ?? []
+                    if storedTarget.isEmpty {
+                        // 메타도 끝났고 영속화된 target 도 없음 → 마이그레이션 이미 완료. cleanup 만 보고.
+                        await cleanupCoordinator.reportMigrationCompleted(userID: userID)
+                        return
                     }
+                    imageInfosToUpload = storedTarget
+                    await cleanupCoordinator.reportMigrationCompleted(userID: userID)
                 } else {
                     let activeMemos = try await anonymousMemoRepository.getAllMemos()
                     let trashedMemos = try await anonymousMemoRepository.getAllMemosInTrash()
@@ -166,6 +183,7 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
                         let imageInfosOfMemo = try await anonymousImpl.getAllImageInfo(for: memo)
                         collectedImageInfos.append(contentsOf: imageInfosOfMemo)
                     }
+                    progressStore?.setProgressTarget(collectedImageInfos)
                     if !collectedImageInfos.isEmpty {
                         try await firestoreImpl.importImageMetadata(collectedImageInfos)
                     }

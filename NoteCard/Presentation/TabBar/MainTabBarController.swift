@@ -106,6 +106,8 @@ class MainTabBarController: UITabBarController {
             syncStatusService: environment.syncStatusService,
             readinessCoordinator: environment.firstSignInReadinessCoordinator,
             signOutCoordinator: environment.signOutCoordinator,
+            uploadProgressObservable: environment.uploadProgressObservable,
+            provideAnonymousCounts: environment.anonymousDataCountsProvider,
             makeTrashViewController: { [environment] in
                 MemoViewController(memoVCType: .trash, environment: environment)
             }

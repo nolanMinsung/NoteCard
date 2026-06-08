@@ -175,7 +175,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func makeLoginViewController(environment: AppEnvironment) -> LoginViewController {
         LoginViewController(
             authService: environment.authService,
-            readinessCoordinator: environment.firstSignInReadinessCoordinator
+            readinessCoordinator: environment.firstSignInReadinessCoordinator,
+            analytics: environment.analytics,
+            provideAnonymousCounts: environment.anonymousDataCountsProvider
         ) { [weak self] outcome in
             UserDefaults.standard.set(true, forKey: UserDefaultsKey.didShowSyncIntroduction.rawValue)
             switch outcome {

@@ -26,4 +26,10 @@ public final class AmplitudeAnalytics: Analytics, @unchecked Sendable {
     public func log(_ event: AnalyticsInterface.AnalyticsEvent) {
         amplitude.track(eventType: event.name, eventProperties: event.properties)
     }
+
+    public func setUserId(_ userId: String?) {
+        // Amplitude 는 nil 을 넘기면 anonymous user 로 전환되고, 같은 device_id 가
+        // 새 user_id 와 또는 anonymous 상태와 자동으로 연결된다 (identity merge).
+        amplitude.setUserId(userId: userId)
+    }
 }

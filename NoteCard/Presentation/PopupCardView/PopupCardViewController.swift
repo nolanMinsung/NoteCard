@@ -131,9 +131,10 @@ class PopupCardViewController: UIViewController {
                         self.memo = updatedMemo
                         self.categories = try await self.fetchCategories()
 
+                        // 통합 갱신 — 직접 title / memoText 만 set 하면 memoDateLabel (~~에 수정됨) 과
+                        // likeButton.isSelected (다른 기기에서 즐겨찾기 토글) 가 stale 로 남는다.
+                        self.rootView.configureView(with: updatedMemo)
                         self.rootView.categoryCollectionView.reloadData()
-                        self.rootView.titleTextField.text = updatedMemo.memoTitle
-                        self.rootView.memoTextView.text = updatedMemo.memoText
                     } catch RepositoryError.notFound {
                         self.dismiss(animated: true)
                     } catch {
@@ -547,6 +548,12 @@ extension PopupCardViewController {
         let alertstyle: UIAlertController.Style = memo.isInTrash ? .actionSheet : .alert
         let alertCon = UIAlertController(title: title, message: message, preferredStyle: alertstyle)
         alertCon.view.tintColor = .currentTheme
+        if alertstyle == .actionSheet {
+            // iPad 에서 actionSheet 는 popover 로 표시되므로 anchor 가 없으면 crash.
+            // 메뉴를 띄운 ellipsisButton 자리에서 popover 가 나오게 anchor 지정.
+            alertCon.popoverPresentationController?.sourceView = rootView.ellipsisButton
+            alertCon.popoverPresentationController?.sourceRect = rootView.ellipsisButton.bounds
+        }
         
         let cancelAction = UIAlertAction(title: L10n.Common.cancel, style: .cancel)
         let deleteAction = UIAlertAction(title: L10n.Common.delete, style: .destructive) { [weak self] action in

@@ -4,8 +4,10 @@
 //
 
 import AccountDeletionFeature
+import AnalyticsInterface
 import AuthenticationServices
 import Combine
+import Domain
 import Shared
 import SyncInterface
 import UIKit
@@ -19,6 +21,9 @@ public final class AccountDetailViewController: UIViewController {
     private let syncStatusService: SyncStatusService
     private let readinessCoordinator: FirstSignInReadinessCoordinator
     private let signOutCoordinator: SignOutCoordinator
+    private let uploadProgressObservable: UploadProgressObservable
+    private let analytics: Analytics
+    private let provideAnonymousCounts: @Sendable () -> AnonymousDataCounts
     private let readinessTimeout: TimeInterval
     private var cancellables = Set<AnyCancellable>()
     private var lastSyncedAt: Date?
@@ -38,6 +43,9 @@ public final class AccountDetailViewController: UIViewController {
         syncStatusService: SyncStatusService,
         readinessCoordinator: FirstSignInReadinessCoordinator,
         signOutCoordinator: SignOutCoordinator,
+        uploadProgressObservable: UploadProgressObservable,
+        analytics: Analytics,
+        provideAnonymousCounts: @escaping @Sendable () -> AnonymousDataCounts,
         readinessTimeout: TimeInterval = 90
     ) {
         self.authService = authService
@@ -45,6 +53,9 @@ public final class AccountDetailViewController: UIViewController {
         self.syncStatusService = syncStatusService
         self.readinessCoordinator = readinessCoordinator
         self.signOutCoordinator = signOutCoordinator
+        self.uploadProgressObservable = uploadProgressObservable
+        self.analytics = analytics
+        self.provideAnonymousCounts = provideAnonymousCounts
         self.readinessTimeout = readinessTimeout
         super.init(nibName: nil, bundle: nil)
     }
@@ -98,6 +109,14 @@ public final class AccountDetailViewController: UIViewController {
             }
             .store(in: &cancellables)
 
+        // 첫 sign-in 마이그레이션 진행 중에만 row 가 보이고 "X장 / Y장" 갱신. snapshot 이 nil 이면 hide.
+        uploadProgressObservable.imageUploadProgressPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] snapshot in
+                self?.renderImageUploadProgress(snapshot)
+            }
+            .store(in: &cancellables)
+
         // RelativeDateTimeFormatter 결과 ("방금 전" → "1분 전" → ...) 를 시간이 흐름에 따라 갱신.
         // viewWillAppear / viewWillDisappear 와 별개로 30초 tick. 화면이 가려져 있어도 무해.
         lastSyncedRefreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
@@ -115,6 +134,20 @@ public final class AccountDetailViewController: UIViewController {
         case .synced:  text = L10n.Account.syncStatusSynced
         }
         rootView.updateRow(rootView.syncStatusRow, value: text)
+    }
+
+    private func renderImageUploadProgress(_ snapshot: UploadProgressSnapshot?) {
+        if let snapshot {
+            let text = String(
+                format: L10n.Account.imageUploadProgressFormat,
+                snapshot.completedImageCount,
+                snapshot.totalImageCount
+            )
+            rootView.updateRow(rootView.imageUploadProgressRow, value: text)
+            rootView.imageUploadProgressRow.isHidden = false
+        } else {
+            rootView.imageUploadProgressRow.isHidden = true
+        }
     }
 
     private func renderLastSyncedRelativeText() {
@@ -156,18 +189,38 @@ public final class AccountDetailViewController: UIViewController {
     @objc private func signInTapped() {
         setLoading(true)
         readinessCoordinator.reportSigningIn()
+        analytics.log(.signInStarted(source: .accountDetail))
+        let counts = provideAnonymousCounts()
+        analytics.log(.anonymousDataStats(
+            memoCount: counts.memoCount,
+            trashedMemoCount: counts.trashedMemoCount,
+            categoryCount: counts.categoryCount,
+            imageCount: counts.imageCount
+        ))
+        let startedAt = Date()
         Task { [weak self] in
             guard let self else { return }
             defer { Task { @MainActor in self.setLoading(false) } }
+            let logOutcome: (AnalyticsEvent.SignInOutcome) -> Void = { outcome in
+                let durationMs = Int(Date().timeIntervalSince(startedAt) * 1000)
+                self.analytics.log(.signInOutcome(source: .accountDetail, outcome: outcome, durationMs: durationMs))
+            }
             do {
                 let user = try await self.authService.signInWithApple()
                 try await self.readinessCoordinator.awaitReady(userID: user.id, timeout: self.readinessTimeout)
+                self.analytics.setUserId(user.id)
+                logOutcome(.success)
                 // 성공 시 authStatePublisher가 새 user를 emit → SceneDelegate.observeAuthStateChanges 가 home 으로 전환
             } catch let error as AuthError {
+                let outcome: AnalyticsEvent.SignInOutcome
+                if case .cancelled = error { outcome = .cancelled } else { outcome = .authError }
+                logOutcome(outcome)
                 await MainActor.run { self.presentInline(error: error) }
             } catch is SignInReadinessError {
+                logOutcome(.readinessTimeout)
                 await MainActor.run { self.showAlert(title: L10n.Login.syncTimeoutError) }
             } catch {
+                logOutcome(.unknownError)
                 await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
             }
         }
@@ -194,18 +247,27 @@ public final class AccountDetailViewController: UIViewController {
     @objc private func syncRetryTapped() {
         guard let userID = authService.currentUser?.id else { return }
         setLoading(true)
+        analytics.log(.syncRetryTapped())
+        let startedAt = Date()
         Task { [weak self] in
             guard let self else { return }
             defer { Task { @MainActor in self.setLoading(false) } }
+            let logOutcome: (AnalyticsEvent.SyncRetryOutcome) -> Void = { outcome in
+                let durationMs = Int(Date().timeIntervalSince(startedAt) * 1000)
+                self.analytics.log(.syncRetryOutcome(outcome: outcome, durationMs: durationMs))
+            }
             do {
                 try await self.readinessCoordinator.retryReady(userID: userID, timeout: self.readinessTimeout)
+                logOutcome(.success)
                 await MainActor.run {
                     self.rootView.syncRetryContainer.isHidden = true
                     self.showAlert(title: L10n.Account.syncRetrySuccessMessage)
                 }
             } catch is SignInReadinessError {
+                logOutcome(.readinessTimeout)
                 await MainActor.run { self.showAlert(title: L10n.Login.syncTimeoutError) }
             } catch {
+                logOutcome(.unknownError)
                 await MainActor.run { self.showAlert(title: L10n.Sync.Auth.unknown) }
             }
         }

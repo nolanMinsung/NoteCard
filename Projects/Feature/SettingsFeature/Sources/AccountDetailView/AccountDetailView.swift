@@ -77,6 +77,8 @@ final class AccountDetailView: UIView {
 
     let syncStatusRow = AccountDetailView.makeInfoRow(title: L10n.Account.syncStatusLabel, value: L10n.Account.syncStatusComingSoon)
     let lastSyncedRow = AccountDetailView.makeInfoRow(title: L10n.Account.lastSyncedLabel, value: L10n.Account.lastSyncedNever)
+    /// 첫 sign-in 마이그레이션 진행 중에만 보이는 row. 평상시 hidden.
+    let imageUploadProgressRow = AccountDetailView.makeInfoRow(title: L10n.Account.imageUploadLabel, value: "")
 
     let syncRetryMessageLabel: UILabel = {
         let label = UILabel()
@@ -145,7 +147,8 @@ final class AccountDetailView: UIView {
         identityStack.spacing = 4
         identityStack.alignment = .center
 
-        let infoStack = UIStackView(arrangedSubviews: [syncStatusRow, lastSyncedRow])
+        imageUploadProgressRow.isHidden = true
+        let infoStack = UIStackView(arrangedSubviews: [syncStatusRow, lastSyncedRow, imageUploadProgressRow])
         infoStack.axis = .vertical
         infoStack.spacing = 8
         infoStack.alignment = .fill

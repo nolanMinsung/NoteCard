@@ -193,6 +193,8 @@ public enum L10n {
         public static let syncStatusSynced = "account.syncStatusSynced".localized()
         public static let lastSyncedLabel = "account.lastSyncedLabel".localized()
         public static let lastSyncedNever = "account.lastSyncedNever".localized()
+        public static let imageUploadLabel = "account.imageUploadLabel".localized()
+        public static let imageUploadProgressFormat = "account.imageUploadProgressFormat".localized()
         public static let signOut = "account.signOut".localized()
         public static let signOutConfirmTitle = "account.signOutConfirmTitle".localized()
         public static let signOutConfirmMessage = "account.signOutConfirmMessage".localized()
