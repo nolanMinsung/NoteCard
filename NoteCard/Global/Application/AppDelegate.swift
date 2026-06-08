@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 import Data
 import Domain
 import DesignSystem
@@ -18,6 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     /// 앱 전체가 공유하는 의존성. 프로세스 수명 동안 하나만 존재한다.
     let environment = AppEnvironment()
+    /// AppDelegate 수명 동안 살아 있는 Combine 구독들. 현재는 인증 상태 → 분석 user_id
+    /// 동기화 한 건.
+    private var cancellables: Set<AnyCancellable> = []
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -62,7 +66,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UserDefaults.standard.string(forKey: UserDefaultsKeys.themeColor.rawValue) == nil {
             UserDefaults.standard.set(ThemeColor.black.rawValue, forKey: UserDefaultsKeys.themeColor.rawValue)
         }
-        
+
+        // 인증 상태 ↔ 분석 user_id 동기화. sign-in 경로 (LoginVC / AccountDetail) 가 성공
+        // 시점에 setUserId 를 호출하지만, sign-out·force sign-out·sentinel 만료 등 어떤
+        // 경로로 사용자가 nil 이 되든 익명 상태로 되돌리도록 publisher 를 단일 진입점으로 사용.
+        let analytics = environment.analytics
+        environment.authService.authStatePublisher
+            .map(\.?.id)
+            .removeDuplicates()
+            .sink { userId in
+                analytics.setUserId(userId)
+            }
+            .store(in: &cancellables)
+
         return true
     }
     
