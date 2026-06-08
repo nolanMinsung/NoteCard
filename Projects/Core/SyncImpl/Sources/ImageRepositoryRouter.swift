@@ -133,10 +133,10 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
     /// 바이너리 업로드는 분리된 백그라운드 Task — readiness gate 와 무관.
     ///
     /// 재진입 동작:
-    /// - 메타 미완 → 메타 업로드 + 바이너리 업로드 둘 다 진행.
-    /// - 메타 완료, 바이너리 미완 → 메타 skip, Firestore 에서 이미지 enumerate 후 바이너리만 재개
-    ///   (per-image progress store 가 이미 완료된 variant 는 skip).
-    /// - 메타 + 바이너리 모두 완료 → short-circuit (cleanup 보고만).
+    /// - 메타 미완 → 익명 enumerate 결과로 target 영속화 + 메타 업로드 + 바이너리 업로드 진행.
+    /// - 메타 완료, 영속화된 target 있음 → 그 target 으로 바이너리 단계만 재개 (Firestore 에서
+    ///   다시 enumerate 하지 않음 — sign-in 이후 새로 만든 이미지가 분모에 섞이는 걸 막기 위해).
+    /// - 메타 완료, 영속화된 target 없음 → 마이그레이션 이미 끝났다는 의미 → short-circuit.
     private func triggerMigrationIfNeeded(to firestoreImpl: ImageRepositoryFirestoreImpl, userID: String) {
         let metaMarkerKey = Self.metaMarkerKey(for: userID)
         let legacyMarkerKey = Self.legacyMarkerKey(for: userID)
@@ -167,13 +167,14 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
             do {
                 let imageInfosToUpload: [MemoImageInfo]
                 if isImageMetaDataMigrated {
-                    // 익명 Core Data 가 cleanup 됐을 수 있으므로 Firestore 가 진실의 출처.
-                    imageInfosToUpload = try await firestoreImpl.enumerateAllImageInfosFromFirestore()
-                    progressStore?.setProgressTarget(imageInfosToUpload)
-                    await cleanupCoordinator.reportMigrationCompleted(userID: userID)
-                    if let progressStore, progressStore.isAllUploaded(amongst: imageInfosToUpload) {
-                        return // 바이너리까지 다 끝남 — 진짜 short-circuit
+                    let storedTarget = progressStore?.currentTarget ?? []
+                    if storedTarget.isEmpty {
+                        // 메타도 끝났고 영속화된 target 도 없음 → 마이그레이션 이미 완료. cleanup 만 보고.
+                        await cleanupCoordinator.reportMigrationCompleted(userID: userID)
+                        return
                     }
+                    imageInfosToUpload = storedTarget
+                    await cleanupCoordinator.reportMigrationCompleted(userID: userID)
                 } else {
                     let activeMemos = try await anonymousMemoRepository.getAllMemos()
                     let trashedMemos = try await anonymousMemoRepository.getAllMemosInTrash()

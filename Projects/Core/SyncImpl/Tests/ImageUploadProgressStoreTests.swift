@@ -342,6 +342,64 @@ final class ImageUploadProgressStoreTests: XCTestCase {
         XCTAssertEqual(progress(), UploadProgressSnapshot(completedImageCount: 1, totalImageCount: 2))
     }
 
+    // MARK: - target 영속화
+
+    func test_setProgressTarget_후_currentTarget_은_같은_목록을_반환한다() {
+        // given
+        let sut = makeSUT()
+        let infoA = makeImageInfo()
+        let infoB = makeImageInfo()
+
+        // when
+        sut.setProgressTarget([infoA, infoB])
+
+        // then
+        XCTAssertEqual(sut.currentTarget, [infoA, infoB])
+    }
+
+    func test_새_인스턴스에서도_영속화된_target_을_자동_로드한다() {
+        // given
+        let infoA = makeImageInfo()
+        let infoB = makeImageInfo()
+        let firstSUT = makeSUT()
+        firstSUT.setProgressTarget([infoA, infoB])
+
+        // when
+        let secondSUT = makeSUT()
+
+        // then
+        XCTAssertEqual(secondSUT.currentTarget, [infoA, infoB])
+    }
+
+    func test_clearProgressTarget_후에는_영속화된_target_도_삭제된다() {
+        // given
+        let info = makeImageInfo()
+        let firstSUT = makeSUT()
+        firstSUT.setProgressTarget([info])
+
+        // when
+        firstSUT.clearProgressTarget()
+        let secondSUT = makeSUT()
+
+        // then
+        XCTAssertTrue(secondSUT.currentTarget.isEmpty)
+    }
+
+    func test_모든_이미지_완료_시_영속화된_target_이_자동_삭제된다() {
+        // given
+        let info = makeImageInfo()
+        let firstSUT = makeSUT()
+        firstSUT.setProgressTarget([info])
+
+        // when: 원본·썸네일 모두 mark → 완료 감지 → 영속화 삭제
+        firstSUT.markUploaded(imageInfo: info, variant: .original)
+        firstSUT.markUploaded(imageInfo: info, variant: .thumbnail)
+        let secondSUT = makeSUT()
+
+        // then: 새 인스턴스도 target 비어 있음
+        XCTAssertTrue(secondSUT.currentTarget.isEmpty)
+    }
+
     // MARK: - 사용자 격리
 
     func test_다른_userID_의_store_는_상태가_분리된다() {
