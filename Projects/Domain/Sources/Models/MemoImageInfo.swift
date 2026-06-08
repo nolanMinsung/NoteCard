@@ -8,7 +8,7 @@
 import Foundation
 import Shared
 
-public struct MemoImageInfo: Hashable, Sendable {
+public struct MemoImageInfo: Hashable, Codable, Sendable {
     public let id: UUID
     public let thumbnailID: UUID
     public var temporaryOrderIndex: Int

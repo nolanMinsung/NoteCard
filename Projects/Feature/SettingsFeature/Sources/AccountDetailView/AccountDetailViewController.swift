@@ -19,6 +19,7 @@ public final class AccountDetailViewController: UIViewController {
     private let syncStatusService: SyncStatusService
     private let readinessCoordinator: FirstSignInReadinessCoordinator
     private let signOutCoordinator: SignOutCoordinator
+    private let uploadProgressObservable: UploadProgressObservable
     private let readinessTimeout: TimeInterval
     private var cancellables = Set<AnyCancellable>()
     private var lastSyncedAt: Date?
@@ -38,6 +39,7 @@ public final class AccountDetailViewController: UIViewController {
         syncStatusService: SyncStatusService,
         readinessCoordinator: FirstSignInReadinessCoordinator,
         signOutCoordinator: SignOutCoordinator,
+        uploadProgressObservable: UploadProgressObservable,
         readinessTimeout: TimeInterval = 90
     ) {
         self.authService = authService
@@ -45,6 +47,7 @@ public final class AccountDetailViewController: UIViewController {
         self.syncStatusService = syncStatusService
         self.readinessCoordinator = readinessCoordinator
         self.signOutCoordinator = signOutCoordinator
+        self.uploadProgressObservable = uploadProgressObservable
         self.readinessTimeout = readinessTimeout
         super.init(nibName: nil, bundle: nil)
     }
@@ -98,6 +101,14 @@ public final class AccountDetailViewController: UIViewController {
             }
             .store(in: &cancellables)
 
+        // 첫 sign-in 마이그레이션 진행 중에만 row 가 보이고 "X장 / Y장" 갱신. snapshot 이 nil 이면 hide.
+        uploadProgressObservable.imageUploadProgressPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] snapshot in
+                self?.renderImageUploadProgress(snapshot)
+            }
+            .store(in: &cancellables)
+
         // RelativeDateTimeFormatter 결과 ("방금 전" → "1분 전" → ...) 를 시간이 흐름에 따라 갱신.
         // viewWillAppear / viewWillDisappear 와 별개로 30초 tick. 화면이 가려져 있어도 무해.
         lastSyncedRefreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
@@ -115,6 +126,20 @@ public final class AccountDetailViewController: UIViewController {
         case .synced:  text = L10n.Account.syncStatusSynced
         }
         rootView.updateRow(rootView.syncStatusRow, value: text)
+    }
+
+    private func renderImageUploadProgress(_ snapshot: UploadProgressSnapshot?) {
+        if let snapshot {
+            let text = String(
+                format: L10n.Account.imageUploadProgressFormat,
+                snapshot.completedImageCount,
+                snapshot.totalImageCount
+            )
+            rootView.updateRow(rootView.imageUploadProgressRow, value: text)
+            rootView.imageUploadProgressRow.isHidden = false
+        } else {
+            rootView.imageUploadProgressRow.isHidden = true
+        }
     }
 
     private func renderLastSyncedRelativeText() {
