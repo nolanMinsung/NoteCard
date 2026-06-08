@@ -152,6 +152,17 @@ public enum SyncBootstrap {
         return NoOpPendingUploadResumeTrigger()
     }
 
+    /// `makeImageRepository` 의 결과가 Router 면 그걸 그대로 `UploadProgressObservable` 로 노출.
+    /// 익명 단독 환경에선 항상 nil 을 emit 하는 NoOp 반환 (UI 는 표시를 숨김).
+    public static func makeUploadProgressObservable(
+        imageRepository: ImageRepository
+    ) -> UploadProgressObservable {
+        if let router = imageRepository as? ImageRepositoryRouter {
+            return router
+        }
+        return NoOpUploadProgressObservable()
+    }
+
     /// 첫 사인인 후 home 진입 가능 시점까지 대기시키는 readiness gate. Firebase 미설정 시 즉시 통과.
     /// 세 Repository 가 모두 Router 구현이 아니면 (= 익명 단독) 게이트가 의미 없어 NoOp 반환.
     public static func makeFirstSignInReadinessCoordinator(

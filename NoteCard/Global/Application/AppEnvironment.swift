@@ -31,6 +31,7 @@ struct AppEnvironment {
     let firstSignInReadinessCoordinator: FirstSignInReadinessCoordinator
     let signOutCoordinator: SignOutCoordinator
     let pendingUploadResumeTrigger: PendingUploadResumeTrigger
+    let uploadProgressObservable: UploadProgressObservable
 
     let coreDataStack: CoreDataStack
 
@@ -105,6 +106,9 @@ struct AppEnvironment {
         )
         self.signOutCoordinator = SyncBootstrap.makeSignOutCoordinator(authService: authService)
         self.pendingUploadResumeTrigger = SyncBootstrap.makePendingUploadResumeTrigger(
+            imageRepository: imageRepository
+        )
+        self.uploadProgressObservable = SyncBootstrap.makeUploadProgressObservable(
             imageRepository: imageRepository
         )
     }
