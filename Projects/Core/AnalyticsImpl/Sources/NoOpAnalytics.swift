@@ -11,4 +11,8 @@ public final class NoOpAnalytics: Analytics, @unchecked Sendable {
     public func log(_ event: AnalyticsEvent) {
         // 이벤트를 의도적으로 버린다.
     }
+
+    public func setUserId(_ userId: String?) {
+        // 의도적으로 무시.
+    }
 }

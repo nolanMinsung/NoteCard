@@ -24,6 +24,7 @@ public final class SettingsViewController: UITableViewController {
     private let readinessCoordinator: FirstSignInReadinessCoordinator
     private let signOutCoordinator: SignOutCoordinator
     private let uploadProgressObservable: UploadProgressObservable
+    private let provideAnonymousCounts: @Sendable () -> AnonymousDataCounts
     private let makeTrashViewController: () -> UIViewController
 
     public init(
@@ -36,6 +37,7 @@ public final class SettingsViewController: UITableViewController {
         readinessCoordinator: FirstSignInReadinessCoordinator,
         signOutCoordinator: SignOutCoordinator,
         uploadProgressObservable: UploadProgressObservable,
+        provideAnonymousCounts: @escaping @Sendable () -> AnonymousDataCounts,
         makeTrashViewController: @escaping () -> UIViewController
     ) {
         self.memoRepository = memoRepository
@@ -47,6 +49,7 @@ public final class SettingsViewController: UITableViewController {
         self.readinessCoordinator = readinessCoordinator
         self.signOutCoordinator = signOutCoordinator
         self.uploadProgressObservable = uploadProgressObservable
+        self.provideAnonymousCounts = provideAnonymousCounts
         self.makeTrashViewController = makeTrashViewController
         super.init(nibName: nil, bundle: nil)
     }
@@ -410,7 +413,9 @@ extension SettingsViewController {
                 syncStatusService: syncStatusService,
                 readinessCoordinator: readinessCoordinator,
                 signOutCoordinator: signOutCoordinator,
-                uploadProgressObservable: uploadProgressObservable
+                uploadProgressObservable: uploadProgressObservable,
+                analytics: analytics,
+                provideAnonymousCounts: provideAnonymousCounts
             )
         case IndexPath(row: 0, section: 1):
             targetVC = ThemeColorPickingViewController()

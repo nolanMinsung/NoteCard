@@ -32,6 +32,8 @@ struct AppEnvironment {
     let signOutCoordinator: SignOutCoordinator
     let pendingUploadResumeTrigger: PendingUploadResumeTrigger
     let uploadProgressObservable: UploadProgressObservable
+    /// 익명 stack 의 entity 카운트 스냅샷을 즉시 반환. sign-in 시점·daily 통계 emit 에 사용.
+    let anonymousDataCountsProvider: @Sendable () -> AnonymousDataCounts
 
     let coreDataStack: CoreDataStack
 
@@ -111,6 +113,9 @@ struct AppEnvironment {
         self.uploadProgressObservable = SyncBootstrap.makeUploadProgressObservable(
             imageRepository: imageRepository
         )
+        self.anonymousDataCountsProvider = { [coreDataStack] in
+            AnonymousDataInspector.snapshotCounts(in: coreDataStack)
+        }
     }
 
     /// Crashlytics를 켜고(가능하면) Amplitude 기반 `Analytics`를 만든다.
