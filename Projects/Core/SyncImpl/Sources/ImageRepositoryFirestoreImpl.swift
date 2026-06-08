@@ -252,7 +252,7 @@ public final class ImageRepositoryFirestoreImpl: ImageRepository, @unchecked Sen
     // MARK: - Migration
 
     /// 현재 사용자의 모든 메모 sub-collection 을 Firestore 에서 enumerate 해 이미지 메타를 모은다.
-    /// 메타 마이그가 이미 끝난 상태에서 재진입할 때 익명 Core Data 가 cleanup 됐을 수 있으므로,
+    /// 메타 마이그레이션이 이미 끝난 상태에서 재진입할 때 익명 Core Data 가 cleanup 됐을 수 있으므로,
     /// 익명 enumerate 대신 Firestore 를 진실의 출처로 삼는다.
     func enumerateAllImageInfosFromFirestore() async throws -> [MemoImageInfo] {
         let memosCollection = firestore.collection("users").document(userID).collection("memos")

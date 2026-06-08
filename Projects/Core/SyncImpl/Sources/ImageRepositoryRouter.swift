@@ -20,7 +20,7 @@ import UIKit
 /// - 전환 시 활성 impl의 `imageUpdatedPublisher`를 내부 subject로 forward.
 /// - 로그인 시 익명 이미지(전 메모 + 휴지통)를 Storage + Firestore로 1회 마이그레이션.
 ///   메모 마이그레이션과 병렬로 진행되므로, 익명 enumeration은 `anonymousMemoRepository`를 직접 조회.
-public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTrigger, @unchecked Sendable {
+public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTrigger, UploadProgressObservable, @unchecked Sendable {
 
     private let authService: AuthService
     private let anonymousImpl: ImageRepository
@@ -37,10 +37,16 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
     private var _isMigrationInFlight: Bool = false
     private var _authCancellable: AnyCancellable?
     private var _publisherCancellable: AnyCancellable?
+    private var _progressForwardCancellable: AnyCancellable?
 
     private let updatedSubject = PassthroughSubject<ImageUpdateType, Never>()
     public var imageUpdatedPublisher: AnyPublisher<ImageUpdateType, Never> {
         updatedSubject.eraseToAnyPublisher()
+    }
+
+    private let imageUploadProgressSubject = CurrentValueSubject<UploadProgressSnapshot?, Never>(nil)
+    public var imageUploadProgressPublisher: AnyPublisher<UploadProgressSnapshot?, Never> {
+        imageUploadProgressSubject.eraseToAnyPublisher()
     }
 
     public init(
@@ -73,22 +79,31 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
                 storage: storage,
                 progressStore: progressStore
             )
-            lock.lock()
-            _progressStore = progressStore
-            _firestoreImpl = impl
-            _activeImpl = impl
-            _currentUserID = userID
-            lock.unlock()
+            let progressForwardCancellable = progressStore.progressPublisher
+                .sink { [imageUploadProgressSubject] snapshot in
+                    imageUploadProgressSubject.send(snapshot)
+                }
+            lock.withLock {
+                _progressStore = progressStore
+                _firestoreImpl = impl
+                _activeImpl = impl
+                _currentUserID = userID
+                _progressForwardCancellable?.cancel()
+                _progressForwardCancellable = progressForwardCancellable
+            }
             attachForwarding(from: impl)
             triggerMigrationIfNeeded(to: impl, userID: userID)
         } else {
-            lock.lock()
-            _firestoreImpl = nil
-            _progressStore = nil
-            _activeImpl = anonymousImpl
-            _currentUserID = nil
-            lock.unlock()
+            lock.withLock {
+                _firestoreImpl = nil
+                _progressStore = nil
+                _activeImpl = anonymousImpl
+                _currentUserID = nil
+                _progressForwardCancellable?.cancel()
+                _progressForwardCancellable = nil
+            }
             attachForwarding(from: anonymousImpl)
+            imageUploadProgressSubject.send(nil)
         }
     }
 
@@ -154,6 +169,7 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
                 if isImageMetaDataMigrated {
                     // 익명 Core Data 가 cleanup 됐을 수 있으므로 Firestore 가 진실의 출처.
                     imageInfosToUpload = try await firestoreImpl.enumerateAllImageInfosFromFirestore()
+                    progressStore?.setProgressTarget(imageInfosToUpload)
                     await cleanupCoordinator.reportMigrationCompleted(userID: userID)
                     if let progressStore, progressStore.isAllUploaded(amongst: imageInfosToUpload) {
                         return // 바이너리까지 다 끝남 — 진짜 short-circuit
@@ -166,6 +182,7 @@ public final class ImageRepositoryRouter: ImageRepository, PendingUploadResumeTr
                         let imageInfosOfMemo = try await anonymousImpl.getAllImageInfo(for: memo)
                         collectedImageInfos.append(contentsOf: imageInfosOfMemo)
                     }
+                    progressStore?.setProgressTarget(collectedImageInfos)
                     if !collectedImageInfos.isEmpty {
                         try await firestoreImpl.importImageMetadata(collectedImageInfos)
                     }
