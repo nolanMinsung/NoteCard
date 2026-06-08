@@ -280,8 +280,8 @@ private extension MemoViewController {
         }
         rootView.editingToolbar.configureMenu(menu)
         rootView.editingToolbar.setSelectedCount(0)
-        rootView.editingToolbar.onDeleteTapped = { [weak self] in
-            self?.deleteEverySelectedMemo()
+        rootView.editingToolbar.onDeleteTapped = { [weak self] sourceView in
+            self?.deleteEverySelectedMemo(sourceView: sourceView)
         }
     }
     
@@ -410,10 +410,10 @@ private extension MemoViewController {
         self.present(naviCon, animated: true)
     }
     
-    @objc func deleteEverySelectedMemo() {
+    func deleteEverySelectedMemo(sourceView: UIView) {
         guard self.smallCardCollectionView.isEditing else { return }
         guard let selectedIndexPaths = self.smallCardCollectionView.indexPathsForSelectedItems else { return }
-        
+
         let alertCon: UIAlertController
         if self.memoVCType == .trash {
             alertCon = UIAlertController(
@@ -421,6 +421,9 @@ private extension MemoViewController {
                 message: L10n.Common.actionCannotBeUndone,
                 preferredStyle: UIAlertController.Style.actionSheet
             )
+            // iPad 에서 actionSheet 는 popover 로 표시되므로 anchor 가 없으면 crash.
+            alertCon.popoverPresentationController?.sourceView = sourceView
+            alertCon.popoverPresentationController?.sourceRect = sourceView.bounds
         } else {
             alertCon = UIAlertController(
                 title: L10n.MemoView.deleteSelectedMemos,

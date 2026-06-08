@@ -31,7 +31,9 @@ final class MemoEditingToolbarView: UIView {
 
     // MARK: - Callbacks
 
-    var onDeleteTapped: (() -> Void)?
+    /// 삭제 버튼 탭 시 호출. 인자는 popover anchor (iPad actionSheet) 용 source view —
+    /// 호출 측은 그 view 의 frame 을 기준으로 popoverPresentationController 를 설정하면 됨.
+    var onDeleteTapped: ((UIView) -> Void)?
 
     // MARK: - Subviews
 
@@ -163,7 +165,7 @@ final class MemoEditingToolbarView: UIView {
     }
 
     @objc private func deleteTapped() {
-        onDeleteTapped?()
+        onDeleteTapped?(deleteButton)
     }
 
     // MARK: - Public API

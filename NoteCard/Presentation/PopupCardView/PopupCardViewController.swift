@@ -547,6 +547,12 @@ extension PopupCardViewController {
         let alertstyle: UIAlertController.Style = memo.isInTrash ? .actionSheet : .alert
         let alertCon = UIAlertController(title: title, message: message, preferredStyle: alertstyle)
         alertCon.view.tintColor = .currentTheme
+        if alertstyle == .actionSheet {
+            // iPad 에서 actionSheet 는 popover 로 표시되므로 anchor 가 없으면 crash.
+            // 메뉴를 띄운 ellipsisButton 자리에서 popover 가 나오게 anchor 지정.
+            alertCon.popoverPresentationController?.sourceView = rootView.ellipsisButton
+            alertCon.popoverPresentationController?.sourceRect = rootView.ellipsisButton.bounds
+        }
         
         let cancelAction = UIAlertAction(title: L10n.Common.cancel, style: .cancel)
         let deleteAction = UIAlertAction(title: L10n.Common.delete, style: .destructive) { [weak self] action in
