@@ -4,6 +4,7 @@
 //
 
 import CoreData
+import Domain
 import Foundation
 
 /// 현재 stack(주로 익명 stack)의 데이터 규모·존재 여부를 동기로 확인하는 진단 helper.
@@ -66,17 +67,3 @@ public enum AnonymousDataInspector {
     }
 }
 
-/// `AnonymousDataInspector.snapshotCounts` 결과. 분석 통계에 그대로 실어 보낸다.
-public struct AnonymousDataCounts: Sendable, Equatable {
-    public let memoCount: Int
-    public let trashedMemoCount: Int
-    public let categoryCount: Int
-    public let imageCount: Int
-
-    public init(memoCount: Int, trashedMemoCount: Int, categoryCount: Int, imageCount: Int) {
-        self.memoCount = memoCount
-        self.trashedMemoCount = trashedMemoCount
-        self.categoryCount = categoryCount
-        self.imageCount = imageCount
-    }
-}

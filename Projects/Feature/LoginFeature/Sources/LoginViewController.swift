@@ -3,7 +3,9 @@
 //  NoteCard
 //
 
+import AnalyticsInterface
 import Combine
+import Domain
 import Shared
 import SyncInterface
 import UIKit
@@ -23,6 +25,8 @@ public final class LoginViewController: UIViewController {
     private let authService: AuthService
     private let readinessCoordinator: FirstSignInReadinessCoordinator
     private let readinessTimeout: TimeInterval
+    private let analytics: Analytics
+    private let provideAnonymousCounts: @Sendable () -> AnonymousDataCounts
     private let onCompletion: (Outcome) -> Void
 
     private var cancellables = Set<AnyCancellable>()
@@ -34,11 +38,15 @@ public final class LoginViewController: UIViewController {
     public init(
         authService: AuthService,
         readinessCoordinator: FirstSignInReadinessCoordinator,
+        analytics: Analytics,
+        provideAnonymousCounts: @escaping @Sendable () -> AnonymousDataCounts,
         readinessTimeout: TimeInterval = 90,
         onCompletion: @escaping (Outcome) -> Void
     ) {
         self.authService = authService
         self.readinessCoordinator = readinessCoordinator
+        self.analytics = analytics
+        self.provideAnonymousCounts = provideAnonymousCounts
         self.readinessTimeout = readinessTimeout
         self.onCompletion = onCompletion
         super.init(nibName: nil, bundle: nil)
@@ -67,26 +75,46 @@ public final class LoginViewController: UIViewController {
         rootView.errorLabel.text = nil
         setLoading(true)
         readinessCoordinator.reportSigningIn()
+        analytics.log(.signInStarted(source: .loginScreen))
+        let counts = provideAnonymousCounts()
+        analytics.log(.anonymousDataStats(
+            memoCount: counts.memoCount,
+            trashedMemoCount: counts.trashedMemoCount,
+            categoryCount: counts.categoryCount,
+            imageCount: counts.imageCount
+        ))
+        let startedAt = Date()
         Task { [weak self] in
             guard let self else { return }
+            let logOutcome: (AnalyticsEvent.SignInOutcome) -> Void = { outcome in
+                let durationMs = Int(Date().timeIntervalSince(startedAt) * 1000)
+                self.analytics.log(.signInOutcome(source: .loginScreen, outcome: outcome, durationMs: durationMs))
+            }
             do {
                 let user = try await self.authService.signInWithApple()
                 try await self.readinessCoordinator.awaitReady(userID: user.id, timeout: self.readinessTimeout)
+                self.analytics.setUserId(user.id)
+                logOutcome(.success)
                 await MainActor.run {
                     self.setLoading(false)
                     self.onCompletion(.signedIn)
                 }
             } catch let error as AuthError {
+                let outcome: AnalyticsEvent.SignInOutcome
+                if case .cancelled = error { outcome = .cancelled } else { outcome = .authError }
+                logOutcome(outcome)
                 await MainActor.run {
                     self.setLoading(false)
                     self.present(error: error)
                 }
             } catch is SignInReadinessError {
+                logOutcome(.readinessTimeout)
                 await MainActor.run {
                     self.setLoading(false)
                     self.rootView.errorLabel.text = L10n.Login.syncTimeoutError
                 }
             } catch {
+                logOutcome(.unknownError)
                 await MainActor.run {
                     self.setLoading(false)
                     self.rootView.errorLabel.text = L10n.Sync.Auth.unknown
@@ -111,6 +139,7 @@ public final class LoginViewController: UIViewController {
     /// readiness gate 가 실패한 뒤 사용자가 skip 을 누른 경우, Firebase 측은 sign-in 된 상태가 잔존.
     /// UI 와 인증 상태를 일치시키기 위해 sign-out 후 .skipped emit.
     private func proceedWithSkip() {
+        analytics.log(.signInSkipped())
         if authService.currentUser == nil {
             onCompletion(.skipped)
             return
