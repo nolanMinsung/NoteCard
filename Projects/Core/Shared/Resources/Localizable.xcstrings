@@ -2608,8 +2608,8 @@
     "account.imageUploadLabel": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Image upload" } },
-        "ko": { "stringUnit": { "state": "translated", "value": "이미지 업로드" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Initial image upload" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "초기 이미지 업로드" } }
       }
     },
     "account.imageUploadProgressFormat": {
