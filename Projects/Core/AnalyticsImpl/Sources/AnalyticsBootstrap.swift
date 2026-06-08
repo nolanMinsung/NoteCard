@@ -26,10 +26,15 @@ public enum AnalyticsBootstrap {
         #endif
     }
 
-    /// Amplitude 기반 `Analytics` 구현을 만든다.
+    /// Amplitude + Firebase Analytics 둘 다에 fan-out 하는 `Analytics` 구현을 만든다.
+    /// `FirebaseApp.configure()` 가 먼저 호출되어 있어야 Firebase 쪽 이벤트가 실제로 전송된다
+    /// (Configure 가 없으면 Firebase 쪽은 silently no-op).
     /// - Parameter amplitudeAPIKey: Amplitude 프로젝트 API Key.
     public static func makeAnalytics(amplitudeAPIKey: String) -> Analytics {
-        AmplitudeAnalytics(apiKey: amplitudeAPIKey)
+        CompositeAnalytics([
+            AmplitudeAnalytics(apiKey: amplitudeAPIKey),
+            FirebaseEventAnalytics(),
+        ])
     }
 
     /// 분석 비활성(테스트·프리뷰·키 부재) 시 사용할 no-op 구현.
