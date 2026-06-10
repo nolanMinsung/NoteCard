@@ -35,7 +35,13 @@ class PopupCardViewController: UIViewController {
     private var restoreMemoAction: UIAction!
     private var presentEditingModeAction: UIAction!
     private var deleteMemoAction: UIAction!
+    private var searchInThisMemoAction: UIAction!
     private var cancellables = Set<AnyCancellable>()
+
+    @Published private var inMemoSearchQuery: String = ""
+    private var matchRanges: [NSRange] = []
+    private var currentMatchIndex: Int = 0
+    private var isInMemoSearchActive = false
     
     init(memo: Memo, indexPath: IndexPath, editingEnabled: Bool = true, environment: AppEnvironment) {
         self.memo = memo
@@ -86,6 +92,8 @@ class PopupCardViewController: UIViewController {
             memoTextViewTapGesture.isEnabled = false
         }
         
+        setupInMemoSearch()
+
         // PopupCard 표시 중에만 해당 메모의 image sub-collection listener attach.
         // cancellables 라이프사이클에 묶여 dismiss 시 자동 detach.
         environment.imageRepository.observeImageChanges(for: memo.memoID)
@@ -229,7 +237,16 @@ private extension PopupCardViewController {
                 self.askDeleting()
             }
         )
-        
+
+        searchInThisMemoAction = UIAction(
+            title: L10n.PopupCard.searchInThisMemo,
+            image: UIImage(systemName: "magnifyingglass"),
+            handler: { [weak self] action in
+                guard let self else { return }
+                self.enterInMemoSearchMode()
+            }
+        )
+
         rootView.titleTextField.addTarget(self, action: #selector(titleTextFieldEditingDidEndOnExit), for: .editingDidEndOnExit)
     }
     
@@ -254,7 +271,7 @@ private extension PopupCardViewController {
             rootView.titleTextField.isUserInteractionEnabled = false
             rootView.memoTextView.isUserInteractionEnabled = false
         } else {
-            rootView.ellipsisButton.menu = UIMenu(children: [presentEditingModeAction, deleteMemoAction])
+            rootView.ellipsisButton.menu = UIMenu(children: [searchInThisMemoAction, presentEditingModeAction, deleteMemoAction])
         }
         rootView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
@@ -393,6 +410,174 @@ extension PopupCardViewController {
 }
 
 
+// MARK: - In-Memo Search
+
+private extension PopupCardViewController {
+
+    func setupInMemoSearch() {
+        rootView.inMemoSearchBar.onQueryChanged = { [weak self] query in
+            self?.inMemoSearchQuery = query
+        }
+        rootView.inMemoSearchBar.onTapPrevious = { [weak self] in
+            self?.moveToPreviousMatch()
+        }
+        rootView.inMemoSearchBar.onTapNext = { [weak self] in
+            self?.moveToNextMatch()
+        }
+        rootView.inMemoSearchBar.onTapClose = { [weak self] in
+            self?.exitInMemoSearchMode()
+        }
+
+        $inMemoSearchQuery
+            .debounce(for: 0.2, scheduler: RunLoop.main)
+            .sink { [weak self] query in
+                self?.runInMemoSearch(query: query)
+            }
+            .store(in: &cancellables)
+    }
+
+    func enterInMemoSearchMode() {
+        guard !isInMemoSearchActive else { return }
+        isInMemoSearchActive = true
+
+        // 본문 bottom 을 검색바 top 으로 끌어올린(push-up) 뒤 검색바를 first responder 로 만들어 키보드를 띄운다.
+        // 제약 변경을 pending 으로 둔 채 키보드를 올려, 검색바 등장과 본문 축소가 키보드 애니메이션에 함께 실리게 한다.
+        rootView.showInMemoSearchBar()
+        rootView.inMemoSearchBar.focusTextField()
+
+        // 검색 중에는 본문 편집을 잠가 일치 위치(NSRange)가 무효화되지 않도록 한다.
+        // (검색바가 first responder 를 가져가므로 키보드는 그대로 유지된다.)
+        rootView.memoTextView.isEditable = false
+        memoTextViewTapGesture.isEnabled = false
+    }
+
+    func exitInMemoSearchMode() {
+        guard isInMemoSearchActive else { return }
+        isInMemoSearchActive = false
+
+        clearMatchHighlights()
+        inMemoSearchQuery = ""
+        rootView.inMemoSearchBar.reset()
+
+        // 검색바를 떼어내며 키보드가 내려가고, pending 된 제약 변경(본문이 다시 늘어남)이 그 애니메이션에 함께 실린다.
+        // 본문은 top 기준이라 아래로 늘어나도 컨텐츠 offset 이 튀지 않는다.
+        rootView.hideInMemoSearchBar()
+
+        if editingEnabled {
+            rootView.memoTextView.isEditable = true
+            memoTextViewTapGesture.isEnabled = true
+        }
+    }
+
+    func runInMemoSearch(query: String) {
+        // 검색 모드가 아닐 때(예: 화면 진입 직후 @Published 초기값 방출)는 본문을 건드리지 않는다.
+        guard isInMemoSearchActive else { return }
+        guard !query.isEmpty else {
+            clearMatchHighlights()
+            rootView.inMemoSearchBar.updateCount(current: 0, total: 0)
+            rootView.inMemoSearchBar.setLoading(false)
+            return
+        }
+
+        rootView.inMemoSearchBar.setLoading(true)
+        let text = rootView.memoTextView.text ?? ""
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let ranges = Self.matchRanges(of: query, in: text)
+            DispatchQueue.main.async {
+                guard let self else { return }
+                // 결과를 기다리는 사이 검색어가 또 바뀌었다면, 곧 새 검색이 다시 갱신하므로 이번 결과는 버린다.
+                guard query == self.inMemoSearchQuery else { return }
+                self.applyMatches(ranges)
+                self.rootView.inMemoSearchBar.setLoading(false)
+            }
+        }
+    }
+
+    func applyMatches(_ ranges: [NSRange]) {
+        matchRanges = ranges
+        currentMatchIndex = 0
+        applyMatchHighlights()
+        if !ranges.isEmpty {
+            scrollToCurrentMatch()
+        }
+        updateMatchCount()
+    }
+
+    func moveToNextMatch() {
+        guard !matchRanges.isEmpty else { return }
+        currentMatchIndex = (currentMatchIndex + 1) % matchRanges.count
+        applyMatchHighlights()
+        scrollToCurrentMatch()
+        updateMatchCount()
+    }
+
+    func moveToPreviousMatch() {
+        guard !matchRanges.isEmpty else { return }
+        currentMatchIndex = (currentMatchIndex - 1 + matchRanges.count) % matchRanges.count
+        applyMatchHighlights()
+        scrollToCurrentMatch()
+        updateMatchCount()
+    }
+
+    func applyMatchHighlights() {
+        let textStorage = rootView.memoTextView.textStorage
+        let fullRange = NSRange(location: 0, length: textStorage.length)
+        let normalColor = UIColor.currentTheme.withAlphaComponent(0.5)
+        let currentColor = UIColor.currentTheme.withAlphaComponent(0.85)
+
+        textStorage.beginEditing()
+        textStorage.removeAttribute(.backgroundColor, range: fullRange)
+        for (index, range) in matchRanges.enumerated() {
+            let highlightColor = index == currentMatchIndex ? currentColor : normalColor
+            textStorage.addAttribute(.backgroundColor, value: highlightColor, range: range)
+        }
+        textStorage.endEditing()
+    }
+
+    func clearMatchHighlights() {
+        matchRanges = []
+        currentMatchIndex = 0
+        // 배경색 제거가 스크롤 위치를 흔들지 않도록 offset 을 보존한다.
+        let savedOffset = rootView.memoTextView.contentOffset
+        let textStorage = rootView.memoTextView.textStorage
+        let fullRange = NSRange(location: 0, length: textStorage.length)
+        textStorage.removeAttribute(.backgroundColor, range: fullRange)
+        rootView.memoTextView.contentOffset = savedOffset
+    }
+
+    func scrollToCurrentMatch() {
+        guard matchRanges.indices.contains(currentMatchIndex) else { return }
+        rootView.memoTextView.scrollRangeToVisible(matchRanges[currentMatchIndex])
+    }
+
+    func updateMatchCount() {
+        let current = matchRanges.isEmpty ? 0 : currentMatchIndex + 1
+        rootView.inMemoSearchBar.updateCount(current: current, total: matchRanges.count)
+    }
+
+    /// 표시 중인 본문에서 검색어와 일치하는 모든 NSRange 를 찾는다.
+    /// NSString 기준으로 탐색해 한글 등 결합 문자에서도 하이라이트 범위가 어긋나지 않도록 한다.
+    static func matchRanges(of query: String, in text: String) -> [NSRange] {
+        guard !query.isEmpty else { return [] }
+        let nsText = text as NSString
+        var ranges: [NSRange] = []
+        var searchStart = 0
+        while searchStart < nsText.length {
+            let remainingRange = NSRange(location: searchStart, length: nsText.length - searchStart)
+            let foundRange = nsText.range(of: query, options: [.caseInsensitive], range: remainingRange)
+            if foundRange.location == NSNotFound {
+                break
+            }
+            ranges.append(foundRange)
+            searchStart = foundRange.location + max(foundRange.length, 1)
+        }
+        return ranges
+    }
+
+}
+
+
 // MARK: - Domain.Category Fetching
 private extension PopupCardViewController {
     
@@ -451,6 +636,10 @@ private extension PopupCardViewController {
     /// 편집 진입 — MemoDetailVC 가 원본 + 썸네일 둘 다 필요한 ImageUIModel 을 요구하므로
     /// 모든 이미지를 sync 로 받아서 변환 후 진입. 한 장이라도 실패하면 alert.
     func enterEditingMode() async {
+        // 편집 모드(formSheet)로 넘어가기 전에 검색 모드를 정리한다.
+        // 그대로 두면 편집 후 돌아왔을 때 stale 한 검색 상태(하이라이트·일치 위치)가 남는다.
+        exitInMemoSearchMode()
+
         do {
             let models = try await fetchAllImageUIModelsForEditing()
             let memoEditingVC = MemoDetailViewController(
