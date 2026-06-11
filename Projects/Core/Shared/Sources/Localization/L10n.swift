@@ -63,6 +63,11 @@ public enum L10n {
         public static let noTitle = "popupCard.noTitle".localized()
         public static let editingPreloadFailedTitle = "popupCard.editingPreloadFailedTitle".localized()
         public static let editingPreloadFailedMessage = "popupCard.editingPreloadFailedMessage".localized()
+        public static let searchInThisMemo = "popupCard.searchInThisMemo".localized()
+        public static let searchPlaceholder = "popupCard.searchPlaceholder".localized()
+        public static let searchPreviousMatch = "popupCard.searchPreviousMatch".localized()
+        public static let searchNextMatch = "popupCard.searchNextMatch".localized()
+        public static let searchClose = "popupCard.searchClose".localized()
     }
 
     public enum MemoView {

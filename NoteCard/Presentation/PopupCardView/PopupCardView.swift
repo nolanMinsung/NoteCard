@@ -57,6 +57,8 @@ final class PopupCardView: UIView {
     
     private(set) var memoTextView: UITextView!
     let memoDateLabel = UILabel()
+    let inMemoSearchBar = PopupCardSearchBar()
+    private var inMemoSearchBarConstraints: [NSLayoutConstraint] = []
 
     private let environment: AppEnvironment
 
@@ -188,6 +190,32 @@ final class PopupCardView: UIView {
             memoTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             memoTextViewBottom,
         ])
+    }
+
+    /// 검색바를 화면에 붙이고 본문 TextView 의 bottom 을 검색바 top 으로 끌어올린다(push-up).
+    /// 평소에는 hierarchy 에서 빼두므로, 검색하지 않을 때는 본문 레이아웃에 전혀 영향을 주지 않는다.
+    func showInMemoSearchBar() {
+        addSubview(inMemoSearchBar)
+        inMemoSearchBar.translatesAutoresizingMaskIntoConstraints = false
+        memoTextViewBottomToKeyboardTop.isActive = false
+        let constraints = [
+            inMemoSearchBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            inMemoSearchBar.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            inMemoSearchBar.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor, constant: -10),
+            memoTextView.bottomAnchor.constraint(equalTo: inMemoSearchBar.topAnchor, constant: -10),
+        ]
+        NSLayoutConstraint.activate(constraints)
+        inMemoSearchBarConstraints = constraints
+    }
+
+    /// 검색바를 떼어내고 본문 TextView 의 bottom 을 다시 키보드 가이드로 되돌린다.
+    /// searchTextField 의 resign 으로 키보드가 내려가며, pending 된 제약 변경이 그 애니메이션에 함께 실린다.
+    func hideInMemoSearchBar() {
+        inMemoSearchBar.searchTextField.resignFirstResponder()
+        NSLayoutConstraint.deactivate(inMemoSearchBarConstraints)
+        inMemoSearchBarConstraints = []
+        inMemoSearchBar.removeFromSuperview()
+        memoTextViewBottomToKeyboardTop.isActive = true
     }
     
     private func updateTitleTextField() {
@@ -384,14 +412,16 @@ extension PopupCardView {
     }
     
     private func setupMemoTextView() {
-        if #available(iOS 16.0, *) {
-            // iOS 16.0 이후에서는 TextKit2 사용기 기본값이기 때문에,
-            // TextKit1 사용으로 통일하기 위해 usingTextLayoutManager 매개변수에 false 할당.
-            memoTextView = UITextView(usingTextLayoutManager: false)
-        } else {
-            memoTextView = UITextView()
-        }
-        
+        // 하이라이트가 행간만큼 늘어지지 않도록 커스텀 NSLayoutManager 를 사용한 TextKit1 스택을 직접 구성한다.
+        // (iOS 16+ 기본값인 TextKit2 대신 TextKit1 을 강제하는 효과도 겸한다.)
+        let textStorage = NSTextStorage()
+        let layoutManager = TightBackgroundLayoutManager()
+        let textContainer = NSTextContainer(size: .zero)
+        textContainer.widthTracksTextView = true
+        textStorage.addLayoutManager(layoutManager)
+        layoutManager.addTextContainer(textContainer)
+        memoTextView = UITextView(frame: .zero, textContainer: textContainer)
+
         let bar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
         let hideKeyboardButton = UIBarButtonItem(
             image: .init(systemName: "keyboard.chevron.compact.down"),
