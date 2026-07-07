@@ -67,18 +67,18 @@ jobs:
           # Debug: verify both rewrites are present (tokens masked in log).
           git config --global --get-all "url.${AUTHED}.insteadOf" | sed 's|^|insteadOf -> |'
 
-      - name: Select Xcode 26 (required by App Store Connect — iOS 26 SDK or later)
+      - name: Select Xcode (pinned — App Store Connect requires iOS 26 SDK or later)
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: "26.1"
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true   # auto bundle install + cache
 
-      - name: Install Tuist
-        run: brew install tuist
+      - name: Install Tuist (pinned via .mise.toml)
+        uses: jdx/mise-action@v2
 
       - name: Cache Tuist dependencies
         uses: actions/cache@v4
