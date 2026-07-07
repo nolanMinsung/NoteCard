@@ -1,0 +1,5 @@
+# Pins the Tuist version for both local development and CI so they never drift.
+# CI installs from this file via jdx/mise-action. When bumping Tuist, upgrade
+# locally first, verify, then update the version here.
+[tools]
+tuist = "4.141.0"
