@@ -28,13 +28,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode (latest-stable)
+      - name: Select Xcode (pinned)
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: "26.1"
 
-      - name: Install Tuist
-        run: brew install tuist
+      - name: Install Tuist (pinned via .mise.toml)
+        uses: jdx/mise-action@v2
 
       - name: Cache Tuist dependencies
         uses: actions/cache@v4
